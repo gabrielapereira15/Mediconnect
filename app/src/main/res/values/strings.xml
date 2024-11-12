@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">mediconnect-android</string>
+    <string name="app_name">Mediconnect</string>
+    <string name="home">Home</string>
+    <string name="notifications">Notifications</string>
+    <string name="medical_history">Medical History</string>
+    <string name="profile">Profile</string>
+    <string name="hello_user_name">Hello, [User Name] 👋</string>
+    <string name="search_text">Find local doctors who take care of your health</string>
+    <string name="search_hint">Search doctor by name or department</string>
+    <string name="top_searched_specialties">Top searched specialties</string>
+    <string name="available_doctors_text">Available doctors</string>
+    <string name="doctor_name">Doctor Rezwana Afrin</string>
+    <string name="speacialty_text">MBBS, DO (Health)</string>
+    <string name="book_appointment_text">Book Appointment</string>
 </resources>
