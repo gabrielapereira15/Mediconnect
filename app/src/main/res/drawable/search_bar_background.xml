@@ -10,7 +10,7 @@
     </item>
 
     <!-- Main background layer -->
-    <item android:left="1dp" android:android="1dp" android:right="1dp" android:top="1dp">
+    <item android:left="1dp" android:top="1dp" android:right="1dp" android:bottom="1dp">
         <shape android:shape="rectangle">
             <solid android:color="#D6D5D5" />
             <corners android:radius="12dp" />
