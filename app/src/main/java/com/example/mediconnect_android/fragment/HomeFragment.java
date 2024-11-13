@@ -6,7 +6,10 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +35,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     List<Integer> imageList = new ArrayList<>();
     DoctorAdapter mAdapter;
     CarouselAdapter carouselAdapter;
+    private Handler carouselHandler = new Handler(Looper.getMainLooper());
+    private Runnable carouselRunnable;
     AppointmentClient appointmentClient;
 
     public HomeFragment() {
@@ -76,6 +81,32 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             // Customize your page transformer here (e.g., for animations)
             page.setAlpha(1 - Math.abs(position));
         });
+        setupAutoScroll();
+    }
+
+    private void setupAutoScroll() {
+        int delayMillis = 5000;
+
+        carouselRunnable = new Runnable() {
+            @Override
+            public void run() {
+                int currentItem = binding.carouselViewPager.getCurrentItem();
+                int nextItem = (currentItem + 1) % imageList.size();
+                binding.carouselViewPager.setCurrentItem(nextItem, true);
+                carouselHandler.postDelayed(this, delayMillis);
+            }
+        };
+
+        carouselHandler.postDelayed(carouselRunnable, delayMillis);
+
+        binding.carouselViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                carouselHandler.removeCallbacks(carouselRunnable);
+                carouselHandler.postDelayed(carouselRunnable, delayMillis);
+            }
+        });
     }
 
     @Override
@@ -91,6 +122,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        carouselHandler.removeCallbacks(carouselRunnable);
         binding = null;
     }
 }

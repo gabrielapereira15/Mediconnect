@@ -27,4 +27,6 @@
     <string name="cardiologist">Cardiologist</string>
     <string name="gynecologist">Gynecologist</string>
     <string name="gastrologist">Gastrologist</string>
+    <string name="appointment_check_in">Appointment Check In</string>
+    <string name="pre_appointment_form">Pre-Appointment Form</string>
 </resources>
