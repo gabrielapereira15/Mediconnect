@@ -5,10 +5,6 @@
         android:icon="@drawable/baseline_home_filled_24"
         android:title="@string/home" />
     <item
-        android:id="@+id/notifications_fragment"
-        android:icon="@drawable/baseline_notifications_24"
-        android:title="@string/notifications" />
-    <item
         android:id="@+id/medical_history_fragment"
         android:icon="@drawable/baseline_notes_24"
         android:title="@string/medical_history" />

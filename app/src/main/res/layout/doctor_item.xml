@@ -5,15 +5,17 @@
     android:orientation="vertical"
     android:padding="8dp"
     android:background="@drawable/doctor_card_background"
-    android:layout_marginEnd="16dp">
+    android:layout_marginEnd="10dp">
 
     <ImageView
         android:id="@+id/doctor_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/round_image_background"
         android:contentDescription="@string/doctor_name"
         android:scaleType="centerCrop"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:clipToOutline="true"/>
 
     <TextView
         android:id="@+id/doctor_name"
@@ -22,7 +24,7 @@
         android:textSize="14sp"
         android:textColor="@color/dark_gray"
         android:layout_gravity="center"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="4dp" />
 
     <TextView
         android:id="@+id/doctor_specialty"
@@ -36,9 +38,10 @@
         android:id="@+id/btn_book_appointment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/book_appointment_text"
-        android:textSize="14sp"
-        android:backgroundTint="@color/light_blue"
         android:layout_gravity="center"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/green"
+        android:text="@string/book_appointment_text"
+        android:textColor="@color/dark_gray"
+        android:textSize="12sp" />
 </LinearLayout>

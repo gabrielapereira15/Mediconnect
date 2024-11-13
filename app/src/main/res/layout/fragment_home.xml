@@ -10,47 +10,11 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/gray_background"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@color/white"
+        android:layout_gravity="center"
+        android:paddingHorizontal="16dp"
         tools:ignore="UselessParent">
-
-        <!-- Greeting and User's Name -->
-        <TextView
-            android:id="@+id/greeting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/hello_user_name"
-            android:layout_marginTop="20dp"
-            android:textSize="16sp"
-            android:textColor="@color/dark_gray"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="sans-serif-medium"/>
-
-        <!-- Main Title -->
-        <TextView
-            android:id="@+id/main_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="sans-serif"
-            android:text="@string/search_text"
-            android:textColor="@color/dark_gray"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <!-- Search Bar -->
-        <EditText
-            android:id="@+id/search_bar"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:hint="@string/search_hint"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:drawablePadding="10dp"
-            android:background="@drawable/search_bar_background"
-            android:drawableStart="@drawable/baseline_search_24"
-            android:layout_marginBottom="16dp"/>
 
         <!-- Specialties Title -->
         <TextView
@@ -58,10 +22,170 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/top_searched_specialties"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textColor="@color/dark_gray"
             android:fontFamily="sans-serif-medium"
-            android:layout_marginBottom="12dp"/>
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Specialties Icons with Labels -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginBottom="20dp">
+
+            <!-- Video Visit Specialty -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:layout_gravity="center"
+                android:background="@drawable/specialty_border"
+                android:padding="7dp"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/dentist_icon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ophthalmologists"
+                    android:contentDescription="@string/ophthalmologists"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ophthalmologists"
+                    android:textSize="12sp"
+                    android:textColor="@color/dark_gray"
+                    android:fontFamily="sans-serif"
+                    android:layout_marginTop="4dp"
+                    tools:ignore="SmallSp" />
+            </LinearLayout>
+
+            <!-- Psychiatrist Specialty -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:layout_gravity="center"
+                android:background="@drawable/specialty_border"
+                android:padding="7dp"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/psychiatrist_icon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/cardiologist"
+                    android:contentDescription="@string/cardiologist"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cardiologist"
+                    android:textSize="12sp"
+                    android:textColor="@color/dark_gray"
+                    android:fontFamily="sans-serif"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+
+            <!-- OBGYN Specialty -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:layout_gravity="center"
+                android:background="@drawable/specialty_border"
+                android:padding="7dp"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/obgyn_icon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/gynecologist"
+                    android:contentDescription="@string/gynecologist"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/gynecologist"
+                    android:textSize="12sp"
+                    android:textColor="@color/dark_gray"
+                    android:fontFamily="sans-serif"
+                    android:layout_marginTop="4dp"
+                    tools:ignore="SmallSp" />
+
+            </LinearLayout>
+
+            <!-- Dermatologist Specialty -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:layout_gravity="center"
+                android:background="@drawable/specialty_border"
+                android:padding="7dp"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/dermatologist_icon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/gastroenterologist"
+                    android:contentDescription="@string/gastrologist"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/gastrologist"
+                    android:textSize="12sp"
+                    android:textColor="@color/dark_gray"
+                    android:fontFamily="sans-serif"
+                    android:layout_marginTop="4dp"
+                    tools:ignore="SmallSp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Main Title -->
+        <TextView
+            android:id="@+id/main_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="sans-serif"
+            android:layout_gravity="left"
+            android:text="@string/search_text"
+            android:textColor="@color/dark_gray"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- Search Bar -->
+        <EditText
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:autofillHints=""
+            android:hint="@string/search_hint"
+            android:inputType="textAutoComplete"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:drawablePadding="10dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/search_bar_background"
+            android:drawableStart="@drawable/baseline_search_24"/>
 
         <!-- Available Doctors Section -->
         <TextView
@@ -69,7 +193,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/available_doctors_text"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/dark_gray"
             android:fontFamily="sans-serif-medium"
@@ -80,9 +204,22 @@
             android:id="@+id/recyclerViewDoctors"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:clipToPadding="false"
-            android:layout_marginBottom="16dp" />
+            android:paddingHorizontal="8dp"
+            android:layout_marginBottom="20dp"
+            android:clipToPadding="false"/>
+
+        <!-- Carousel -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:cardCornerRadius="16dp">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/carouselViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 

@@ -1,5 +1,6 @@
 package com.example.mediconnect_android.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,11 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.adapter.CarouselAdapter;
 import com.example.mediconnect_android.adapter.DoctorAdapter;
 import com.example.mediconnect_android.client.AppointmentClient;
 import com.example.mediconnect_android.client.AppointmentMock;
 import com.example.mediconnect_android.databinding.FragmentHomeBinding;
 import com.example.mediconnect_android.model.Doctor;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +29,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private FragmentHomeBinding binding;
     List<Doctor> doctorList = new ArrayList<Doctor>();
+    List<Integer> imageList = new ArrayList<>();
     DoctorAdapter mAdapter;
+    CarouselAdapter carouselAdapter;
     AppointmentClient appointmentClient;
 
     public HomeFragment() {
@@ -48,9 +55,27 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void init() {
-        appointmentClient.getDoctor("1");
+        imageList.add(R.drawable.mediconnect_logo);
+        imageList.add(R.drawable.doctorimage);
+
         doctorList.addAll(appointmentClient.getDoctors());
+
         bindAdapter();
+        bindCarouselAdapter();
+    }
+
+    private void bindCarouselAdapter() {
+        // Initialize the CarouselAdapter with the imageList
+        carouselAdapter = new CarouselAdapter(imageList);
+
+        // Set the adapter to ViewPager2
+        binding.carouselViewPager.setAdapter(carouselAdapter);
+
+        // Optionally set a page transformer for visual effects (optional)
+        binding.carouselViewPager.setPageTransformer((page, position) -> {
+            // Customize your page transformer here (e.g., for animations)
+            page.setAlpha(1 - Math.abs(position));
+        });
     }
 
     @Override

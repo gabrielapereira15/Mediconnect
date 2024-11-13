@@ -6,10 +6,25 @@
     <string name="profile">Profile</string>
     <string name="hello_user_name">Hello, [User Name] 👋</string>
     <string name="search_text">Find local doctors who take care of your health</string>
-    <string name="search_hint">Search doctor by name or department</string>
+    <string name="search_hint">Search doctor by name or specialty</string>
     <string name="top_searched_specialties">Top searched specialties</string>
-    <string name="available_doctors_text">Available doctors</string>
+    <string name="available_doctors_text">Book an appointment with our available doctors</string>
     <string name="doctor_name">Doctor Rezwana Afrin</string>
     <string name="speacialty_text">MBBS, DO (Health)</string>
     <string name="book_appointment_text">Book Appointment</string>
+    <string name="doctor_image">Doctor Image</string>
+    <string name="doctor_score">4.5</string>
+    <string name="about_text">About the doctor</string>
+    <string name="about_description">Dr. Rezwana Afrin was born in 1978 in Karachi, Pakistan. She completed her undergraduate studies at Karachi University and earned her medical degree...</string>
+    <string name="read_more_link">Read More</string>
+    <string name="choose_date__time"><![CDATA[Choose Date & Time]]></string>
+    <string name="calendar_icon_desc">Calendar Icon</string>
+    <string name="next_text">Next</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dentist">Dentist</string>
+    <string name="ophthalmologists">Ophthalmo</string>
+    <string name="cardiologist">Cardiologist</string>
+    <string name="gynecologist">Gynecologist</string>
+    <string name="gastrologist">Gastrologist</string>
 </resources>
