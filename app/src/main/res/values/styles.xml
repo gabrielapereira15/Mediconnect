@@ -3,6 +3,7 @@
     <!-- Style for expanded title -->
     <style name="ExpandedTitleStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/light_blue</item> <!-- Title in blue -->
-        <item name="android:textSize">24sp</item> <!-- Adjust size if needed -->
+        <item name="android:textSize">20sp</item> <!-- Adjust size if needed -->
+        <item name="android:fontFamily">@font/montserrat_regular</item>
     </style>
 </resources>
