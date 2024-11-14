@@ -13,7 +13,7 @@ import java.util.List;
 
 public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.CarouselViewHolder> {
 
-    private List<Integer> items;
+    private final List<Integer> items;
 
     public CarouselAdapter(List<Integer> items) {
         this.items = items;
@@ -37,7 +37,7 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Carous
 
     public class CarouselViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView imageView;
+        private final ImageView imageView;
 
         public CarouselViewHolder(View itemView) {
             super(itemView);

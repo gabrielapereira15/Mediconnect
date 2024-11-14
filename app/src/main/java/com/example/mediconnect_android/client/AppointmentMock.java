@@ -12,8 +12,8 @@ import java.util.logging.Logger;
 
 public class AppointmentMock implements AppointmentClient {
 
-    Logger logger = Logger.getLogger(AppointmentMock.class.getName());
     private final ObjectMapper objectMapper;
+    Logger logger = Logger.getLogger(AppointmentMock.class.getName());
 
     public AppointmentMock() {
         this.objectMapper = new ObjectMapper();
@@ -23,35 +23,35 @@ public class AppointmentMock implements AppointmentClient {
     @Override
     public List<Doctor> getDoctors() {
         var response = """
-{
-  "doctors": [
-    {
-      "id": 1,
-      "name": "Roberto",
-      "specialty": "Dentist",
-      "photo": "https://mediconnect.ca/{cod-clinic}/doc-photo/1"
-    },
-    {
-      "id": 2,
-      "name": "Gino",
-      "specialty": "Cardiologist",
-      "photo": "https://mediconnect.ca/{cod-clinic}/doctor/1/photo"
-    },
-    {
-      "id": 3,
-      "name": "Gabriela",
-      "specialty": "Gynecologist",
-      "photo": "https://mediconnect.ca/{cod-clinic}/doc-photo/1"
-    },
-    {
-      "id": 4,
-      "name": "Eduardo",
-      "specialty": "Chiropractic",
-      "photo": "https://mediconnect.ca/{cod-clinic}/doc-photo/1"
-    }
-  ]
-}
-        """;
+                {
+                  "doctors": [
+                    {
+                      "id": 1,
+                      "name": "Roberto",
+                      "specialty": "Dentist",
+                      "photo": "https://mediconnect.ca/{cod-clinic}/doc-photo/1"
+                    },
+                    {
+                      "id": 2,
+                      "name": "Gino",
+                      "specialty": "Cardiologist",
+                      "photo": "https://mediconnect.ca/{cod-clinic}/doctor/1/photo"
+                    },
+                    {
+                      "id": 3,
+                      "name": "Gabriela",
+                      "specialty": "Gynecologist",
+                      "photo": "https://mediconnect.ca/{cod-clinic}/doc-photo/1"
+                    },
+                    {
+                      "id": 4,
+                      "name": "Eduardo",
+                      "specialty": "Chiropractic",
+                      "photo": "https://mediconnect.ca/{cod-clinic}/doc-photo/1"
+                    }
+                  ]
+                }
+                        """;
         try {
             return objectMapper.readValue(response, DoctorsResponse.class).getDoctors();
         } catch (IOException e) {
@@ -63,25 +63,25 @@ public class AppointmentMock implements AppointmentClient {
     @Override
     public Doctor getDoctor(String doctorId) {
         var response = """
-{
-  "id": 1,
-  "name": "Roberto",
-  "score": 4.5,
-  "experienceYears": "10 years",
-  "description": "Loren ipso",
-  "photo": "https://mediconnect.ca/{cod-clinic}/doctor/1/photo",
-  "schedule": [
-    {
-      "date": "11/12/2024",
-      "times": ["11 am", "13 pm", "15 pm"]
-    },
-    {
-      "date": "12/12/2024",
-      "times": ["10 am", "11 pm", "12 pm", "13 pm", "14 pm", "15 pm"]
-    }
-  ]
-}
-        """;
+                {
+                  "id": 1,
+                  "name": "Roberto",
+                  "score": 4.5,
+                  "experienceYears": "10 years",
+                  "description": "Dr. Rezwana Afrin was born in 1978 in Karachi, Pakistan. She completed her undergraduate studies at Karachi University and earned her medical degree...",
+                  "photo": "https://mediconnect.ca/{cod-clinic}/doctor/1/photo",
+                  "schedule": [
+                    {
+                      "date": "Fri, 9 Jun",
+                      "times": ["11 AM", "13 PM", "15 PM"]
+                    },
+                    {
+                      "date": "Fri, 10 Jun",
+                      "times": ["10 AM", "11 PM", "12 PM", "13 PM", "14 PM", "15 PM"]
+                    }
+                  ]
+                }
+                        """;
         try {
             return objectMapper.readValue(response, Doctor.class);
         } catch (IOException e) {

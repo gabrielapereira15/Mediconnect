@@ -1,7 +1,6 @@
 package com.example.mediconnect_android.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +20,9 @@ import java.util.List;
 
 public class DoctorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context context;
-    private List<Doctor> doctorList;
     DoctorItemBinding doctorItemBinding;
+    private final Context context;
+    private final List<Doctor> doctorList;
 
     public DoctorAdapter(List<Doctor> doctorList, Context context) {
         super();
@@ -39,12 +38,24 @@ public class DoctorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return new ViewHolder(doctorItemBinding);
     }
 
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        ((ViewHolder) holder).bindView(doctorList.get(position));
+    }
+
+    @Override
+    public int getItemCount() {
+        return doctorList.size();
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         DoctorItemBinding recyclerItemBinding;
+
         public ViewHolder(DoctorItemBinding recyclerItemBinding) {
             super(recyclerItemBinding.getRoot());
             this.recyclerItemBinding = recyclerItemBinding;
         }
+
         public void bindView(Doctor doctor) {
             recyclerItemBinding.doctorName.setText(doctor.getName());
             recyclerItemBinding.doctorSpecialty.setText(doctor.getSpecialty());
@@ -69,15 +80,5 @@ public class DoctorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 }
             });
         }
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((ViewHolder) holder).bindView(doctorList.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return doctorList.size();
     }
 }

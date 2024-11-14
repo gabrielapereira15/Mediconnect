@@ -1,19 +1,20 @@
 package com.example.mediconnect_android.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
-
-import android.os.Handler;
-import android.os.Looper;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.adapter.CarouselAdapter;
@@ -22,22 +23,21 @@ import com.example.mediconnect_android.client.AppointmentClient;
 import com.example.mediconnect_android.client.AppointmentMock;
 import com.example.mediconnect_android.databinding.FragmentHomeBinding;
 import com.example.mediconnect_android.model.Doctor;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
+import com.example.mediconnect_android.util.KeyboardUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
-    private FragmentHomeBinding binding;
+    private final Handler carouselHandler = new Handler(Looper.getMainLooper());
     List<Doctor> doctorList = new ArrayList<Doctor>();
     List<Integer> imageList = new ArrayList<>();
     DoctorAdapter mAdapter;
     CarouselAdapter carouselAdapter;
-    private Handler carouselHandler = new Handler(Looper.getMainLooper());
-    private Runnable carouselRunnable;
     AppointmentClient appointmentClient;
+    private FragmentHomeBinding binding;
+    private Runnable carouselRunnable;
 
     public HomeFragment() {
         appointmentClient = new AppointmentMock();
@@ -55,7 +55,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         init();
-
         return view;
     }
 
@@ -67,6 +66,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         bindAdapter();
         bindCarouselAdapter();
+        setupKeyboardDismiss();
     }
 
     private void bindCarouselAdapter() {
@@ -110,13 +110,28 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onClick(View view) {}
+    public void onClick(View view) {
+    }
 
     private void bindAdapter() {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         binding.recyclerViewDoctors.setLayoutManager(layoutManager);
         mAdapter = new DoctorAdapter(doctorList, getContext());
         binding.recyclerViewDoctors.setAdapter(mAdapter);
+    }
+
+    private void setupKeyboardDismiss() {
+        EditText editText = binding.searchBar;
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    KeyboardUtils.hideKeyboard(v, getContext());
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override

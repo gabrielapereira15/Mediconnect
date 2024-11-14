@@ -5,7 +5,8 @@
     <color name="green">#9abb80</color>
     <color name="light_blue">#1E88E5</color>
     <color name="dark_gray">#333333</color>
-    <color name="light_gray">#777777</color>
+    <color name="light_gray">#E0E0E0</color>
+    <color name="gray">#777777</color>
     <color name="gray_background">#F5F5F5</color>
     <color name="transparent">#FFFFFF</color>
     <color name="nav_item_selected">#1E88E5</color>

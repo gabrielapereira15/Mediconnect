@@ -4,16 +4,16 @@
     <!-- Shadow layer -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#E0E0E0" />
-            <corners android:radius="12dp" />
+            <solid android:color="@color/light_gray" />
+            <corners android:radius="20dp" />
         </shape>
     </item>
 
     <!-- Main background layer -->
     <item android:left="1dp" android:top="1dp" android:right="1dp" android:bottom="1dp">
         <shape android:shape="rectangle">
-            <solid android:color="#D6D5D5" />
-            <corners android:radius="10dp" />
+            <solid android:color="@color/white" />
+            <corners android:radius="20dp" />
         </shape>
     </item>
 

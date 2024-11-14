@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface AppointmentClient {
     List<Doctor> getDoctors();
+
     Doctor getDoctor(String doctorId);
 }

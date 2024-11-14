@@ -7,211 +7,186 @@
     android:background="@color/gray_background"
     tools:context=".fragment.BookAppointmentFragment">
 
-    <LinearLayout
-        android:id="@+id/appointmentContainer"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        tools:ignore="MissingConstraints">
+        android:layout_height="match_parent">
 
-        <!-- Doctor Information Card -->
         <LinearLayout
+            android:id="@+id/appointmentContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/doctor_card_background"
-            android:elevation="4dp"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:orientation="vertical"
+            android:padding="16dp"
+            tools:ignore="MissingConstraints">
 
-
-            <ImageView
-                android:id="@+id/doctorImage"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/round_image_background"
-                android:contentDescription="@string/doctor_image"
-                android:scaleType="centerCrop"
-                android:src="@drawable/doctorimage" />
-
+            <!-- Doctor Information Card -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/search_bar_background"
+                android:orientation="horizontal"
+                android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/doctorName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/doctor_name"
-                    android:textColor="@color/light_blue"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/doctorSpecialty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/speacialty_text"
-                    android:textColor="@color/light_gray"
-                    android:textSize="14sp" />
+                <ImageView
+                    android:id="@+id/doctorImage"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/round_image_background"
+                    android:contentDescription="@string/doctor_image"
+                    android:scaleType="centerCrop"
+                    android:clipToOutline="true"
+                    android:src="@drawable/doctorimage" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="4dp"
-                        android:src="@drawable/baseline_star_rate_24" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/doctorScore"
+                        android:id="@+id/doctorName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/doctor_score"
-                        android:layout_marginEnd="4dp"
-                        android:textColor="@color/yellow"
-                        android:textSize="14sp" />
+                        android:text="@string/doctor_name"
+                        android:textColor="@color/light_blue"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/reviewCount"
+                        android:id="@+id/doctorSpecialty"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=""
-                        android:textColor="@color/yellow"
+                        android:text="@string/speacialty_text"
+                        android:textColor="@color/gray"
                         android:textSize="14sp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="4dp"
+                            android:src="@drawable/baseline_star_rate_24" />
+
+                        <TextView
+                            android:id="@+id/doctorScore"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/doctor_score"
+                            android:layout_marginEnd="4dp"
+                            android:textColor="@color/yellow"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/reviewCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/yellow"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
-
-        <!-- Doctor Bio Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/doctor_card_background"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/about_text"
-                android:textColor="@color/dark_gray"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/doctorDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="2"
-                android:text="@string/about_description"
-                android:textColor="@color/light_gray"
-                android:textSize="14sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/read_more_link"
-                android:textColor="@color/light_blue"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Choose Date & Time Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/doctor_card_background"
-            android:orientation="vertical"
-            android:padding="16dp">
-
+            <!-- Doctor Bio Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/search_bar_background"
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/choose_date__time"
+                    android:text="@string/about_text"
                     android:textColor="@color/dark_gray"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="@string/calendar_icon_desc"
-                    android:src="@drawable/baseline_calendar_today_24"
-                    app:tint="@color/light_blue" />
-            </LinearLayout>
+                <TextView
+                    android:id="@+id/doctorDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:text="@string/about_description"
+                    android:textColor="@color/gray"
+                    android:textSize="14sp" />
 
-            <!-- Date & Time Slots -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="vertical">
-
-                <!-- Repeat for each day -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Thu, 8 Jun"
-                    android:textColor="#7A7A7A"
-                    android:textSize="14sp" />
+                    android:text="@string/read_more_link"
+                    android:textColor="@color/light_blue"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
-                <GridLayout
+            <!-- Choose Date & Time Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@drawable/search_bar_background"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:columnCount="3">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                    <!-- Repeat for each time slot -->
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:background="@drawable/time_slot_background"
-                        android:gravity="center"
-                        android:padding="8dp"
-                        android:text="10:30 AM"
-                        android:textColor="#1A1A1A" />
+                        android:layout_weight="1"
+                        android:text="@string/choose_date__time"
+                        android:textColor="@color/dark_gray"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
-                    <!-- Add more time slots similarly -->
-                </GridLayout>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/calendar_icon_desc"
+                        android:src="@drawable/baseline_calendar_today_24"
+                        app:tint="@color/light_blue" />
+                </LinearLayout>
 
-                <!-- Repeat Date and Time slots for other days -->
+                <!-- Date & Time Slots -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/timeSlotsRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"/>
+
             </LinearLayout>
+
+            <!-- Next Button -->
+            <Button
+                android:id="@+id/btnNext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/light_blue"
+                android:text="@string/next_text"
+                android:textColor="@color/dark_gray"
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Next Button -->
-        <Button
-            android:id="@+id/btnNext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
-            android:backgroundTint="@color/green"
-            android:text="@string/next_text"
-            android:textColor="@color/dark_gray"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>
