@@ -14,122 +14,112 @@
         android:id="@+id/logoImageView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="10dp"
         android:contentDescription="@string/logo"
         android:src="@drawable/mediconnect_logo"
-        app:layout_constraintDimensionRatio="1.2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/container"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.6" />
+        app:layout_constraintVertical_bias="0.5">
 
-    <!-- Welcome Text -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        android:text="@string/welcome"
-        android:textColor="@color/green"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/radioGroupUserType"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!-- Radio Group for Patient or Clinic -->
-    <RadioGroup
-        android:id="@+id/radioGroupUserType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/logoImageView">
-
-        <RadioButton
-            android:id="@+id/radioPatient"
+        <!-- Welcome Text -->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="@string/patient"
-            android:textColor="@color/dark_gray"
-            android:textSize="16sp" />
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="@string/welcome"
+            android:textColor="@color/green"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-        <RadioButton
-            android:id="@+id/radioClinic"
+        <!-- Radio Group for Patient or Clinic -->
+        <RadioGroup
+            android:id="@+id/radioGroupUserType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="@string/clinic"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radioPatient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="@string/patient"
+                android:textColor="@color/dark_gray"
+                android:textSize="16sp" />
+
+            <RadioButton
+                android:id="@+id/radioClinic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="@string/clinic"
+                android:textColor="@color/dark_gray"
+                android:textSize="16sp" />
+        </RadioGroup>
+
+        <!-- Email Input Field -->
+        <EditText
+            android:id="@+id/emailEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="16dp"
+            android:autofillHints=""
+            android:background="@drawable/rounded_edittext"
+            android:hint="@string/enter_your_email"
+            android:inputType="textEmailAddress"
+            android:padding="16dp"
             android:textColor="@color/dark_gray"
+            android:textColorHint="@color/gray"
             android:textSize="16sp" />
-    </RadioGroup>
 
-    <!-- Email Input Field -->
-    <EditText
-        android:id="@+id/emailEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/rounded_edittext"
-        android:hint="@string/enter_your_email"
-        android:inputType="textEmailAddress"
-        android:padding="16dp"
-        android:textColor="@color/dark_gray"
-        android:textColorHint="@color/gray"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/radioGroupUserType" />
+        <!-- Checkbox for Terms and Conditions -->
+        <CheckBox
+            android:id="@+id/checkboxTerms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/i_accept_the_terms_and_conditions"
+            android:textColor="@color/dark_gray" />
 
-    <!-- Checkbox for Terms and Conditions -->
-    <CheckBox
-        android:id="@+id/checkboxTerms"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/i_accept_the_terms_and_conditions"
-        android:textColor="@color/dark_gray"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/emailEditText" />
+        <!-- Link for Terms and Conditions -->
+        <TextView
+            android:id="@+id/termsLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:text="@string/read_more_link"
+            android:textColor="@color/light_blue"
+            android:textSize="14sp" />
 
-    <!-- Link for Terms and Conditions -->
-    <TextView
-        android:id="@+id/termsLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:text="@string/read_more_link"
-        android:textColor="@color/light_blue"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/checkboxTerms" />
-
-    <!-- Submit Button -->
-    <Button
-        android:id="@+id/submitButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:backgroundTint="@color/green"
-        android:padding="16dp"
-        android:text="@string/get_otp"
-        android:textColor="@color/dark_gray"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/termsLink" />
-
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:backgroundTint="@color/green"
+            android:padding="16dp"
+            android:text="@string/get_otp"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
