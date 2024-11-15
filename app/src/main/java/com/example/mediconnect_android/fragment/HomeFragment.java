@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void init() {
-        imageList.add(R.drawable.mediconnect_logo);
+        imageList.add(R.drawable.drawer_image);
         imageList.add(R.drawable.doctorimage);
 
         doctorList.addAll(appointmentClient.getDoctors());

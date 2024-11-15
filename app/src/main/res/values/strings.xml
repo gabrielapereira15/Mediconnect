@@ -80,4 +80,11 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="upcoming">Upcoming</string>
     <string name="completed">Completed</string>
     <string name="cancelled">Cancelled</string>
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
+    <string name="forms">Forms</string>
+    <string name="appointments">Appointments</string>
+    <string name="doctors">Doctors</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Logout</string>
 </resources>

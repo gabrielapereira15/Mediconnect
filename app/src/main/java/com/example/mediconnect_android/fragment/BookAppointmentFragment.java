@@ -16,6 +16,7 @@ import com.example.mediconnect_android.client.AppointmentMock;
 import com.example.mediconnect_android.databinding.FragmentBookAppointmentBinding;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.util.FragmentUtils;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
 import java.util.List;
