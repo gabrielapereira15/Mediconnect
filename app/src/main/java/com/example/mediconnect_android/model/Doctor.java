@@ -8,6 +8,7 @@ public class Doctor {
 
     private String id;
     private String name;
+    private int clinicId;
     private String specialty;
     private String score;
     private String experienceYears;
@@ -21,6 +22,14 @@ public class Doctor {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getClinicId() {
+        return clinicId;
+    }
+
+    public void setClinicId(int clinicId) {
+        this.clinicId = clinicId;
     }
 
     public String getName() {

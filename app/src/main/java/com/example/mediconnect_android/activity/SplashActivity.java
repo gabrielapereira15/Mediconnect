@@ -1,7 +1,6 @@
 package com.example.mediconnect_android.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -9,6 +8,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mediconnect_android.databinding.ActivitySplashBinding;
+import com.example.mediconnect_android.util.ActivityUtils;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
@@ -25,9 +25,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish(); // Finish SplashScreenActivity
+                ActivityUtils.startActivity(SplashActivity.this, WelcomeActivity.class);
             }
         }, SPLASH_DELAY);
     }

@@ -9,11 +9,11 @@ import android.widget.RadioGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.mediconnect_android.R;
-import com.example.mediconnect_android.activity.TermsConditionsActivity;
-import com.example.mediconnect_android.activity.WelcomeActivity;
 import com.example.mediconnect_android.databinding.FragmentBookAppointmentPatientDetailsBinding;
+import com.example.mediconnect_android.util.FragmentUtils;
 
 public class BookAppointmentPatientDetailsFragment extends Fragment {
 
@@ -40,6 +40,13 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
     }
 
     private void init() {
+        listeners();
+    }
+
+    private void listeners() {
+        ConfirmAppointmentFragment confirmFragment = new ConfirmAppointmentFragment();
+        FragmentManager fragmentManager = getParentFragmentManager();
+
         binding.rgPatientSelection.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -62,7 +69,7 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String noteForDoctor = binding.etSelfNote.getText().toString();
-                transitionToConfirmAppointment();
+                FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, confirmFragment);
             }
         });
 
@@ -73,19 +80,10 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
                 String lastName = binding.etLastName.getText().toString();
                 String dob = binding.etDobOther.getText().toString();
                 String additionalNotes = binding.etNoteOther.getText().toString();
-                transitionToConfirmAppointment();
+                FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, confirmFragment);
             }
         });
     }
-
-    private void transitionToConfirmAppointment() {
-        ConfirmAppointmentFragment confirmFragment = new ConfirmAppointmentFragment();
-        getFragmentManager().beginTransaction()
-                .replace(R.id.flFragment, confirmFragment)
-                .addToBackStack(null)
-                .commit();
-    }
-
 
     @Override
     public void onDestroyView() {

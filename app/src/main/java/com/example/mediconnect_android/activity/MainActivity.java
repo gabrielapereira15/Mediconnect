@@ -22,7 +22,8 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationManager = new BottomNavigationManager(
                 getSupportFragmentManager(),
-                R.id.flFragment
+                R.id.flFragment,
+                mainBinding.materialToolbar
         );
 
         bottomNavigationManager.setupBottomNavigationListener(mainBinding.bottomNavigationView);

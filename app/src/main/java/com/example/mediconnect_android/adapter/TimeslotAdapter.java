@@ -18,8 +18,8 @@ public class TimeslotAdapter extends RecyclerView.Adapter<TimeslotAdapter.Timesl
 
     private final List<String> dateList;
     private final List<List<String>> timeSlotsList;
-    private View lastSelectedView = null;
     private final Context context;
+    private View lastSelectedView = null;
 
     public TimeslotAdapter(Context context, List<String> dateList, List<List<String>> timeSlotsList) {
         this.context = context;

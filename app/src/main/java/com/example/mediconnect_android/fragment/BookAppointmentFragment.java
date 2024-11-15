@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mediconnect_android.R;
@@ -15,6 +15,7 @@ import com.example.mediconnect_android.client.AppointmentClient;
 import com.example.mediconnect_android.client.AppointmentMock;
 import com.example.mediconnect_android.databinding.FragmentBookAppointmentBinding;
 import com.example.mediconnect_android.model.Doctor;
+import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,10 +75,8 @@ public class BookAppointmentFragment extends Fragment {
         binding.btnNext.setOnClickListener(v -> {
             // Navigate to the next fragment
             BookAppointmentPatientDetailsFragment detailsFragment = new BookAppointmentPatientDetailsFragment();
-            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-            transaction.replace(R.id.flFragment, detailsFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            FragmentManager fragmentManager = getParentFragmentManager();
+            FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, detailsFragment);
         });
     }
 
@@ -87,5 +86,11 @@ public class BookAppointmentFragment extends Fragment {
         // Initialize the adapter
         adapter = new TimeslotAdapter(getContext(), dateList, timeSlotsList);
         binding.timeSlotsRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

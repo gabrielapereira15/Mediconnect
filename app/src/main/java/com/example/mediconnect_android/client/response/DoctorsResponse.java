@@ -1,4 +1,4 @@
-package com.example.mediconnect_android.client;
+package com.example.mediconnect_android.client.response;
 
 import com.example.mediconnect_android.model.Doctor;
 

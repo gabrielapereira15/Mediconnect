@@ -1,22 +1,22 @@
 package com.example.mediconnect_android.fragment;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import com.example.mediconnect_android.R;
-import com.example.mediconnect_android.databinding.FragmentBookAppointmentPatientDetailsBinding;
 import com.example.mediconnect_android.databinding.FragmentConfirmAppointmentBinding;
+import com.example.mediconnect_android.util.FragmentUtils;
 
 public class ConfirmAppointmentFragment extends Fragment {
-    
+
     FragmentConfirmAppointmentBinding binding;
-    
+
     public ConfirmAppointmentFragment() {
         // Required empty public constructor
     }
@@ -38,21 +38,21 @@ public class ConfirmAppointmentFragment extends Fragment {
     }
 
     private void init() {
+        HomeFragment homeFragment = new HomeFragment();
+        FragmentManager fragmentManager = getParentFragmentManager();
         binding.btnConfirmBooking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "Booking Confirmed", Toast.LENGTH_LONG).show();
-                transitionToHome();
+                FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, homeFragment);
             }
         });
     }
 
-    private void transitionToHome() {
-        HomeFragment homeFragment = new HomeFragment();
-        getFragmentManager().beginTransaction()
-                .replace(R.id.flFragment, homeFragment)
-                .addToBackStack(null)
-                .commit();
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
 }

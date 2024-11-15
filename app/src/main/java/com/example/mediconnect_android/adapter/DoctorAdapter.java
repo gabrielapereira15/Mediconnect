@@ -20,9 +20,9 @@ import java.util.List;
 
 public class DoctorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    DoctorItemBinding doctorItemBinding;
     private final Context context;
     private final List<Doctor> doctorList;
+    DoctorItemBinding doctorItemBinding;
 
     public DoctorAdapter(List<Doctor> doctorList, Context context) {
         super();

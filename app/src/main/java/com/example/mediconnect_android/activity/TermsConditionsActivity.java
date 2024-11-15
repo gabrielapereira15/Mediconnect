@@ -3,14 +3,8 @@ package com.example.mediconnect_android.activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.example.mediconnect_android.R;
-import com.example.mediconnect_android.databinding.ActivityOtpactivityBinding;
 import com.example.mediconnect_android.databinding.ActivityTermsConditionsBinding;
 
 public class TermsConditionsActivity extends AppCompatActivity {
@@ -46,6 +40,5 @@ public class TermsConditionsActivity extends AppCompatActivity {
         Intent intent = new Intent(TermsConditionsActivity.this, WelcomeActivity.class);
         intent.putExtra("TERMS_AGREED", isTermsAgreed);
         startActivity(intent);
-        finish();
     }
 }

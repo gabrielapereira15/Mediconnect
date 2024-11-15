@@ -72,4 +72,12 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="dob_mock">Date of Birth: 02/15/1995</string>
     <string name="age_mock">Age: 28</string>
     <string name="add_notes_mock">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet ligula rutrum, dictum nisl a, aliquam felis. Aliquam nec nisi non urna fringilla varius. Etiam porta nulla sit amet diam fermentum pulvinar. Sed bibendum mauris in urna aliquet scelerisque et eu magna. Donec pellentesque a erat eget gravida. Phasellus id magna metus. Nunc pellentesque urna at facilisis egestas. Pellentesque volutpat eros sapien. Mauris imperdiet pellentesque tortor, vitae placerat lectus consectetur id.</string>
+    <string name="remind_me">Remind me</string>
+    <string name="cancel">Cancel</string>
+    <string name="reschedule">Reschedule</string>
+    <string name="re_book">Re-Book</string>
+    <string name="add_review">Add Review</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="completed">Completed</string>
+    <string name="cancelled">Cancelled</string>
 </resources>

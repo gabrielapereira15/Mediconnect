@@ -1,19 +1,13 @@
 package com.example.mediconnect_android.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText;
 import android.view.KeyEvent;
+import android.widget.EditText;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.ActivityOtpactivityBinding;
-import com.example.mediconnect_android.databinding.ActivityWelcomeBinding;
+import com.example.mediconnect_android.util.ActivityUtils;
 
 public class OTPActivity extends AppCompatActivity {
 
@@ -36,8 +30,7 @@ public class OTPActivity extends AppCompatActivity {
             // Check if the OTP fields are filled
             if (areOTPFieldsFilled()) {
                 // If filled, proceed to the next activity
-                Intent intent = new Intent(OTPActivity.this, MainActivity.class);
-                startActivity(intent);
+                ActivityUtils.startActivity(OTPActivity.this, MainActivity.class);
             }
         });
     }
@@ -138,10 +131,7 @@ public class OTPActivity extends AppCompatActivity {
         });
 
         binding.otpDigit6.setOnKeyListener((v, keyCode, event) -> {
-            if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                return true;
-            }
-            return false;
+            return keyCode == KeyEvent.KEYCODE_ENTER;
         });
     }
 

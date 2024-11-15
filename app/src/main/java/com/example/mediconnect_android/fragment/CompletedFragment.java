@@ -7,13 +7,13 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.mediconnect_android.databinding.FragmentProfileBinding;
+import com.example.mediconnect_android.databinding.FragmentCompletedBinding;
 
-public class ProfileFragment extends Fragment {
+public class CompletedFragment extends Fragment {
 
-    FragmentProfileBinding binding;
+    FragmentCompletedBinding binding;
 
-    public ProfileFragment() {
+    public CompletedFragment() {
         // Required empty public constructor
     }
 
@@ -25,7 +25,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentProfileBinding.inflate(inflater, container, false);
+        binding = FragmentCompletedBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         init();
 

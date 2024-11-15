@@ -1,5 +1,8 @@
 package com.example.mediconnect_android.client;
 
+import com.example.mediconnect_android.client.response.AppointmentsResponse;
+import com.example.mediconnect_android.client.response.DoctorsResponse;
+import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -96,4 +99,121 @@ public class AppointmentMock implements AppointmentClient {
             throw new RuntimeException("Error to parse response get doctor");
         }
     }
+
+    @Override
+    public List<Appointment> getAppointments(int patientId) {
+        var response = """
+                {
+                  "appointments": [
+                    {
+                      "appointmentId": 1,
+                      "status": "Scheduled",
+                      "patientId": 1,
+                      "schedule": {
+                        "date": "2024-11-16",
+                        "time": "10:00 AM"
+                      },
+                      "isVirtual": true
+                    },
+                    {
+                      "appointmentId": 2,
+                      "status": "Completed",
+                      "patientId": 1,
+                      "schedule": {
+                        "date": "2024-11-17",
+                        "time": "11:00 AM"
+                      },
+                      "isVirtual": false
+                    },
+                    {
+                      "appointmentId": 3,
+                      "status": "Scheduled",
+                      "patientId": 1,
+                      "schedule": {
+                        "date": "2024-11-18",
+                        "time": "09:00 AM"
+                      },
+                      "isVirtual": true
+                    },
+                    {
+                      "appointmentId": 4,
+                      "status": "Scheduled",
+                      "patientId": 1,
+                      "schedule": {
+                        "date": "2024-11-19",
+                        "time": "02:00 PM"
+                      },
+                      "isVirtual": false
+                    },
+                    {
+                      "appointmentId": 5,
+                      "status": "Completed",
+                      "patientId": 1,
+                      "schedule": {
+                        "date": "2024-11-20",
+                        "time": "03:00 PM"
+                      },
+                      "isVirtual": true
+                    },
+                    {
+                      "appointmentId": 6,
+                      "status": "Scheduled",
+                      "patientId": 1,
+                      "schedule": {
+                        "date": "2024-11-21",
+                        "time": "04:00 PM"
+                      },
+                      "isVirtual": false
+                    },
+                    {
+                      "appointmentId": 7,
+                      "status": "Scheduled",
+                      "patientId": 1,
+                      "schedule": {
+                        "date": "2024-11-22",
+                        "time": "10:00 AM"
+                      },
+                      "isVirtual": true
+                    },
+                    {
+                      "appointmentId": 8,
+                      "status": "Completed",
+                      "patientId": 1,
+                      "schedule": {
+                        "date": "2024-11-23",
+                        "time": "12:00 PM"
+                      },
+                      "isVirtual": false
+                    },
+                    {
+                      "appointmentId": 9,
+                      "status": "Scheduled",
+                      "patientId": 1,
+                      "schedule": {
+                        "date": "2024-11-24",
+                        "time": "11:00 AM"
+                      },
+                      "isVirtual": true
+                    },
+                    {
+                      "appointmentId": 10,
+                      "status": "Completed",
+                      "patientId": 1,
+                      "schedule": {
+                        "date": "2024-11-25",
+                        "time": "01:00 PM"
+                      },
+                      "isVirtual": false
+                    }
+                  ]
+                }
+                """;
+        try {
+            return objectMapper.readValue(response, AppointmentsResponse.class).getAppointments();
+        } catch (IOException e) {
+            logger.warning("Error parsing response get appointments");
+            return Collections.emptyList();
+        }
+    }
+
 }

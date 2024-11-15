@@ -2,21 +2,16 @@ package com.example.mediconnect_android.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-import android.util.Patterns;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.example.mediconnect_android.R;
-import com.example.mediconnect_android.databinding.ActivityMainBinding;
 import com.example.mediconnect_android.databinding.ActivityWelcomeBinding;
+import com.example.mediconnect_android.util.ActivityUtils;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -46,14 +41,12 @@ public class WelcomeActivity extends AppCompatActivity {
             // Check if the fields are filled correctly
             if (areFieldsFilled()) {
                 // If fields are filled, proceed to OTPActivity
-                Intent intent = new Intent(WelcomeActivity.this, OTPActivity.class);
-                startActivity(intent);
+                ActivityUtils.startActivity(WelcomeActivity.this, OTPActivity.class);
             }
         });
         welcomeBinding.termsLink.setOnClickListener(v -> {
             // Handle terms and conditions button click
-            Intent intent = new Intent(WelcomeActivity.this, TermsConditionsActivity.class);
-            startActivity(intent);
+            ActivityUtils.startActivity(WelcomeActivity.this, TermsConditionsActivity.class);
         });
     }
 
