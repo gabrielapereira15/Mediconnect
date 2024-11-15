@@ -4,6 +4,7 @@ import com.example.mediconnect_android.client.response.AppointmentsResponse;
 import com.example.mediconnect_android.client.response.DoctorsResponse;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
+import com.example.mediconnect_android.model.Schedule;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -214,6 +215,11 @@ public class AppointmentMock implements AppointmentClient {
             logger.warning("Error parsing response get appointments");
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public List<Schedule> getSchedules(int doctorId) {
+        return Collections.emptyList();
     }
 
 }
