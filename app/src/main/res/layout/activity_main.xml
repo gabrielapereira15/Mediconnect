@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -15,15 +14,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/gray_background"
-        app:titleTextColor="@color/light_blue"
-        app:titleTextAppearance="@style/ExpandedTitleStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:logo="@drawable/baseline_menu_24"
         app:title="@string/app_name"
-        app:titleMarginStart="30dp"
         app:titleCentered="true"
-        app:logo="@drawable/baseline_menu_24">
+        app:titleMarginStart="30dp"
+        app:titleTextAppearance="@style/ExpandedTitleStyle"
+        app:titleTextColor="@color/light_blue">
 
         <!-- Notification Icon aligned to the end (right) -->
         <ImageView
@@ -31,9 +30,9 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="end"
+            android:contentDescription="@string/notifications"
             android:paddingEnd="30dp"
             android:src="@drawable/baseline_notifications_none_24"
-            android:contentDescription="@string/notifications"
             app:tint="@color/light_blue"
             tools:ignore="RtlSymmetry" />
 
@@ -63,6 +62,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_nav_menu"/>
+        app:menu="@menu/bottom_nav_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

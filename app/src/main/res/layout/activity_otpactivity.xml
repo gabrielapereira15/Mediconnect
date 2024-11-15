@@ -13,94 +13,94 @@
         android:id="@+id/otpInstructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
         android:text="@string/enter_the_6_digit_code_sent_to_your_email"
         android:textColor="#333333"
         android:textSize="18sp"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="100dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- OTP Input Fields -->
     <LinearLayout
         android:id="@+id/otpInputLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginTop="24dp"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/otpInstructions"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/otpInstructions">
 
         <!-- Six individual fields for OTP digits -->
         <EditText
             android:id="@+id/otpDigit1"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:background="@drawable/rounded_edittext"
-            android:layout_margin="8dp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/otpDigit2"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:background="@drawable/rounded_edittext"
-            android:layout_margin="8dp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/otpDigit3"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:background="@drawable/rounded_edittext"
-            android:layout_margin="8dp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/otpDigit4"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:background="@drawable/rounded_edittext"
-            android:layout_margin="8dp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/otpDigit5"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:background="@drawable/rounded_edittext"
-            android:layout_margin="8dp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/otpDigit6"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:background="@drawable/rounded_edittext"
-            android:layout_margin="8dp" />
+            android:textSize="18sp" />
     </LinearLayout>
 
     <!-- Resend OTP Text -->
@@ -108,31 +108,31 @@
         android:id="@+id/resendOtpText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/resend_otp"
-        android:textColor="#1E88E5"
-        android:textSize="16sp"
         android:layout_marginTop="16dp"
         android:clickable="true"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/otpInputLayout"
+        android:text="@string/resend_otp"
+        android:textColor="#1E88E5"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/otpInputLayout" />
 
     <!-- Submit Button -->
     <Button
         android:id="@+id/verifyButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:backgroundTint="@color/green"
+        android:padding="16dp"
         android:text="@string/verify_otp"
         android:textColor="@color/dark_gray"
-        android:backgroundTint="@color/light_blue"
-        android:padding="16dp"
-        android:layout_marginTop="24dp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/resendOtpText"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/resendOtpText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

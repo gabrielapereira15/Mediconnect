@@ -12,8 +12,8 @@
 
     <!-- Padding Inside EditText -->
     <padding
+        android:bottom="8dp"
         android:left="12dp"
         android:right="12dp"
-        android:top="8dp"
-        android:bottom="8dp" />
+        android:top="8dp" />
 </shape>

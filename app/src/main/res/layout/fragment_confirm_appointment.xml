@@ -1,163 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/gray_background"
     tools:context=".fragment.ConfirmAppointmentFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/card_background"
         android:elevation="4dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp">
+        android:orientation="vertical"
+        android:padding="24dp">
 
         <!-- Title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/review_your_bookin"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/light_blue"
             android:layout_gravity="center_horizontal"
-            android:paddingBottom="16dp" />
+            android:paddingBottom="16dp"
+            android:text="@string/review_your_bookin"
+            android:textColor="@color/light_blue"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <!-- Doctor's Details -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/doctor_s_details"
-            android:textSize="16sp"
-            android:textColor="@color/dark_gray"
             android:paddingTop="8dp"
             android:paddingBottom="4dp"
+            android:text="@string/doctor_s_details"
+            android:textColor="@color/dark_gray"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
             android:text="@string/doctor_name_mock"
-            android:textSize="14sp"
             android:textColor="@color/dark_gray"
-            android:paddingBottom="2dp" />
+            android:textSize="14sp" />
 
         <!-- Appointment Details -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/appointment_details"
-            android:textSize="16sp"
-            android:textColor="@color/dark_gray"
             android:paddingTop="8dp"
             android:paddingBottom="4dp"
+            android:text="@string/appointment_details"
+            android:textColor="@color/dark_gray"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
             android:text="@string/mock_date"
-            android:textSize="14sp"
             android:textColor="@color/dark_gray"
-            android:paddingBottom="2dp" />
+            android:textSize="14sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
             android:text="@string/mock_time"
-            android:textSize="14sp"
             android:textColor="@color/dark_gray"
-            android:paddingBottom="12dp" />
+            android:textSize="14sp" />
 
         <!-- Patient Details -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/patient_details"
-            android:textSize="16sp"
-            android:textColor="@color/dark_gray"
             android:paddingTop="8dp"
             android:paddingBottom="4dp"
+            android:text="@string/patient_details"
+            android:textColor="@color/dark_gray"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
             android:text="@string/patient_name_mock"
-            android:textSize="14sp"
             android:textColor="@color/dark_gray"
-            android:paddingBottom="2dp" />
+            android:textSize="14sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
             android:text="@string/phone_number_mock"
-            android:textSize="14sp"
             android:textColor="@color/dark_gray"
-            android:paddingBottom="2dp" />
+            android:textSize="14sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
             android:text="@string/dob_mock"
-            android:textSize="14sp"
             android:textColor="@color/dark_gray"
-            android:paddingBottom="2dp" />
+            android:textSize="14sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
             android:text="@string/age_mock"
-            android:textSize="14sp"
             android:textColor="@color/dark_gray"
-            android:paddingBottom="16dp" />
+            android:textSize="14sp" />
 
         <!-- Note for Doctor -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/additional_notes"
-            android:textSize="16sp"
-            android:textColor="@color/dark_gray"
             android:paddingTop="8dp"
             android:paddingBottom="4dp"
+            android:text="@string/additional_notes"
+            android:textColor="@color/dark_gray"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
             android:text="@string/add_notes_mock"
-            android:textSize="14sp"
             android:textColor="@color/dark_gray"
-            android:paddingBottom="16dp" />
+            android:textSize="14sp" />
 
         <!-- Terms and Conditions -->
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/i_accept_the_terms_and_conditions_booking"
-            android:textColor="@color/dark_gray"
             android:paddingTop="8dp"
-            android:paddingBottom="16dp" />
+            android:paddingBottom="16dp"
+            android:text="@string/i_accept_the_terms_and_conditions_booking"
+            android:textColor="@color/dark_gray" />
 
         <!-- Confirm Booking Button -->
         <Button
             android:id="@+id/btn_confirm_booking"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/confirm_appointment"
-            android:textColor="@color/dark_gray"
-            android:backgroundTint="@color/light_blue"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_gravity="center_horizontal" />
+            android:backgroundTint="@color/green"
+            android:text="@string/confirm_appointment"
+            android:textColor="@color/dark_gray"
+            android:textSize="16sp" />
 
     </LinearLayout>
 

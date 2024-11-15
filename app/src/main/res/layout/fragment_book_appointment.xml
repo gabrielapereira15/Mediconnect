@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/gray_background"
     tools:context=".fragment.BookAppointmentFragment">
 
@@ -35,9 +35,9 @@
                     android:layout_height="80dp"
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/round_image_background"
+                    android:clipToOutline="true"
                     android:contentDescription="@string/doctor_image"
                     android:scaleType="centerCrop"
-                    android:clipToOutline="true"
                     android:src="@drawable/doctorimage" />
 
                 <LinearLayout
@@ -79,8 +79,8 @@
                             android:id="@+id/doctorScore"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/doctor_score"
                             android:layout_marginEnd="4dp"
+                            android:text="@string/doctor_score"
                             android:textColor="@color/yellow"
                             android:textSize="14sp" />
 
@@ -169,7 +169,7 @@
                     android:id="@+id/timeSlotsRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"/>
+                    android:layout_marginBottom="16dp" />
 
             </LinearLayout>
 
@@ -180,11 +180,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
-                android:backgroundTint="@color/light_blue"
+                android:backgroundTint="@color/green"
                 android:text="@string/next_text"
                 android:textColor="@color/dark_gray"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textSize="16sp" />
         </LinearLayout>
 
     </ScrollView>

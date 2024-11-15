@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="8dp"
+    android:background="@color/white"
     app:cardCornerRadius="12dp"
-    app:cardElevation="4dp"
-    android:background="@color/white">
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,28 +21,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/mock_date"
-            android:textStyle="bold"
             android:textColor="@color/gray"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <!-- Doctor Information (Hide Image for Canceled) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
 
             <!-- Doctor's Image -->
             <ImageView
                 android:id="@+id/doctor_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:background="@drawable/round_image_background"
+                android:clipToOutline="true"
+                android:contentDescription="@string/doctor_name"
                 android:scaleType="centerCrop"
                 android:src="@drawable/doctorimage"
                 android:visibility="visible"
-                android:background="@drawable/round_image_background"
-                android:contentDescription="@string/doctor_name"
-                android:clipToOutline="true"
                 tools:ignore="UnusedAttribute" />
 
             <!-- Doctor's Details -->
@@ -78,30 +78,30 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
             android:gravity="end"
-            android:layout_marginTop="8dp">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/rebook_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/re_book"
-                android:textStyle="bold"
+                android:backgroundTint="@color/green"
                 android:ems="8"
+                android:text="@string/re_book"
                 android:textColor="@color/dark_gray"
-                android:backgroundTint="@color/green" />
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/add_review_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:textStyle="bold"
+                android:backgroundTint="@color/green"
                 android:ems="8"
                 android:text="@string/add_review"
                 android:textColor="@color/dark_gray"
-                android:backgroundTint="@color/green" />
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:padding="16dp"
     android:background="@color/gray_background"
+    android:padding="16dp"
     tools:context=".fragment.BookAppointmentPatientDetailsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@color/white">
+        android:padding="16dp">
 
         <!-- Selection: Is this appointment for the user or another patient? -->
         <TextView
             android:id="@+id/tv_appointment_for"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
             android:text="@string/is_this_appointment_for_you_or_another_patient"
-            android:textSize="16sp"
             android:textColor="@color/dark_gray"
-            android:paddingBottom="8dp" />
+            android:textSize="16sp" />
 
         <RadioGroup
             android:id="@+id/rg_patient_selection"
@@ -41,9 +41,9 @@
                 android:id="@+id/rb_for_another"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:text="@string/for_another_patient"
-                android:textColor="@color/dark_gray"
-                android:layout_marginStart="16dp" />
+                android:textColor="@color/dark_gray" />
         </RadioGroup>
 
         <!-- Details for "For Myself" -->
@@ -52,65 +52,64 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone"
-            android:paddingTop="16dp">
+            android:paddingTop="16dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tv_patient_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
                 android:text="@string/your_details"
-                android:textSize="16sp"
                 android:textColor="@color/dark_gray"
-                android:paddingBottom="8dp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_patient_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:textSize="14sp"
-                android:textColor="@color/dark_gray" />
+                android:textColor="@color/dark_gray"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/tv_patient_dob"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:textSize="14sp"
-                android:textColor="@color/dark_gray" />
+                android:textColor="@color/dark_gray"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/tv_patient_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:textSize="14sp"
-                android:textColor="@color/dark_gray" />
+                android:textColor="@color/dark_gray"
+                android:textSize="14sp" />
 
             <!-- Text Field for Note -->
             <EditText
                 android:id="@+id/et_self_note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/note_for_the_doctor"
-                android:textColor="@color/dark_gray"
-                android:textColorHint="@color/gray"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/rounded_edittext"
+                android:hint="@string/note_for_the_doctor"
                 android:padding="12dp"
-                android:layout_marginTop="12dp"/>
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray" />
 
             <!-- Confirm Button -->
             <Button
                 android:id="@+id/btn_confirm_self"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/green"
                 android:text="@string/confirm_appointment"
                 android:textColor="@color/dark_gray"
-                android:backgroundTint="@color/light_blue"
-                android:layout_marginTop="24dp"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textSize="16sp" />
 
         </LinearLayout>
 
@@ -120,63 +119,62 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone"
-            android:paddingTop="16dp">
+            android:paddingTop="16dp"
+            android:visibility="gone">
 
             <EditText
                 android:id="@+id/et_first_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/first_name"
-                android:textColor="@color/dark_gray"
-                android:textColorHint="@color/gray"
                 android:background="@drawable/rounded_edittext"
-                android:padding="12dp" />
+                android:hint="@string/first_name"
+                android:padding="12dp"
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray" />
 
             <EditText
                 android:id="@+id/et_last_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/last_name"
-                android:textColor="@color/dark_gray"
-                android:textColorHint="@color/gray"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/rounded_edittext"
+                android:hint="@string/last_name"
                 android:padding="12dp"
-                android:layout_marginTop="12dp"/>
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray" />
 
             <EditText
                 android:id="@+id/et_dob_other"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/date_of_birth"
-                android:textColor="@color/dark_gray"
-                android:textColorHint="@color/gray"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/rounded_edittext"
+                android:hint="@string/date_of_birth"
                 android:padding="12dp"
-                android:layout_marginTop="12dp"/>
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray" />
 
             <EditText
                 android:id="@+id/et_note_other"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/additional_notes"
-                android:textColor="@color/dark_gray"
-                android:textColorHint="@color/gray"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/rounded_edittext"
+                android:hint="@string/additional_notes"
                 android:padding="12dp"
-                android:layout_marginTop="12dp"/>
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray" />
 
             <!-- Confirm Button -->
             <Button
                 android:id="@+id/btn_confirm_other"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/green"
                 android:text="@string/confirm_appointment"
                 android:textColor="@color/dark_gray"
-                android:backgroundTint="@color/light_blue"
-                android:layout_marginTop="24dp"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textSize="16sp" />
 
         </LinearLayout>
 

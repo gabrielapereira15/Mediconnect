@@ -10,7 +10,11 @@
     </item>
 
     <!-- Main card layer -->
-    <item android:top="2dp" android:left="2dp" android:right="2dp" android:bottom="2dp">
+    <item
+        android:bottom="2dp"
+        android:left="2dp"
+        android:right="2dp"
+        android:top="2dp">
         <shape android:shape="rectangle">
             <corners android:radius="16dp" />
             <solid android:color="#FFFFFF" /> <!-- Card background color -->
