@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mediconnect_android.R;
@@ -66,9 +67,18 @@ public class BookAppointmentFragment extends Fragment {
             });
         }
 
-
         // Initialize the RecyclerView
         bindAdapter();
+
+        // Set the click listener for the 'Next' button
+        binding.btnNext.setOnClickListener(v -> {
+            // Navigate to the next fragment
+            BookAppointmentPatientDetailsFragment detailsFragment = new BookAppointmentPatientDetailsFragment();
+            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+            transaction.replace(R.id.flFragment, detailsFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
     }
 
     private void bindAdapter() {

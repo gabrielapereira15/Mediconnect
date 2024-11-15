@@ -25,12 +25,12 @@
                 android:id="@+id/main_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="16dp"
                 android:layout_gravity="center"
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/search_text"
                 android:textColor="@color/dark_gray"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <!-- Search Bar -->
             <EditText
@@ -39,6 +39,8 @@
                 android:layout_height="48dp"
                 android:textColor="@color/dark_gray"
                 android:inputType="textPersonName"
+                android:hint="@string/search_for_doctors_or_specialties"
+                android:textColorHint="@color/gray"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/search_bar_background"
                 android:paddingStart="15dp"
@@ -82,8 +84,10 @@
 
                     <ImageView
                         android:id="@+id/dentist_icon"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:src="@drawable/ophthalmologists"
                         android:contentDescription="@string/ophthalmologists"/>
 
@@ -112,9 +116,11 @@
 
                     <ImageView
                         android:id="@+id/psychiatrist_icon"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:src="@drawable/cardiologist"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:contentDescription="@string/cardiologist"/>
 
                     <TextView
@@ -141,8 +147,10 @@
 
                     <ImageView
                         android:id="@+id/obgyn_icon"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:src="@drawable/gynecologist"
                         android:contentDescription="@string/gynecologist"/>
 
@@ -172,8 +180,10 @@
 
                     <ImageView
                         android:id="@+id/dermatologist_icon"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:src="@drawable/gastroenterologist"
                         android:contentDescription="@string/gastrologist"/>
 

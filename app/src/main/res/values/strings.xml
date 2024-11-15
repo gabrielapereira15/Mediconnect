@@ -6,7 +6,6 @@
     <string name="profile">Profile</string>
     <string name="hello_user_name">Hello, [User Name] 👋</string>
     <string name="search_text">Find local doctors who take care of your health</string>
-    <string name="search_hint">Search doctor by name or specialty</string>
     <string name="top_searched_specialties">Top searched specialties</string>
     <string name="available_doctors_text">Book an appointment with our available doctors</string>
     <string name="doctor_name">Doctor Rezwana Afrin</string>
@@ -30,4 +29,47 @@
     <string name="appointment_check_in">Appointment Check In</string>
     <string name="pre_appointment_form">Pre-Appointment Form</string>
     <string name="date_slot_thu_8_jun">Thu, 8 Jun</string>
+    <string name="logo">Logo</string>
+    <string name="welcome">Welcome</string>
+    <string name="patient">Patient</string>
+    <string name="clinic">Clinic</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="get_otp">Get OTP</string>
+    <string name="i_accept_the_terms_and_conditions">I accept the terms and conditions</string>
+    <string name="i_accept_the_terms_and_conditions_booking">I accept the terms and conditions of booking</string>
+    <string name="verify_otp">Verify OTP</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="enter_the_6_digit_code_sent_to_your_email">Enter the 6-digit code sent to your email</string>
+    <string name="search_for_doctors_or_specialties">Search for doctors or specialties</string>
+    <string name="agree">Agree</string>
+    <string name="disagree">Disagree</string>
+    <string name="terms_conditions_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet ligula rutrum, dictum nisl a, aliquam felis. Aliquam nec nisi non urna fringilla varius. Etiam porta nulla sit amet diam fermentum pulvinar. Sed bibendum mauris in urna aliquet scelerisque et eu magna. Donec pellentesque a erat eget gravida. Phasellus id magna metus. Nunc pellentesque urna at facilisis egestas. Pellentesque volutpat eros sapien. Mauris imperdiet pellentesque tortor, vitae placerat lectus consectetur id.
+Nulla vitae neque nisl. Aenean vel libero eget justo efficitur efficitur. Praesent placerat at mauris vitae porttitor. Nam vel volutpat nibh, et semper lacus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque diam ligula, tempor viverra tempor eu, cursus ut sapien. Cras egestas dolor in bibendum fringilla. Proin lorem est, varius id justo tristique, facilisis condimentum nunc. Etiam sed erat risus. In dictum sem neque, vel tincidunt ante tincidunt ut.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi consequat rutrum orci, vel congue magna finibus ac. Aenean faucibus risus nec mi ultricies, quis tincidunt lacus tempor. Etiam pellentesque tellus a sem hendrerit rutrum. Pellentesque id ligula nisl. Duis ex mi, blandit eget feugiat nec, tristique ac justo. Donec leo est, tincidunt eget blandit consequat, pharetra ut arcu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut dictum risus tellus, vel aliquam dolor laoreet sit amet. Praesent accumsan placerat elit id scelerisque. Cras vehicula semper nisl.
+Suspendisse lacinia elit id nisi rhoncus, dignissim elementum est sodales. Mauris aliquet nisi est, at mollis lectus fringilla sit amet. Proin blandit laoreet sagittis. Quisque condimentum ex eget libero consequat, eget tincidunt nibh auctor. Donec sollicitudin massa semper, sodales erat sed, molestie sapien. Pellentesque venenatis, velit non semper pharetra, orci odio aliquam odio, nec cursus mauris ligula vitae enim. Aenean tempus semper justo, non pretium tellus.
+Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. Etiam eu lacinia sem. Nulla facilisi. Vivamus at mollis massa. Vivamus pretium aliquam ornare. Nullam nec rutrum odio. Sed facilisis, massa sit amet volutpat maximus, quam mi eleifend lorem, sit amet bibendum enim eros in nulla. Nulla leo sapien, tincidunt dictum sem et, vestibulum faucibus eros. Nulla blandit in eros sit amet dignissim. Suspendisse fermentum venenatis sagittis.</string>
+    <string name="terms_and_conditions_title">Terms and Conditions</string>
+    <string name="back">Back</string>
+    <string name="is_this_appointment_for_you_or_another_patient">Is this appointment for you or another patient?</string>
+    <string name="for_myself">For Myself</string>
+    <string name="for_another_patient">For Another Patient</string>
+    <string name="your_details">Your Details:</string>
+    <string name="note_for_the_doctor">Note for the doctor</string>
+    <string name="confirm_appointment">Confirm Appointment</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="additional_notes">Additional Notes</string>
+    <string name="review_your_bookin">Review Your Booking</string>
+    <string name="doctor_s_details">Doctor\'s Details</string>
+    <string name="doctor_name_mock">Dr. Bidya Balan, Orthopedic Specialist</string>
+    <string name="appointment_details">Appointment Details</string>
+    <string name="mock_date">Date: Thursday, 8th June</string>
+    <string name="mock_time">Time: 11:30 AM</string>
+    <string name="patient_details">Patient Details</string>
+    <string name="patient_name_mock">Patient Name: Gabriela Pereira</string>
+    <string name="phone_number_mock">Phone Number: 1 (628) 267 - 9041</string>
+    <string name="dob_mock">Date of Birth: 02/15/1995</string>
+    <string name="age_mock">Age: 28</string>
+    <string name="add_notes_mock">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet ligula rutrum, dictum nisl a, aliquam felis. Aliquam nec nisi non urna fringilla varius. Etiam porta nulla sit amet diam fermentum pulvinar. Sed bibendum mauris in urna aliquet scelerisque et eu magna. Donec pellentesque a erat eget gravida. Phasellus id magna metus. Nunc pellentesque urna at facilisis egestas. Pellentesque volutpat eros sapien. Mauris imperdiet pellentesque tortor, vitae placerat lectus consectetur id.</string>
 </resources>

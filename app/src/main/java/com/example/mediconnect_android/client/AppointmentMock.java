@@ -78,10 +78,18 @@ public class AppointmentMock implements AppointmentClient {
                     {
                       "date": "Fri, 10 Jun",
                       "times": ["10 AM", "11 PM", "12 PM", "13 PM", "14 PM", "15 PM"]
+                    },
+                    {
+                      "date": "Fri, 11 Jun",
+                      "times": ["11 AM", "13 PM", "15 PM"]
+                    },
+                                        {
+                      "date": "Fri, 12 Jun",
+                      "times": ["11 AM", "13 PM", "15 PM", "17 PM"]
                     }
                   ]
                 }
-                        """;
+                """;
         try {
             return objectMapper.readValue(response, Doctor.class);
         } catch (IOException e) {

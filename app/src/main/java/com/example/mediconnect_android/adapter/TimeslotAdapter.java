@@ -18,7 +18,7 @@ public class TimeslotAdapter extends RecyclerView.Adapter<TimeslotAdapter.Timesl
 
     private final List<String> dateList;
     private final List<List<String>> timeSlotsList;
-    private final View selectedView = null;
+    private View lastSelectedView = null;
     private final Context context;
 
     public TimeslotAdapter(Context context, List<String> dateList, List<List<String>> timeSlotsList) {
@@ -54,8 +54,15 @@ public class TimeslotAdapter extends RecyclerView.Adapter<TimeslotAdapter.Timesl
             timeSlotView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (lastSelectedView != null && lastSelectedView != v) {
+                        lastSelectedView.setSelected(false);
+                        lastSelectedView.setBackgroundResource(R.drawable.time_slot_background);
+                    }
 
-                    v.setSelected(!v.isSelected());
+                    v.setSelected(true);
+                    v.setBackgroundResource(R.drawable.time_slot_background);
+
+                    lastSelectedView = v;
                 }
             });
 
