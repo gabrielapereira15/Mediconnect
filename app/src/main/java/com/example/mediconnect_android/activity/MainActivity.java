@@ -1,9 +1,13 @@
 package com.example.mediconnect_android.activity;
 
 import static com.example.mediconnect_android.util.FragmentUtils.loadFragment;
+import static com.example.mediconnect_android.util.ImageUtils.getImageFromInternalStorage;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -73,6 +77,14 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mainBinding.materialToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
+        View headerView = mainBinding.navView.getHeaderView(0);
+        ImageView profileImageView = headerView.findViewById(R.id.iv_profile_image);
+
+        Bitmap profileImage = getImageFromInternalStorage(MainActivity.this, "profile_image.jpg");
+        if (profileImage != null) {
+            profileImageView.setImageBitmap(profileImage);
+        }
 
         mainBinding.navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override

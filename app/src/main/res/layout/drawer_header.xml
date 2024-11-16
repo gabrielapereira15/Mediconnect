@@ -2,6 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
 android:layout_height="170dp"
-android:background="@drawable/drawer_image"
 android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/iv_profile_image"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
+        android:background="@drawable/round_image_background"
+        android:clipToOutline="true"
+        android:contentDescription="@string/profile_picture"
+        android:scaleType="centerCrop"
+        android:src="@drawable/doctorimage" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/montserrat_regular"
+        android:textColor="@color/light_blue"
+        android:textSize="16dp"
+        android:layout_gravity="center"
+        android:text="Gabriela Pereira" />
+
 </LinearLayout>

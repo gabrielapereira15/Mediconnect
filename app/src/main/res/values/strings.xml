@@ -105,4 +105,7 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="email_mock">gabriela@gmail.com</string>
     <string name="address_mock">123 Main St, Toronto</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="service_days">Service Days</string>
+    <string name="service_hours">Service Hours</string>
+    <string name="see_all_link">See all</string>
 </resources>
