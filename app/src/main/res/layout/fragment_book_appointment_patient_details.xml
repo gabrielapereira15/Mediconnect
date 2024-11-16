@@ -96,6 +96,7 @@
                 android:layout_marginTop="12dp"
                 android:background="@drawable/rounded_edittext"
                 android:hint="@string/note_for_the_doctor"
+                android:lines="7"
                 android:padding="12dp"
                 android:textColor="@color/dark_gray"
                 android:textColorHint="@color/gray" />
@@ -161,6 +162,7 @@
                 android:layout_marginTop="12dp"
                 android:background="@drawable/rounded_edittext"
                 android:hint="@string/additional_notes"
+                android:lines="7"
                 android:padding="12dp"
                 android:textColor="@color/dark_gray"
                 android:textColorHint="@color/gray" />

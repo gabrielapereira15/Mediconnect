@@ -67,9 +67,9 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="mock_date">Thursday, 8th June</string>
     <string name="mock_time">11:30 AM</string>
     <string name="patient_details">Patient Details</string>
-    <string name="patient_name_mock">Patient Name: Gabriela Pereira</string>
-    <string name="phone_number_mock">Phone Number: 1 (628) 267 - 9041</string>
-    <string name="dob_mock">Date of Birth: 02/15/1995</string>
+    <string name="patient_name_mock">Gabriela Pereira</string>
+    <string name="phone_number_mock">1 (628) 267 - 9041</string>
+    <string name="dob_mock">02/15/1995</string>
     <string name="age_mock">Age: 28</string>
     <string name="add_notes_mock">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet ligula rutrum, dictum nisl a, aliquam felis. Aliquam nec nisi non urna fringilla varius. Etiam porta nulla sit amet diam fermentum pulvinar. Sed bibendum mauris in urna aliquet scelerisque et eu magna. Donec pellentesque a erat eget gravida. Phasellus id magna metus. Nunc pellentesque urna at facilisis egestas. Pellentesque volutpat eros sapien. Mauris imperdiet pellentesque tortor, vitae placerat lectus consectetur id.</string>
     <string name="remind_me">Remind me</string>
@@ -87,4 +87,22 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="doctors">Doctors</string>
     <string name="settings">Settings</string>
     <string name="logout">Logout</string>
+    <string name="profile_picture">profile picture</string>
+    <string name="edit_profile_picture">edit profile picture</string>
+    <string name="email_address">Email</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="clinic_code">Clinic Code</string>
+    <string name="address">Address</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="other">Other</string>
+    <string name="upload_id">Upload Government Photo ID</string>
+    <string name="submit">Submit</string>
+    <string name="gender_label">Gender</string>
+    <string name="no_file_selected">No file selected</string>
+    <string name="review_question">How was your experience with Rezwana?</string>
+    <string name="add_detailed_review_text">Add detailed review</string>
+    <string name="email_mock">gabriela@gmail.com</string>
+    <string name="address_mock">123 Main St, Toronto</string>
+    <string name="edit_profile">Edit Profile</string>
 </resources>

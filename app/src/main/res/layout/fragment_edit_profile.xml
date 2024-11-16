@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_background"
+    tools:context=".fragment.EditProfileFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Profile Image -->
+            <FrameLayout
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp">
+
+                <ImageView
+                    android:id="@+id/iv_profile_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:clipToOutline="true"
+                    android:background="@drawable/round_image_background"
+                    android:contentDescription="@string/profile_picture" />
+
+                <ImageView
+                    android:id="@+id/iv_edit_icon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/baseline_edit_24"
+                    android:background="@drawable/circle_overlay"
+                    android:contentDescription="@string/edit_profile_picture" />
+            </FrameLayout>
+
+            <!-- Input Fields -->
+            <EditText
+                android:id="@+id/et_first_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edittext"
+                android:hint="@string/first_name"
+                android:padding="12dp"
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray" />
+
+            <EditText
+                android:id="@+id/et_last_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/rounded_edittext"
+                android:hint="@string/last_name"
+                android:padding="12dp"
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray" />
+
+            <EditText
+                android:id="@+id/et_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/rounded_edittext"
+                android:inputType="textEmailAddress"
+                android:hint="@string/email_address"
+                android:padding="12dp"
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray" />
+
+            <EditText
+                android:id="@+id/et_phone_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:inputType="phone"
+                android:background="@drawable/rounded_edittext"
+                android:hint="@string/phone_number"
+                android:padding="12dp"
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray" />
+
+            <EditText
+                android:id="@+id/et_clinic_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:inputType="numberDecimal"
+                android:background="@drawable/rounded_edittext"
+                android:hint="@string/clinic_code"
+                android:padding="12dp"
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray" />
+
+            <EditText
+                android:id="@+id/et_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:inputType="textPostalAddress"
+                android:background="@drawable/rounded_edittext"
+                android:hint="@string/address"
+                android:padding="12dp"
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray" />
+
+            <EditText
+                android:id="@+id/et_dob"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:inputType="date"
+                android:background="@drawable/rounded_edittext"
+                android:hint="@string/date_of_birth"
+                android:padding="12dp"
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/gender_label"
+                android:textColor="@color/dark_gray"/>
+
+
+            <!-- Gender Radio Buttons -->
+            <RadioGroup
+                android:id="@+id/rg_gender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rb_male"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/male"
+                    android:textColor="@color/dark_gray" />
+
+                <RadioButton
+                    android:id="@+id/rb_female"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/female"
+                    android:textColor="@color/dark_gray" />
+
+                <RadioButton
+                    android:id="@+id/rb_other"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/other"
+                    android:textColor="@color/dark_gray" />
+            </RadioGroup>
+
+            <!-- Upload Photo ID Button -->
+            <Button
+                android:id="@+id/btn_upload_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/green"
+                android:text="@string/upload_id"
+                android:textColor="@color/dark_gray" />
+
+            <TextView
+                android:id="@+id/tvFileName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/no_file_selected"
+                android:textColor="@color/light_blue"/>
+
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/btn_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/green"
+                android:text="@string/submit"
+                android:textColor="@color/dark_gray" />
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

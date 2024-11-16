@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_background"
-    tools:context=".fragment.ProfileFragment">
+    tools:context=".fragment.AddReviewFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -27,59 +27,76 @@
                     android:id="@+id/profileImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:src="@drawable/doctorimage"
                     android:scaleType="centerCrop"
                     android:layout_centerInParent="true"
                     android:background="@drawable/circle_overlay"
                     android:clipToOutline="true" />
+
             </RelativeLayout>
 
-            <!-- User Details -->
+            <!-- Doctor Name and Specialty -->
             <TextView
-                android:id="@+id/tvFirstName"
+                android:id="@+id/doctorName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/patient_name_mock"
-                android:textSize="16sp"
+                android:text="@string/doctor_name"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 android:textColor="@color/dark_gray"
-                android:layout_marginTop="8dp" />
+                android:gravity="center" />
 
             <TextView
-                android:id="@+id/tvEmail"
+                android:id="@+id/doctorSpecialty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/email_mock"
-                android:textSize="16sp"
-                android:textColor="@color/dark_gray"
-                android:layout_marginTop="8dp" />
+                android:text="@string/speacialty_text"
+                android:textSize="14sp"
+                android:textColor="@color/gray"
+                android:gravity="center"
+                android:layout_marginBottom="16dp" />
 
+            <!-- Experience Text -->
             <TextView
-                android:id="@+id/tvPhoneNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/phone_number_mock"
-                android:textSize="16sp"
-                android:textColor="@color/dark_gray"
-                android:layout_marginTop="8dp" />
-
-            <TextView
-                android:id="@+id/tvAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/address_mock"
-                android:textSize="16sp"
-                android:textColor="@color/dark_gray"
-                android:layout_marginTop="8dp" />
-
-            <!-- Edit Button -->
-            <Button
-                android:id="@+id/btnEditProfile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@string/review_question"
+                android:textSize="16sp"
+                android:textColor="@color/dark_gray"
+                android:gravity="center"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Star Rating -->
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <!-- Add Review Input -->
+            <EditText
+                android:id="@+id/reviewInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/add_detailed_review_text"
+                android:background="@drawable/rounded_edittext"
+                android:padding="12dp"
+                android:gravity="top"
+                android:lines="4"
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/submitButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/submit"
                 android:backgroundTint="@color/green"
-                android:text="@string/edit_profile"
                 android:textColor="@color/dark_gray"
                 android:textSize="16sp"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="8dp" />
 
         </LinearLayout>
 
