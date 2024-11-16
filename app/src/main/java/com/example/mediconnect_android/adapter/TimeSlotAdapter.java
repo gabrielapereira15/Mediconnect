@@ -14,14 +14,14 @@ import com.example.mediconnect_android.R;
 
 import java.util.List;
 
-public class TimeslotAdapter extends RecyclerView.Adapter<TimeslotAdapter.TimeslotViewHolder> {
+public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.TimeslotViewHolder> {
 
     private final List<String> dateList;
     private final List<List<String>> timeSlotsList;
     private final Context context;
     private View lastSelectedView = null;
 
-    public TimeslotAdapter(Context context, List<String> dateList, List<List<String>> timeSlotsList) {
+    public TimeSlotAdapter(Context context, List<String> dateList, List<List<String>> timeSlotsList) {
         this.context = context;
         this.dateList = dateList;
         this.timeSlotsList = timeSlotsList;

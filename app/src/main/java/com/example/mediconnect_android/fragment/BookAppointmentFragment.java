@@ -10,13 +10,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mediconnect_android.R;
-import com.example.mediconnect_android.adapter.TimeslotAdapter;
+import com.example.mediconnect_android.adapter.TimeSlotAdapter;
 import com.example.mediconnect_android.client.AppointmentClient;
 import com.example.mediconnect_android.client.AppointmentMock;
 import com.example.mediconnect_android.databinding.FragmentBookAppointmentBinding;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.util.FragmentUtils;
-import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ public class BookAppointmentFragment extends Fragment {
     AppointmentClient appointmentClient;
     List<String> dateList = new ArrayList<>();
     List<List<String>> timeSlotsList = new ArrayList<>();
-    private TimeslotAdapter adapter;
+    private TimeSlotAdapter adapter;
 
     public BookAppointmentFragment() {
         appointmentClient = new AppointmentMock();
@@ -85,7 +84,7 @@ public class BookAppointmentFragment extends Fragment {
         // Set the layout manager for the RecyclerView
         binding.timeSlotsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         // Initialize the adapter
-        adapter = new TimeslotAdapter(getContext(), dateList, timeSlotsList);
+        adapter = new TimeSlotAdapter(getContext(), dateList, timeSlotsList);
         binding.timeSlotsRecyclerView.setAdapter(adapter);
     }
 

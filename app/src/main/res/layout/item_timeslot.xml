@@ -22,8 +22,9 @@
         android:id="@+id/gl_timeslots"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:columnCount="5"
+        android:layout_margin="5dp"
+        android:useDefaultMargins="true"
+        android:columnCount="4"
         android:columnOrderPreserved="false">
 
     </GridLayout>

@@ -64,8 +64,8 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="doctor_s_details">Doctor\'s Details</string>
     <string name="doctor_name_mock">Dr. Bidya Balan, Orthopedic Specialist</string>
     <string name="appointment_details">Appointment Details</string>
-    <string name="mock_date">Date: Thursday, 8th June</string>
-    <string name="mock_time">Time: 11:30 AM</string>
+    <string name="mock_date">Thursday, 8th June</string>
+    <string name="mock_time">11:30 AM</string>
     <string name="patient_details">Patient Details</string>
     <string name="patient_name_mock">Patient Name: Gabriela Pereira</string>
     <string name="phone_number_mock">Phone Number: 1 (628) 267 - 9041</string>
