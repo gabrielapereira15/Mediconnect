@@ -8,14 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.mediconnect_android.databinding.FragmentFormsBinding;
+import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.databinding.FragmentPreAppointmentFormBinding;
+import com.example.mediconnect_android.databinding.FragmentSettingsBinding;
 
+public class PreAppointmentFormFragment extends Fragment {
 
-public class FormsFragment extends Fragment {
+    FragmentPreAppointmentFormBinding binding;
 
-    FragmentFormsBinding binding;
-
-    public FormsFragment() {
+    public PreAppointmentFormFragment() {
         // Required empty public constructor
     }
 
@@ -28,7 +29,7 @@ public class FormsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = FragmentFormsBinding.inflate(inflater, container, false);
+        binding = FragmentPreAppointmentFormBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         init();
 
