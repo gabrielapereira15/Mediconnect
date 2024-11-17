@@ -44,7 +44,8 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
-        <!-- Radio Group for Patient or Clinic -->
+<!--
+        &lt;!&ndash; Radio Group for Patient or Clinic &ndash;&gt;
         <RadioGroup
             android:id="@+id/radioGroupUserType"
             android:layout_width="wrap_content"
@@ -70,6 +71,7 @@
                 android:textColor="@color/dark_gray"
                 android:textSize="16sp" />
         </RadioGroup>
+-->
 
         <!-- Email Input Field -->
         <EditText

@@ -8,9 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.FragmentAddReviewBinding;
-import com.example.mediconnect_android.databinding.FragmentSettingsBinding;
+
 
 public class AddReviewFragment extends Fragment {
 

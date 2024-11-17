@@ -53,8 +53,8 @@ public class WelcomeActivity extends AppCompatActivity {
     private boolean areFieldsFilled() {
         // Get the email field, radio group, and checkbox
         EditText emailEditText = welcomeBinding.emailEditText;
-        RadioGroup radioGroupUserType = welcomeBinding.radioGroupUserType;
         CheckBox checkboxTerms = welcomeBinding.checkboxTerms;
+        // RadioGroup radioGroupUserType = welcomeBinding.radioGroupUserType;
 
         // Check if the email field is not empty
         String email = emailEditText.getText().toString().trim();
@@ -70,11 +70,11 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
         // Check if a radio button is selected
-        int selectedRadioButtonId = radioGroupUserType.getCheckedRadioButtonId();
+/*        int selectedRadioButtonId = radioGroupUserType.getCheckedRadioButtonId();
         if (selectedRadioButtonId == -1) {
             Toast.makeText(WelcomeActivity.this, "Please select a user type", Toast.LENGTH_SHORT).show();
             return false; // No radio button selected
-        }
+        }*/
 
         // Check if the terms and conditions checkbox is checked
         if (!checkboxTerms.isChecked()) {
