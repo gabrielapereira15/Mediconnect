@@ -137,5 +137,12 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="alcohol_question">Do you consume alcohol?</string>
     <string name="family_history_disease">Do you have a family history of any significant medical conditions?</string>
     <string name="cancer">Cancer</string>
+    <string name="notification_title_mock">Notification Title</string>
+    <string name="time_notification_mock">2h ago</string>
+    <string name="notification_body_mock">This is the notification body text. This is the notification body text. This is the notification body text.</string>
+    <string name="read_text">Read</string>
+    <string name="clear_text">Clear</string>
+    <string name="stroke">Stroke</string>
+    <string name="ok">OK</string>
 
 </resources>

@@ -3,8 +3,9 @@ package com.example.mediconnect_android.activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-
+import android.content.Context;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mediconnect_android.databinding.ActivityOtpactivityBinding;

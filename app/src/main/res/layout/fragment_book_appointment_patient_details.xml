@@ -113,7 +113,7 @@
 
         </LinearLayout>
 
-        <!-- Form for "For Another Patient" -->
+        <!-- PreAppointmentForm for "For Another Patient" -->
         <LinearLayout
             android:id="@+id/layout_other_details"
             android:layout_width="match_parent"

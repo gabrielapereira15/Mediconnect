@@ -73,7 +73,7 @@
             android:layout_height="match_parent"
             android:padding="16dp">
 
-            <!-- Check In Form -->
+            <!-- Check In PreAppointmentForm -->
             <LinearLayout
                 android:id="@+id/layout_checkin_form"
                 android:layout_width="match_parent"

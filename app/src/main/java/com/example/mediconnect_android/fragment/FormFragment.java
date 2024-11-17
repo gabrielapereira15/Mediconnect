@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.example.mediconnect_android.adapter.FormAdapter;
 import com.example.mediconnect_android.databinding.FragmentFormBinding;
-import com.example.mediconnect_android.model.Form;
+import com.example.mediconnect_android.model.FormItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class FormFragment extends Fragment {
 
     FragmentFormBinding binding;
     FormAdapter adapter;
-    List<Form> forms = new ArrayList<>();
+    List<FormItem> forms = new ArrayList<>();
 
     public FormFragment() {
         // Required empty public constructor
@@ -44,8 +44,8 @@ public class FormFragment extends Fragment {
     }
 
     private void init() {
-        forms.add(new Form("Pre-Appointment Form", "Pending", "If you have an upcoming appointment, streamline the process taking 3-5 minutes to fill out this form"));
-        forms.add(new Form("Check-In Form", "Pending", "If you want to check in for your appointment and streamline the process, fill out this form at least 2 hours before your appointment"));
+        forms.add(new FormItem("Pre-Appointment PreAppointmentForm", "Pending", "If you have an upcoming appointment, streamline the process taking 3-5 minutes to fill out this form"));
+        forms.add(new FormItem("Check-In PreAppointmentForm", "Pending", "If you want to check in for your appointment and streamline the process, fill out this form at least 2 hours before your appointment"));
         bindAdapter();
     }
 

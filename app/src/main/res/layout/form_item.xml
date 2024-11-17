@@ -21,7 +21,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- Form Title -->
+            <!-- PreAppointmentForm Title -->
             <TextView
                 android:id="@+id/form_title"
                 android:layout_width="0dp"
@@ -32,7 +32,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <!-- Form Status -->
+            <!-- PreAppointmentForm Status -->
             <TextView
                 android:id="@+id/form_status"
                 android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
                 android:visibility="visible"/>
         </LinearLayout>
 
-        <!-- Form Description -->
+        <!-- PreAppointmentForm Description -->
         <TextView
             android:id="@+id/form_description"
             android:layout_width="match_parent"

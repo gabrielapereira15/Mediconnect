@@ -23,10 +23,13 @@ import com.example.mediconnect_android.client.AppointmentClient;
 import com.example.mediconnect_android.client.AppointmentMock;
 import com.example.mediconnect_android.databinding.FragmentHomeBinding;
 import com.example.mediconnect_android.model.Doctor;
+import com.example.mediconnect_android.util.ActivityUtils;
+import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.KeyboardUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
@@ -63,6 +66,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         imageList.add(R.drawable.doctorimage);
 
         doctorList.addAll(appointmentClient.getDoctors());
+        binding.seeAllCategories.setOnClickListener(this);
+        binding.seeAllDoctors.setOnClickListener(this);
 
         bindAdapter();
         bindCarouselAdapter();
@@ -111,6 +116,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        if (view.getId() == R.id.see_all_categories) {
+            FragmentUtils.loadFragment(requireActivity().getSupportFragmentManager(), R.id.flFragment, new SpecialtiesFragment());
+        } else if (view.getId() == R.id.see_all_doctors) {
+            FragmentUtils.loadFragment(requireActivity().getSupportFragmentManager(), R.id.flFragment, new DoctorsFragment());
+        }
     }
 
     private void bindAdapter() {
