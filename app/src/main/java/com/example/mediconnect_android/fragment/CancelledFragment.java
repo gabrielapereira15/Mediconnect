@@ -40,7 +40,6 @@ public class CancelledFragment extends Fragment {
         binding = FragmentCancelledBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         init();
-
         return view;
     }
 
