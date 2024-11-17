@@ -4,8 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -39,15 +40,24 @@ public class ConfirmAppointmentFragment extends Fragment {
     }
 
     private void init() {
-        HomeFragment homeFragment = new HomeFragment();
+        MedicalHistoryFragment medicalHistoryFragment = new MedicalHistoryFragment();
         FragmentManager fragmentManager = getParentFragmentManager();
         binding.btnConfirmBooking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "Booking Confirmed", Toast.LENGTH_LONG).show();
-                FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, homeFragment);
+                showConfirmationMessage();
+                FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, medicalHistoryFragment);
             }
         });
+    }
+
+    private void showConfirmationMessage() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Booking Confirmed")
+                .setMessage("Your appointment has been successfully booked.")
+                .setIcon(R.drawable.baseline_check_circle_24)
+                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
     @Override
