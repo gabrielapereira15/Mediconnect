@@ -8,8 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.mediconnect_android.R;
-import com.example.mediconnect_android.databinding.FragmentDoctorsBinding;
 import com.example.mediconnect_android.databinding.FragmentSettingsBinding;
 
 public class SettingsFragment extends Fragment {

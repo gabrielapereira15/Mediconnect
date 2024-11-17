@@ -13,6 +13,7 @@ import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.FragmentConfirmAppointmentBinding;
 import com.example.mediconnect_android.util.FragmentUtils;
 
+
 public class ConfirmAppointmentFragment extends Fragment {
 
     FragmentConfirmAppointmentBinding binding;

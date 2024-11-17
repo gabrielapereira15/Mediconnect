@@ -11,16 +11,6 @@
         android:title="@string/forms"
         android:tint="@color/dark_gray" />
     <item
-        android:id="@+id/nav_appointments_menu"
-        android:icon="@drawable/baseline_calendar_today_24"
-        android:title="@string/appointments"
-        android:tint="@color/dark_gray"/>
-    <item
-        android:id="@+id/nav_doctors_menu"
-        android:icon="@drawable/baseline_supervised_user_circle_24"
-        android:title="@string/doctors"
-        android:tint="@color/dark_gray"/>
-    <item
         android:id="@+id/nav_settings_menu"
         android:icon="@drawable/baseline_settings_24"
         android:title="@string/settings"

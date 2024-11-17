@@ -18,9 +18,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.ActivityMainBinding;
-import com.example.mediconnect_android.fragment.AppointmentsFragment;
-import com.example.mediconnect_android.fragment.DoctorsFragment;
-import com.example.mediconnect_android.fragment.FormsFragment;
+import com.example.mediconnect_android.fragment.FormFragment;
 import com.example.mediconnect_android.fragment.HomeFragment;
 import com.example.mediconnect_android.fragment.LogoutFragment;
 import com.example.mediconnect_android.fragment.NotificationsFragment;
@@ -95,14 +93,8 @@ public class MainActivity extends AppCompatActivity {
                     frag = new ProfileFragment();
                     }
                 else if(itemId==R.id.nav_forms_menu){
-                    frag = new FormsFragment();
+                    frag = new FormFragment();
                 }
-                else if(itemId==R.id.nav_appointments_menu){
-                    frag = new AppointmentsFragment();
-                }
-                else if(itemId==R.id.nav_doctors_menu){
-                    frag = new DoctorsFragment();
-                    }
                 else if(itemId==R.id.nav_settings_menu){
                     frag = new SettingsFragment();
                 }

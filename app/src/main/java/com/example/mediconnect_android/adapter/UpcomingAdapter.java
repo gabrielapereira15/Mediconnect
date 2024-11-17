@@ -1,22 +1,22 @@
 package com.example.mediconnect_android.adapter;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.UpcomingItemBinding;
 import com.example.mediconnect_android.fragment.BookAppointmentFragment;
+import com.example.mediconnect_android.fragment.CancelledFragment;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.model.Schedule;
+import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.List;
 
@@ -43,18 +43,12 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
     private void listeners() {
         upcomingItemBindingbinding.rescheduleButton.setOnClickListener(v -> {
             BookAppointmentFragment bookAppointmentFragment = new BookAppointmentFragment();
+            FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, bookAppointmentFragment);
 /*          Bundle bundle = new Bundle();
             bundle.putString("doctorId", doctor.getId());
             bundle.putString("doctorPhoto", doctor.getPhoto());
             bundle.putString("doctorSpecialty", doctor.getSpecialty());
             bookAppointmentFragment.setArguments(bundle);*/
-
-            if (context instanceof AppCompatActivity) {
-                FragmentTransaction transaction = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.flFragment, bookAppointmentFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
         });
 
         upcomingItemBindingbinding.cancelButton.setOnClickListener(v -> {

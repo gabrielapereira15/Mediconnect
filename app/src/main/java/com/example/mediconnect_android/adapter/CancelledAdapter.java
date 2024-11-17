@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mediconnect_android.R;
@@ -15,6 +14,7 @@ import com.example.mediconnect_android.fragment.BookAppointmentFragment;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.model.Schedule;
+import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.List;
 
@@ -41,12 +41,7 @@ public class CancelledAdapter extends RecyclerView.Adapter<CancelledAdapter.View
     private void listeners() {
         cancelledItemBinding.rescheduleButton.setOnClickListener(v -> {
             BookAppointmentFragment bookAppointmentFragment = new BookAppointmentFragment();
-            if (context instanceof AppCompatActivity) {
-                FragmentTransaction transaction = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.flFragment, bookAppointmentFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
+            FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, bookAppointmentFragment);
         });
     }
 

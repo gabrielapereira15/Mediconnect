@@ -108,4 +108,34 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="service_days">Service Days</string>
     <string name="service_hours">Service Hours</string>
     <string name="see_all_link">See all</string>
+    <string name="form_title">Form Title</string>
+    <string name="form_description_mock">Short description about the form to give the user context.</string>
+    <string name="form_status_mock">Pending</string>
+    <string name="edit">Edit</string>
+    <string name="current_symptoms">Primary reason for your visit?</string>
+    <string name="medication_taking">Are you currently taking any medications?</string>
+    <string name="recent_symptoms">Have you experienced any of the following symptoms recently? (Select all that apply)</string>
+    <string name="fever">Fever</string>
+    <string name="cough">Cough</string>
+    <string name="chest_pain">Chest pain</string>
+    <string name="fatigue">Fatigue</string>
+    <string name="shortness_of_breath">Shortness of breath</string>
+    <string name="headache">Headache</string>
+    <string name="upcoming_appointments_text">You have an upcoming appointment, please confirm your attendance:</string>
+    <string name="rsvp_no">I can\'t make it</string>
+    <string name="rsvp_yes">I\'ll be there</string>
+    <string name="pre_appointment_form_title">Pre-Appointment Form</string>
+    <string name="chronic_condition">Do you have a history of any chronic conditions? (Select all that apply)</string>
+    <string name="diabetes">Diabetes</string>
+    <string name="hypertension">Hypertension</string>
+    <string name="heart_disease">Heart disease</string>
+    <string name="asthma">Asthma</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="surgery_question">Have you undergone any surgeries or major medical procedures in the past?</string>
+    <string name="smoke_question">Do you smoke or use tobacco products?</string>
+    <string name="alcohol_question">Do you consume alcohol?</string>
+    <string name="family_history_disease">Do you have a family history of any significant medical conditions?</string>
+    <string name="cancer">Cancer</string>
+
 </resources>

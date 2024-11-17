@@ -8,13 +8,13 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.DoctorItemBinding;
 import com.example.mediconnect_android.fragment.BookAppointmentFragment;
 import com.example.mediconnect_android.model.Doctor;
+import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.List;
 
@@ -71,12 +71,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     bundle.putString("doctorSpecialty", doctor.getSpecialty());
                     bookAppointmentFragment.setArguments(bundle);
 
-                    if (context instanceof AppCompatActivity) {
-                        FragmentTransaction transaction = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
-                        transaction.replace(R.id.flFragment, bookAppointmentFragment);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                    }
+                    FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, bookAppointmentFragment);
                 }
             });
         }

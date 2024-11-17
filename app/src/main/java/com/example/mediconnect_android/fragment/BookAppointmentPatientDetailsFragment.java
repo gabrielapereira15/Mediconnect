@@ -33,9 +33,7 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentBookAppointmentPatientDetailsBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-
         init();
-
         return view;
     }
 
