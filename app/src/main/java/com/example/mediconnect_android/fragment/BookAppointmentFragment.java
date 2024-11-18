@@ -80,11 +80,11 @@ public class BookAppointmentFragment extends Fragment {
 
 
             // Simulating the dates and timeslots data
-/*            var schedule = doctorDetail.getSchedule();
+            var schedule = doctorDetail.getSchedule();
             schedule.forEach(docSchedule -> {
                 dateList.add(docSchedule.getDate());
                 timeSlotsList.add(docSchedule.getTimes());
-            });*/
+            });
         }
 
         // Initialize the RecyclerView
