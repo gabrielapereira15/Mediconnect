@@ -10,19 +10,21 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mediconnect_android.client.OTPClient;
+import com.example.mediconnect_android.client.OTPClientImpl;
 import com.example.mediconnect_android.databinding.ActivityWelcomeBinding;
 import com.example.mediconnect_android.util.ActivityUtils;
 
 public class WelcomeActivity extends AppCompatActivity {
 
     ActivityWelcomeBinding welcomeBinding;
+    String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         welcomeBinding = ActivityWelcomeBinding.inflate(getLayoutInflater());
         setContentView(welcomeBinding.getRoot());
-
         init();
     }
 
@@ -34,19 +36,35 @@ public class WelcomeActivity extends AppCompatActivity {
             boolean isTermsAgreed = intent.getBooleanExtra("TERMS_AGREED", false);
             welcomeBinding.checkboxTerms.setChecked(isTermsAgreed);
         }
+        if (intent != null && intent.hasExtra("email")) {
+            String email = intent.getStringExtra("email");
+            welcomeBinding.emailEditText.setText(email);
+        }
     }
 
     private void listeners() {
+        OTPClient otpClient = new OTPClientImpl();
+
         welcomeBinding.submitButton.setOnClickListener(v -> {
             // Check if the fields are filled correctly
             if (areFieldsFilled()) {
                 // If fields are filled, proceed to OTPActivity
-                ActivityUtils.startActivity(WelcomeActivity.this, OTPActivity.class);
+                email = welcomeBinding.emailEditText.getText().toString();
+                otpClient.sendOTP(email, "patient");
+                Intent intent = new Intent(WelcomeActivity.this, OTPActivity.class);
+                intent.putExtra("email", email);
+                startActivity(intent);
             }
         });
         welcomeBinding.termsLink.setOnClickListener(v -> {
-            // Handle terms and conditions button click
-            ActivityUtils.startActivity(WelcomeActivity.this, TermsConditionsActivity.class);
+            Intent intent = new Intent(this, TermsConditionsActivity.class);
+            if (welcomeBinding.checkboxTerms.isChecked()) {
+                intent.putExtra("TERMS_AGREED", true);
+            }
+            if (welcomeBinding.emailEditText.getText() != null) {
+                intent.putExtra("email", welcomeBinding.emailEditText.getText().toString());
+            }
+            startActivity(intent);
         });
     }
 

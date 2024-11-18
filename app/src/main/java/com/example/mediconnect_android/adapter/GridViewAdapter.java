@@ -8,10 +8,17 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.DoctorListItemBinding;
 import com.example.mediconnect_android.databinding.SpecialtyItemBinding;
+import com.example.mediconnect_android.fragment.DoctorsFragment;
 import com.example.mediconnect_android.model.Specialty;
+import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.List;
 
@@ -54,6 +61,10 @@ public class GridViewAdapter extends BaseAdapter {
 
         binding.specialtyIcon.setImageResource(specialty.getImageResId());
         binding.specialty.setText(specialty.getName());
+
+        convertView.setOnClickListener(v -> {
+            FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, new DoctorsFragment());
+        });
 
         return convertView;
     }

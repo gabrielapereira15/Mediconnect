@@ -13,7 +13,7 @@ import com.example.mediconnect_android.util.ActivityUtils;
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
 
-    private static final int SPLASH_DELAY = 30000; // 3 seconds
+    private static final int SPLASH_DELAY = 1000; // 3 seconds
     ActivitySplashBinding binding;
 
     @Override

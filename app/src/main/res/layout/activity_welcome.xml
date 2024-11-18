@@ -9,18 +9,6 @@
     tools:context=".activity.WelcomeActivity">
 
 
-    <!-- Logo of the App -->
-    <ImageView
-        android:id="@+id/logoImageView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:contentDescription="@string/logo"
-        android:src="@drawable/mediconnect_logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/container"
-        app:layout_constraintTop_toTopOf="parent"/>
-
     <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
@@ -105,6 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:clickable="true"
+            android:minHeight="48dp"
             android:text="@string/read_more_link"
             android:textColor="@color/light_blue"
             android:textSize="14sp" />

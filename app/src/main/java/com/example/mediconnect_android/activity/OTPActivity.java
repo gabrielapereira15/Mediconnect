@@ -1,5 +1,6 @@
 package com.example.mediconnect_android.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,12 +9,15 @@ import android.widget.EditText;
 import android.content.Context;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mediconnect_android.client.OTPClient;
+import com.example.mediconnect_android.client.OTPClientImpl;
 import com.example.mediconnect_android.databinding.ActivityOtpactivityBinding;
 import com.example.mediconnect_android.util.ActivityUtils;
 
 public class OTPActivity extends AppCompatActivity {
 
     ActivityOtpactivityBinding binding;
+    String email;
 
 
     @Override
@@ -21,12 +25,16 @@ public class OTPActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityOtpactivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         init();
     }
 
     private void init() {
         setupOTPFieldListeners();
+
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("email")) {
+            email = intent.getStringExtra("email");
+        }
 
         binding.verifyButton.setOnClickListener(v -> {
             // Check if the OTP fields are filled

@@ -18,25 +18,23 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.adapter.CarouselAdapter;
-import com.example.mediconnect_android.adapter.DoctorAdapter;
+import com.example.mediconnect_android.adapter.DoctorHomeScreenAdapter;
 import com.example.mediconnect_android.client.AppointmentClient;
 import com.example.mediconnect_android.client.AppointmentMock;
 import com.example.mediconnect_android.databinding.FragmentHomeBinding;
 import com.example.mediconnect_android.model.Doctor;
-import com.example.mediconnect_android.util.ActivityUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.KeyboardUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private final Handler carouselHandler = new Handler(Looper.getMainLooper());
     List<Doctor> doctorList = new ArrayList<Doctor>();
     List<Integer> imageList = new ArrayList<>();
-    DoctorAdapter mAdapter;
+    DoctorHomeScreenAdapter mAdapter;
     CarouselAdapter carouselAdapter;
     AppointmentClient appointmentClient;
     private FragmentHomeBinding binding;
@@ -68,6 +66,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         doctorList.addAll(appointmentClient.getDoctors());
         binding.seeAllCategories.setOnClickListener(this);
         binding.seeAllDoctors.setOnClickListener(this);
+        binding.psychiatristIcon.setOnClickListener(this);
+        binding.dentistIcon.setOnClickListener(this);
+        binding.dermatologistIcon.setOnClickListener(this);
+        binding.obgynIcon.setOnClickListener(this);
 
         bindAdapter();
         bindCarouselAdapter();
@@ -118,7 +120,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         if (view.getId() == R.id.see_all_categories) {
             FragmentUtils.loadFragment(requireActivity().getSupportFragmentManager(), R.id.flFragment, new SpecialtiesFragment());
-        } else if (view.getId() == R.id.see_all_doctors) {
+        }
+        if (view.getId() == R.id.see_all_doctors || view.getId() == R.id.dermatologist_icon
+        || view.getId() == R.id.dentist_icon || view.getId() == R.id.obgyn_icon || view.getId() == R.id.psychiatrist_icon) {
             FragmentUtils.loadFragment(requireActivity().getSupportFragmentManager(), R.id.flFragment, new DoctorsFragment());
         }
     }
@@ -126,7 +130,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private void bindAdapter() {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         binding.recyclerViewDoctors.setLayoutManager(layoutManager);
-        mAdapter = new DoctorAdapter(doctorList, getContext());
+        mAdapter = new DoctorHomeScreenAdapter(doctorList, getContext());
         binding.recyclerViewDoctors.setAdapter(mAdapter);
     }
 

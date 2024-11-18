@@ -18,13 +18,13 @@ import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.List;
 
-public class DoctorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DoctorHomeScreenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context context;
     private final List<Doctor> doctorList;
     DoctorItemBinding doctorItemBinding;
 
-    public DoctorAdapter(List<Doctor> doctorList, Context context) {
+    public DoctorHomeScreenAdapter(List<Doctor> doctorList, Context context) {
         super();
         this.doctorList = doctorList;
         this.context = context;

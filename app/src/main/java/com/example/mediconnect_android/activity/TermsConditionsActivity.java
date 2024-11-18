@@ -25,20 +25,30 @@ public class TermsConditionsActivity extends AppCompatActivity {
     }
 
     private void listeners() {
-        binding.backButton.setOnClickListener(v -> {
-            transitionToWelcomeActivity(false);
-        });
-        binding.agreeButton.setOnClickListener(v -> {
-            transitionToWelcomeActivity(true);
-        });
-        binding.disagreeButton.setOnClickListener(v -> {
-            transitionToWelcomeActivity(false);
-        });
-    }
+        Intent intent = getIntent();
+        Intent intentWelcome = new Intent(TermsConditionsActivity.this, WelcomeActivity.class);
 
-    private void transitionToWelcomeActivity(Boolean isTermsAgreed) {
-        Intent intent = new Intent(TermsConditionsActivity.this, WelcomeActivity.class);
-        intent.putExtra("TERMS_AGREED", isTermsAgreed);
-        startActivity(intent);
+        if (intent != null && intent.hasExtra("email")) {
+            String email = intent.getStringExtra("email");
+            intentWelcome.putExtra("email", email);
+        }
+
+        binding.backButton.setOnClickListener(v -> {
+            if (intent != null && intent.hasExtra("TERMS_AGREED")) {
+                boolean isTermsAgreed = intent.getBooleanExtra("TERMS_AGREED", false);
+                intentWelcome.putExtra("TERMS_AGREED", isTermsAgreed);
+            }
+            startActivity(intentWelcome);
+        });
+
+        binding.agreeButton.setOnClickListener(v -> {
+            intentWelcome.putExtra("TERMS_AGREED", true);
+            startActivity(intentWelcome);
+        });
+
+        binding.disagreeButton.setOnClickListener(v -> {
+            intentWelcome.putExtra("TERMS_AGREED", false);
+            startActivity(intentWelcome);
+        });
     }
 }

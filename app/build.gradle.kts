@@ -39,6 +39,8 @@ android {
 
 dependencies {
     implementation(libs.jackson.databind)
+    implementation (libs.unirest.java)
+    implementation(libs.okhttpclient)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
