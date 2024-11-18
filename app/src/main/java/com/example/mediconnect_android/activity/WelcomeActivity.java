@@ -14,6 +14,7 @@ import com.example.mediconnect_android.client.OTPClient;
 import com.example.mediconnect_android.client.OTPClientImpl;
 import com.example.mediconnect_android.databinding.ActivityWelcomeBinding;
 import com.example.mediconnect_android.util.ActivityUtils;
+import com.example.mediconnect_android.util.DialogUtils;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -50,10 +51,14 @@ public class WelcomeActivity extends AppCompatActivity {
             if (areFieldsFilled()) {
                 // If fields are filled, proceed to OTPActivity
                 email = welcomeBinding.emailEditText.getText().toString();
-                otpClient.sendOTP(email, "patient");
-                Intent intent = new Intent(WelcomeActivity.this, OTPActivity.class);
-                intent.putExtra("email", email);
-                startActivity(intent);
+                boolean isOtpSent = otpClient.sendOTP(email, "patient");
+                if (isOtpSent) {
+                    Intent intent = new Intent(WelcomeActivity.this, OTPActivity.class);
+                    intent.putExtra("email", email);
+                    startActivity(intent);
+                } else {
+                    DialogUtils.showMessageDialog(this, "OTP Error! Please contact Mediconnect support.");
+                }
             }
         });
         welcomeBinding.termsLink.setOnClickListener(v -> {

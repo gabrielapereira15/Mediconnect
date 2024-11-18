@@ -14,16 +14,22 @@ public class OTPClientImpl implements OTPClient {
             .build();
 
     @Override
-    public void sendOTP(String email, String role) {
+    public boolean sendOTP(String email, String role) {
         String url = baseurl + "/auth/get-otp";
         String jsonData = String.format("{\"email\": \"%s\", \"role\": \"%s\"}", email, role);
         ApiGenericResponse response = OkHttpClientHelper.post(url, jsonData);
-
+        return response.isSuccess();
     }
 
     @Override
     public boolean verifyOTP(String email, String otp) {
-        // Implement this logic similarly if needed
-        return true;
+        String url = baseurl + "/auth/verify-otp";
+        String jsonData = String.format("{\n" +
+                "\"email\":\"%s\",\n" +
+                "\"otp\":\"%s\"\n" +
+                "}", email, otp);
+
+        ApiGenericResponse response = OkHttpClientHelper.post(url, jsonData);
+        return response.isSuccess();
     }
 }

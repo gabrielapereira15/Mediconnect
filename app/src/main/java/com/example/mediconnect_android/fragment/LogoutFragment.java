@@ -8,8 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.mediconnect_android.activity.WelcomeActivity;
 import com.example.mediconnect_android.databinding.FragmentLogoutBinding;
 import com.example.mediconnect_android.databinding.FragmentProfileBinding;
+import com.example.mediconnect_android.util.ActivityUtils;
+import com.example.mediconnect_android.util.FragmentUtils;
+import com.example.mediconnect_android.util.SessionManager;
 
 public class LogoutFragment extends Fragment {
 
@@ -36,6 +40,21 @@ public class LogoutFragment extends Fragment {
     }
 
     private void init() {
+        logoutUser();
+    }
+
+    private void logoutUser() {
+        // Pass the fragment's context or activity to SessionManager
+        SessionManager sessionManager = new SessionManager(requireContext());
+        sessionManager.logoutUser();
+
+        // Navigate to LoginActivity
+        ActivityUtils.startActivity(requireContext(), WelcomeActivity.class);
+
+        // Optionally, finish the parent activity if you want to completely exit
+        if (getActivity() != null) {
+            getActivity().finish();
+        }
     }
 
     @Override

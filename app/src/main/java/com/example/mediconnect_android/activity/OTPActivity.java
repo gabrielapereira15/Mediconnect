@@ -13,6 +13,8 @@ import com.example.mediconnect_android.client.OTPClient;
 import com.example.mediconnect_android.client.OTPClientImpl;
 import com.example.mediconnect_android.databinding.ActivityOtpactivityBinding;
 import com.example.mediconnect_android.util.ActivityUtils;
+import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.SessionManager;
 
 public class OTPActivity extends AppCompatActivity {
 
@@ -31,6 +33,8 @@ public class OTPActivity extends AppCompatActivity {
     private void init() {
         setupOTPFieldListeners();
 
+        OTPClient otpClient = new OTPClientImpl();
+
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("email")) {
             email = intent.getStringExtra("email");
@@ -39,10 +43,49 @@ public class OTPActivity extends AppCompatActivity {
         binding.verifyButton.setOnClickListener(v -> {
             // Check if the OTP fields are filled
             if (areOTPFieldsFilled()) {
-                // If filled, proceed to the next activity
-                ActivityUtils.startActivity(OTPActivity.this, MainActivity.class);
+                String otp = getOTP();
+                boolean isOtpVerified = otpClient.verifyOTP(email, otp);
+                if (isOtpVerified) {
+                    loginUser(email);
+                } else {
+                    DialogUtils.showMessageDialog(this, "OTP Error! The OTP inserted is invalid.");
+                }
             }
         });
+        binding.resendOtpText.setOnClickListener(v -> {
+            boolean isOtpSent = otpClient.sendOTP(email, "patient");
+            if (isOtpSent) {
+                DialogUtils.showMessageDialog(this, "OTP re-sent successfully!");
+            }
+        });
+    }
+
+    private void loginUser(String email) {
+        SessionManager sessionManager = new SessionManager(this);
+        sessionManager.createLoginSession(email);
+
+        // Navigate to the main activity
+        ActivityUtils.startActivity(this, MainActivity.class);
+        finish();
+    }
+
+
+    private String getOTP() {
+        EditText otpDigit1 = binding.otpDigit1;
+        EditText otpDigit2 = binding.otpDigit2;
+        EditText otpDigit3 = binding.otpDigit3;
+        EditText otpDigit4 = binding.otpDigit4;
+        EditText otpDigit5 = binding.otpDigit5;
+        EditText otpDigit6 = binding.otpDigit6;
+
+        String otp = otpDigit1.getText().toString() +
+                otpDigit2.getText().toString() +
+                otpDigit3.getText().toString() +
+                otpDigit4.getText().toString() +
+                otpDigit5.getText().toString() +
+                otpDigit6.getText().toString();
+
+        return otp;
     }
 
     private boolean areOTPFieldsFilled() {

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.NotificationItemBinding;
 import com.example.mediconnect_android.model.Notification;
+import com.example.mediconnect_android.util.DialogUtils;
 
 import java.util.List;
 
@@ -60,23 +61,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             recyclerItemBinding.buttonRead.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                    View dialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.dialog_message, null);
-                    TextView messageTextView = dialogView.findViewById(R.id.dialog_message_text);
-
-                    // Passar o texto original (não truncado) para o TextView no diálogo
-                    String fullMessage = notification.getBody();  // A mensagem completa sem truncar
-                    messageTextView.setText(fullMessage);
-
-                    builder.setView(dialogView)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                }
-                            });
-
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
+                    DialogUtils.showMessageDialog(context, notification.getBody());
                 }
             });
 
