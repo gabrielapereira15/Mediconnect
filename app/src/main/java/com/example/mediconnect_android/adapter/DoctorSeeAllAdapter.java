@@ -64,7 +64,6 @@ public class DoctorSeeAllAdapter extends RecyclerView.Adapter<DoctorSeeAllAdapte
             recyclerItemBinding.doctorName.setText(doctor.getName());
             recyclerItemBinding.doctorSpeacialty.setText(doctor.getSpecialty());
             recyclerItemBinding.doctorImage.setImageResource(R.drawable.doctorimage);
-            recyclerItemBinding.doctorScore.setText(String.valueOf(doctor.getScore()));
         }
 
     }

@@ -211,6 +211,19 @@
                 android:textColor="@color/dark_gray"
                 android:textSize="14sp" />
 
+            <TextView
+                android:id="@+id/unavailable_doctors_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/available_doctors_text"
+                android:textColor="@color/dark_gray"
+                android:textSize="14sp"
+                android:visibility="gone"/>
+
+
             <!-- Doctors List (RecyclerView) -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewDoctors"

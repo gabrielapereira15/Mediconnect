@@ -11,10 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.adapter.TimeSlotAdapter;
-import com.example.mediconnect_android.client.AppointmentClient;
-import com.example.mediconnect_android.client.AppointmentMock;
+import com.example.mediconnect_android.client.DoctorClient;
+import com.example.mediconnect_android.client.DoctorClientImpl;
 import com.example.mediconnect_android.databinding.FragmentBookAppointmentBinding;
-import com.example.mediconnect_android.model.Doctor;
+import com.example.mediconnect_android.model.DoctorDetails;
+import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.ArrayList;
@@ -23,13 +24,13 @@ import java.util.List;
 public class BookAppointmentFragment extends Fragment {
 
     FragmentBookAppointmentBinding binding;
-    AppointmentClient appointmentClient;
+    DoctorClient doctorClient;
     List<String> dateList = new ArrayList<>();
     List<List<String>> timeSlotsList = new ArrayList<>();
     private TimeSlotAdapter adapter;
 
     public BookAppointmentFragment() {
-        appointmentClient = new AppointmentMock();
+        doctorClient = new DoctorClientImpl();
     }
 
     @Override
@@ -51,21 +52,39 @@ public class BookAppointmentFragment extends Fragment {
             String doctorId = getArguments().getString("doctorId");
             String doctorPhoto = getArguments().getString("doctorPhoto");
             String doctorSpecialty = getArguments().getString("doctorSpecialty");
+            String doctorName = getArguments().getString("doctorName");
 
-            Doctor doctorDetail = appointmentClient.getDoctor(doctorId);
+            DoctorDetails doctorDetail = doctorClient.getDoctor(doctorId);
+            if (doctorDetail == null) {
+                DialogUtils.showMessageDialog(getContext(), "Doctor unavailable");
+                return;
+            }
+
             // Update the UI with doctor's details
-            binding.doctorName.setText(doctorDetail.getName());
+            binding.doctorName.setText(doctorName);
             binding.doctorSpecialty.setText(doctorSpecialty);
-            binding.doctorDescription.setText(doctorDetail.getDescription());
-            binding.doctorScore.setText(String.valueOf(doctorDetail.getScore()));
             binding.doctorImage.setImageResource(R.drawable.doctorimage);
 
+            String description = doctorDetail.getDescription();
+            if (description == null) {
+                description = "No description available";
+            }
+            binding.doctorDescription.setText(description);
+
+            Double score = doctorDetail.getScore();
+            binding.doctorScore.setText(String.valueOf(score));
+            if (score == null) {
+                String score_text = "No description available";
+                binding.doctorScore.setText(String.valueOf(score_text));
+            }
+
+
             // Simulating the dates and timeslots data
-            var schedule = doctorDetail.getSchedule();
+/*            var schedule = doctorDetail.getSchedule();
             schedule.forEach(docSchedule -> {
                 dateList.add(docSchedule.getDate());
                 timeSlotsList.add(docSchedule.getTimes());
-            });
+            });*/
         }
 
         // Initialize the RecyclerView

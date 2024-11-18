@@ -67,6 +67,7 @@ public class DoctorHomeScreenAdapter extends RecyclerView.Adapter<RecyclerView.V
                     BookAppointmentFragment bookAppointmentFragment = new BookAppointmentFragment();
                     Bundle bundle = new Bundle();
                     bundle.putString("doctorId", doctor.getId());
+                    bundle.putString("doctorName", doctor.getName());
                     bundle.putString("doctorPhoto", doctor.getPhoto());
                     bundle.putString("doctorSpecialty", doctor.getSpecialty());
                     bookAppointmentFragment.setArguments(bundle);

@@ -44,8 +44,8 @@ public class FormFragment extends Fragment {
     }
 
     private void init() {
-        forms.add(new FormItem("Pre-Appointment PreAppointmentForm", "Pending", "If you have an upcoming appointment, streamline the process taking 3-5 minutes to fill out this form"));
-        forms.add(new FormItem("Check-In PreAppointmentForm", "Pending", "If you want to check in for your appointment and streamline the process, fill out this form at least 2 hours before your appointment"));
+        forms.add(new FormItem("Pre-Appointment Form", "Pending", "If you have an upcoming appointment, streamline the process taking 3-5 minutes to fill out this form"));
+        forms.add(new FormItem("Check-In Form", "Pending", "If you want to check in for your appointment and streamline the process, fill out this form at least 2 hours before your appointment"));
         bindAdapter();
     }
 

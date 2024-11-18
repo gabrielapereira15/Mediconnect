@@ -21,6 +21,8 @@ import com.example.mediconnect_android.adapter.CarouselAdapter;
 import com.example.mediconnect_android.adapter.DoctorHomeScreenAdapter;
 import com.example.mediconnect_android.client.AppointmentClient;
 import com.example.mediconnect_android.client.AppointmentMock;
+import com.example.mediconnect_android.client.DoctorClient;
+import com.example.mediconnect_android.client.DoctorClientImpl;
 import com.example.mediconnect_android.databinding.FragmentHomeBinding;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.util.FragmentUtils;
@@ -36,12 +38,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     List<Integer> imageList = new ArrayList<>();
     DoctorHomeScreenAdapter mAdapter;
     CarouselAdapter carouselAdapter;
-    AppointmentClient appointmentClient;
+    DoctorClient doctorClient;
     private FragmentHomeBinding binding;
     private Runnable carouselRunnable;
 
     public HomeFragment() {
-        appointmentClient = new AppointmentMock();
+        doctorClient = new DoctorClientImpl();
     }
 
     @Override
@@ -63,7 +65,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         imageList.add(R.drawable.drawer_image);
         imageList.add(R.drawable.doctorimage);
 
-        doctorList.addAll(appointmentClient.getDoctors());
+        doctorList = doctorClient.getDoctors();
+
         binding.seeAllCategories.setOnClickListener(this);
         binding.seeAllDoctors.setOnClickListener(this);
         binding.psychiatristIcon.setOnClickListener(this);

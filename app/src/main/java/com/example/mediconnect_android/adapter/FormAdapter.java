@@ -66,10 +66,10 @@ public class FormAdapter extends RecyclerView.Adapter<FormAdapter.ViewHolder> {
             recyclerItemBinding.editFormButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (form.getTitle().equals("Check-In PreAppointmentForm")) {
+                    if (form.getTitle().equals("Check-In Form")) {
                         CheckinFormFragment checkinFormFragment = new CheckinFormFragment();
                         FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, checkinFormFragment);
-                    } else if (form.getTitle().equals("Pre-Appointment PreAppointmentForm")) {
+                    } else if (form.getTitle().equals("Pre-Appointment Form")) {
                         PreAppointmentFormFragment preAppointmentFormFragment = new PreAppointmentFormFragment();
                         FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, preAppointmentFormFragment);
                     }
