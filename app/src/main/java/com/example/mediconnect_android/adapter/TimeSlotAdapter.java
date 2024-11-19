@@ -20,6 +20,7 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.Timesl
     private final List<List<String>> timeSlotsList;
     private final Context context;
     private View lastSelectedView = null;
+    public String selectedTimeSlot = null;
 
     public TimeSlotAdapter(Context context, List<String> dateList, List<List<String>> timeSlotsList) {
         this.context = context;
@@ -63,6 +64,7 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.Timesl
                     v.setBackgroundResource(R.drawable.time_slot_background);
 
                     lastSelectedView = v;
+                    selectedTimeSlot = String.valueOf(((TextView) lastSelectedView).getText());
                 }
             });
 

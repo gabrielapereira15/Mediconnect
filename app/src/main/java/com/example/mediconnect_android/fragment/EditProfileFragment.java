@@ -4,7 +4,10 @@ import static android.app.Activity.RESULT_OK;
 import static com.example.mediconnect_android.util.ImageUtils.getImageFromInternalStorage;
 import static com.example.mediconnect_android.util.ImageUtils.saveImageToInternalStorage;
 
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -25,11 +28,14 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.FragmentEditProfileBinding;
+import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Objects;
 
 public class EditProfileFragment extends Fragment {
 
@@ -127,6 +133,9 @@ public class EditProfileFragment extends Fragment {
             photoPickerIntent.setType("image/*");
             imagePickerLauncher.launch(photoPickerIntent);
         });
+
+        binding.etDob.setOnClickListener(v -> showDatePickerDialog());
+
         binding.btnSubmit.setOnClickListener(v -> {
             if (isFormValidated()) {
                 submitForm();
@@ -134,12 +143,54 @@ public class EditProfileFragment extends Fragment {
         });
     }
 
+    private void showDatePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                requireContext(),
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    @SuppressLint("DefaultLocale") String formattedDate = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                    binding.etDob.setText(formattedDate);
+                },
+                year, month, day
+        );
+        datePickerDialog.show();
+    }
+
     private void submitForm() {
+        String firstName = binding.etFirstName.getText().toString().trim();
+        String lastName = binding.etLastName.getText().toString().trim();
+        String email = binding.etEmail.getText().toString().trim();
+        String address = binding.etAddress.getText().toString().trim();
+        String dob = binding.etDob.getText().toString().trim();
+        String phoneNumber = binding.etPhoneNumber.getText().toString().trim();
+        
+        saveToSharedPreferences(firstName, lastName, email, phoneNumber, address, dob);
+        
+        //createPatient();
+        
         // Navigate to the next fragment
         HomeFragment homeFragment = new HomeFragment();
         FragmentManager fragmentManager = getParentFragmentManager();
         FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, homeFragment);
-        Toast.makeText(getContext(), "Profile updated successfully", Toast.LENGTH_LONG).show();
+        DialogUtils.showMessageDialog(getContext(), "Profile updated successfully");
+    }
+
+    private void saveToSharedPreferences(String name, String lastName, String email, String phoneNumber, String address, String dob) {
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserProfile", getContext().MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString("first_name", name);
+        editor.putString("last_name", lastName);
+        editor.putString("email", email);
+        editor.putString("phone_number", phoneNumber);
+        editor.putString("address", address);
+        editor.putString("dob", dob);
+
+        editor.apply();
     }
 
     private boolean isFormValidated() {

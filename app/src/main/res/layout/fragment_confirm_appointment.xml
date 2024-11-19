@@ -39,6 +39,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tv_doctor_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
@@ -58,6 +59,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/appointment_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
@@ -66,6 +68,7 @@
             android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/appointment_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="12dp"
@@ -85,6 +88,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tv_patient_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
@@ -93,6 +97,7 @@
             android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/tv_patient_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
@@ -101,18 +106,11 @@
             android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/tv_patient_dob"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
             android:text="@string/dob_mock"
-            android:textColor="@color/dark_gray"
-            android:textSize="14sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="@string/age_mock"
             android:textColor="@color/dark_gray"
             android:textSize="14sp" />
 
@@ -128,6 +126,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tv_note_for_doctor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"

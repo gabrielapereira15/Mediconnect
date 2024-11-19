@@ -1,6 +1,7 @@
 package com.example.mediconnect_android.adapter;
 
 import android.content.Context;
+import com.bumptech.glide.Glide;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.example.mediconnect_android.fragment.BookAppointmentFragment;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.util.FragmentUtils;
 
+import java.net.URL;
 import java.util.List;
 
 public class DoctorHomeScreenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -57,9 +59,26 @@ public class DoctorHomeScreenAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         public void bindView(Doctor doctor) {
-            recyclerItemBinding.doctorName.setText(doctor.getName());
-            recyclerItemBinding.doctorSpecialty.setText(doctor.getSpecialty());
-            recyclerItemBinding.doctorImage.setImageResource(R.drawable.doctorimage);
+            if (doctor.getName() == null || doctor.getName().isEmpty()) {
+                recyclerItemBinding.doctorName.setText("Name Unavailable");
+            } else {
+                recyclerItemBinding.doctorName.setText(doctor.getName());
+            }
+
+            if (doctor.getSpecialty() == null || doctor.getSpecialty().isEmpty()) {
+                recyclerItemBinding.doctorSpecialty.setText("Specialty Unavailable");
+            } else {
+                recyclerItemBinding.doctorSpecialty.setText(doctor.getSpecialty());
+            }
+
+            String doctorImageURL = doctor.getPhoto();
+            //String doctorImageURL = "https://randomuser.me/api/portraits/women/90.jpg";
+            Glide.with(context)
+                    .load(doctorImageURL)
+                    .placeholder(R.drawable.doctorimage)
+                    .error(R.drawable.doctorimage)
+                    .into(recyclerItemBinding.doctorImage);
+
 
             recyclerItemBinding.btnBookAppointment.setOnClickListener(new View.OnClickListener() {
                 @Override

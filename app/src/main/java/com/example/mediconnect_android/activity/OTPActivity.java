@@ -11,7 +11,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mediconnect_android.client.OTPClient;
 import com.example.mediconnect_android.client.OTPClientImpl;
+import com.example.mediconnect_android.client.PatientClient;
+import com.example.mediconnect_android.client.PatientClientImpl;
 import com.example.mediconnect_android.databinding.ActivityOtpactivityBinding;
+import com.example.mediconnect_android.fragment.EditProfileFragment;
 import com.example.mediconnect_android.util.ActivityUtils;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.SessionManager;
@@ -64,9 +67,25 @@ public class OTPActivity extends AppCompatActivity {
         SessionManager sessionManager = new SessionManager(this);
         sessionManager.createLoginSession(email);
 
-        // Navigate to the main activity
-        ActivityUtils.startActivity(this, MainActivity.class);
-        finish();
+        if (isRegisteredPatient()) {
+            // Navigate to the main activity
+            ActivityUtils.startActivity(this, MainActivity.class);
+            finish();
+        } else {
+            // Navigate to the registration activity
+            ActivityUtils.startActivity(this, EditProfileFragment.class);
+            finish();
+        }
+    }
+
+    private boolean isRegisteredPatient() {
+        PatientClient patientClient = new PatientClientImpl();
+        String patientEmail = email;
+        if (patientClient.getPatient(patientEmail) != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

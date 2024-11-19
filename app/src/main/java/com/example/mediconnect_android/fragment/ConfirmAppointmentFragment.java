@@ -18,9 +18,24 @@ import com.example.mediconnect_android.util.FragmentUtils;
 public class ConfirmAppointmentFragment extends Fragment {
 
     FragmentConfirmAppointmentBinding binding;
+    private static final String ARG_NAME = "name";
+    private static final String ARG_DOB = "dob";
+    private static final String ARG_PHONE = "phone";
+    private static final String ARG_NOTE = "note";
 
     public ConfirmAppointmentFragment() {
         // Required empty public constructor
+    }
+
+    public static ConfirmAppointmentFragment newInstance(String name, String dob, String phone, String note) {
+        ConfirmAppointmentFragment fragment = new ConfirmAppointmentFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_NAME, name);
+        args.putString(ARG_DOB, dob);
+        args.putString(ARG_PHONE, phone);
+        args.putString(ARG_NOTE, note);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -40,6 +55,20 @@ public class ConfirmAppointmentFragment extends Fragment {
     }
 
     private void init() {
+        // Retrieve the arguments
+        if (getArguments() != null) {
+            String name = getArguments().getString(ARG_NAME);
+            String dob = getArguments().getString(ARG_DOB);
+            String phone = getArguments().getString(ARG_PHONE);
+            String note = getArguments().getString(ARG_NOTE);
+
+            // Set the values to the views
+            binding.tvPatientName.setText(name);
+            binding.tvPatientDob.setText(dob);
+            binding.tvPatientPhone.setText(phone);
+            binding.tvNoteForDoctor.setText(note);
+        }
+
         MedicalHistoryFragment medicalHistoryFragment = new MedicalHistoryFragment();
         FragmentManager fragmentManager = getParentFragmentManager();
         binding.btnConfirmBooking.setOnClickListener(new View.OnClickListener() {

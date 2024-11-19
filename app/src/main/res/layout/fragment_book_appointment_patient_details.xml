@@ -155,6 +155,17 @@
                 android:textColorHint="@color/gray" />
 
             <EditText
+                android:id="@+id/tvPhoneNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/rounded_edittext"
+                android:hint="@string/phone_number"
+                android:padding="12dp"
+                android:textColor="@color/dark_gray"
+                android:textColorHint="@color/gray" />
+
+            <EditText
                 android:id="@+id/et_note_other"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

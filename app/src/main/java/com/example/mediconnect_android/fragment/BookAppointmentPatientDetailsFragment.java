@@ -1,5 +1,7 @@
 package com.example.mediconnect_android.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,10 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.FragmentBookAppointmentPatientDetailsBinding;
+import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
+
+import java.util.Objects;
 
 public class BookAppointmentPatientDetailsFragment extends Fragment {
 
@@ -52,9 +57,16 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
                     binding.layoutSelfDetails.setVisibility(View.VISIBLE);
                     binding.layoutOtherDetails.setVisibility(View.GONE);
 
-                    binding.tvPatientName.setText("Name: Gabriela Pereira");
-                    binding.tvPatientDob.setText("Date of Birth: 03/15/1993");
-                    binding.tvPatientPhone.setText("Phone: +1 234 567 890");
+                    SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
+                    String first_name = sharedPreferences.getString("first_name", "");
+                    String last_name = sharedPreferences.getString("last_name", "");
+                    String fullName = first_name + " " + last_name;
+                    String dob = sharedPreferences.getString("dob", "");
+                    String phoneNumber = sharedPreferences.getString("phone_number", "");
+
+                    binding.tvPatientName.setText(fullName);
+                    binding.tvPatientDob.setText(dob);
+                    binding.tvPatientPhone.setText(phoneNumber);
 
                 } else if (checkedId == binding.rbForAnother.getId()) {
                     binding.layoutSelfDetails.setVisibility(View.GONE);
@@ -66,7 +78,16 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
         binding.btnConfirmSelf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String name = binding.tvPatientName.getText().toString();
+                String dob = binding.tvPatientDob.getText().toString();
+                String phoneNumber = binding.tvPatientPhone.getText().toString();
                 String noteForDoctor = binding.etSelfNote.getText().toString();
+                if(!isPatientInfoValid()) {
+                    DialogUtils.showMessageDialog(getContext(), "Please fill in all the required fields");
+                    return;
+                }
+
+                ConfirmAppointmentFragment confirmFragment = ConfirmAppointmentFragment.newInstance(name, dob, phoneNumber, noteForDoctor);
                 FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, confirmFragment);
             }
         });
@@ -74,14 +95,53 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
         binding.btnConfirmOther.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!isPatientInfoValid()) {
+                    DialogUtils.showMessageDialog(getContext(), "Please fill in all the required fields");
+                    return;
+                }
                 String firstName = binding.etFirstName.getText().toString();
                 String lastName = binding.etLastName.getText().toString();
                 String dob = binding.etDobOther.getText().toString();
+                String phoneNumber = binding.tvPhoneNumber.getText().toString();
                 String additionalNotes = binding.etNoteOther.getText().toString();
+                String fullName = firstName + " " + lastName;
+
+                ConfirmAppointmentFragment confirmFragment = ConfirmAppointmentFragment.newInstance(fullName, dob, phoneNumber, additionalNotes);
                 FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, confirmFragment);
             }
         });
     }
+
+    private boolean isPatientInfoValid() {
+        if (binding.rbForSelf.isChecked()) {
+            return true;
+        } else if (binding.rbForAnother.isChecked()) {
+            String firstName = binding.etFirstName.getText().toString().trim();
+            String lastName = binding.etLastName.getText().toString().trim();
+            String dob = binding.etDobOther.getText().toString().trim();
+            String phoneNumber = binding.tvPhoneNumber.getText().toString().trim();
+
+            if (firstName.isEmpty()) {
+                binding.etFirstName.setError("First name is required");
+                return false;
+            }
+            if (lastName.isEmpty()) {
+                binding.etLastName.setError("Last name is required");
+                return false;
+            }
+            if (dob.isEmpty()) {
+                binding.etDobOther.setError("Date of birth is required");
+                return false;
+            }
+            if (phoneNumber.isEmpty()) {
+                binding.tvPhoneNumber.setError("Phone number is required");
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
 
     @Override
     public void onDestroyView() {

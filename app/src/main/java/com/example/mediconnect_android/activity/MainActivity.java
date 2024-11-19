@@ -3,11 +3,14 @@ package com.example.mediconnect_android.activity;
 import static com.example.mediconnect_android.util.FragmentUtils.loadFragment;
 import static com.example.mediconnect_android.util.ImageUtils.getImageFromInternalStorage;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -82,6 +85,14 @@ public class MainActivity extends AppCompatActivity {
         if (profileImage != null) {
             profileImageView.setImageBitmap(profileImage);
         }
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
+        String first_name = sharedPreferences.getString("first_name", "");
+        String last_name = sharedPreferences.getString("last_name", "");
+        String fullName = first_name + " " + last_name;
+
+        TextView user = headerView.findViewById(R.id.textView);
+        user.setText(fullName);
 
         mainBinding.navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override

@@ -39,6 +39,8 @@ android {
 
 dependencies {
     implementation(libs.jackson.databind)
+    implementation (libs.glide)
+    annotationProcessor (libs.compiler)
     implementation (libs.unirest.java)
     implementation (libs.gson)
     implementation(libs.okhttpclient)

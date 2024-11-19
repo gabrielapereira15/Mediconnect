@@ -61,23 +61,32 @@ public class BookAppointmentFragment extends Fragment {
             }
 
             // Update the UI with doctor's details
-            binding.doctorName.setText(doctorName);
-            binding.doctorSpecialty.setText(doctorSpecialty);
-            binding.doctorImage.setImageResource(R.drawable.doctorimage);
+            if (doctorName == null) {
+                doctorName = "No name available";
+            }
+
+            if (doctorSpecialty == null) {
+                doctorSpecialty = "No specialty available";
+            }
 
             String description = doctorDetail.getDescription();
             if (description == null) {
                 description = "No description available";
             }
-            binding.doctorDescription.setText(description);
 
             Double score = doctorDetail.getScore();
-            binding.doctorScore.setText(String.valueOf(score));
+            String score_text;
             if (score == null) {
-                String score_text = "No description available";
-                binding.doctorScore.setText(String.valueOf(score_text));
+                score_text = "No score available";
+            } else {
+                score_text = String.valueOf(score);
             }
 
+            binding.doctorName.setText(doctorName);
+            binding.doctorSpecialty.setText(doctorSpecialty);
+            binding.doctorImage.setImageResource(R.drawable.doctorimage);
+            binding.doctorDescription.setText(description);
+            binding.doctorScore.setText(score_text);
 
             // Simulating the dates and timeslots data
             var schedule = doctorDetail.getSchedule();
@@ -93,6 +102,11 @@ public class BookAppointmentFragment extends Fragment {
         // Set the click listener for the 'Next' button
         binding.btnNext.setOnClickListener(v -> {
             // Navigate to the next fragment
+            if (adapter.selectedTimeSlot == null) {
+                DialogUtils.showMessageDialog(getContext(), "Please select a time slot");
+                return;
+            }
+
             BookAppointmentPatientDetailsFragment detailsFragment = new BookAppointmentPatientDetailsFragment();
             FragmentManager fragmentManager = getParentFragmentManager();
             FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, detailsFragment);
