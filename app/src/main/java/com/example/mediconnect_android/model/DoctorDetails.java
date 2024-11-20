@@ -81,9 +81,8 @@ public class DoctorDetails {
     private List<Schedule> schedule;
 
     public static class Schedule {
-
         private String date;
-        private List<String> times;
+        private List<TimeSlot> times;
 
         // Getters and Setters
         public String getDate() {
@@ -98,12 +97,24 @@ public class DoctorDetails {
             return LocalDate.parse(date, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
         }
 
-        public List<String> getTimes() {
+        public List<TimeSlot> getTimes() {
             return times;
         }
 
-        public void setTimes(List<String> times) {
+        public void setTimes(List<TimeSlot> times) {
             this.times = times;
+        }
+
+        public static class TimeSlot {
+            private String time;
+
+            public String getTime() {
+                return time;
+            }
+
+            public void setTime(String time) {
+                this.time = time;
+            }
         }
     }
 }

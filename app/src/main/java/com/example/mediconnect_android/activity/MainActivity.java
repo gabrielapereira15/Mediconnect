@@ -30,6 +30,7 @@ import com.example.mediconnect_android.fragment.NotificationsFragment;
 import com.example.mediconnect_android.fragment.ProfileFragment;
 import com.example.mediconnect_android.fragment.SettingsFragment;
 import com.example.mediconnect_android.util.BottomNavigationManager;
+import com.example.mediconnect_android.util.DialogUtils;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -65,6 +66,15 @@ public class MainActivity extends AppCompatActivity {
                 mainBinding.materialToolbar
         );
 
+        mainBinding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            if (!isUserDataComplete()) {
+                DialogUtils.showMessageDialog(this, "Please complete your profile before navigating.");
+                loadFragment(getSupportFragmentManager(), R.id.flFragment, new EditProfileFragment());
+                return false; // Prevent navigation
+            }
+            return true; // Allow navigation
+        });
+
         bottomNavigationManager.setupBottomNavigationListener(mainBinding.bottomNavigationView);
 
         Intent intent = getIntent();
@@ -95,6 +105,15 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mainBinding.materialToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
+        mainBinding.navView.setNavigationItemSelectedListener(item -> {
+            if (!isUserDataComplete()) {
+                DialogUtils.showMessageDialog(this, "Please complete your profile before navigating.");
+                loadFragment(getSupportFragmentManager(), R.id.flFragment, new EditProfileFragment());
+                return false; // Prevent navigation
+            }
+            return true; // Allow navigation
+        });
 
         View headerView = mainBinding.navView.getHeaderView(0);
         ImageView profileImageView = headerView.findViewById(R.id.iv_profile_image);
@@ -150,6 +169,19 @@ public class MainActivity extends AppCompatActivity {
         user.setText(fullName);
     }
 
+    private boolean isUserDataComplete() {
+        SharedPreferences sharedPreferences = getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
+        String firstName = sharedPreferences.getString("first_name", null);
+        String lastName = sharedPreferences.getString("last_name", null);
+        String dob = sharedPreferences.getString("dob", null);
+        String phoneNumber = sharedPreferences.getString("phone_number", null);
+
+        // Check if any of the required fields is null or empty
+        return firstName != null && !firstName.isEmpty()
+                && lastName != null && !lastName.isEmpty()
+                && dob != null && !dob.isEmpty()
+                && phoneNumber != null && !phoneNumber.isEmpty();
+    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

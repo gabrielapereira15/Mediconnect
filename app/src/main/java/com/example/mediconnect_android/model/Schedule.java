@@ -6,7 +6,7 @@ public class Schedule {
     private int scheduleId;
     private Doctor doctor;
     private String date;
-    private List<String> times;
+    private String time;
 
     public int getScheduleId() {
         return scheduleId;
@@ -14,6 +14,14 @@ public class Schedule {
 
     public void setScheduleId(int scheduleId) {
         this.scheduleId = scheduleId;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
     }
 
     public String getDate() {
@@ -24,21 +32,16 @@ public class Schedule {
         this.date = date;
     }
 
-    public List<String> getTimes() {
-        return times;
+    public String getTime() {
+        return time;
     }
 
-    public void setTimes(List times) {
-        this.times = times;
-    }
-
-    public Doctor getDoctor() {
-        return doctor;
+    public void setTime(String time) {
+        this.time = time;
     }
 
     @Override
     public String toString() {
-        return date + " - " + times;
+        return date + " - " + time;
     }
-
 }

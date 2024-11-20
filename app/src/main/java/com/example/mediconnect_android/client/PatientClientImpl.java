@@ -20,7 +20,7 @@ public class PatientClientImpl implements PatientClient {
 
     @Override
     public Patient getPatient(String patientEmail) {
-        String url = baseurl + "/api/mobile/patients/email/" + patientEmail;
+        String url = baseurl + "/api/mobile/patients/" + patientEmail;
         ApiGenericResponse response = OkHttpClientHelper.get(url);
         if (response.isSuccess()) {
             // Use Gson to deserialize the response body

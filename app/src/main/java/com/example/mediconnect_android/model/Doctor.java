@@ -25,6 +25,13 @@ public class Doctor {
     }
 
     public String getName() {
+        if (firstName == null && lastName == null) {
+            return "Unknown Doctor";
+        } else if (lastName == null) {
+            return firstName;
+        } else if (firstName == null) {
+            return lastName;
+        }
         return lastName + ", " + firstName;
     }
 

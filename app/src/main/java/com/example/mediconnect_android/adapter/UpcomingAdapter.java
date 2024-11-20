@@ -1,6 +1,7 @@
 package com.example.mediconnect_android.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -36,24 +37,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         upcomingItemBindingbinding = UpcomingItemBinding.inflate(layoutInflater, parent, false);
-        listeners();
         return new ViewHolder(upcomingItemBindingbinding);
-    }
-
-    private void listeners() {
-        upcomingItemBindingbinding.rescheduleButton.setOnClickListener(v -> {
-            BookAppointmentFragment bookAppointmentFragment = new BookAppointmentFragment();
-            FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, bookAppointmentFragment);
-/*          Bundle bundle = new Bundle();
-            bundle.putString("doctorId", doctor.getId());
-            bundle.putString("doctorPhoto", doctor.getPhoto());
-            bundle.putString("doctorSpecialty", doctor.getSpecialty());
-            bookAppointmentFragment.setArguments(bundle);*/
-        });
-
-        upcomingItemBindingbinding.cancelButton.setOnClickListener(v -> {
-            showCancelConfirmationDialog();
-        });
     }
 
     private void showCancelConfirmationDialog() {
@@ -95,13 +79,41 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
         public ViewHolder(UpcomingItemBinding recyclerItemBinding) {
             super(recyclerItemBinding.getRoot());
             this.recyclerItemBinding = recyclerItemBinding;
+
+            // Add listeners here
+            recyclerItemBinding.rescheduleButton.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position == RecyclerView.NO_POSITION) return;
+
+                Appointment appointment = appointmentList.get(position);
+                Schedule schedule = appointment.getSchedule();
+                if (schedule == null || schedule.getDoctor() == null) return;
+
+                Doctor doctor = schedule.getDoctor();
+
+                // Create a Bundle to pass arguments
+                Bundle args = new Bundle();
+                args.putString("doctorId", doctor.getId());
+                args.putString("doctorPhoto", doctor.getPhoto());
+                args.putString("doctorSpecialty", doctor.getSpecialty());
+                args.putString("doctorName", doctor.getName());
+
+                // Create a new instance of BookAppointmentFragment with arguments
+                BookAppointmentFragment bookAppointmentFragment = new BookAppointmentFragment();
+                bookAppointmentFragment.setArguments(args);
+
+                // Load the fragment
+                FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, bookAppointmentFragment);
+            });
+
+            recyclerItemBinding.cancelButton.setOnClickListener(v -> showCancelConfirmationDialog());
         }
 
         public void bindView(Appointment appointment) {
             Schedule schedule = appointment.getSchedule();
 /*            if (schedule != null) {
                 Doctor doctor = schedule.getDoctor();
-                if (doctor == null) {
+                if (doctor != null) {
                     recyclerItemBinding.appointmentDate.setText(schedule.toString());
                     recyclerItemBinding.doctorName.setText(doctor.getName());
                     recyclerItemBinding.doctorImage.setImageResource(Integer.parseInt(doctor.getPhoto()));

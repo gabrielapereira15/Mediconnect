@@ -83,7 +83,10 @@ public class BookAppointmentFragment extends Fragment {
             var schedule = doctorDetail.getSchedule();
             schedule.forEach(docSchedule -> {
                 dateList.add(docSchedule.getDate());
-                timeSlotsList.add(docSchedule.getTimes());
+                // Extract the "time" strings from TimeSlot objects
+                List<String> timeStrings = new ArrayList<>();
+                docSchedule.getTimes().forEach(timeSlot -> timeStrings.add(timeSlot.getTime()));
+                timeSlotsList.add(timeStrings);
             });
         }
 
