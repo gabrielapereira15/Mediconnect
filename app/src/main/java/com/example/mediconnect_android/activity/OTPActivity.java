@@ -19,6 +19,7 @@ import com.example.mediconnect_android.databinding.ActivityOtpactivityBinding;
 import com.example.mediconnect_android.fragment.EditProfileFragment;
 import com.example.mediconnect_android.util.ActivityUtils;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.SessionManager;
 
 public class OTPActivity extends AppCompatActivity {
 
@@ -66,6 +67,8 @@ public class OTPActivity extends AppCompatActivity {
 
     private void loginUser(String email) {
         if (isRegisteredPatient()) {
+            SessionManager sessionManager = new SessionManager(this);
+            sessionManager.createLoginSession(email);
             // Navigate to the main activity
             ActivityUtils.startActivity(this, MainActivity.class);
             finish();
