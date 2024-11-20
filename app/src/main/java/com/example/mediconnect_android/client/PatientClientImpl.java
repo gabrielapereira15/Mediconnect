@@ -20,7 +20,7 @@ public class PatientClientImpl implements PatientClient {
 
     @Override
     public Patient getPatient(String patientEmail) {
-        String url = baseurl + "/api/patients/email/" + patientEmail;
+        String url = baseurl + "/api/mobile/patients/email/" + patientEmail;
         ApiGenericResponse response = OkHttpClientHelper.get(url);
         if (response.isSuccess()) {
             // Use Gson to deserialize the response body
@@ -37,5 +37,16 @@ public class PatientClientImpl implements PatientClient {
     @Override
     public List<Patient> getPatients() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public Boolean createPatient(String patient) {
+        String url = baseurl + "/api/mobile/patients";
+        ApiGenericResponse response = OkHttpClientHelper.post(url, patient);
+        if (response.isSuccess()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

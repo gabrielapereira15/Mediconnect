@@ -6,6 +6,7 @@ import static com.example.mediconnect_android.util.ImageUtils.saveImageToInterna
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -27,9 +28,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.activity.MainActivity;
+import com.example.mediconnect_android.client.PatientClient;
+import com.example.mediconnect_android.client.PatientClientImpl;
 import com.example.mediconnect_android.databinding.FragmentEditProfileBinding;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
+import com.example.mediconnect_android.util.SessionManager;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.FileNotFoundException;
@@ -40,12 +45,13 @@ import java.util.Objects;
 public class EditProfileFragment extends Fragment {
 
     FragmentEditProfileBinding binding;
-
     private ActivityResultLauncher<Intent> imagePickerLauncher;
     private ActivityResultLauncher<Intent> filePickerLauncher;
+    PatientClient patientClient;
+    String email;
 
     public EditProfileFragment() {
-        // Required empty public constructor
+        patientClient = new PatientClientImpl();
     }
 
     @Override
@@ -119,6 +125,10 @@ public class EditProfileFragment extends Fragment {
             binding.ivProfileImage.setImageBitmap(profileImage);
         }
 
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
+        email = sharedPreferences.getString("email", "");
+        binding.etEmail.setText(email);
+
         listeners();
     }
 
@@ -161,22 +171,70 @@ public class EditProfileFragment extends Fragment {
     }
 
     private void submitForm() {
+        String email = binding.etEmail.getText().toString().trim();
+        String clinicCode = binding.etClinicCode.getText().toString().trim();
         String firstName = binding.etFirstName.getText().toString().trim();
         String lastName = binding.etLastName.getText().toString().trim();
-        String email = binding.etEmail.getText().toString().trim();
-        String address = binding.etAddress.getText().toString().trim();
+        String gender = String.valueOf(binding.rgGender.getCheckedRadioButtonId());
         String dob = binding.etDob.getText().toString().trim();
         String phoneNumber = binding.etPhoneNumber.getText().toString().trim();
-        
+        String address = binding.etAddress.getText().toString().trim();
+
+        if (gender.equals(R.id.rb_male)) {
+            gender = "Male";
+        } else if (gender.equals(R.id.rb_female)) {
+            gender = "Female";
+        } else if (gender.equals(R.id.rb_other)) {
+            gender = "Other";
+        }
+
+        String jsonString = String.format(
+                "{" +
+                        "    \"email\": \"%s\",\n" +
+                        "    \"clinicCode\": \"%s\",\n" +
+                        "    \"firstName\": \"%s\",\n" +
+                        "    \"lastName\": \"%s\",\n" +
+                        "    \"gender\": \"%s\",\n" +
+                        "    \"birthdate\": \"%s\",\n" +
+                        "    \"phoneNumber\": \"%s\",\n" +
+                        "    \"address\": \"%s\"\n" +
+                        "}",
+                email,
+                clinicCode,
+                firstName,
+                lastName,
+                gender,
+                dob,
+                phoneNumber,
+                address
+        );
+
+        if (!isPatientcreated(jsonString)){
+            DialogUtils.showMessageDialog(getContext(), "Error! Patient not created. Please, try again later.");
+            return;
+        }
+
         saveToSharedPreferences(firstName, lastName, email, phoneNumber, address, dob);
-        
-        //createPatient();
-        
+
+        SessionManager sessionManager = new SessionManager(requireContext());
+        sessionManager.createLoginSession(email);
+
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity != null) {
+            String fullName = firstName + " " + lastName;
+            mainActivity.updateUserName(fullName);
+        }
+
+
         // Navigate to the next fragment
         HomeFragment homeFragment = new HomeFragment();
         FragmentManager fragmentManager = getParentFragmentManager();
         FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, homeFragment);
         DialogUtils.showMessageDialog(getContext(), "Profile updated successfully");
+    }
+
+    private boolean isPatientcreated(String jsonString) {
+        return patientClient.createPatient(jsonString);
     }
 
     private void saveToSharedPreferences(String name, String lastName, String email, String phoneNumber, String address, String dob) {
@@ -205,16 +263,6 @@ public class EditProfileFragment extends Fragment {
         // Validate last name
         if (isEmpty(binding.etLastName)) {
             binding.etLastName.setError("Last name is required");
-            isValid = false;
-        }
-
-        // Validate email
-        String email = binding.etEmail.getText().toString().trim();
-        if (isEmpty(binding.etEmail)) {
-            binding.etEmail.setError("Email is required");
-            isValid = false;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.etEmail.setError("Enter a valid email");
             isValid = false;
         }
 

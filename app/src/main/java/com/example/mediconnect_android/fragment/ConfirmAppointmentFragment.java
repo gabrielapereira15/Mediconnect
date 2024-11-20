@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.FragmentConfirmAppointmentBinding;
+import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 
 
@@ -22,18 +23,26 @@ public class ConfirmAppointmentFragment extends Fragment {
     private static final String ARG_DOB = "dob";
     private static final String ARG_PHONE = "phone";
     private static final String ARG_NOTE = "note";
+    private static final String ARG_DOCTOR_NAME = "doctorName";
+    private static final String ARG_DOCTOR_SPECIALTY = "doctorSpecialty";
+    private static final String ARG_SELECTED_TIME_SLOT = "selectedTimeSlot";
+    private static final String ARG_SELECTED_DATE = "selectedDate";
 
     public ConfirmAppointmentFragment() {
         // Required empty public constructor
     }
 
-    public static ConfirmAppointmentFragment newInstance(String name, String dob, String phone, String note) {
+    public static ConfirmAppointmentFragment newInstance(String name, String dob, String phone, String note, String doctorName, String doctorSpecialty, String selectedTimeSlot, String selectedDate) {
         ConfirmAppointmentFragment fragment = new ConfirmAppointmentFragment();
         Bundle args = new Bundle();
         args.putString(ARG_NAME, name);
         args.putString(ARG_DOB, dob);
         args.putString(ARG_PHONE, phone);
         args.putString(ARG_NOTE, note);
+        args.putString(ARG_DOCTOR_NAME, doctorName);
+        args.putString(ARG_DOCTOR_SPECIALTY, doctorSpecialty);
+        args.putString(ARG_SELECTED_TIME_SLOT, selectedTimeSlot);
+        args.putString(ARG_SELECTED_DATE, selectedDate);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,12 +70,21 @@ public class ConfirmAppointmentFragment extends Fragment {
             String dob = getArguments().getString(ARG_DOB);
             String phone = getArguments().getString(ARG_PHONE);
             String note = getArguments().getString(ARG_NOTE);
+            String doctorName = getArguments().getString("doctorName");
+            String doctorSpecialty = getArguments().getString("doctorSpecialty");
+            String selectedTimeSlot = getArguments().getString("selectedTimeSlot");
+            String selectedDate = getArguments().getString("selectedDate");
+
+            String doctorInfo = doctorName + ", " + doctorSpecialty;
 
             // Set the values to the views
             binding.tvPatientName.setText(name);
             binding.tvPatientDob.setText(dob);
             binding.tvPatientPhone.setText(phone);
             binding.tvNoteForDoctor.setText(note);
+            binding.tvDoctorName.setText(doctorInfo);
+            binding.appointmentDate.setText(selectedDate);
+            binding.appointmentTime.setText(selectedTimeSlot);
         }
 
         MedicalHistoryFragment medicalHistoryFragment = new MedicalHistoryFragment();
@@ -74,6 +92,10 @@ public class ConfirmAppointmentFragment extends Fragment {
         binding.btnConfirmBooking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!binding.bookingTermsAndConditions.isChecked()) {
+                    DialogUtils.showMessageDialog(getContext(), "Please accept the terms and conditions");
+                    return;
+                }
                 showConfirmationMessage();
                 FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, medicalHistoryFragment);
             }

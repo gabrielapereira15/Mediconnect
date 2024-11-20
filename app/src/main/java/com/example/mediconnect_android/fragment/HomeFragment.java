@@ -62,8 +62,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void init() {
-        imageList.add(R.drawable.drawer_image);
-        imageList.add(R.drawable.doctorimage);
+        imageList.add(R.drawable.adv1);
+        imageList.add(R.drawable.adv2);
+        imageList.add(R.drawable.adv3);
 
         doctorList = doctorClient.getDoctors();
 

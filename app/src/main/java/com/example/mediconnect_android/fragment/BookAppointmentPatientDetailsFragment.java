@@ -1,5 +1,7 @@
 package com.example.mediconnect_android.fragment;
 
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import com.example.mediconnect_android.databinding.FragmentBookAppointmentPatien
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 
+import java.util.Calendar;
 import java.util.Objects;
 
 public class BookAppointmentPatientDetailsFragment extends Fragment {
@@ -31,6 +34,12 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            String doctorName = getArguments().getString("doctorName");
+            String doctorSpecialty = getArguments().getString("doctorSpecialty");
+            String selectedTimeSlot = getArguments().getString("selectedTimeSlot");
+            String selectedDate = getArguments().getString("selectedDate");
+        }
     }
 
     @Nullable
@@ -75,6 +84,8 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
             }
         });
 
+        binding.etDobOther.setOnClickListener(v -> showDatePickerDialog());
+
         binding.btnConfirmSelf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,12 +93,21 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
                 String dob = binding.tvPatientDob.getText().toString();
                 String phoneNumber = binding.tvPatientPhone.getText().toString();
                 String noteForDoctor = binding.etSelfNote.getText().toString();
-                if(!isPatientInfoValid()) {
+
+                if(isInfoPatientValid()) {
                     DialogUtils.showMessageDialog(getContext(), "Please fill in all the required fields");
                     return;
                 }
 
-                ConfirmAppointmentFragment confirmFragment = ConfirmAppointmentFragment.newInstance(name, dob, phoneNumber, noteForDoctor);
+                // Use the newInstance method to pass data
+                ConfirmAppointmentFragment confirmFragment = ConfirmAppointmentFragment.newInstance(
+                        name, dob, phoneNumber, noteForDoctor,
+                        requireArguments().getString("doctorName"),
+                        requireArguments().getString("doctorSpecialty"),
+                        requireArguments().getString("selectedTimeSlot"),
+                        requireArguments().getString("selectedDate")
+                );
+
                 FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, confirmFragment);
             }
         });
@@ -95,7 +115,7 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
         binding.btnConfirmOther.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isPatientInfoValid()) {
+                if (isInfoPatientValid()) {
                     DialogUtils.showMessageDialog(getContext(), "Please fill in all the required fields");
                     return;
                 }
@@ -106,15 +126,41 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
                 String additionalNotes = binding.etNoteOther.getText().toString();
                 String fullName = firstName + " " + lastName;
 
-                ConfirmAppointmentFragment confirmFragment = ConfirmAppointmentFragment.newInstance(fullName, dob, phoneNumber, additionalNotes);
+                // Use the newInstance method to pass data
+                ConfirmAppointmentFragment confirmFragment = ConfirmAppointmentFragment.newInstance(
+                        fullName, dob, phoneNumber, additionalNotes,
+                        requireArguments().getString("doctorName"),
+                        requireArguments().getString("doctorSpecialty"),
+                        requireArguments().getString("selectedTimeSlot"),
+                        requireArguments().getString("selectedDate")
+                );
+
                 FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, confirmFragment);
             }
         });
     }
 
-    private boolean isPatientInfoValid() {
+    private void showDatePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                requireContext(),
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    @SuppressLint("DefaultLocale") String formattedDate = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                    binding.etDobOther.setText(formattedDate);
+                },
+                year, month, day
+        );
+        datePickerDialog.show();
+    }
+
+
+    private boolean isInfoPatientValid() {
         if (binding.rbForSelf.isChecked()) {
-            return true;
+            return false;
         } else if (binding.rbForAnother.isChecked()) {
             String firstName = binding.etFirstName.getText().toString().trim();
             String lastName = binding.etLastName.getText().toString().trim();
@@ -123,23 +169,23 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
 
             if (firstName.isEmpty()) {
                 binding.etFirstName.setError("First name is required");
-                return false;
+                return true;
             }
             if (lastName.isEmpty()) {
                 binding.etLastName.setError("Last name is required");
-                return false;
+                return true;
             }
             if (dob.isEmpty()) {
                 binding.etDobOther.setError("Date of birth is required");
-                return false;
+                return true;
             }
             if (phoneNumber.isEmpty()) {
                 binding.tvPhoneNumber.setError("Phone number is required");
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
 

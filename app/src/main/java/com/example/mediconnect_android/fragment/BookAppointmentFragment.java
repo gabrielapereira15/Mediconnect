@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.bumptech.glide.Glide;
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.adapter.TimeSlotAdapter;
 import com.example.mediconnect_android.client.DoctorClient;
@@ -60,33 +61,23 @@ public class BookAppointmentFragment extends Fragment {
                 return;
             }
 
-            // Update the UI with doctor's details
-            if (doctorName == null) {
-                doctorName = "No name available";
-            }
-
-            if (doctorSpecialty == null) {
-                doctorSpecialty = "No specialty available";
-            }
-
-            String description = doctorDetail.getDescription();
-            if (description == null) {
-                description = "No description available";
-            }
-
+            // Set default or fetched doctor details
+            doctorName = doctorName != null ? doctorName : "No name available";
+            doctorSpecialty = doctorSpecialty != null ? doctorSpecialty : "No specialty available";
+            String description = doctorDetail.getDescription() != null ? doctorDetail.getDescription() : "No description available";
             Double score = doctorDetail.getScore();
-            String score_text;
-            if (score == null) {
-                score_text = "No score available";
-            } else {
-                score_text = String.valueOf(score);
-            }
+            String score_text = score != null ? String.valueOf(score) : "No score available";
 
             binding.doctorName.setText(doctorName);
             binding.doctorSpecialty.setText(doctorSpecialty);
-            binding.doctorImage.setImageResource(R.drawable.doctorimage);
             binding.doctorDescription.setText(description);
             binding.doctorScore.setText(score_text);
+
+            Glide.with(requireContext())
+                    .load(doctorPhoto)
+                    .placeholder(R.drawable.doctorimage)
+                    .error(R.drawable.doctorimage)
+                    .into(binding.doctorImage);
 
             // Simulating the dates and timeslots data
             var schedule = doctorDetail.getSchedule();
@@ -95,6 +86,18 @@ public class BookAppointmentFragment extends Fragment {
                 timeSlotsList.add(docSchedule.getTimes());
             });
         }
+
+        // Handle 'Read More' functionality
+        binding.readMoreLink.setOnClickListener(v -> {
+            // Check the current maxLines and toggle
+            if (binding.doctorDescription.getMaxLines() == 2) {
+                binding.doctorDescription.setMaxLines(Integer.MAX_VALUE); // Allow full text display
+                binding.readMoreLink.setText(R.string.read_less_link);    // Change to 'Read Less'
+            } else {
+                binding.doctorDescription.setMaxLines(2); // Restrict to 2 lines
+                binding.readMoreLink.setText(R.string.read_more_link);    // Change back to 'Read More'
+            }
+        });
 
         // Initialize the RecyclerView
         bindAdapter();
@@ -107,7 +110,20 @@ public class BookAppointmentFragment extends Fragment {
                 return;
             }
 
+            // Create the new fragment instance
             BookAppointmentPatientDetailsFragment detailsFragment = new BookAppointmentPatientDetailsFragment();
+
+            // Create a Bundle to pass data
+            Bundle args = new Bundle();
+            args.putString("doctorName", binding.doctorName.getText().toString().trim());
+            args.putString("doctorSpecialty", binding.doctorSpecialty.getText().toString().trim());
+            args.putString("selectedTimeSlot", adapter.selectedTimeSlot);
+            args.putString("selectedDate", adapter.selectedDate);
+
+            // Set arguments to the fragment
+            detailsFragment.setArguments(args);
+
+            // Navigate to the next fragment
             FragmentManager fragmentManager = getParentFragmentManager();
             FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, detailsFragment);
         });

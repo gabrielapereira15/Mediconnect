@@ -8,4 +8,6 @@ public interface PatientClient {
     Patient getPatient(String patientEmail);
 
     List<Patient> getPatients();
+
+    Boolean createPatient(String patient);
 }

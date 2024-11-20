@@ -20,6 +20,7 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.Timesl
     private final List<List<String>> timeSlotsList;
     private final Context context;
     private View lastSelectedView = null;
+    public String selectedDate = null;
     public String selectedTimeSlot = null;
 
     public TimeSlotAdapter(Context context, List<String> dateList, List<List<String>> timeSlotsList) {
@@ -65,6 +66,7 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.Timesl
 
                     lastSelectedView = v;
                     selectedTimeSlot = String.valueOf(((TextView) lastSelectedView).getText());
+                    selectedDate = holder.tvDate.getText().toString();
                 }
             });
 

@@ -1,14 +1,16 @@
 package com.example.mediconnect_android.activity;
 
+import static com.example.mediconnect_android.util.FragmentUtils.loadFragment;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.content.Context;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.client.OTPClient;
 import com.example.mediconnect_android.client.OTPClientImpl;
 import com.example.mediconnect_android.client.PatientClient;
@@ -17,7 +19,6 @@ import com.example.mediconnect_android.databinding.ActivityOtpactivityBinding;
 import com.example.mediconnect_android.fragment.EditProfileFragment;
 import com.example.mediconnect_android.util.ActivityUtils;
 import com.example.mediconnect_android.util.DialogUtils;
-import com.example.mediconnect_android.util.SessionManager;
 
 public class OTPActivity extends AppCompatActivity {
 
@@ -64,18 +65,25 @@ public class OTPActivity extends AppCompatActivity {
     }
 
     private void loginUser(String email) {
-        SessionManager sessionManager = new SessionManager(this);
-        sessionManager.createLoginSession(email);
-
         if (isRegisteredPatient()) {
             // Navigate to the main activity
             ActivityUtils.startActivity(this, MainActivity.class);
             finish();
         } else {
             // Navigate to the registration activity
-            ActivityUtils.startActivity(this, EditProfileFragment.class);
+            saveToSharedPreferences(email);
+            Intent intent = new Intent(OTPActivity.this, MainActivity.class);
+            intent.putExtra("target_fragment", "EditProfileFragment");
+            startActivity(intent);
             finish();
         }
+    }
+
+    private void saveToSharedPreferences(String email) {
+        SharedPreferences sharedPreferences = this.getSharedPreferences("UserProfile", this.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("email", email);
+        editor.apply();
     }
 
     private boolean isRegisteredPatient() {

@@ -22,7 +22,7 @@ public class DoctorClientImpl implements DoctorClient {
 
     @Override
     public List<Doctor> getDoctors() {
-        String url = baseurl + "/api/doctors";
+        String url = baseurl + "/api/mobile/doctors";
         ApiGenericResponse response = OkHttpClientHelper.get(url);
         if (response.isSuccess()) {
             // Use Gson to deserialize the response body

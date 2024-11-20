@@ -4,6 +4,7 @@ import static com.example.mediconnect_android.util.FragmentUtils.loadFragment;
 import static com.example.mediconnect_android.util.ImageUtils.getImageFromInternalStorage;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.ActivityMainBinding;
+import com.example.mediconnect_android.fragment.EditProfileFragment;
 import com.example.mediconnect_android.fragment.FormFragment;
 import com.example.mediconnect_android.fragment.HomeFragment;
 import com.example.mediconnect_android.fragment.LogoutFragment;
@@ -65,7 +67,23 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationManager.setupBottomNavigationListener(mainBinding.bottomNavigationView);
 
-        bottomNavigationManager.loadFragment(new HomeFragment());
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("target_fragment")) {
+            String targetFragment = intent.getStringExtra("target_fragment");
+
+            // Load the specified fragment
+            if ("EditProfileFragment".equals(targetFragment)) {
+                loadFragment(getSupportFragmentManager(), R.id.flFragment, new EditProfileFragment());
+            } else {
+                // Default to HomeFragment if no specific fragment is specified
+                bottomNavigationManager.loadFragment(new HomeFragment());
+            }
+        } else {
+            // Default behavior
+            bottomNavigationManager.loadFragment(new HomeFragment());
+        }
+
+
     }
 
     private void setNavigationDrawer() {
@@ -125,6 +143,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void updateUserName(String fullName) {
+        View headerView = mainBinding.navView.getHeaderView(0);
+        TextView user = headerView.findViewById(R.id.textView);
+        user.setText(fullName);
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
