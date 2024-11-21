@@ -64,13 +64,14 @@
                     android:layout_gravity="center"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
+                    android:clickable="true"
                     android:background="@drawable/specialty_border"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="7dp">
 
                     <ImageView
-                        android:id="@+id/dentist_icon"
+                        android:id="@+id/optometrist_icon"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:clickable="true"
@@ -96,13 +97,14 @@
                     android:layout_gravity="center"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
+                    android:clickable="true"
                     android:background="@drawable/specialty_border"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="7dp">
 
                     <ImageView
-                        android:id="@+id/psychiatrist_icon"
+                        android:id="@+id/cardiologist_icon"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:clickable="true"
@@ -127,6 +129,7 @@
                     android:layout_gravity="center"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
+                    android:clickable="true"
                     android:background="@drawable/specialty_border"
                     android:gravity="center"
                     android:orientation="vertical"
@@ -160,26 +163,27 @@
                     android:layout_gravity="center"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
+                    android:clickable="true"
                     android:background="@drawable/specialty_border"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="7dp">
 
                     <ImageView
-                        android:id="@+id/dermatologist_icon"
+                        android:id="@+id/pediatrician_icon"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:clickable="true"
-                        android:contentDescription="@string/gastrologist"
+                        android:contentDescription="@string/pediatrician"
                         android:focusable="true"
-                        android:src="@drawable/gastroenterologist" />
+                        android:src="@drawable/baseline_child_care_24" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="sans-serif"
-                        android:text="@string/gastrologist"
+                        android:text="@string/pediatrician"
                         android:textColor="@color/dark_gray"
                         android:textSize="12sp"
                         tools:ignore="SmallSp" />
@@ -198,7 +202,7 @@
                 android:layout_gravity="right"
                 android:text="@string/see_all_link"
                 android:textColor="@color/light_blue"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <!-- Available Doctors Section -->
             <TextView
@@ -237,14 +241,15 @@
                 android:id="@+id/see_all_doctors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginEnd="10dp"
-                android:clickable="true"
-                android:textStyle="bold"
                 android:layout_gravity="right"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="15dp"
+                android:clickable="true"
+                android:minWidth="48dp"
                 android:text="@string/see_all_link"
                 android:textColor="@color/light_blue"
-                android:textSize="14sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <!-- Carousel -->
             <androidx.viewpager2.widget.ViewPager2

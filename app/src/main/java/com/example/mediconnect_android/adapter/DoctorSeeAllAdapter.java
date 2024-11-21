@@ -1,5 +1,6 @@
 package com.example.mediconnect_android.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -56,6 +57,7 @@ public class DoctorSeeAllAdapter extends RecyclerView.Adapter<DoctorSeeAllAdapte
             this.recyclerItemBinding = recyclerItemBinding;
         }
 
+        @SuppressLint("SetTextI18n")
         public void bindView(Doctor doctor) {
             recyclerItemBinding.doctorName.setText(doctor.getName());
             recyclerItemBinding.doctorSpeacialty.setText(doctor.getSpecialty());
@@ -71,9 +73,9 @@ public class DoctorSeeAllAdapter extends RecyclerView.Adapter<DoctorSeeAllAdapte
 
             // Check if the review count is available
             if (doctor.getReviewCount() != null) {
-                recyclerItemBinding.reviewCount.setText(String.format("(%d reviews)", doctor.getReviewCount()));
+                recyclerItemBinding.reviewCount.setText("(" + String.valueOf(doctor.getReviewCount() + ")"));
             } else {
-                recyclerItemBinding.reviewCount.setText(""); // Set no text for reviews
+                recyclerItemBinding.reviewCount.setText("");
             }
 
             String doctorImageURL = doctor.getPhoto();

@@ -26,18 +26,32 @@ import java.util.List;
 public class DoctorsFragment extends Fragment {
 
     FragmentDoctorsBinding binding;
-    List<Doctor> doctorList = new ArrayList<Doctor>();
+    List<Doctor> doctorList = new ArrayList<>();
     DoctorSeeAllAdapter mAdapter;
-    DoctorClient doctorClient;
 
     public DoctorsFragment() {
-        doctorClient = new DoctorClientImpl();
+        // Default constructor
+    }
+
+    /**
+     * Factory method to create a new instance of the fragment with a doctor list.
+     */
+    public static DoctorsFragment newInstance(List<Doctor> doctors) {
+        DoctorsFragment fragment = new DoctorsFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("doctorList", new ArrayList<>(doctors));
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Retrieve the doctor list from the arguments
+        if (getArguments() != null) {
+            doctorList = (List<Doctor>) getArguments().getSerializable("doctorList");
+        }
     }
 
     @Override
@@ -51,7 +65,6 @@ public class DoctorsFragment extends Fragment {
     }
 
     private void init() {
-        doctorList = doctorClient.getDoctors();
         bindAdapter();
     }
 

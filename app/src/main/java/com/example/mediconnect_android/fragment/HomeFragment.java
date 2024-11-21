@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -30,6 +32,7 @@ import com.example.mediconnect_android.util.KeyboardUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
@@ -70,9 +73,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         binding.seeAllCategories.setOnClickListener(this);
         binding.seeAllDoctors.setOnClickListener(this);
-        binding.psychiatristIcon.setOnClickListener(this);
-        binding.dentistIcon.setOnClickListener(this);
-        binding.dermatologistIcon.setOnClickListener(this);
+        binding.cardiologistIcon.setOnClickListener(this);
+        binding.optometristIcon.setOnClickListener(this);
+        binding.pediatricianIcon.setOnClickListener(this);
         binding.obgynIcon.setOnClickListener(this);
 
         bindAdapter();
@@ -122,19 +125,60 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.see_all_categories) {
+        int viewId = view.getId();
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        if (viewId == R.id.see_all_categories) {
             FragmentUtils.loadFragment(requireActivity().getSupportFragmentManager(), R.id.flFragment, new SpecialtiesFragment());
-        }
-        if (view.getId() == R.id.see_all_doctors || view.getId() == R.id.dermatologist_icon
-        || view.getId() == R.id.dentist_icon || view.getId() == R.id.obgyn_icon || view.getId() == R.id.psychiatrist_icon) {
-            FragmentUtils.loadFragment(requireActivity().getSupportFragmentManager(), R.id.flFragment, new DoctorsFragment());
+        } else if (viewId == R.id.see_all_doctors) {
+            DoctorsFragment allDoctorsFragment = DoctorsFragment.newInstance(doctorList);
+            transaction.replace(R.id.flFragment, allDoctorsFragment).commit();
+        } else if (viewId == R.id.optometrist_icon || viewId == R.id.cardiologist_icon ||
+                viewId == R.id.obgyn_icon || viewId == R.id.pediatrician_icon) {
+            String specialty = getSpecialtyForIcon(viewId);
+            loadDoctorsBySpecialty(specialty, transaction);
         }
     }
 
+    /**
+     * Helper method to map view ID to doctor specialty.
+     */
+    private String getSpecialtyForIcon(int viewId) {
+        if (viewId == R.id.optometrist_icon) {
+            return "Optometrist";
+        } else if (viewId == R.id.cardiologist_icon) {
+            return "Cardiologist";
+        } else if (viewId == R.id.obgyn_icon) {
+            return "Gynecologist";
+        } else if (viewId == R.id.pediatrician_icon) {
+            return "Pediatrician";
+        }
+        return ""; // Default value
+    }
+
+    /**
+     * Helper method to load doctors by specialty into a DoctorsFragment.
+     */
+    private void loadDoctorsBySpecialty(String specialty, FragmentTransaction transaction) {
+        List<Doctor> filteredDoctors = new ArrayList<>();
+        for (Doctor doctor : doctorList) {
+            if (doctor.getSpecialty().equals(specialty)) {
+                filteredDoctors.add(doctor);
+            }
+        }
+        DoctorsFragment doctorsFragment = DoctorsFragment.newInstance(filteredDoctors);
+        transaction.replace(R.id.flFragment, doctorsFragment).commit();
+    }
+
     private void bindAdapter() {
+        List<Doctor> firstFiveDoctors = doctorList.stream()
+                .limit(5)
+                .collect(Collectors.toList());
+
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         binding.recyclerViewDoctors.setLayoutManager(layoutManager);
-        mAdapter = new DoctorHomeScreenAdapter(doctorList, getContext());
+        mAdapter = new DoctorHomeScreenAdapter(firstFiveDoctors, getContext());
         binding.recyclerViewDoctors.setAdapter(mAdapter);
     }
 
