@@ -85,7 +85,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
 
         public void bindView(Appointment appointment) {
             Doctor doctor = appointment.getDoctor();
-            recyclerItemBinding.appointmentDate.setText(appointment.getDate());
+            recyclerItemBinding.appointmentDate.setText(appointment.toString());
             recyclerItemBinding.doctorName.setText(doctor.getName());
             recyclerItemBinding.doctorSpeacialty.setText(doctor.getSpecialty());
 

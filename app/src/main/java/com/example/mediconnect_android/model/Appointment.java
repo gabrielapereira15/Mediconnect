@@ -78,13 +78,7 @@ public class Appointment {
 
     @Override
     public String toString() {
-        return "Appointment{" +
-                "appointmentId=" + appointmentId +
-                ", status='" + status + '\'' +
-                ", patientId=" + patientId +
-                ", schedule=" + schedule +
-                ", isVirtual=" + isVirtual +
-                '}';
+        return date + " | " + time;
     }
 
     public Schedule getSchedule() {

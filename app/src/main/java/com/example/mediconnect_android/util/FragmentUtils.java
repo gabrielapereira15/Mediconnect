@@ -9,7 +9,7 @@ public class FragmentUtils {
     public static void loadFragment(FragmentManager fragmentManager, int containerViewId, Fragment fragment) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(containerViewId, fragment);
-        //transaction.addToBackStack(null);
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 }
