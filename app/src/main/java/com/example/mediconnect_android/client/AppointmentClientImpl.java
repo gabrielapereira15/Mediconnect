@@ -51,4 +51,16 @@ public class AppointmentClientImpl implements AppointmentClient {
             return false;
         }
     }
+
+    @Override
+    public Boolean cancelAppointment(String appointmentId) {
+        String url = baseurl + "/api/mobile/appointments/cancel/" + appointmentId;
+        ApiGenericResponse response = OkHttpClientHelper.put(url);
+        if (response.isSuccess()) {
+            return true;
+        } else {
+            Log.e("AppointmentClientImpl", "Error canceling appointment: " + response.getResponseBody());
+            return false;
+        }
+    }
 }

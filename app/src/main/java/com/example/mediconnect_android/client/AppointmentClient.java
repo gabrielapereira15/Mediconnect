@@ -12,4 +12,6 @@ public interface AppointmentClient {
     List<Appointment> getAppointments(String email);
 
     Boolean createAppointment(String appointmentJson);
+
+    Boolean cancelAppointment(String appointmentId);
 }

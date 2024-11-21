@@ -49,7 +49,7 @@ public class CancelledFragment extends Fragment {
 
     private void bindAdapter() {
         List<Appointment> filteredAppointments = appointments.stream()
-                .filter(appointment -> "CANCELLED".equals(appointment.getStatus()))
+                .filter(appointment -> "CANCELED".equals(appointment.getStatus()))
                 .collect(Collectors.toList());
 
         if (filteredAppointments.isEmpty()) {

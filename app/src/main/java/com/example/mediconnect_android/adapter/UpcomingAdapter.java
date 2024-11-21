@@ -1,6 +1,9 @@
 package com.example.mediconnect_android.adapter;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,21 +16,27 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.client.AppointmentClient;
+import com.example.mediconnect_android.client.AppointmentClientImpl;
 import com.example.mediconnect_android.databinding.UpcomingItemBinding;
 import com.example.mediconnect_android.fragment.BookAppointmentFragment;
 import com.example.mediconnect_android.fragment.CancelledFragment;
+import com.example.mediconnect_android.fragment.MedicalHistoryFragment;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.model.Schedule;
+import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHolder> {
 
     private final Context context;
     UpcomingItemBinding upcomingItemBindingbinding;
     private final List<Appointment> appointmentList;
+    AppointmentClient appointmentClient;
 
     public UpcomingAdapter(List<Appointment> appointmentList, Context context) {
         this.appointmentList = appointmentList;
@@ -39,29 +48,8 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         upcomingItemBindingbinding = UpcomingItemBinding.inflate(layoutInflater, parent, false);
+        appointmentClient = new AppointmentClientImpl();
         return new ViewHolder(upcomingItemBindingbinding);
-    }
-
-    private void showCancelConfirmationDialog() {
-        new AlertDialog.Builder(context)
-                .setTitle("Cancel Appointment")
-                .setMessage("Are you sure you want to cancel the appointment?")
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    showCancellationMessage();
-                })
-                .setNegativeButton("No", (dialog, which) -> {
-                    dialog.dismiss();
-                })
-                .show();
-    }
-
-    private void showCancellationMessage() {
-        new AlertDialog.Builder(context)
-                .setTitle("Appointment Cancelled")
-                .setMessage("Your appointment has been successfully cancelled.")
-                .setIcon(R.drawable.baseline_check_circle_24)
-                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
-                .show();
     }
 
     @Override
@@ -106,11 +94,53 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
                     bundle.putString("doctorSpecialty", doctor.getSpecialty());
                     bookAppointmentFragment.setArguments(bundle);
 
-                    FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, bookAppointmentFragment);
+                    if (isAppointmentCancelled(appointment)) {
+                        FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, bookAppointmentFragment);
+                    } else {
+                        DialogUtils.showMessageDialog(context, "Appointment not cancelled, please try again later");
+                    }
                 }
             });
 
-            recyclerItemBinding.cancelButton.setOnClickListener(v -> showCancelConfirmationDialog());
+            recyclerItemBinding.cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showCancelConfirmationDialog(appointment);
+                }
+            });
+
+        }
+
+        private void showCancelConfirmationDialog(Appointment appointment) {
+            new AlertDialog.Builder(context)
+                    .setTitle("Cancel Appointment")
+                    .setMessage("Are you sure you want to cancel the appointment?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        if (isAppointmentCancelled(appointment)) {
+                            showCancellationMessage();
+                        } else {
+                            DialogUtils.showMessageDialog(context, "Appointment not cancelled, please try again later");
+                        }
+                    })
+                    .setNegativeButton("No", (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .show();
+        }
+
+        private void showCancellationMessage() {
+            new AlertDialog.Builder(context)
+                    .setTitle("Appointment Cancelled")
+                    .setMessage("Your appointment has been successfully cancelled.")
+                    .setIcon(R.drawable.baseline_check_circle_24)
+                    .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                    .show();
+
+            FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, new MedicalHistoryFragment());
+        }
+
+        private boolean isAppointmentCancelled(Appointment appointment) {
+            return appointmentClient.cancelAppointment(appointment.getId());
         }
     }
 }

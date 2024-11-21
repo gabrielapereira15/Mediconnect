@@ -43,6 +43,16 @@ public class OkHttpClientHelper {
         return execute(url, request);
     }
 
+    public static ApiGenericResponse put(String url) {
+        RequestBody body = RequestBody.create("", null);
+        Request request = new Request.Builder()
+                .url(url)
+                .put(body)
+                .build();
+
+        return execute(url, request);
+    }
+
     private static ApiGenericResponse execute(String url, Request request) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         try {
@@ -77,5 +87,4 @@ public class OkHttpClientHelper {
             throw new RuntimeException(e);
         }
     }
-
 }

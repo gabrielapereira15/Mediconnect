@@ -3,7 +3,7 @@ package com.example.mediconnect_android.model;
 import java.util.List;
 
 public class Appointment {
-    private int appointmentId;
+    private String id;
     private int patientId;
     private String status;
     private String date;
@@ -26,15 +26,6 @@ public class Appointment {
 
     public void setTime(String time) {
         this.time = time;
-    }
-
-    // Getters e Setters
-    public int getAppointmentId() {
-        return appointmentId;
-    }
-
-    public void setAppointmentId(int appointmentId) {
-        this.appointmentId = appointmentId;
     }
 
     public String getStatus() {
@@ -83,5 +74,13 @@ public class Appointment {
 
     public Schedule getSchedule() {
         return schedule;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
