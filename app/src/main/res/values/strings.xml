@@ -147,5 +147,6 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="read_less_link">Read Less</string>
     <string name="no_appointments_to_display">No appointments to display</string>
     <string name="pediatrician">Pediatrician</string>
+    <string name="no_data_available">No data available</string>
 
 </resources>
