@@ -34,12 +34,6 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String doctorName = getArguments().getString("doctorName");
-            String doctorSpecialty = getArguments().getString("doctorSpecialty");
-            String selectedTimeSlot = getArguments().getString("selectedTimeSlot");
-            String selectedDate = getArguments().getString("selectedDate");
-        }
     }
 
     @Nullable
@@ -104,7 +98,8 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
                         name, dob, phoneNumber, noteForDoctor,
                         requireArguments().getString("doctorName"),
                         requireArguments().getString("doctorSpecialty"),
-                        requireArguments().getString("selectedTimeSlot"),
+                        requireArguments().getString("selectedTimeSlotTime"),
+                        requireArguments().getString("selectedTimeSlotId"),
                         requireArguments().getString("selectedDate")
                 );
 
@@ -131,7 +126,8 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
                         fullName, dob, phoneNumber, additionalNotes,
                         requireArguments().getString("doctorName"),
                         requireArguments().getString("doctorSpecialty"),
-                        requireArguments().getString("selectedTimeSlot"),
+                        requireArguments().getString("selectedTimeSlotTime"),
+                        requireArguments().getString("selectedTimeSlotId"),
                         requireArguments().getString("selectedDate")
                 );
 

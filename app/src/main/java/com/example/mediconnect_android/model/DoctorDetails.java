@@ -8,11 +8,12 @@ import java.util.UUID;
 public class DoctorDetails {
     private UUID id;
     private String name;
+    private String experienceYears;
     private Double score;
     private Integer reviewCount;
-    private String experienceYears;
     private String description;
     private String photo;
+    private List<Schedule> schedule;
 
     public UUID getId() {
         return id;
@@ -78,8 +79,6 @@ public class DoctorDetails {
         this.schedule = schedule;
     }
 
-    private List<Schedule> schedule;
-
     public static class Schedule {
         private String date;
         private List<TimeSlot> times;
@@ -93,10 +92,6 @@ public class DoctorDetails {
             this.date = date;
         }
 
-        public LocalDate getLocalDate() {
-            return LocalDate.parse(date, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-        }
-
         public List<TimeSlot> getTimes() {
             return times;
         }
@@ -107,6 +102,15 @@ public class DoctorDetails {
 
         public static class TimeSlot {
             private String time;
+            private String id;
+
+            public String getId() {
+                return id;
+            }
+
+            public void setId(String id) {
+                this.id = id;
+            }
 
             public String getTime() {
                 return time;

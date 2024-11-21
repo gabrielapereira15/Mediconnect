@@ -9,9 +9,7 @@ import java.util.List;
 public interface AppointmentClient {
     List<Doctor> getDoctors();
 
-    Doctor getDoctor(String doctorId);
+    List<Appointment> getAppointments(String email);
 
-    List<Appointment> getAppointments(int patientId);
-
-    List<Schedule> getSchedules(int doctorId);
+    Boolean createAppointment(String appointmentJson);
 }

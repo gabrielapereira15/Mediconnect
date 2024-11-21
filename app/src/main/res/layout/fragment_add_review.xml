@@ -71,7 +71,12 @@
                 android:id="@+id/ratingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:progressTint="@color/yellow"
+                android:stepSize="1.0"
+                android:progressBackgroundTint="@color/gray"
+                android:secondaryProgressTint="@color/yellow"
+                android:theme="@style/Widget.AppCompat.RatingBar"/>
 
             <!-- Add Review Input -->
             <EditText

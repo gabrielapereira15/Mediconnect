@@ -16,6 +16,7 @@ import com.example.mediconnect_android.client.DoctorClient;
 import com.example.mediconnect_android.client.DoctorClientImpl;
 import com.example.mediconnect_android.databinding.FragmentBookAppointmentBinding;
 import com.example.mediconnect_android.model.DoctorDetails;
+import com.example.mediconnect_android.model.TimSlotRecord;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 
@@ -27,7 +28,7 @@ public class BookAppointmentFragment extends Fragment {
     FragmentBookAppointmentBinding binding;
     DoctorClient doctorClient;
     List<String> dateList = new ArrayList<>();
-    List<List<String>> timeSlotsList = new ArrayList<>();
+    List<List<TimSlotRecord>> timeSlotsList = new ArrayList<>();
     private TimeSlotAdapter adapter;
 
     public BookAppointmentFragment() {
@@ -84,8 +85,8 @@ public class BookAppointmentFragment extends Fragment {
             schedule.forEach(docSchedule -> {
                 dateList.add(docSchedule.getDate());
                 // Extract the "time" strings from TimeSlot objects
-                List<String> timeStrings = new ArrayList<>();
-                docSchedule.getTimes().forEach(timeSlot -> timeStrings.add(timeSlot.getTime()));
+                List<TimSlotRecord> timeStrings = new ArrayList<>();
+                docSchedule.getTimes().forEach(timeSlot -> timeStrings.add(new TimSlotRecord(timeSlot.getTime(), timeSlot.getId())));
                 timeSlotsList.add(timeStrings);
             });
         }
@@ -108,7 +109,7 @@ public class BookAppointmentFragment extends Fragment {
         // Set the click listener for the 'Next' button
         binding.btnNext.setOnClickListener(v -> {
             // Navigate to the next fragment
-            if (adapter.selectedTimeSlot == null) {
+            if (adapter.selectedTimeSlotTime == null) {
                 DialogUtils.showMessageDialog(getContext(), "Please select a time slot");
                 return;
             }
@@ -120,7 +121,8 @@ public class BookAppointmentFragment extends Fragment {
             Bundle args = new Bundle();
             args.putString("doctorName", binding.doctorName.getText().toString().trim());
             args.putString("doctorSpecialty", binding.doctorSpecialty.getText().toString().trim());
-            args.putString("selectedTimeSlot", adapter.selectedTimeSlot);
+            args.putString("selectedTimeSlotTime", adapter.selectedTimeSlotTime);
+            args.putString("selectedTimeSlotId", adapter.selectedTimeSlotId);
             args.putString("selectedDate", adapter.selectedDate);
 
             // Set arguments to the fragment

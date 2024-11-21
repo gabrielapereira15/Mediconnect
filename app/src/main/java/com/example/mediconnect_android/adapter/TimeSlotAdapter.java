@@ -11,19 +11,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.model.TimSlotRecord;
 
 import java.util.List;
 
 public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.TimeslotViewHolder> {
 
     private final List<String> dateList;
-    private final List<List<String>> timeSlotsList;
+    private final List<List<TimSlotRecord>> timeSlotsList;
     private final Context context;
     private View lastSelectedView = null;
     public String selectedDate = null;
-    public String selectedTimeSlot = null;
+    public String selectedTimeSlotTime = null;
+    public String selectedTimeSlotId = null;
 
-    public TimeSlotAdapter(Context context, List<String> dateList, List<List<String>> timeSlotsList) {
+    public TimeSlotAdapter(Context context, List<String> dateList, List<List<TimSlotRecord>> timeSlotsList) {
         this.context = context;
         this.dateList = dateList;
         this.timeSlotsList = timeSlotsList;
@@ -39,15 +41,16 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.Timesl
     @Override
     public void onBindViewHolder(@NonNull TimeslotViewHolder holder, int position) {
         String date = dateList.get(position);
-        List<String> timeSlots = timeSlotsList.get(position);
+        List<TimSlotRecord> timeSlots = timeSlotsList.get(position);
 
         holder.tvDate.setText(date);
         holder.glTimeSlots.removeAllViews(); // Remove existing views to avoid duplicates
 
         // Dynamically add time slots to the GridLayout
-        for (String timeSlot : timeSlots) {
+        for (TimSlotRecord timeSlot : timeSlots) {
             TextView timeSlotView = new TextView(context);
-            timeSlotView.setText(timeSlot);
+            timeSlotView.setTag(timeSlot.id());
+            timeSlotView.setText(timeSlot.time());
             timeSlotView.setPadding(16, 16, 16, 16);
             timeSlotView.setBackgroundResource(R.drawable.time_slot_background);
             timeSlotView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -65,7 +68,9 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.Timesl
                     v.setBackgroundResource(R.drawable.time_slot_background);
 
                     lastSelectedView = v;
-                    selectedTimeSlot = String.valueOf(((TextView) lastSelectedView).getText());
+                    var textViewTimeSlot = ((TextView) lastSelectedView);
+                    selectedTimeSlotId = String.valueOf(textViewTimeSlot.getTag());
+                    selectedTimeSlotTime = String.valueOf(textViewTimeSlot.getText());
                     selectedDate = holder.tvDate.getText().toString();
                 }
             });

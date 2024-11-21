@@ -72,13 +72,11 @@ public class DoctorHomeScreenAdapter extends RecyclerView.Adapter<RecyclerView.V
             }
 
             String doctorImageURL = doctor.getPhoto();
-            //String doctorImageURL = "https://randomuser.me/api/portraits/women/90.jpg";
             Glide.with(context)
                     .load(doctorImageURL)
                     .placeholder(R.drawable.doctorimage)
                     .error(R.drawable.doctorimage)
                     .into(recyclerItemBinding.doctorImage);
-
 
             recyclerItemBinding.btnBookAppointment.setOnClickListener(new View.OnClickListener() {
                 @Override

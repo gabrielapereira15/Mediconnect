@@ -1,5 +1,7 @@
 package com.example.mediconnect_android.client;
 
+import android.util.Log;
+
 import com.example.mediconnect_android.client.response.ApiGenericResponse;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.model.DoctorDetails;
@@ -31,6 +33,7 @@ public class DoctorClientImpl implements DoctorClient {
             List<Doctor> doctors = gson.fromJson(response.getResponseBody(), doctorListType);
             return doctors;
         } else {
+            Log.e("DoctorClientImpl", "Error getting doctors: " + response.getResponseBody());
             return Collections.emptyList();
         }
     }
@@ -46,6 +49,7 @@ public class DoctorClientImpl implements DoctorClient {
             DoctorDetails doctorDetails = gson.fromJson(response.getResponseBody(), doctorListType);
             return doctorDetails;
         } else {
+            Log.e("DoctorClientImpl", "Error getting doctor details: " + response.getResponseBody());
             return null;
         }
     }

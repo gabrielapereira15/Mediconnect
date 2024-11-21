@@ -1,5 +1,7 @@
 package com.example.mediconnect_android.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.client.AppointmentClient;
+import com.example.mediconnect_android.client.AppointmentClientImpl;
 import com.example.mediconnect_android.databinding.FragmentConfirmAppointmentBinding;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
@@ -19,20 +23,23 @@ import com.example.mediconnect_android.util.FragmentUtils;
 public class ConfirmAppointmentFragment extends Fragment {
 
     FragmentConfirmAppointmentBinding binding;
+    private String selectedTimeSlotId;
+    AppointmentClient appointmentClient;
     private static final String ARG_NAME = "name";
     private static final String ARG_DOB = "dob";
     private static final String ARG_PHONE = "phone";
     private static final String ARG_NOTE = "note";
     private static final String ARG_DOCTOR_NAME = "doctorName";
     private static final String ARG_DOCTOR_SPECIALTY = "doctorSpecialty";
-    private static final String ARG_SELECTED_TIME_SLOT = "selectedTimeSlot";
+    private static final String ARG_SELECTED_TIME_SLOT = "selectedTimeSlotTime";
+    private static final String ARG_SELECTED_TIME_SLOT_ID = "selectedTimeSlotId";
     private static final String ARG_SELECTED_DATE = "selectedDate";
 
     public ConfirmAppointmentFragment() {
-        // Required empty public constructor
+        appointmentClient = new AppointmentClientImpl();
     }
 
-    public static ConfirmAppointmentFragment newInstance(String name, String dob, String phone, String note, String doctorName, String doctorSpecialty, String selectedTimeSlot, String selectedDate) {
+    public static ConfirmAppointmentFragment newInstance(String name, String dob, String phone, String note, String doctorName, String doctorSpecialty, String selectedTimeSlot, String selectedTimeSlotId, String selectedDate) {
         ConfirmAppointmentFragment fragment = new ConfirmAppointmentFragment();
         Bundle args = new Bundle();
         args.putString(ARG_NAME, name);
@@ -42,6 +49,7 @@ public class ConfirmAppointmentFragment extends Fragment {
         args.putString(ARG_DOCTOR_NAME, doctorName);
         args.putString(ARG_DOCTOR_SPECIALTY, doctorSpecialty);
         args.putString(ARG_SELECTED_TIME_SLOT, selectedTimeSlot);
+        args.putString(ARG_SELECTED_TIME_SLOT_ID, selectedTimeSlotId);
         args.putString(ARG_SELECTED_DATE, selectedDate);
         fragment.setArguments(args);
         return fragment;
@@ -72,9 +80,9 @@ public class ConfirmAppointmentFragment extends Fragment {
             String note = getArguments().getString(ARG_NOTE);
             String doctorName = getArguments().getString("doctorName");
             String doctorSpecialty = getArguments().getString("doctorSpecialty");
-            String selectedTimeSlot = getArguments().getString("selectedTimeSlot");
+            String selectedTimeSlot = getArguments().getString("selectedTimeSlotTime");
+            selectedTimeSlotId = getArguments().getString("selectedTimeSlotId");
             String selectedDate = getArguments().getString("selectedDate");
-
             String doctorInfo = doctorName + ", " + doctorSpecialty;
 
             // Set the values to the views
@@ -96,10 +104,29 @@ public class ConfirmAppointmentFragment extends Fragment {
                     DialogUtils.showMessageDialog(getContext(), "Please accept the terms and conditions");
                     return;
                 }
+                if (!isAppointmentCreated(selectedTimeSlotId)) {
+                    DialogUtils.showMessageDialog(getContext(), "Appointment not created, please try again later.");
+                    return;
+                }
                 showConfirmationMessage();
                 FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, medicalHistoryFragment);
             }
         });
+    }
+
+    private boolean isAppointmentCreated(String selectedTimeSlotId) {
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
+        String email = sharedPreferences.getString("email", "");
+        String jsonString = String.format(
+                "{ \"patientEmail\": \"%s\", \"scheduleTimeId\": \"%s\" }",
+                email,
+                selectedTimeSlotId
+        );
+
+        if (!appointmentClient.createAppointment(jsonString)) {
+            return false;
+        }
+        return true;
     }
 
     private void showConfirmationMessage() {

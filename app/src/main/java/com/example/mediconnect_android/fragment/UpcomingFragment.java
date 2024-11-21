@@ -16,16 +16,16 @@ import com.example.mediconnect_android.model.Appointment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UpcomingFragment extends Fragment {
 
     FragmentUpcomingBinding binding;
     UpcomingAdapter adapter;
-    AppointmentClient appointmentClient;
-    List<Appointment> appointments = new ArrayList<>();
+    List<Appointment> appointments;
 
-    public UpcomingFragment() {
-        appointmentClient = new AppointmentMock();
+    public UpcomingFragment(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 
     @Override
@@ -39,18 +39,28 @@ public class UpcomingFragment extends Fragment {
         binding = FragmentUpcomingBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         init();
-
         return view;
     }
 
     private void init() {
-        appointments.addAll(appointmentClient.getAppointments(1));
         bindAdapter();
     }
 
     private void bindAdapter() {
+        List<Appointment> filteredAppointments = appointments.stream()
+                .filter(appointment -> "UPCOMING".equals(appointment.getStatus()))
+                .collect(Collectors.toList());
+
+        if (filteredAppointments.isEmpty()) {
+            binding.tvEmptyMessage.setVisibility(View.VISIBLE);
+            binding.recyclerView.setVisibility(View.GONE);
+        } else {
+            binding.tvEmptyMessage.setVisibility(View.GONE);
+            binding.recyclerView.setVisibility(View.VISIBLE);
+        }
+
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new UpcomingAdapter(appointments, getContext());
+        adapter = new UpcomingAdapter(filteredAppointments, getContext());
         binding.recyclerView.setAdapter(adapter);
     }
 

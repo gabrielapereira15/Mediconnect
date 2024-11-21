@@ -1,5 +1,7 @@
 package com.example.mediconnect_android.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,18 +11,26 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.client.AppointmentClient;
+import com.example.mediconnect_android.client.AppointmentClientImpl;
 import com.example.mediconnect_android.databinding.FragmentMedicalHistoryBinding;
+import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.google.android.material.tabs.TabLayout;
+
+import java.util.List;
+import java.util.Objects;
 
 public class MedicalHistoryFragment extends Fragment {
 
     public TabLayout tabLayout;
     public FragmentManager fragmentManager;
     FragmentMedicalHistoryBinding binding;
+    AppointmentClient appointmentClient;
+    List<Appointment> appointmentsList;
 
     public MedicalHistoryFragment() {
-        // Required empty public constructor
+        appointmentClient = new AppointmentClientImpl();
     }
 
     @Override
@@ -36,8 +46,13 @@ public class MedicalHistoryFragment extends Fragment {
 
         fragmentManager = getChildFragmentManager();
 
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
+        String email = sharedPreferences.getString("email", "");
+
+        appointmentsList = appointmentClient.getAppointments(email);
+
         // Set initial fragment to UpcomingFragment
-        UpcomingFragment upcomingFragment = new UpcomingFragment();
+        UpcomingFragment upcomingFragment = new UpcomingFragment(appointmentsList);
         FragmentUtils.loadFragment(fragmentManager, R.id.fragment_container, upcomingFragment);
 
         init();
@@ -56,17 +71,15 @@ public class MedicalHistoryFragment extends Fragment {
             public void onTabSelected(TabLayout.Tab tab) {
                 Fragment selectedFragment;
                 switch (tab.getPosition()) {
-                    case 0:
-                        selectedFragment = new UpcomingFragment();
-                        break;
                     case 1:
-                        selectedFragment = new CompletedFragment();
+                        selectedFragment = new CompletedFragment(appointmentsList);
                         break;
                     case 2:
-                        selectedFragment = new CancelledFragment();
+                        selectedFragment = new CancelledFragment(appointmentsList);
                         break;
+                    case 0:
                     default:
-                        selectedFragment = new UpcomingFragment();
+                        selectedFragment = new UpcomingFragment(appointmentsList);
                         break;
                 }
 

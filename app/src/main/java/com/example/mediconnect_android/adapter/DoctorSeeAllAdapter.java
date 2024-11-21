@@ -1,13 +1,16 @@
 package com.example.mediconnect_android.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.DoctorListItemBinding;
 import com.example.mediconnect_android.fragment.BookAppointmentFragment;
@@ -32,15 +35,7 @@ public class DoctorSeeAllAdapter extends RecyclerView.Adapter<DoctorSeeAllAdapte
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         doctorListItemBinding = DoctorListItemBinding.inflate(layoutInflater, parent, false);
-        listeners();
         return new ViewHolder(doctorListItemBinding);
-    }
-
-    private void listeners() {
-        doctorListItemBinding.bookAppointmentButton.setOnClickListener(v -> {
-            BookAppointmentFragment bookAppointmentFragment = new BookAppointmentFragment();
-            FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, bookAppointmentFragment);
-        });
     }
 
     @Override
@@ -55,6 +50,7 @@ public class DoctorSeeAllAdapter extends RecyclerView.Adapter<DoctorSeeAllAdapte
 
     class ViewHolder extends RecyclerView.ViewHolder {
         DoctorListItemBinding recyclerItemBinding;
+
         public ViewHolder(DoctorListItemBinding recyclerItemBinding) {
             super(recyclerItemBinding.getRoot());
             this.recyclerItemBinding = recyclerItemBinding;
@@ -63,9 +59,45 @@ public class DoctorSeeAllAdapter extends RecyclerView.Adapter<DoctorSeeAllAdapte
         public void bindView(Doctor doctor) {
             recyclerItemBinding.doctorName.setText(doctor.getName());
             recyclerItemBinding.doctorSpeacialty.setText(doctor.getSpecialty());
-            recyclerItemBinding.doctorImage.setImageResource(R.drawable.doctorimage);
-        }
 
+            // Check if the score is available
+            if (doctor.getScore() != null) {
+                recyclerItemBinding.doctorScore.setText(String.valueOf(doctor.getScore()));
+                recyclerItemBinding.star.setColorFilter(context.getResources().getColor(R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
+            } else {
+                recyclerItemBinding.doctorScore.setText(""); // Set no text for score
+                recyclerItemBinding.star.setColorFilter(context.getResources().getColor(R.color.gray), android.graphics.PorterDuff.Mode.SRC_IN);
+            }
+
+            // Check if the review count is available
+            if (doctor.getReviewCount() != null) {
+                recyclerItemBinding.reviewCount.setText(String.format("(%d reviews)", doctor.getReviewCount()));
+            } else {
+                recyclerItemBinding.reviewCount.setText(""); // Set no text for reviews
+            }
+
+            String doctorImageURL = doctor.getPhoto();
+            Glide.with(context)
+                    .load(doctorImageURL)
+                    .placeholder(R.drawable.doctorimage)
+                    .error(R.drawable.doctorimage)
+                    .into(recyclerItemBinding.doctorImage);
+
+            recyclerItemBinding.bookAppointmentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    BookAppointmentFragment bookAppointmentFragment = new BookAppointmentFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("doctorId", doctor.getId());
+                    bundle.putString("doctorName", doctor.getName());
+                    bundle.putString("doctorPhoto", doctor.getPhoto());
+                    bundle.putString("doctorSpecialty", doctor.getSpecialty());
+                    bookAppointmentFragment.setArguments(bundle);
+
+                    FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, bookAppointmentFragment);
+                }
+            });
+        }
     }
 
 }

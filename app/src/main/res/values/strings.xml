@@ -100,7 +100,7 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="submit">Submit</string>
     <string name="gender_label">Gender</string>
     <string name="no_file_selected">No file selected</string>
-    <string name="review_question">How was your experience with Rezwana?</string>
+    <string name="review_question">How was your experience with the doctor?</string>
     <string name="add_detailed_review_text">Add detailed review</string>
     <string name="email_mock">gabriela@gmail.com</string>
     <string name="address_mock">123 Main St, Toronto</string>
@@ -145,5 +145,6 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="stroke">Stroke</string>
     <string name="ok">OK</string>
     <string name="read_less_link">Read Less</string>
+    <string name="no_appointments_to_display">No appointments to display</string>
 
 </resources>

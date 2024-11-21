@@ -1,11 +1,32 @@
 package com.example.mediconnect_android.model;
 
+import java.util.List;
+
 public class Appointment {
     private int appointmentId;
-    private String status;
     private int patientId;
+    private String status;
+    private String date;
+    private String time;
+    private Doctor doctor;
     private Schedule schedule;
     private boolean isVirtual;
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     // Getters e Setters
     public int getAppointmentId() {
@@ -26,6 +47,13 @@ public class Appointment {
 
     public int getPatientId() {
         return patientId;
+    }
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
     }
 
     public void setPatientId(int patientId) {

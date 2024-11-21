@@ -14,6 +14,8 @@ import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.adapter.DoctorSeeAllAdapter;
 import com.example.mediconnect_android.client.AppointmentClient;
 import com.example.mediconnect_android.client.AppointmentMock;
+import com.example.mediconnect_android.client.DoctorClient;
+import com.example.mediconnect_android.client.DoctorClientImpl;
 import com.example.mediconnect_android.databinding.FragmentDoctorsBinding;
 import com.example.mediconnect_android.databinding.FragmentSpecialtiesBinding;
 import com.example.mediconnect_android.model.Doctor;
@@ -26,10 +28,10 @@ public class DoctorsFragment extends Fragment {
     FragmentDoctorsBinding binding;
     List<Doctor> doctorList = new ArrayList<Doctor>();
     DoctorSeeAllAdapter mAdapter;
-    AppointmentClient appointmentClient;
+    DoctorClient doctorClient;
 
     public DoctorsFragment() {
-        appointmentClient = new AppointmentMock();
+        doctorClient = new DoctorClientImpl();
     }
 
     @Override
@@ -49,7 +51,7 @@ public class DoctorsFragment extends Fragment {
     }
 
     private void init() {
-        doctorList.addAll(appointmentClient.getDoctors());
+        doctorList = doctorClient.getDoctors();
         bindAdapter();
     }
 
