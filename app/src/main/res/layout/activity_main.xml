@@ -25,16 +25,36 @@
             app:titleCentered="true"
             app:titleTextColor="@color/light_blue">
 
-            <ImageView
-                android:id="@+id/notificationIcon"
+            <!-- Container for the notification icon and badge -->
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:padding="16dp"
-                android:src="@drawable/baseline_notifications_none_24"
-                android:contentDescription="@string/notifications" />
+                android:padding="16dp">
+
+                <!-- Notification icon -->
+                <ImageView
+                    android:id="@+id/notificationIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_notifications_none_24"
+                    android:contentDescription="@string/notifications" />
+
+                <!-- Red badge (dot) -->
+                <View
+                    android:id="@+id/notificationBadge"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_alignTop="@id/notificationIcon"
+                    android:layout_alignEnd="@id/notificationIcon"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/circle_red"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
         </com.google.android.material.appbar.MaterialToolbar>
+
 
         <!-- Fragment Container -->
         <FrameLayout

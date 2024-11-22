@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mediconnect_android.activity.MainActivity;
 import com.example.mediconnect_android.client.NotificationClient;
 import com.example.mediconnect_android.client.NotificationClientImpl;
 import com.example.mediconnect_android.databinding.NotificationItemBinding;
@@ -15,10 +16,8 @@ import com.example.mediconnect_android.model.Notification;
 import com.example.mediconnect_android.util.DialogUtils;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -77,6 +76,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     notificationClient.markAsRead(notification.getId());
                     notificationList.remove(getAdapterPosition());
                     notifyItemRemoved(getAdapterPosition());
+                    if (notificationList.isEmpty()) {
+                        ((MainActivity) context).updateNotificationBadgeVisibility(false);
+                    }
                 }
             });
         }

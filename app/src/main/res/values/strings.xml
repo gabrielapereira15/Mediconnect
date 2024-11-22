@@ -148,5 +148,6 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="no_appointments_to_display">No appointments to display</string>
     <string name="pediatrician">Pediatrician</string>
     <string name="no_data_available">No data available</string>
+    <string name="no_notifications_to_display">No notifications to display</string>
 
 </resources>

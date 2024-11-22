@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.mediconnect_android.activity.MainActivity;
 import com.example.mediconnect_android.adapter.NotificationAdapter;
 import com.example.mediconnect_android.client.NotificationClient;
 import com.example.mediconnect_android.client.NotificationClientImpl;
@@ -58,9 +59,30 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void bindAdapter() {
+        if (notifications.isEmpty()) {
+            binding.tvEmptyMessage.setVisibility(View.VISIBLE);
+            binding.recyclerView.setVisibility(View.GONE);
+
+            if (getActivity() instanceof NotificationBadgeHandler) {
+                ((NotificationBadgeHandler) getActivity()).updateNotificationBadgeVisibility(false);
+            }
+        } else {
+            binding.tvEmptyMessage.setVisibility(View.GONE);
+            binding.recyclerView.setVisibility(View.VISIBLE);
+
+            if (getActivity() instanceof NotificationBadgeHandler) {
+                ((NotificationBadgeHandler) getActivity()).updateNotificationBadgeVisibility(true);
+            }
+        }
+
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new NotificationAdapter(notifications, getContext());
         binding.recyclerView.setAdapter(adapter);
+    }
+
+
+    public interface NotificationBadgeHandler {
+        void updateNotificationBadgeVisibility(boolean visible);
     }
 
     @Override

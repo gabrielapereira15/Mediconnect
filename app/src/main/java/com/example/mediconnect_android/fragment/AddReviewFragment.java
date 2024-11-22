@@ -10,17 +10,21 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.client.ReviewClient;
+import com.example.mediconnect_android.client.ReviewClientImpl;
 import com.example.mediconnect_android.databinding.FragmentAddReviewBinding;
 import com.example.mediconnect_android.model.DoctorDetails;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.FragmentUtils;
 
 
 public class AddReviewFragment extends Fragment {
 
     FragmentAddReviewBinding binding;
+    ReviewClient reviewClient;
 
     public AddReviewFragment() {
-        // Required empty public constructor
+        reviewClient = new ReviewClientImpl();
     }
 
     @Override
@@ -35,7 +39,6 @@ public class AddReviewFragment extends Fragment {
         binding = FragmentAddReviewBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         init();
-
         return view;
     }
 
@@ -45,6 +48,7 @@ public class AddReviewFragment extends Fragment {
             String doctorPhoto = getArguments().getString("doctorPhoto");
             String doctorSpecialty = getArguments().getString("doctorSpecialty");
             String doctorName = getArguments().getString("doctorName");
+            String appointmentId = getArguments().getString("appointmentId");
 
             binding.doctorName.setText(doctorName);
             binding.doctorSpecialty.setText(doctorSpecialty);
@@ -56,9 +60,18 @@ public class AddReviewFragment extends Fragment {
                     .into(binding.profileImage);
 
             binding.submitButton.setOnClickListener(v -> {
-                DialogUtils.showMessageDialog(getContext(), "Review submitted successfully");
+                if (isReviewSubmitted(appointmentId, (double) binding.ratingBar.getRating(), binding.reviewInput.getText().toString())) {
+                    DialogUtils.showMessageDialog(getContext(), "ReviewClient submitted successfully");
+                    FragmentUtils.loadFragment(requireActivity().getSupportFragmentManager(), R.id.flFragment, new MedicalHistoryFragment());
+                } else {
+                    DialogUtils.showMessageDialog(getContext(), "ReviewClient submission failed. Try again later.");
+                }
             });
         }
+    }
+
+    private boolean isReviewSubmitted(String appointmentId, Double score, String description) {
+        return reviewClient.createReview(appointmentId, score, description);
     }
 
     @Override

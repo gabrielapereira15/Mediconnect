@@ -94,6 +94,7 @@ public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.View
                 bundle.putString("doctorName", doctor.getName());
                 bundle.putString("doctorPhoto", doctor.getPhoto());
                 bundle.putString("doctorSpecialty", doctor.getSpecialty());
+                bundle.putString("appointmentId", appointment.getId());
                 addReviewFragment.setArguments(bundle);
                 FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, addReviewFragment);
             });

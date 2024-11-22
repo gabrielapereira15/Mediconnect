@@ -78,7 +78,7 @@
                 android:secondaryProgressTint="@color/yellow"
                 android:theme="@style/Widget.AppCompat.RatingBar"/>
 
-            <!-- Add Review Input -->
+            <!-- Add ReviewClient Input -->
             <EditText
                 android:id="@+id/reviewInput"
                 android:layout_width="match_parent"

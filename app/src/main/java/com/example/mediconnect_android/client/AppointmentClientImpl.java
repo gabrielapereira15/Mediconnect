@@ -17,9 +17,6 @@ import okhttp3.OkHttpClient;
 
 public class AppointmentClientImpl implements AppointmentClient {
     private final String baseurl = "https://mediconnect-latest.onrender.com";
-    private final OkHttpClient client = new OkHttpClient.Builder()
-            .readTimeout(30, TimeUnit.SECONDS)
-            .build();
 
     @Override
     public List<Doctor> getDoctors() {

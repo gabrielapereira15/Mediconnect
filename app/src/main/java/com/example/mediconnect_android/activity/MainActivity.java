@@ -10,10 +10,12 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -21,6 +23,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.client.NotificationClient;
+import com.example.mediconnect_android.client.NotificationClientImpl;
 import com.example.mediconnect_android.databinding.ActivityMainBinding;
 import com.example.mediconnect_android.fragment.EditProfileFragment;
 import com.example.mediconnect_android.fragment.FormFragment;
@@ -29,28 +33,60 @@ import com.example.mediconnect_android.fragment.LogoutFragment;
 import com.example.mediconnect_android.fragment.NotificationsFragment;
 import com.example.mediconnect_android.fragment.ProfileFragment;
 import com.example.mediconnect_android.fragment.SettingsFragment;
+import com.example.mediconnect_android.model.Notification;
 import com.example.mediconnect_android.util.BottomNavigationManager;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.navigation.NavigationView;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements NotificationsFragment.NotificationBadgeHandler {
 
     ActivityMainBinding mainBinding;
     private BottomNavigationManager bottomNavigationManager;
     ActionBarDrawerToggle mToggle;
+    NotificationClient notificationClient;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mainBinding.getRoot());
+        notificationClient = new NotificationClientImpl();
         init();
     }
 
     private void init() {
         setNavigationBottom();
         setNavigationDrawer();
+        setNotificationIcon();
         listeners();
+    }
+
+    @Override
+    public void updateNotificationBadgeVisibility(boolean visible) {
+        if (mainBinding != null) {
+            mainBinding.notificationBadge.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void setNotificationIcon() {
+        String email = sharedPreferences.getString("email", "");
+        List<Notification> notifications = notificationClient.getNotifications(email);
+
+        int notificationCount = notifications != null ? notifications.size() : 0;
+
+        View notificationBadge = findViewById(R.id.notificationBadge);
+
+        if (notificationCount > 0) {
+            notificationBadge.setVisibility(View.VISIBLE);
+        } else {
+            notificationBadge.setVisibility(View.GONE);
+        }
     }
 
     private void listeners() {
@@ -123,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
             profileImageView.setImageBitmap(profileImage);
         }
 
-        SharedPreferences sharedPreferences = this.getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
         String first_name = sharedPreferences.getString("first_name", "");
         String last_name = sharedPreferences.getString("last_name", "");
         String fullName = first_name + " " + last_name;
