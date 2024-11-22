@@ -42,10 +42,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:background="@drawable/rounded_edittext"
-            android:textColor="@color/dark_gray"
             android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
+            android:textColor="@color/dark_gray"
             android:textSize="18sp" />
 
         <EditText
@@ -53,11 +53,11 @@
             android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:textColor="@color/dark_gray"
             android:background="@drawable/rounded_edittext"
             android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
+            android:textColor="@color/dark_gray"
             android:textSize="18sp" />
 
         <EditText
@@ -65,11 +65,11 @@
             android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:textColor="@color/dark_gray"
             android:background="@drawable/rounded_edittext"
             android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
+            android:textColor="@color/dark_gray"
             android:textSize="18sp" />
 
         <EditText
@@ -77,11 +77,11 @@
             android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:textColor="@color/dark_gray"
             android:background="@drawable/rounded_edittext"
             android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
+            android:textColor="@color/dark_gray"
             android:textSize="18sp" />
 
         <EditText
@@ -89,11 +89,11 @@
             android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:textColor="@color/dark_gray"
             android:background="@drawable/rounded_edittext"
             android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
+            android:textColor="@color/dark_gray"
             android:textSize="18sp" />
 
         <EditText
@@ -101,11 +101,11 @@
             android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:textColor="@color/dark_gray"
             android:background="@drawable/rounded_edittext"
             android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
+            android:textColor="@color/dark_gray"
             android:textSize="18sp" />
     </LinearLayout>
 

@@ -23,9 +23,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:useDefaultMargins="true"
         android:columnCount="4"
-        android:columnOrderPreserved="false">
+        android:columnOrderPreserved="false"
+        android:useDefaultMargins="true">
 
     </GridLayout>
 

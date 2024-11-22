@@ -14,8 +14,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <!-- Profile Image -->
             <RelativeLayout
@@ -27,10 +27,10 @@
                     android:id="@+id/profileImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
                     android:layout_centerInParent="true"
                     android:background="@drawable/circle_overlay"
-                    android:clipToOutline="true" />
+                    android:clipToOutline="true"
+                    android:scaleType="centerCrop" />
             </RelativeLayout>
 
             <!-- User Details -->
@@ -38,48 +38,48 @@
                 android:id="@+id/tvFirstName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/patient_name_mock"
-                android:textSize="16sp"
                 android:textColor="@color/dark_gray"
-                android:layout_marginTop="8dp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/email_mock"
-                android:textSize="16sp"
                 android:textColor="@color/dark_gray"
-                android:layout_marginTop="8dp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvPhoneNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/phone_number_mock"
-                android:textSize="16sp"
                 android:textColor="@color/dark_gray"
-                android:layout_marginTop="8dp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/address_mock"
-                android:textSize="16sp"
                 android:textColor="@color/dark_gray"
-                android:layout_marginTop="8dp" />
+                android:textSize="16sp" />
 
             <!-- Edit Button -->
             <Button
                 android:id="@+id/btnEditProfile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:backgroundTint="@color/green"
                 android:text="@string/edit_profile"
                 android:textColor="@color/dark_gray"
-                android:textSize="16sp"
-                android:layout_marginTop="16dp" />
+                android:textSize="16sp" />
 
         </LinearLayout>
 

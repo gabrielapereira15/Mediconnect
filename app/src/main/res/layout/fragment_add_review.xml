@@ -14,8 +14,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <!-- Profile Image -->
             <RelativeLayout
@@ -27,11 +27,11 @@
                     android:id="@+id/profileImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/doctorimage"
-                    android:scaleType="centerCrop"
                     android:layout_centerInParent="true"
                     android:background="@drawable/circle_overlay"
-                    android:clipToOutline="true" />
+                    android:clipToOutline="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/doctorimage" />
 
             </RelativeLayout>
 
@@ -40,31 +40,31 @@
                 android:id="@+id/doctorName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="@string/doctor_name"
-                android:textSize="20sp"
-                android:textStyle="bold"
                 android:textColor="@color/dark_gray"
-                android:gravity="center" />
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/doctorSpecialty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/speacialty_text"
-                android:textSize="14sp"
-                android:textColor="@color/gray"
+                android:layout_marginBottom="16dp"
                 android:gravity="center"
-                android:layout_marginBottom="16dp" />
+                android:text="@string/speacialty_text"
+                android:textColor="@color/gray"
+                android:textSize="14sp" />
 
             <!-- Experience Text -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/review_question"
-                android:textSize="16sp"
-                android:textColor="@color/dark_gray"
+                android:layout_marginBottom="16dp"
                 android:gravity="center"
-                android:layout_marginBottom="16dp" />
+                android:text="@string/review_question"
+                android:textColor="@color/dark_gray"
+                android:textSize="16sp" />
 
             <!-- Star Rating -->
             <RatingBar
@@ -72,36 +72,36 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:progressTint="@color/yellow"
-                android:stepSize="1.0"
                 android:progressBackgroundTint="@color/gray"
+                android:progressTint="@color/yellow"
                 android:secondaryProgressTint="@color/yellow"
-                android:theme="@style/Widget.AppCompat.RatingBar"/>
+                android:stepSize="1.0"
+                android:theme="@style/Widget.AppCompat.RatingBar" />
 
             <!-- Add ReviewClient Input -->
             <EditText
                 android:id="@+id/reviewInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/add_detailed_review_text"
+                android:layout_marginBottom="24dp"
                 android:background="@drawable/rounded_edittext"
-                android:padding="12dp"
                 android:gravity="top"
+                android:hint="@string/add_detailed_review_text"
                 android:lines="4"
+                android:padding="12dp"
                 android:textColor="@color/dark_gray"
-                android:textColorHint="@color/gray"
-                android:layout_marginBottom="24dp" />
+                android:textColorHint="@color/gray" />
 
             <!-- Submit Button -->
             <Button
                 android:id="@+id/submitButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/submit"
+                android:layout_marginTop="8dp"
                 android:backgroundTint="@color/green"
+                android:text="@string/submit"
                 android:textColor="@color/dark_gray"
-                android:textSize="16sp"
-                android:layout_marginTop="8dp" />
+                android:textSize="16sp" />
 
         </LinearLayout>
 

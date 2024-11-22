@@ -18,8 +18,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <!-- Notification Title -->
             <TextView
@@ -27,12 +27,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:text="@string/notification_title_mock"
                 android:textColor="@color/dark_gray"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:ellipsize="end"
-                android:maxLines="2" />
+                android:textStyle="bold" />
 
             <!-- Time -->
             <TextView
@@ -59,8 +59,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:orientation="horizontal"
-            android:gravity="end">
+            android:gravity="end"
+            android:orientation="horizontal">
 
             <!-- Read Button -->
             <Button
@@ -73,15 +73,15 @@
                 android:text="@string/read_text"
                 android:textColor="@color/dark_gray"
                 android:textSize="14sp"
-                android:visibility="visible"/>
+                android:visibility="visible" />
 
             <!-- Clear Button -->
             <Button
                 android:id="@+id/button_clear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/green"
                 android:layout_marginStart="8dp"
+                android:backgroundTint="@color/green"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
                 android:text="@string/clear_text"

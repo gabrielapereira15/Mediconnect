@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/card_background"
-        android:padding="24dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="24dp">
 
         <!-- RSVP -->
         <LinearLayout
@@ -20,26 +20,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="@string/upcoming_appointments_text"
                 android:textColor="@color/dark_gray"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/doctorName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="@string/doctor_name_mock"
-                android:textSize="16sp"
                 android:textColor="@color/dark_gray"
-                android:layout_marginTop="12dp" />
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -81,8 +81,8 @@
                 android:id="@+id/layout_checkin_form"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:orientation="vertical"
                 android:gravity="center_horizontal"
+                android:orientation="vertical"
                 android:visibility="gone">
 
                 <!-- Input Fields -->
@@ -113,7 +113,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:text="@string/recent_symptoms"
-                    android:textColor="@color/dark_gray"/>
+                    android:textColor="@color/dark_gray" />
 
                 <!-- Recent Symptoms Checkboxes -->
                 <LinearLayout

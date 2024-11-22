@@ -3,23 +3,23 @@
     <item
         android:id="@+id/nav_profile_menu"
         android:icon="@drawable/baseline_person_24"
-        android:title="@string/profile"
-        android:tint="@color/dark_gray"/>
+        android:tint="@color/dark_gray"
+        android:title="@string/profile" />
     <item
         android:id="@+id/nav_forms_menu"
         android:icon="@drawable/baseline_menu_24"
-        android:title="@string/forms"
-        android:tint="@color/dark_gray" />
+        android:tint="@color/dark_gray"
+        android:title="@string/forms" />
     <item
         android:id="@+id/nav_settings_menu"
         android:icon="@drawable/baseline_settings_24"
-        android:title="@string/settings"
         android:tint="@color/dark_gray"
-        android:visible="false"/>
+        android:title="@string/settings"
+        android:visible="false" />
     <item
         android:id="@+id/nav_logout_menu"
         android:icon="@drawable/baseline_logout_24"
-        android:title="@string/logout"
-        android:tint="@color/dark_gray"/>
+        android:tint="@color/dark_gray"
+        android:title="@string/logout" />
 </menu>
 

@@ -32,34 +32,34 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
-<!--
-        &lt;!&ndash; Radio Group for Patient or Clinic &ndash;&gt;
-        <RadioGroup
-            android:id="@+id/radioGroupUserType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal">
+        <!--
+                &lt;!&ndash; Radio Group for Patient or Clinic &ndash;&gt;
+                <RadioGroup
+                    android:id="@+id/radioGroupUserType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal">
 
-            <RadioButton
-                android:id="@+id/radioPatient"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:text="@string/patient"
-                android:textColor="@color/dark_gray"
-                android:textSize="16sp" />
+                    <RadioButton
+                        android:id="@+id/radioPatient"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="@string/patient"
+                        android:textColor="@color/dark_gray"
+                        android:textSize="16sp" />
 
-            <RadioButton
-                android:id="@+id/radioClinic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:text="@string/clinic"
-                android:textColor="@color/dark_gray"
-                android:textSize="16sp" />
-        </RadioGroup>
--->
+                    <RadioButton
+                        android:id="@+id/radioClinic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="@string/clinic"
+                        android:textColor="@color/dark_gray"
+                        android:textSize="16sp" />
+                </RadioGroup>
+        -->
 
         <!-- Email Input Field -->
         <EditText
