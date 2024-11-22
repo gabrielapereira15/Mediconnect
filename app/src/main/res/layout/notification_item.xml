@@ -32,7 +32,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:ellipsize="end"
-                android:maxLines="1" />
+                android:maxLines="2" />
 
             <!-- Time -->
             <TextView

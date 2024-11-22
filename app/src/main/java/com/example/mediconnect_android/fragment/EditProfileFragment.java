@@ -14,11 +14,13 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -129,6 +131,32 @@ public class EditProfileFragment extends Fragment {
         email = sharedPreferences.getString("email", "");
         binding.etEmail.setText(email);
 
+        try {
+            String firstName = sharedPreferences.getString("first_name", "");
+            String lastName = sharedPreferences.getString("last_name", "");
+            String phoneNumber = sharedPreferences.getString("phone_number", "");
+            String clinicCode = sharedPreferences.getString("clinic_code", "");
+            String address = sharedPreferences.getString("address", "");
+            String dob = sharedPreferences.getString("dob", "");
+            String gender = sharedPreferences.getString("gender", "");
+
+            binding.etFirstName.setText(firstName);
+            binding.etLastName.setText(lastName);
+            binding.etPhoneNumber.setText(phoneNumber);
+            binding.etClinicCode.setText(clinicCode);
+            binding.etAddress.setText(address);
+            binding.etDob.setText(dob);
+            if (gender.equals("Male")) {
+                binding.rbMale.setChecked(true);
+            } else if (gender.equals("Female")) {
+                binding.rbFemale.setChecked(true);
+            } else if (gender.equals("Other")) {
+                binding.rbOther.setChecked(true);
+            }
+        } catch (Exception e) {
+            Log.e("EditProfileFragment", "Patient does not exist");
+        }
+
         listeners();
     }
 
@@ -175,17 +203,15 @@ public class EditProfileFragment extends Fragment {
         String clinicCode = binding.etClinicCode.getText().toString().trim();
         String firstName = binding.etFirstName.getText().toString().trim();
         String lastName = binding.etLastName.getText().toString().trim();
-        String gender = String.valueOf(binding.rgGender.getCheckedRadioButtonId());
         String dob = binding.etDob.getText().toString().trim();
         String phoneNumber = binding.etPhoneNumber.getText().toString().trim();
         String address = binding.etAddress.getText().toString().trim();
 
-        if (gender.equals(R.id.rb_male)) {
-            gender = "Male";
-        } else if (gender.equals(R.id.rb_female)) {
-            gender = "Female";
-        } else if (gender.equals(R.id.rb_other)) {
-            gender = "Other";
+        int selectedId = binding.rgGender.getCheckedRadioButtonId();
+        String gender = "";
+        if (selectedId != -1) {
+            RadioButton selectedRadioButton = binding.getRoot().findViewById(selectedId);
+            gender = selectedRadioButton.getText().toString();;
         }
 
         String jsonString = String.format(
@@ -214,7 +240,7 @@ public class EditProfileFragment extends Fragment {
             return;
         }
 
-        saveToSharedPreferences(firstName, lastName, email, phoneNumber, address, dob);
+        saveToSharedPreferences(firstName, lastName, email, phoneNumber, clinicCode, address, dob, gender);
 
         SessionManager sessionManager = new SessionManager(requireContext());
         sessionManager.createLoginSession(email);
@@ -237,7 +263,7 @@ public class EditProfileFragment extends Fragment {
         return patientClient.createPatient(jsonString);
     }
 
-    private void saveToSharedPreferences(String name, String lastName, String email, String phoneNumber, String address, String dob) {
+    private void saveToSharedPreferences(String name, String lastName, String email, String phoneNumber, String clinicCode, String address, String dob, String gender) {
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserProfile", getContext().MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -245,8 +271,10 @@ public class EditProfileFragment extends Fragment {
         editor.putString("last_name", lastName);
         editor.putString("email", email);
         editor.putString("phone_number", phoneNumber);
+        editor.putString("clinic_code", clinicCode);
         editor.putString("address", address);
         editor.putString("dob", dob);
+        editor.putString("gender", gender);
 
         editor.apply();
     }
