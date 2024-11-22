@@ -10,8 +10,18 @@ public class Appointment {
     private String time;
     private Doctor doctor;
     private Schedule schedule;
+    private Boolean reviewed;
     private boolean isVirtual;
 
+
+    public Boolean getReviewed() {
+        return reviewed;
+    }
+
+    public void setReviewed(Boolean reviewed) {
+        reviewed = reviewed;
+    }
+    
     public String getDate() {
         return date;
     }

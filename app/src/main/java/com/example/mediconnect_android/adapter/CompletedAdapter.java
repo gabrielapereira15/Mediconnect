@@ -67,6 +67,10 @@ public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.View
             recyclerItemBinding.doctorName.setText(doctor.getName());
             recyclerItemBinding.doctorSpeacialty.setText(doctor.getSpecialty());
 
+            if (appointment.getReviewed()) {
+                recyclerItemBinding.addReviewButton.setVisibility(View.GONE);
+            }
+
             Glide.with(context)
                     .load(doctor.getPhoto())
                     .placeholder(R.drawable.doctorimage)

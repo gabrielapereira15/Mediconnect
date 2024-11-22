@@ -61,7 +61,7 @@ public class AddReviewFragment extends Fragment {
 
             binding.submitButton.setOnClickListener(v -> {
                 if (isReviewSubmitted(appointmentId, (double) binding.ratingBar.getRating(), binding.reviewInput.getText().toString())) {
-                    DialogUtils.showMessageDialog(getContext(), "ReviewClient submitted successfully");
+                    DialogUtils.showMessageDialog(getContext(), "Review submitted successfully");
                     FragmentUtils.loadFragment(requireActivity().getSupportFragmentManager(), R.id.flFragment, new MedicalHistoryFragment());
                 } else {
                     DialogUtils.showMessageDialog(getContext(), "ReviewClient submission failed. Try again later.");
