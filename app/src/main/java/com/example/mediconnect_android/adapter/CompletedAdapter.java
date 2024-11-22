@@ -63,7 +63,7 @@ public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.View
         public void bindView(Appointment appointment) {
             Doctor doctor = appointment.getDoctor();
 
-            recyclerItemBinding.appointmentDate.setText(appointment.getDate());
+            recyclerItemBinding.appointmentDate.setText(appointment.toString());
             recyclerItemBinding.doctorName.setText(doctor.getName());
             recyclerItemBinding.doctorSpeacialty.setText(doctor.getSpecialty());
 

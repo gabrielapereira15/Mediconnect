@@ -1,23 +1,19 @@
 package com.example.mediconnect_android.model;
 
+import java.time.LocalDateTime;
+
 public class Notification {
+    private String id;
     private String title;
-    private String body;
-    private long timestamp;
+    private String message;
+    private String creationDate;
 
-    // Constructor
-    public Notification(String title, String body, long timestamp) {
-        this.title = title;
-        this.body = body;
-        this.timestamp = timestamp;
+    public String getId() {
+        return id;
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -28,12 +24,20 @@ public class Notification {
         this.title = title;
     }
 
-    public String getBody() {
-        return body;
+    public String getMessage() {
+        return message;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
     }
 
 }

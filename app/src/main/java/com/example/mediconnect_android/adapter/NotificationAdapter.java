@@ -1,27 +1,32 @@
 package com.example.mediconnect_android.adapter;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.client.NotificationClient;
+import com.example.mediconnect_android.client.NotificationClientImpl;
 import com.example.mediconnect_android.databinding.NotificationItemBinding;
 import com.example.mediconnect_android.model.Notification;
 import com.example.mediconnect_android.util.DialogUtils;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
     NotificationItemBinding notificationItemBinding;
     private List<Notification> notificationList;
     private Context context;
+    NotificationClient notificationClient;
 
     public NotificationAdapter(List<Notification> notificationList, Context context) {
         this.notificationList = notificationList;
@@ -33,6 +38,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     public NotificationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         notificationItemBinding = NotificationItemBinding.inflate(layoutInflater, parent, false);
+        notificationClient = new NotificationClientImpl();
         listeners();
         return new NotificationAdapter.ViewHolder(notificationItemBinding);
     }
@@ -61,18 +67,16 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             recyclerItemBinding.buttonRead.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    DialogUtils.showMessageDialog(context, notification.getBody());
+                    DialogUtils.showMessageDialog(context, notification.getMessage());
                 }
             });
 
             recyclerItemBinding.buttonClear.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        notificationList.remove(position);
-                        notifyItemRemoved(position);
-                    }
+                    notificationClient.markAsRead(notification.getId());
+                    notificationList.remove(getAdapterPosition());
+                    notifyItemRemoved(getAdapterPosition());
                 }
             });
         }
@@ -81,14 +85,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             this.notification = notification;
             setupMessage(notification);
             recyclerItemBinding.notificationTitle.setText(notification.getTitle());
-            recyclerItemBinding.notificationBody.setText(notification.getBody());
+            recyclerItemBinding.notificationBody.setText(notification.getMessage());
         }
 
         private void setupMessage(Notification notification) {
-            recyclerItemBinding.notificationBody.setText(notification.getBody());
+            recyclerItemBinding.notificationBody.setText(notification.getMessage());
             recyclerItemBinding.notificationBody.post(() -> {
                 if (recyclerItemBinding.notificationBody.getLineCount() > 2) {
-                    String fullText = notification.getBody();
+                    String fullText = notification.getMessage();
 
                     int endOfSecondLine = recyclerItemBinding.notificationBody.getLayout()
                             .getLineEnd(1);
@@ -101,21 +105,38 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 }
             });
 
-            long currentTimeMillis = System.currentTimeMillis();
-            long notificationTimeMillis = notification.getTimestamp();
+            String timeText = createTimeAgo(notification);
 
-            long elapsedTimeMillis = currentTimeMillis - notificationTimeMillis;
-
-            long hoursElapsed = elapsedTimeMillis / (1000 * 60 * 60);
-            long daysElapsed = hoursElapsed / 24;
-
-            String timeText;
-            if (hoursElapsed < 24) {
-                timeText = hoursElapsed + " hours ago";
-            } else {
-                timeText = daysElapsed + " days ago";
-            }
             recyclerItemBinding.notificationTime.setText(timeText);
         }
+    }
+
+    private String createTimeAgo(Notification notification) {
+        LocalDateTime creationDate = LocalDateTime.parse(notification.getCreationDate());
+        LocalDateTime now = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
+        long diffInSeconds = Math.abs(now.toEpochSecond(ZoneOffset.UTC) - creationDate.toEpochSecond(ZoneOffset.UTC));
+        long days = TimeUnit.DAYS.convert(diffInSeconds, TimeUnit.SECONDS);
+        long hours = TimeUnit.HOURS.convert(diffInSeconds, TimeUnit.SECONDS);
+        long minutes = TimeUnit.MINUTES.convert(diffInSeconds, TimeUnit.SECONDS);
+
+        if (days > 0) {
+            if (days == 1) {
+                return "Yesterday";
+            }
+            return days + " days ago";
+        }
+        if (hours > 0) {
+            if (hours == 1) {
+                return "1 hour ago";
+            }
+            return hours + " hours ago";
+        }
+        if (minutes > 0) {
+            if (minutes == 1) {
+                return "1 minute ago";
+            }
+            return minutes + " minutes ago";
+        }
+        return "Just now";
     }
 }

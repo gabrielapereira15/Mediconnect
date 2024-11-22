@@ -86,19 +86,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
             recyclerItemBinding.rescheduleButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    BookAppointmentFragment bookAppointmentFragment = new BookAppointmentFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("doctorId", doctor.getId());
-                    bundle.putString("doctorName", doctor.getName());
-                    bundle.putString("doctorPhoto", doctor.getPhoto());
-                    bundle.putString("doctorSpecialty", doctor.getSpecialty());
-                    bookAppointmentFragment.setArguments(bundle);
-
-                    if (isAppointmentCancelled(appointment)) {
-                        FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, bookAppointmentFragment);
-                    } else {
-                        DialogUtils.showMessageDialog(context, "Appointment not cancelled, please try again later");
-                    }
+                    rescheduleAppointmentDialog(appointment, doctor);
                 }
             });
 
@@ -109,6 +97,35 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
                 }
             });
 
+        }
+
+        private void rescheduleAppointmentDialog(Appointment appointment, Doctor doctor) {
+            new AlertDialog.Builder(context)
+                    .setTitle("Reschedule Appointment")
+                    .setMessage("Are you sure you want to reschedule the appointment? \n\n* This action will cancel the current appointment.")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        if (isAppointmentCancelled(appointment)) {
+                            BookAppointmentFragment bookAppointmentFragment = getBookAppointmentFragment(doctor);
+                            FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, bookAppointmentFragment);
+                        } else {
+                            DialogUtils.showMessageDialog(context, "Appointment not cancelled, please try again later");
+                        }
+                    })
+                    .setNegativeButton("No", (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .show();
+        }
+
+        private static @NonNull BookAppointmentFragment getBookAppointmentFragment(Doctor doctor) {
+            BookAppointmentFragment bookAppointmentFragment = new BookAppointmentFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("doctorId", doctor.getId());
+            bundle.putString("doctorName", doctor.getName());
+            bundle.putString("doctorPhoto", doctor.getPhoto());
+            bundle.putString("doctorSpecialty", doctor.getSpecialty());
+            bookAppointmentFragment.setArguments(bundle);
+            return bookAppointmentFragment;
         }
 
         private void showCancelConfirmationDialog(Appointment appointment) {
