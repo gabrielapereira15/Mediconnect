@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,6 +84,9 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
                     .error(R.drawable.doctorimage)
                     .into(recyclerItemBinding.doctorImage);
 
+            boolean isReminderEnabled = getReminderState(appointment.getId());
+            recyclerItemBinding.switchRemindMe.setChecked(isReminderEnabled);
+
             recyclerItemBinding.rescheduleButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -97,6 +101,22 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
                 }
             });
 
+            recyclerItemBinding.switchRemindMe.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                saveReminderState(appointment.getId(), isChecked);
+            });
+
+        }
+
+        private void saveReminderState(String appointmentId, boolean isReminderEnabled) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("ReminderPrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean(appointmentId, isReminderEnabled);
+            editor.apply();
+        }
+
+        private boolean getReminderState(String appointmentId) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("ReminderPrefs", Context.MODE_PRIVATE);
+            return sharedPreferences.getBoolean(appointmentId, false);
         }
 
         private void rescheduleAppointmentDialog(Appointment appointment, Doctor doctor) {
