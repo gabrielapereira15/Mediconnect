@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.FragmentCheckinFormBinding;
+import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 
 public class CheckinFormFragment extends Fragment implements View.OnClickListener {
@@ -45,6 +46,7 @@ public class CheckinFormFragment extends Fragment implements View.OnClickListene
     private void listeners() {
         binding.confirmButton.setOnClickListener(this);
         binding.cancelButton.setOnClickListener(this);
+        binding.btnSubmit.setOnClickListener(this);
     }
 
     @Override
@@ -60,6 +62,9 @@ public class CheckinFormFragment extends Fragment implements View.OnClickListene
         } else if (view == binding.cancelButton) {
             binding.layoutCheckinForm.setVisibility(View.GONE);
             showCancelConfirmationDialog();
+        } else if (view == binding.btnSubmit) {
+            DialogUtils.showMessageDialog(getContext(), "Form Submitted Successfully");
+            FragmentUtils.loadFragment(getActivity().getSupportFragmentManager(), R.id.flFragment, new HomeFragment());
         }
     }
 

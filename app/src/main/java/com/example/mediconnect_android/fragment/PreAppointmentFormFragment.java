@@ -7,10 +7,13 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.FragmentPreAppointmentFormBinding;
 import com.example.mediconnect_android.databinding.FragmentSettingsBinding;
+import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.FragmentUtils;
 
 public class PreAppointmentFormFragment extends Fragment {
 
@@ -37,6 +40,40 @@ public class PreAppointmentFormFragment extends Fragment {
     }
 
     private void init() {
+        binding.btnSubmit.setOnClickListener(v -> {
+            if (validateForm()) {
+                // Proceed with form submission
+                DialogUtils.showMessageDialog(getContext(), "Form Submitted Successfully");
+                FragmentUtils.loadFragment(getActivity().getSupportFragmentManager(), R.id.flFragment, new HomeFragment());
+            } else {
+                // Show a general error message
+                DialogUtils.showMessageDialog(getContext(), "Please fill in all required fields.");
+            }
+        });
+    }
+
+    private boolean validateForm() {
+        boolean isValid = true;
+
+        // Validate Surgery Question
+        if (binding.radioGroupSurgery.getCheckedRadioButtonId() == -1) {
+            binding.radioGroupSurgery.requestFocus();
+            isValid = false;
+        }
+
+        // Validate Smoke Question
+        if (binding.radioGroupSmoke.getCheckedRadioButtonId() == -1) {
+            binding.radioGroupSmoke.requestFocus();
+            isValid = false;
+        }
+
+        // Validate Alcohol Question
+        if (binding.radioGroupAlcohol.getCheckedRadioButtonId() == -1) {
+            binding.radioGroupAlcohol.requestFocus();
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     @Override

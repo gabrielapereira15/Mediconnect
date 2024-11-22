@@ -28,6 +28,7 @@
                 android:layout_marginTop="16dp" />
 
             <RadioGroup
+                android:id="@+id/radioGroupSurgery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -58,6 +59,7 @@
                 android:layout_marginTop="16dp" />
 
             <RadioGroup
+                android:id="@+id/radioGroupSmoke"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -88,6 +90,7 @@
                 android:layout_marginTop="16dp" />
 
             <RadioGroup
+                android:id="@+id/radioGroupAlcohol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
