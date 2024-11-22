@@ -19,7 +19,6 @@ import com.example.mediconnect_android.util.FragmentUtils;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
-import java.util.Objects;
 
 public class MedicalHistoryFragment extends Fragment {
 

@@ -1,19 +1,17 @@
 package com.example.mediconnect_android.fragment;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.client.ReviewClient;
 import com.example.mediconnect_android.client.ReviewClientImpl;
 import com.example.mediconnect_android.databinding.FragmentAddReviewBinding;
-import com.example.mediconnect_android.model.DoctorDetails;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 

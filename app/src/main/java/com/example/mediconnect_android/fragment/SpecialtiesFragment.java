@@ -1,15 +1,14 @@
 package com.example.mediconnect_android.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.adapter.SpecialtiesAdapter;
@@ -26,9 +25,9 @@ public class SpecialtiesFragment extends Fragment {
 
     private FragmentSpecialtiesBinding binding;
     private SpecialtiesAdapter adapter;
-    private DoctorClient doctorClient; // Class-level field
+    private final DoctorClient doctorClient; // Class-level field
     private List<Doctor> doctorList = new ArrayList<>();
-    private List<Specialty> specialties = new ArrayList<>();
+    private final List<Specialty> specialties = new ArrayList<>();
 
     public SpecialtiesFragment() {
         // Properly initialize the class-level field

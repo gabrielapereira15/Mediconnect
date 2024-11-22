@@ -9,12 +9,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mediconnect_android.adapter.UpcomingAdapter;
-import com.example.mediconnect_android.client.AppointmentClient;
-import com.example.mediconnect_android.client.AppointmentMock;
 import com.example.mediconnect_android.databinding.FragmentUpcomingBinding;
 import com.example.mediconnect_android.model.Appointment;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

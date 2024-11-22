@@ -1,18 +1,15 @@
 package com.example.mediconnect_android.fragment;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+
 import com.example.mediconnect_android.activity.WelcomeActivity;
 import com.example.mediconnect_android.databinding.FragmentLogoutBinding;
-import com.example.mediconnect_android.databinding.FragmentProfileBinding;
 import com.example.mediconnect_android.util.ActivityUtils;
-import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.SessionManager;
 
 public class LogoutFragment extends Fragment {

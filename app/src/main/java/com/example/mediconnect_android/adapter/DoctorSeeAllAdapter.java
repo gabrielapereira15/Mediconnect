@@ -41,7 +41,7 @@ public class DoctorSeeAllAdapter extends RecyclerView.Adapter<DoctorSeeAllAdapte
 
     @Override
     public void onBindViewHolder(@NonNull DoctorSeeAllAdapter.ViewHolder holder, int position) {
-        ((ViewHolder) holder).bindView(doctorList.get(position));
+        holder.bindView(doctorList.get(position));
     }
 
     @Override
@@ -73,7 +73,7 @@ public class DoctorSeeAllAdapter extends RecyclerView.Adapter<DoctorSeeAllAdapte
 
             // Check if the review count is available
             if (doctor.getReviewCount() != null) {
-                recyclerItemBinding.reviewCount.setText("(" + String.valueOf(doctor.getReviewCount() + ")"));
+                recyclerItemBinding.reviewCount.setText("(" + doctor.getReviewCount() + ")");
             } else {
                 recyclerItemBinding.reviewCount.setText("");
             }

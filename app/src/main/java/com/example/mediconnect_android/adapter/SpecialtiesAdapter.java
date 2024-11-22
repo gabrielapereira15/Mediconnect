@@ -2,20 +2,18 @@ package com.example.mediconnect_android.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.SpecialtyItemBinding;
 import com.example.mediconnect_android.fragment.DoctorsFragment;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.model.Specialty;
-import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.ArrayList;
 import java.util.List;

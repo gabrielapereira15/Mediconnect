@@ -16,7 +16,6 @@ import com.example.mediconnect_android.databinding.CancelledItemBinding;
 import com.example.mediconnect_android.fragment.BookAppointmentFragment;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
-import com.example.mediconnect_android.model.Schedule;
 import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.List;
@@ -24,8 +23,8 @@ import java.util.List;
 public class CancelledAdapter extends RecyclerView.Adapter<CancelledAdapter.ViewHolder> {
 
     private final Context context;
-    CancelledItemBinding cancelledItemBinding;
     private final List<Appointment> appointmentList;
+    CancelledItemBinding cancelledItemBinding;
 
     public CancelledAdapter(List<Appointment> appointmentList, Context context) {
         this.appointmentList = appointmentList;

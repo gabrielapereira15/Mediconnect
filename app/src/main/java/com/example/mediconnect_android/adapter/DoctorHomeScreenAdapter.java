@@ -1,7 +1,6 @@
 package com.example.mediconnect_android.adapter;
 
 import android.content.Context;
-import com.bumptech.glide.Glide;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,13 +10,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.DoctorItemBinding;
 import com.example.mediconnect_android.fragment.BookAppointmentFragment;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.util.FragmentUtils;
 
-import java.net.URL;
 import java.util.List;
 
 public class DoctorHomeScreenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

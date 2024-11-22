@@ -11,9 +11,6 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
 
 public class AppointmentClientImpl implements AppointmentClient {
     private final String baseurl = "https://mediconnect-latest.onrender.com";
@@ -28,7 +25,8 @@ public class AppointmentClientImpl implements AppointmentClient {
         String url = baseurl + "/api/mobile/appointments/" + email;
         ApiGenericResponse response = OkHttpClientHelper.get(url);
         if (response.isSuccess()) {
-            Type appointmentListType = new TypeToken<List<Appointment>>() {}.getType();
+            Type appointmentListType = new TypeToken<List<Appointment>>() {
+            }.getType();
             Gson gson = new Gson();
             return gson.fromJson(response.getResponseBody(), appointmentListType);
         } else {

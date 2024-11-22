@@ -1,4 +1,5 @@
 package com.example.mediconnect_android.model;
+
 public class Doctor {
 
     private String id;

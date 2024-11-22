@@ -23,9 +23,9 @@ import java.util.concurrent.TimeUnit;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
     NotificationItemBinding notificationItemBinding;
-    private List<Notification> notificationList;
-    private Context context;
     NotificationClient notificationClient;
+    private final List<Notification> notificationList;
+    private final Context context;
 
     public NotificationAdapter(List<Notification> notificationList, Context context) {
         this.notificationList = notificationList;
@@ -53,6 +53,35 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public int getItemCount() {
         return notificationList.size();
+    }
+
+    private String createTimeAgo(Notification notification) {
+        LocalDateTime creationDate = LocalDateTime.parse(notification.getCreationDate());
+        LocalDateTime now = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
+        long diffInSeconds = Math.abs(now.toEpochSecond(ZoneOffset.UTC) - creationDate.toEpochSecond(ZoneOffset.UTC));
+        long days = TimeUnit.DAYS.convert(diffInSeconds, TimeUnit.SECONDS);
+        long hours = TimeUnit.HOURS.convert(diffInSeconds, TimeUnit.SECONDS);
+        long minutes = TimeUnit.MINUTES.convert(diffInSeconds, TimeUnit.SECONDS);
+
+        if (days > 0) {
+            if (days == 1) {
+                return "Yesterday";
+            }
+            return days + " days ago";
+        }
+        if (hours > 0) {
+            if (hours == 1) {
+                return "1 hour ago";
+            }
+            return hours + " hours ago";
+        }
+        if (minutes > 0) {
+            if (minutes == 1) {
+                return "1 minute ago";
+            }
+            return minutes + " minutes ago";
+        }
+        return "Just now";
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -111,34 +140,5 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
             recyclerItemBinding.notificationTime.setText(timeText);
         }
-    }
-
-    private String createTimeAgo(Notification notification) {
-        LocalDateTime creationDate = LocalDateTime.parse(notification.getCreationDate());
-        LocalDateTime now = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
-        long diffInSeconds = Math.abs(now.toEpochSecond(ZoneOffset.UTC) - creationDate.toEpochSecond(ZoneOffset.UTC));
-        long days = TimeUnit.DAYS.convert(diffInSeconds, TimeUnit.SECONDS);
-        long hours = TimeUnit.HOURS.convert(diffInSeconds, TimeUnit.SECONDS);
-        long minutes = TimeUnit.MINUTES.convert(diffInSeconds, TimeUnit.SECONDS);
-
-        if (days > 0) {
-            if (days == 1) {
-                return "Yesterday";
-            }
-            return days + " days ago";
-        }
-        if (hours > 0) {
-            if (hours == 1) {
-                return "1 hour ago";
-            }
-            return hours + " hours ago";
-        }
-        if (minutes > 0) {
-            if (minutes == 1) {
-                return "1 minute ago";
-            }
-            return minutes + " minutes ago";
-        }
-        return "Just now";
     }
 }

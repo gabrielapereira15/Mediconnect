@@ -1,7 +1,5 @@
 package com.example.mediconnect_android.model;
 
-import java.util.List;
-
 public class Schedule {
     private int scheduleId;
     private Doctor doctor;

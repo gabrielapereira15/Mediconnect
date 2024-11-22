@@ -2,7 +2,6 @@ package com.example.mediconnect_android.client;
 
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
-import com.example.mediconnect_android.model.Schedule;
 
 import java.util.List;
 

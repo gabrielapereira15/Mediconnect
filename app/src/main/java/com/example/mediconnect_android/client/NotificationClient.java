@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface NotificationClient {
     List<Notification> getNotifications(String email);
+
     Boolean markAsRead(String notificationId);
 }

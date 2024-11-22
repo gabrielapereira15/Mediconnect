@@ -1,7 +1,5 @@
 package com.example.mediconnect_android.model;
 
-import java.util.List;
-
 public class Appointment {
     private String id;
     private int patientId;
@@ -21,7 +19,7 @@ public class Appointment {
     public void setReviewed(Boolean reviewed) {
         reviewed = reviewed;
     }
-    
+
     public String getDate() {
         return date;
     }
@@ -49,16 +47,17 @@ public class Appointment {
     public int getPatientId() {
         return patientId;
     }
+
+    public void setPatientId(int patientId) {
+        this.patientId = patientId;
+    }
+
     public Doctor getDoctor() {
         return doctor;
     }
 
     public void setDoctor(Doctor doctor) {
         this.doctor = doctor;
-    }
-
-    public void setPatientId(int patientId) {
-        this.patientId = patientId;
     }
 
     public Schedule getschedule() {

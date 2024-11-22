@@ -21,8 +21,6 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.adapter.CarouselAdapter;
 import com.example.mediconnect_android.adapter.DoctorHomeScreenAdapter;
-import com.example.mediconnect_android.client.AppointmentClient;
-import com.example.mediconnect_android.client.AppointmentMock;
 import com.example.mediconnect_android.client.DoctorClient;
 import com.example.mediconnect_android.client.DoctorClientImpl;
 import com.example.mediconnect_android.databinding.FragmentHomeBinding;

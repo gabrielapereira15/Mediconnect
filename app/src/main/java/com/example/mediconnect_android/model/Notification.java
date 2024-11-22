@@ -1,7 +1,5 @@
 package com.example.mediconnect_android.model;
 
-import java.time.LocalDateTime;
-
 public class Notification {
     private String id;
     private String title;

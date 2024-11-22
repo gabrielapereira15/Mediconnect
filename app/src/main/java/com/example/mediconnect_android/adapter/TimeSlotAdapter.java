@@ -20,10 +20,10 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.Timesl
     private final List<String> dateList;
     private final List<List<TimSlotRecord>> timeSlotsList;
     private final Context context;
-    private View lastSelectedView = null;
     public String selectedDate = null;
     public String selectedTimeSlotTime = null;
     public String selectedTimeSlotId = null;
+    private View lastSelectedView = null;
 
     public TimeSlotAdapter(Context context, List<String> dateList, List<List<TimSlotRecord>> timeSlotsList) {
         this.context = context;

@@ -1,13 +1,12 @@
 package com.example.mediconnect_android.fragment;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mediconnect_android.adapter.FormAdapter;
 import com.example.mediconnect_android.databinding.FragmentFormBinding;

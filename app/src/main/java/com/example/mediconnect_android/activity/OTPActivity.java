@@ -1,22 +1,20 @@
 package com.example.mediconnect_android.activity;
 
-import static com.example.mediconnect_android.util.FragmentUtils.loadFragment;
-
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.client.OTPClient;
 import com.example.mediconnect_android.client.OTPClientImpl;
 import com.example.mediconnect_android.client.PatientClient;
 import com.example.mediconnect_android.client.PatientClientImpl;
 import com.example.mediconnect_android.databinding.ActivityOtpactivityBinding;
-import com.example.mediconnect_android.fragment.EditProfileFragment;
 import com.example.mediconnect_android.util.ActivityUtils;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.SessionManager;
@@ -83,7 +81,7 @@ public class OTPActivity extends AppCompatActivity {
     }
 
     private void saveToSharedPreferences(String email) {
-        SharedPreferences sharedPreferences = this.getSharedPreferences("UserProfile", this.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = this.getSharedPreferences("UserProfile", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("email", email);
         editor.apply();
@@ -92,11 +90,7 @@ public class OTPActivity extends AppCompatActivity {
     private boolean isRegisteredPatient() {
         PatientClient patientClient = new PatientClientImpl();
         String patientEmail = email;
-        if (patientClient.getPatient(patientEmail) != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return patientClient.getPatient(patientEmail) != null;
     }
 
 

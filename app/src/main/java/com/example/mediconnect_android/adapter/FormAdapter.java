@@ -14,7 +14,6 @@ import com.example.mediconnect_android.databinding.FormItemBinding;
 import com.example.mediconnect_android.fragment.CheckinFormFragment;
 import com.example.mediconnect_android.fragment.PreAppointmentFormFragment;
 import com.example.mediconnect_android.model.FormItem;
-import com.example.mediconnect_android.model.PreAppointmentForm;
 import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.List;
@@ -42,7 +41,7 @@ public class FormAdapter extends RecyclerView.Adapter<FormAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ((ViewHolder) holder).bindView(forms.get(position));
+        holder.bindView(forms.get(position));
     }
 
     @Override

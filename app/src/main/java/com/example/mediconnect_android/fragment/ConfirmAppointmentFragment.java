@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -22,9 +21,6 @@ import com.example.mediconnect_android.util.FragmentUtils;
 
 public class ConfirmAppointmentFragment extends Fragment {
 
-    FragmentConfirmAppointmentBinding binding;
-    private String selectedTimeSlotId;
-    AppointmentClient appointmentClient;
     private static final String ARG_NAME = "name";
     private static final String ARG_DOB = "dob";
     private static final String ARG_PHONE = "phone";
@@ -34,6 +30,9 @@ public class ConfirmAppointmentFragment extends Fragment {
     private static final String ARG_SELECTED_TIME_SLOT = "selectedTimeSlotTime";
     private static final String ARG_SELECTED_TIME_SLOT_ID = "selectedTimeSlotId";
     private static final String ARG_SELECTED_DATE = "selectedDate";
+    FragmentConfirmAppointmentBinding binding;
+    AppointmentClient appointmentClient;
+    private String selectedTimeSlotId;
 
     public ConfirmAppointmentFragment() {
         appointmentClient = new AppointmentClientImpl();
@@ -123,10 +122,7 @@ public class ConfirmAppointmentFragment extends Fragment {
                 selectedTimeSlotId
         );
 
-        if (!appointmentClient.createAppointment(jsonString)) {
-            return false;
-        }
-        return true;
+        return appointmentClient.createAppointment(jsonString);
     }
 
     private void showConfirmationMessage() {

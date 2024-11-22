@@ -1,10 +1,8 @@
 package com.example.mediconnect_android.client;
 
-import com.example.mediconnect_android.client.response.AppointmentsResponse;
 import com.example.mediconnect_android.client.response.DoctorsResponse;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
-import com.example.mediconnect_android.model.Schedule;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

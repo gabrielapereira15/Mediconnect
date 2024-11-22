@@ -43,10 +43,6 @@ public class PatientClientImpl implements PatientClient {
     public Boolean createPatient(String patient) {
         String url = baseurl + "/api/mobile/patients";
         ApiGenericResponse response = OkHttpClientHelper.post(url, patient);
-        if (response.isSuccess()) {
-            return true;
-        } else {
-            return false;
-        }
+        return response.isSuccess();
     }
 }

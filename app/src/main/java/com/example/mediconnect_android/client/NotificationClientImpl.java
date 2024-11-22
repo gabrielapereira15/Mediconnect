@@ -26,7 +26,8 @@ public class NotificationClientImpl implements NotificationClient {
         ApiGenericResponse response = OkHttpClientHelper.get(url);
         if (response.isSuccess()) {
             // Use Gson to deserialize the response body
-            Type notificationListType = new TypeToken<List<Notification>>() {}.getType();
+            Type notificationListType = new TypeToken<List<Notification>>() {
+            }.getType();
             Gson gson = new Gson();
             return gson.fromJson(response.getResponseBody(), notificationListType);
         } else {

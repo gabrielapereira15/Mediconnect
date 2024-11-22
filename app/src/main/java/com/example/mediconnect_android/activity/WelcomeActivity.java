@@ -5,15 +5,12 @@ import android.os.Bundle;
 import android.util.Patterns;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mediconnect_android.client.OTPClient;
 import com.example.mediconnect_android.client.OTPClientImpl;
 import com.example.mediconnect_android.databinding.ActivityWelcomeBinding;
-import com.example.mediconnect_android.util.ActivityUtils;
 import com.example.mediconnect_android.util.DialogUtils;
 
 public class WelcomeActivity extends AppCompatActivity {

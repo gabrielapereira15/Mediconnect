@@ -1,13 +1,12 @@
 package com.example.mediconnect_android.fragment;
 
 import android.os.Bundle;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.FragmentCheckinFormBinding;

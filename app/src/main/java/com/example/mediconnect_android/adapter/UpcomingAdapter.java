@@ -1,9 +1,6 @@
 package com.example.mediconnect_android.adapter;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,22 +18,19 @@ import com.example.mediconnect_android.client.AppointmentClient;
 import com.example.mediconnect_android.client.AppointmentClientImpl;
 import com.example.mediconnect_android.databinding.UpcomingItemBinding;
 import com.example.mediconnect_android.fragment.BookAppointmentFragment;
-import com.example.mediconnect_android.fragment.CancelledFragment;
 import com.example.mediconnect_android.fragment.MedicalHistoryFragment;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
-import com.example.mediconnect_android.model.Schedule;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHolder> {
 
     private final Context context;
-    UpcomingItemBinding upcomingItemBindingbinding;
     private final List<Appointment> appointmentList;
+    UpcomingItemBinding upcomingItemBindingbinding;
     AppointmentClient appointmentClient;
 
     public UpcomingAdapter(List<Appointment> appointmentList, Context context) {
@@ -70,6 +64,17 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
         public ViewHolder(UpcomingItemBinding recyclerItemBinding) {
             super(recyclerItemBinding.getRoot());
             this.recyclerItemBinding = recyclerItemBinding;
+        }
+
+        private static @NonNull BookAppointmentFragment getBookAppointmentFragment(Doctor doctor) {
+            BookAppointmentFragment bookAppointmentFragment = new BookAppointmentFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("doctorId", doctor.getId());
+            bundle.putString("doctorName", doctor.getName());
+            bundle.putString("doctorPhoto", doctor.getPhoto());
+            bundle.putString("doctorSpecialty", doctor.getSpecialty());
+            bookAppointmentFragment.setArguments(bundle);
+            return bookAppointmentFragment;
         }
 
         public void bindView(Appointment appointment) {
@@ -135,17 +140,6 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
                         dialog.dismiss();
                     })
                     .show();
-        }
-
-        private static @NonNull BookAppointmentFragment getBookAppointmentFragment(Doctor doctor) {
-            BookAppointmentFragment bookAppointmentFragment = new BookAppointmentFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("doctorId", doctor.getId());
-            bundle.putString("doctorName", doctor.getName());
-            bundle.putString("doctorPhoto", doctor.getPhoto());
-            bundle.putString("doctorSpecialty", doctor.getSpecialty());
-            bookAppointmentFragment.setArguments(bundle);
-            return bookAppointmentFragment;
         }
 
         private void showCancelConfirmationDialog(Appointment appointment) {

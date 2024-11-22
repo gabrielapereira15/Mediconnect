@@ -21,7 +21,6 @@ import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.Calendar;
-import java.util.Objects;
 
 public class BookAppointmentPatientDetailsFragment extends Fragment {
 
@@ -88,7 +87,7 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
                 String phoneNumber = binding.tvPatientPhone.getText().toString();
                 String noteForDoctor = binding.etSelfNote.getText().toString();
 
-                if(isInfoPatientValid()) {
+                if (isInfoPatientValid()) {
                     DialogUtils.showMessageDialog(getContext(), "Please fill in all the required fields");
                     return;
                 }

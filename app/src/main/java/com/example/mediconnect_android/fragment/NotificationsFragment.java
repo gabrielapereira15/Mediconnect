@@ -3,26 +3,21 @@ package com.example.mediconnect_android.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.mediconnect_android.activity.MainActivity;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.example.mediconnect_android.adapter.NotificationAdapter;
 import com.example.mediconnect_android.client.NotificationClient;
 import com.example.mediconnect_android.client.NotificationClientImpl;
 import com.example.mediconnect_android.databinding.FragmentNotificationsBinding;
-
 import com.example.mediconnect_android.model.Notification;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class NotificationsFragment extends Fragment {
 
@@ -80,14 +75,13 @@ public class NotificationsFragment extends Fragment {
         binding.recyclerView.setAdapter(adapter);
     }
 
-
-    public interface NotificationBadgeHandler {
-        void updateNotificationBadgeVisibility(boolean visible);
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    public interface NotificationBadgeHandler {
+        void updateNotificationBadgeVisibility(boolean visible);
     }
 }

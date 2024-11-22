@@ -1,8 +1,8 @@
 package com.example.mediconnect_android.model;
 
 public class Specialty {
-    private String name;
-    private int imageResId;
+    private final String name;
+    private final int imageResId;
 
     public Specialty(String name, int imageResId) {
         this.name = name;

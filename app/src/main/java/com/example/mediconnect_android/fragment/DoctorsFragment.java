@@ -1,23 +1,16 @@
 package com.example.mediconnect_android.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.adapter.DoctorSeeAllAdapter;
-import com.example.mediconnect_android.client.AppointmentClient;
-import com.example.mediconnect_android.client.AppointmentMock;
-import com.example.mediconnect_android.client.DoctorClient;
-import com.example.mediconnect_android.client.DoctorClientImpl;
 import com.example.mediconnect_android.databinding.FragmentDoctorsBinding;
-import com.example.mediconnect_android.databinding.FragmentSpecialtiesBinding;
 import com.example.mediconnect_android.model.Doctor;
 
 import java.util.ArrayList;

@@ -17,7 +17,6 @@ import com.example.mediconnect_android.fragment.AddReviewFragment;
 import com.example.mediconnect_android.fragment.BookAppointmentFragment;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
-import com.example.mediconnect_android.model.Schedule;
 import com.example.mediconnect_android.util.FragmentUtils;
 
 import java.util.List;
@@ -25,8 +24,8 @@ import java.util.List;
 public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.ViewHolder> {
 
     private final Context context;
-    CompletedItemBinding completedItemBinding;
     private final List<Appointment> appointmentList;
+    CompletedItemBinding completedItemBinding;
 
     public CompletedAdapter(List<Appointment> appointmentList, Context context) {
         this.appointmentList = appointmentList;

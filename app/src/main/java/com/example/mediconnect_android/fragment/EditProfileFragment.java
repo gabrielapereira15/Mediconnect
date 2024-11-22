@@ -37,20 +37,18 @@ import com.example.mediconnect_android.databinding.FragmentEditProfileBinding;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.SessionManager;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Calendar;
-import java.util.Objects;
 
 public class EditProfileFragment extends Fragment {
 
     FragmentEditProfileBinding binding;
-    private ActivityResultLauncher<Intent> imagePickerLauncher;
-    private ActivityResultLauncher<Intent> filePickerLauncher;
     PatientClient patientClient;
     String email;
+    private ActivityResultLauncher<Intent> imagePickerLauncher;
+    private ActivityResultLauncher<Intent> filePickerLauncher;
 
     public EditProfileFragment() {
         patientClient = new PatientClientImpl();
@@ -60,7 +58,6 @@ public class EditProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Registrar os Launchers de atividade
         imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
@@ -211,7 +208,7 @@ public class EditProfileFragment extends Fragment {
         String gender = "";
         if (selectedId != -1) {
             RadioButton selectedRadioButton = binding.getRoot().findViewById(selectedId);
-            gender = selectedRadioButton.getText().toString();;
+            gender = selectedRadioButton.getText().toString();
         }
 
         String jsonString = String.format(
@@ -235,7 +232,7 @@ public class EditProfileFragment extends Fragment {
                 address
         );
 
-        if (!isPatientcreated(jsonString)){
+        if (!isPatientcreated(jsonString)) {
             DialogUtils.showMessageDialog(getContext(), "Error! Patient not created. Please, try again later.");
             return;
         }
@@ -264,7 +261,8 @@ public class EditProfileFragment extends Fragment {
     }
 
     private void saveToSharedPreferences(String name, String lastName, String email, String phoneNumber, String clinicCode, String address, String dob, String gender) {
-        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserProfile", getContext().MODE_PRIVATE);
+        getContext();
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString("first_name", name);

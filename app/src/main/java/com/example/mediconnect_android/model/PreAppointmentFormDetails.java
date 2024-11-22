@@ -6,4 +6,5 @@ record PreAppointmentFormDetails(Boolean hasSurgery,
                                  Boolean smoke,
                                  Boolean alcohol,
                                  List<String> chronicConditions,
-                                 List<String> familyHistory) {}
+                                 List<String> familyHistory) {
+}

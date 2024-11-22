@@ -10,12 +10,10 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.OptIn;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -36,9 +34,6 @@ import com.example.mediconnect_android.fragment.SettingsFragment;
 import com.example.mediconnect_android.model.Notification;
 import com.example.mediconnect_android.util.BottomNavigationManager;
 import com.example.mediconnect_android.util.DialogUtils;
-import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.badge.BadgeUtils;
-import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
@@ -46,10 +41,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements NotificationsFragment.NotificationBadgeHandler {
 
     ActivityMainBinding mainBinding;
-    private BottomNavigationManager bottomNavigationManager;
     ActionBarDrawerToggle mToggle;
     NotificationClient notificationClient;
     SharedPreferences sharedPreferences;
+    private BottomNavigationManager bottomNavigationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,22 +167,18 @@ public class MainActivity extends AppCompatActivity implements NotificationsFrag
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment frag = null;
                 int itemId = item.getItemId();
-                if(itemId==R.id.nav_profile_menu){
+                if (itemId == R.id.nav_profile_menu) {
                     frag = new ProfileFragment();
-                    }
-                else if(itemId==R.id.nav_forms_menu){
+                } else if (itemId == R.id.nav_forms_menu) {
                     frag = new FormFragment();
-                }
-                else if(itemId==R.id.nav_settings_menu){
+                } else if (itemId == R.id.nav_settings_menu) {
                     frag = new SettingsFragment();
-                }
-                else if(itemId==R.id.nav_logout_menu){
+                } else if (itemId == R.id.nav_logout_menu) {
                     frag = new LogoutFragment();
-                }
-                else{
+                } else {
                     frag = new HomeFragment();
                 }
-                if(frag!=null){
+                if (frag != null) {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.flFragment, frag);
                     ft.commit();
@@ -221,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements NotificationsFrag
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(mToggle.onOptionsItemSelected(item)) {
+        if (mToggle.onOptionsItemSelected(item)) {
             return true;
         }
         return super.onOptionsItemSelected(item);
