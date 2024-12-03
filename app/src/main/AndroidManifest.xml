@@ -28,7 +28,6 @@
         <activity
             android:name=".activity.WelcomeActivity"
             android:exported="false"/>
-
         <activity
             android:name=".activity.SplashActivity"
             android:exported="true">
