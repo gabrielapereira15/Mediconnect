@@ -15,6 +15,7 @@ import com.example.mediconnect_android.client.OTPClientImpl;
 import com.example.mediconnect_android.client.PatientClient;
 import com.example.mediconnect_android.client.PatientClientImpl;
 import com.example.mediconnect_android.databinding.ActivityOtpactivityBinding;
+import com.example.mediconnect_android.model.Patient;
 import com.example.mediconnect_android.util.ActivityUtils;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.SessionManager;
@@ -87,10 +88,31 @@ public class OTPActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    private void saveCompletedataToSharedPreferences(String name, String lastName, String email, String phoneNumber, String clinicCode, String address, String dob, String gender) {
+        SharedPreferences sharedPreferences = this.getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString("first_name", name);
+        editor.putString("last_name", lastName);
+        editor.putString("email", email);
+        editor.putString("phone_number", phoneNumber);
+        editor.putString("clinic_code", clinicCode);
+        editor.putString("address", address);
+        editor.putString("dob", dob);
+        editor.putString("gender", gender);
+
+        editor.apply();
+    }
+
     private boolean isRegisteredPatient() {
         PatientClient patientClient = new PatientClientImpl();
         String patientEmail = email;
-        return patientClient.getPatient(patientEmail) != null;
+        Patient patient = patientClient.getPatient(patientEmail);
+        if (patient == null) {
+            return false;
+        }
+        saveCompletedataToSharedPreferences(patient.getfirstName(), patient.getlastName(), patientEmail, patient.getphoneNumber(), patient.getclinicCode(), patient.getaddress(), patient.getbirthdate(), patient.getgender());
+        return true;
     }
 
 

@@ -1,87 +1,87 @@
 package com.example.mediconnect_android.model;
 
 public class Patient {
-    int patientId;
-    String FirstName;
-    String LastName;
-    String Email;
-    String PhoneNumber;
-    String ClinicCode;
-    String Address;
-    String DOB;
-    String Gender;
+    String id;
+    String firstName;
+    String lastName;
+    String email;
+    String phoneNumber;
+    String clinicCode;
+    String address;
+    String birthdate;
+    String gender;
     String document;
 
-    public int getPatientId() {
-        return patientId;
+    public String getid() {
+        return id;
     }
 
-    public void setPatientId(int patientId) {
-        this.patientId = patientId;
+    public void setid(String id) {
+        this.id = id;
     }
 
-    public String getFirstName() {
-        return FirstName;
+    public String getfirstName() {
+        return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        FirstName = firstName;
+    public void setfirstName(String firstName) {
+        firstName = firstName;
     }
 
-    public String getLastName() {
-        return LastName;
+    public String getlastName() {
+        return lastName;
     }
 
-    public void setLastName(String lastName) {
-        LastName = lastName;
+    public void setlastName(String lastName) {
+        lastName = lastName;
     }
 
-    public String getEmail() {
-        return Email;
+    public String getemail() {
+        return email;
     }
 
-    public void setEmail(String email) {
-        Email = email;
+    public void setemail(String email) {
+        email = email;
     }
 
-    public String getPhoneNumber() {
-        return PhoneNumber;
+    public String getphoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        PhoneNumber = phoneNumber;
+    public void setphoneNumber(String phoneNumber) {
+        phoneNumber = phoneNumber;
     }
 
-    public String getClinicCode() {
-        return ClinicCode;
+    public String getclinicCode() {
+        return clinicCode;
     }
 
-    public void setClinicCode(String clinicCode) {
-        ClinicCode = clinicCode;
+    public void setclinicCode(String clinicCode) {
+        clinicCode = clinicCode;
     }
 
-    public String getAddress() {
-        return Address;
+    public String getaddress() {
+        return address;
     }
 
-    public void setAddress(String address) {
-        Address = address;
+    public void setaddress(String address) {
+        address = address;
     }
 
-    public String getDOB() {
-        return DOB;
+    public String getbirthdate() {
+        return birthdate;
     }
 
-    public void setDOB(String DOB) {
-        this.DOB = DOB;
+    public void setbirthdate(String birthdate) {
+        this.birthdate = birthdate;
     }
 
-    public String getGender() {
-        return Gender;
+    public String getgender() {
+        return gender;
     }
 
-    public void setGender(String gender) {
-        Gender = gender;
+    public void setgender(String gender) {
+        gender = gender;
     }
 
     public String getDocument() {
