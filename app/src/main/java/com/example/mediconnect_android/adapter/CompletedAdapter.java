@@ -57,28 +57,14 @@ public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.View
         public ViewHolder(CompletedItemBinding recyclerItemBinding) {
             super(recyclerItemBinding.getRoot());
             this.recyclerItemBinding = recyclerItemBinding;
-        }
 
-        public void bindView(Appointment appointment) {
-            Doctor doctor = appointment.getDoctor();
+            // Rebook button click listener
+            recyclerItemBinding.rebookButton.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    Appointment appointment = appointmentList.get(position);
+                    Doctor doctor = appointment.getDoctor();
 
-            recyclerItemBinding.appointmentDate.setText(appointment.toString());
-            recyclerItemBinding.doctorName.setText(doctor.getName());
-            recyclerItemBinding.doctorSpeacialty.setText(doctor.getSpecialty());
-
-            if (appointment.getReviewed()) {
-                recyclerItemBinding.addReviewButton.setVisibility(View.GONE);
-            }
-
-            Glide.with(context)
-                    .load(doctor.getPhoto())
-                    .placeholder(R.drawable.doctorimage)
-                    .error(R.drawable.doctorimage)
-                    .into(recyclerItemBinding.doctorImage);
-
-            recyclerItemBinding.rebookButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
                     BookAppointmentFragment bookAppointmentFragment = new BookAppointmentFragment();
                     Bundle bundle = new Bundle();
                     bundle.putString("doctorId", doctor.getId());
@@ -90,17 +76,44 @@ public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.View
                 }
             });
 
-            completedItemBinding.addReviewButton.setOnClickListener(v -> {
-                AddReviewFragment addReviewFragment = new AddReviewFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("doctorId", doctor.getId());
-                bundle.putString("doctorName", doctor.getName());
-                bundle.putString("doctorPhoto", doctor.getPhoto());
-                bundle.putString("doctorSpecialty", doctor.getSpecialty());
-                bundle.putString("appointmentId", appointment.getId());
-                addReviewFragment.setArguments(bundle);
-                FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, addReviewFragment);
+            // Add Review button click listener
+            recyclerItemBinding.addReviewButton.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    Appointment appointment = appointmentList.get(position);
+                    Doctor doctor = appointment.getDoctor();
+
+                    AddReviewFragment addReviewFragment = new AddReviewFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("doctorId", doctor.getId());
+                    bundle.putString("doctorName", doctor.getName());
+                    bundle.putString("doctorPhoto", doctor.getPhoto());
+                    bundle.putString("doctorSpecialty", doctor.getSpecialty());
+                    bundle.putString("appointmentId", appointment.getId());
+                    addReviewFragment.setArguments(bundle);
+                    FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, addReviewFragment);
+                }
             });
+        }
+
+        public void bindView(Appointment appointment) {
+            Doctor doctor = appointment.getDoctor();
+
+            recyclerItemBinding.appointmentDate.setText(appointment.toString());
+            recyclerItemBinding.doctorName.setText(doctor.getName());
+            recyclerItemBinding.doctorSpeacialty.setText(doctor.getSpecialty());
+
+            if (appointment.getReviewed()) {
+                recyclerItemBinding.addReviewButton.setVisibility(View.GONE);
+            } else {
+                recyclerItemBinding.addReviewButton.setVisibility(View.VISIBLE);
+            }
+
+            Glide.with(context)
+                    .load(doctor.getPhoto())
+                    .placeholder(R.drawable.doctorimage)
+                    .error(R.drawable.doctorimage)
+                    .into(recyclerItemBinding.doctorImage);
         }
     }
 }
