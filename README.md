@@ -64,9 +64,6 @@ MediConnect aims to:
 ![Appointment Completed List](assets/CompletedList.png)
 ![Appointment Cancelled List](assets/CancelledList.png)
 
-![Profile](assets/Profile.png)
-![Profile Form](assets/ProfileForm.png)
-
 ![Drawer](assets/Drawer.png)
 ![Form List](assets/FormsList.png)
 ![Check In Form](assets/CheckInForm.png)
