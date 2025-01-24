@@ -75,8 +75,6 @@ MediConnect aims to:
 ![Notification List](assets/NotificationList.png)
 ![Notification](assets/Notification.png)
 
-![Navigation Diagram](assets/NavigationDiagram.png)
-
 ---
 
 ## Future Enhancements
