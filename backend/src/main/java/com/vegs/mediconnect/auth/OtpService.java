@@ -33,7 +33,8 @@ public class OtpService {
 
     private record Otp(String code, Instant expiresAt, int attempts) {
         boolean isExpired() {
-            return Instant.now().isAfter(expiresAt);
+            // Not isAfter: a code whose expiry is exactly now is already spent.
+            return !Instant.now().isBefore(expiresAt);
         }
     }
 

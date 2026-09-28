@@ -78,7 +78,7 @@
                         android:clickable="true"
                         android:contentDescription="@string/ophthalmologists"
                         android:focusable="true"
-                        android:src="@drawable/ophthalmologists" android:tint="@color/md_on_primary_container" />
+                        android:src="@drawable/ophthalmologists" app:tint="@color/md_on_primary_container" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -116,7 +116,7 @@
                         android:clickable="true"
                         android:contentDescription="@string/cardiologist"
                         android:focusable="true"
-                        android:src="@drawable/cardiologist" android:tint="@color/md_on_primary_container" />
+                        android:src="@drawable/cardiologist" app:tint="@color/md_on_primary_container" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -153,7 +153,7 @@
                         android:clickable="true"
                         android:contentDescription="@string/gynecologist"
                         android:focusable="true"
-                        android:src="@drawable/gynecologist" android:tint="@color/md_on_primary_container" />
+                        android:src="@drawable/gynecologist" app:tint="@color/md_on_primary_container" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -192,7 +192,7 @@
                         android:clickable="true"
                         android:contentDescription="@string/pediatrician"
                         android:focusable="true"
-                        android:src="@drawable/baseline_child_care_24" android:tint="@color/md_on_primary_container" />
+                        android:src="@drawable/baseline_child_care_24" app:tint="@color/md_on_primary_container" />
 
                     <TextView
                         android:layout_width="match_parent"

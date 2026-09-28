@@ -42,12 +42,6 @@
             android:name=".activity.MainActivity"
             android:windowSoftInputMode="adjustPan"
             android:exported="false" />
-        <activity
-            android:name=".fragment.HomeFragment"
-            android:exported="false" />
-        <activity
-            android:name=".fragment.BookAppointmentFragment"
-            android:exported="false" />
 
         <receiver android:name=".util.Notification" />
     </application>
