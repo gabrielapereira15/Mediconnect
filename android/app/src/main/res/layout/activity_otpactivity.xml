@@ -135,7 +135,7 @@
         android:backgroundTint="@color/green"
         android:padding="16dp"
         android:text="@string/verify_otp"
-        android:textColor="@color/dark_gray"
+        android:textColor="@color/md_on_primary"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

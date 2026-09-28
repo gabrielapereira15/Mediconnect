@@ -110,7 +110,7 @@
                 android:backgroundTint="@color/green"
                 android:ems="8"
                 android:text="@string/reschedule"
-                android:textColor="@color/dark_gray" />
+                android:textColor="@color/md_on_primary" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

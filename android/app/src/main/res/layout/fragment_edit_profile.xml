@@ -171,7 +171,7 @@
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/green"
                 android:text="@string/upload_id"
-                android:textColor="@color/dark_gray" />
+                android:textColor="@color/md_on_primary" />
 
             <TextView
                 android:id="@+id/tvFileName"
@@ -189,7 +189,7 @@
                 android:layout_marginTop="24dp"
                 android:backgroundTint="@color/green"
                 android:text="@string/submit"
-                android:textColor="@color/dark_gray" />
+                android:textColor="@color/md_on_primary" />
         </LinearLayout>
 
     </ScrollView>

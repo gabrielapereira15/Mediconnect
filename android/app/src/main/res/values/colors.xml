@@ -1,16 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Light colour scheme.
+
+    Colours are named by role, not by appearance. The old palette used names
+    like `green`, `light_blue` and `yellow`, which said what a colour looked
+    like but not what it was for — so there was no way to give them sensible
+    dark-mode values. values-night/colors.xml redefines every name here.
+
+    The legacy names are kept at the bottom as aliases, so the 37 existing
+    layouts keep working and pick up both themes without being edited.
+-->
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="green">#9abb80</color>
-    <color name="red">#FF0000</color>
-    <color name="light_blue">#1E88E5</color>
-    <color name="dark_gray">#333333</color>
-    <color name="light_gray">#E0E0E0</color>
-    <color name="gray">#777777</color>
-    <color name="gray_background">#F5F5F5</color>
-    <color name="transparent">#FFFFFF</color>
-    <color name="nav_item_selected">#1E88E5</color>
-    <color name="nav_item_unselected">#777777</color>
-    <color name="yellow">#FFD700</color>
+
+    <!-- ==== Brand ========================================================= -->
+    <!-- A calm clinical green: the app's existing sage, given a full range. -->
+    <color name="md_primary">#2E6B52</color>
+    <color name="md_on_primary">#FFFFFF</color>
+    <color name="md_primary_container">#B2F1D0</color>
+    <color name="md_on_primary_container">#00210F</color>
+
+    <!-- Used for links, the selected nav item, and informational accents. -->
+    <color name="md_secondary">#1B6AA5</color>
+    <color name="md_on_secondary">#FFFFFF</color>
+    <color name="md_secondary_container">#D2E8FF</color>
+    <color name="md_on_secondary_container">#001D33</color>
+
+    <!-- ==== Surfaces ====================================================== -->
+    <color name="md_background">#F3F6F2</color>
+    <color name="md_on_background">#191C1A</color>
+    <color name="md_surface">#FBFDF9</color>
+    <!-- Cards, inputs and anything raised off the background. -->
+    <color name="md_surface_container">#FFFFFF</color>
+    <color name="md_on_surface">#191C1A</color>
+    <!-- Secondary text, captions, unselected icons. -->
+    <color name="md_on_surface_variant">#5A5F5B</color>
+    <color name="md_outline">#DCE5DE</color>
+    <color name="md_outline_variant">#EDF1EC</color>
+
+    <!-- ==== Status ======================================================== -->
+    <color name="md_error">#BA1A1A</color>
+    <color name="md_on_error">#FFFFFF</color>
+    <color name="md_success">#2E6B52</color>
+    <!-- Review stars. -->
+    <color name="md_rating">#E0A200</color>
+
+    <!-- ==== Legacy aliases ================================================
+         Kept so existing layouts and drawables resolve. Each points at the
+         role it was actually being used for, which is why the whole app
+         re-skins without the layouts changing.
+    -->
+    <color name="green">@color/md_primary</color>
+    <color name="light_blue">@color/md_secondary</color>
+    <!-- Primary body text: 126 usages, all textColor. -->
+    <color name="dark_gray">@color/md_on_surface</color>
+    <!-- Secondary text and muted icons. -->
+    <color name="gray">@color/md_on_surface_variant</color>
+    <!-- Dividers and hairlines. -->
+    <color name="light_gray">@color/md_outline</color>
+    <!-- Screen background behind cards. -->
+    <color name="gray_background">@color/md_background</color>
+    <!-- Only ever used as a card or input background, so it is a surface. -->
+    <color name="white">@color/md_surface_container</color>
+    <!-- Only ever used as textColor. -->
+    <color name="black">@color/md_on_surface</color>
+    <color name="yellow">@color/md_rating</color>
+    <color name="red">@color/md_error</color>
+
+    <color name="nav_item_selected">@color/md_primary</color>
+    <color name="nav_item_unselected">@color/md_on_surface_variant</color>
+
+    <!-- Was #FFFFFF — an opaque white named "transparent". -->
+    <color name="transparent">#00000000</color>
+
+    <!-- Referenced by one layout left over from the project template. -->
+    <color name="my_light_primary">@color/md_primary</color>
 </resources>

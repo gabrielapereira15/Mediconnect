@@ -64,6 +64,6 @@
             android:backgroundTint="@color/green"
             android:paddingHorizontal="16dp"
             android:text="@string/edit"
-            android:textColor="@color/dark_gray" />
+            android:textColor="@color/md_on_primary" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

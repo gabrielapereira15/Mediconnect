@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -77,15 +78,20 @@
                         android:clickable="true"
                         android:contentDescription="@string/ophthalmologists"
                         android:focusable="true"
-                        android:src="@drawable/ophthalmologists" />
+                        android:src="@drawable/ophthalmologists" android:tint="@color/md_on_primary_container" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="sans-serif"
+                        android:gravity="center"
+                        android:maxLines="1"
                         android:text="@string/ophthalmologists"
-                        android:textColor="@color/dark_gray"
+                        android:textColor="@color/md_on_primary_container"
+                        app:autoSizeMaxTextSize="12sp"
+                        app:autoSizeMinTextSize="9sp"
+                        app:autoSizeTextType="uniform"
                         android:textSize="12sp"
                         tools:ignore="SmallSp" />
                 </LinearLayout>
@@ -110,15 +116,20 @@
                         android:clickable="true"
                         android:contentDescription="@string/cardiologist"
                         android:focusable="true"
-                        android:src="@drawable/cardiologist" />
+                        android:src="@drawable/cardiologist" android:tint="@color/md_on_primary_container" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="sans-serif"
                         android:text="@string/cardiologist"
-                        android:textColor="@color/dark_gray"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:textColor="@color/md_on_primary_container"
+                        app:autoSizeMaxTextSize="12sp"
+                        app:autoSizeMinTextSize="9sp"
+                        app:autoSizeTextType="uniform"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -142,15 +153,20 @@
                         android:clickable="true"
                         android:contentDescription="@string/gynecologist"
                         android:focusable="true"
-                        android:src="@drawable/gynecologist" />
+                        android:src="@drawable/gynecologist" android:tint="@color/md_on_primary_container" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="sans-serif"
                         android:text="@string/gynecologist"
-                        android:textColor="@color/dark_gray"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:textColor="@color/md_on_primary_container"
+                        app:autoSizeMaxTextSize="12sp"
+                        app:autoSizeMinTextSize="9sp"
+                        app:autoSizeTextType="uniform"
                         android:textSize="12sp"
                         tools:ignore="SmallSp" />
 
@@ -176,15 +192,20 @@
                         android:clickable="true"
                         android:contentDescription="@string/pediatrician"
                         android:focusable="true"
-                        android:src="@drawable/baseline_child_care_24" />
+                        android:src="@drawable/baseline_child_care_24" android:tint="@color/md_on_primary_container" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="sans-serif"
                         android:text="@string/pediatrician"
-                        android:textColor="@color/dark_gray"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:textColor="@color/md_on_primary_container"
+                        app:autoSizeMaxTextSize="12sp"
+                        app:autoSizeMinTextSize="9sp"
+                        app:autoSizeTextType="uniform"
                         android:textSize="12sp"
                         tools:ignore="SmallSp" />
                 </LinearLayout>

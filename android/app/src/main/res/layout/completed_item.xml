@@ -101,7 +101,7 @@
                 android:backgroundTint="@color/green"
                 android:ems="8"
                 android:text="@string/add_review"
-                android:textColor="@color/dark_gray"
+                android:textColor="@color/md_on_primary"
                 android:visibility="visible" />
         </LinearLayout>
     </LinearLayout>

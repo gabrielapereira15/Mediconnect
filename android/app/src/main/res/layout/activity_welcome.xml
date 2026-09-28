@@ -109,7 +109,7 @@
             android:backgroundTint="@color/green"
             android:padding="16dp"
             android:text="@string/get_otp"
-            android:textColor="@color/dark_gray"
+            android:textColor="@color/md_on_primary"
             android:textStyle="bold" />
     </LinearLayout>
 

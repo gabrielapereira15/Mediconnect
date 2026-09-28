@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Dark colour scheme.
+
+    Every name in values/colors.xml is redefined here. Previously this file did
+    not exist: the theme was Material3.DayNight, so Android switched to dark
+    mode, but all the app's own colours stayed at their light values — dark
+    text on dark surfaces, white cards on a dark background.
+-->
+<resources>
+
+    <!-- ==== Brand ========================================================= -->
+    <!-- Lighter and less saturated, as a dark surface needs. -->
+    <color name="md_primary">#8FD6B0</color>
+    <color name="md_on_primary">#00391F</color>
+    <color name="md_primary_container">#14513A</color>
+    <color name="md_on_primary_container">#B2F1D0</color>
+
+    <color name="md_secondary">#9BCBFA</color>
+    <color name="md_on_secondary">#003355</color>
+    <color name="md_secondary_container">#004A79</color>
+    <color name="md_on_secondary_container">#D2E8FF</color>
+
+    <!-- ==== Surfaces ====================================================== -->
+    <color name="md_background">#0E1210</color>
+    <color name="md_on_background">#E1E3DF</color>
+    <color name="md_surface">#0E1210</color>
+    <!-- Cards sit slightly above the background rather than below it. -->
+    <color name="md_surface_container">#1A211D</color>
+    <color name="md_on_surface">#E1E3DF</color>
+    <color name="md_on_surface_variant">#B4BDB6</color>
+    <color name="md_outline">#3A423D</color>
+    <color name="md_outline_variant">#272E2A</color>
+
+    <!-- ==== Status ======================================================== -->
+    <color name="md_error">#FFB4AB</color>
+    <color name="md_on_error">#690005</color>
+    <color name="md_success">#8FD6B0</color>
+    <color name="md_rating">#F5C518</color>
+
+    <!-- ==== Legacy aliases ================================================ -->
+    <color name="green">@color/md_primary</color>
+    <color name="light_blue">@color/md_secondary</color>
+    <color name="dark_gray">@color/md_on_surface</color>
+    <color name="gray">@color/md_on_surface_variant</color>
+    <color name="light_gray">@color/md_outline</color>
+    <color name="gray_background">@color/md_background</color>
+    <color name="white">@color/md_surface_container</color>
+    <color name="black">@color/md_on_surface</color>
+    <color name="yellow">@color/md_rating</color>
+    <color name="red">@color/md_error</color>
+
+    <color name="nav_item_selected">@color/md_primary</color>
+    <color name="nav_item_unselected">@color/md_on_surface_variant</color>
+
+    <color name="transparent">#00000000</color>
+    <color name="my_light_primary">@color/md_primary</color>
+</resources>

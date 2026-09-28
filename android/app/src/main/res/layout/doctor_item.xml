@@ -42,6 +42,6 @@
         android:layout_marginTop="4dp"
         android:backgroundTint="@color/green"
         android:text="@string/book_appointment_text"
-        android:textColor="@color/dark_gray"
+        android:textColor="@color/md_on_primary"
         android:textSize="12sp" />
 </LinearLayout>
