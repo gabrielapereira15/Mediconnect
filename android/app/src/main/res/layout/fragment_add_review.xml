@@ -31,7 +31,8 @@
                     android:background="@drawable/circle_overlay"
                     android:clipToOutline="true"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/doctorimage" />
+                    android:src="@drawable/doctorimage" 
+        android:contentDescription="@string/cd_doctor_photo" />
 
             </RelativeLayout>
 

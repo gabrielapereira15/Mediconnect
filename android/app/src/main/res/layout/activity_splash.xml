@@ -17,6 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/mediconnect_logo" />
+        app:srcCompat="@drawable/mediconnect" 
+        android:contentDescription="@string/cd_app_logo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

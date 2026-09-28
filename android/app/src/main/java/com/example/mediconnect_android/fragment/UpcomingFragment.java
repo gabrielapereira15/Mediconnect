@@ -12,6 +12,7 @@ import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.adapter.UpcomingAdapter;
 import com.example.mediconnect_android.databinding.FragmentUpcomingBinding;
 import com.example.mediconnect_android.model.Appointment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,17 +50,38 @@ public class UpcomingFragment extends Fragment {
                 .filter(appointment -> "UPCOMING".equals(appointment.getStatus()))
                 .collect(Collectors.toList());
 
-        // An empty tab now says what it means rather than showing a bare line
-        // of text that looked the same as a failure.
+        // An empty tab says what it means and offers the obvious next step,
+        // rather than leaving the patient on a dead end.
         binding.stateView.setContentView(binding.recyclerView);
-        binding.stateView.showContentOrEmpty(filteredAppointments.isEmpty(),
-                R.drawable.baseline_event_busy_24,
-                R.string.state_no_upcoming_title,
-                R.string.state_no_upcoming_body);
+        if (filteredAppointments.isEmpty()) {
+            binding.stateView.showEmpty(
+                    R.drawable.baseline_event_busy_24,
+                    R.string.state_no_upcoming_title,
+                    R.string.state_no_upcoming_body,
+                    R.string.state_book_appointment,
+                    this::goToBooking);
+        } else {
+            binding.stateView.showContent();
+        }
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new UpcomingAdapter(filteredAppointments, getContext());
         binding.recyclerView.setAdapter(adapter);
+    }
+
+    /**
+     * Sends the patient to Home, where the doctor list and booking live.
+     *
+     * Goes through the bottom navigation rather than swapping the fragment
+     * directly, so the selected tab and the toolbar title follow — and because
+     * DoctorsFragment needs a doctor list passed in, which an empty
+     * appointments tab does not have.
+     */
+    private void goToBooking() {
+        BottomNavigationView nav = requireActivity().findViewById(R.id.bottomNavigationView);
+        if (nav != null) {
+            nav.setSelectedItemId(R.id.home_fragment);
+        }
     }
 
     @Override

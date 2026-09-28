@@ -86,27 +86,37 @@
                 android:visibility="gone">
 
                 <!-- Input Fields -->
-                <EditText
-                    android:id="@+id/editTextCurrentSymptoms"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_md"
-                    android:background="@drawable/rounded_edittext"
                     android:hint="@string/current_symptoms"
-                    android:padding="@dimen/space_md"
-                    android:textColor="@color/dark_gray"
-                    android:textColorHint="@color/gray" />
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
-                <EditText
-                    android:id="@+id/editTextMedication"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                    android:id="@+id/editTextCurrentSymptoms"
+                    android:padding="@dimen/space_md"
+                    android:textColor="@color/dark_gray" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_md"
-                    android:background="@drawable/rounded_edittext"
                     android:hint="@string/medication_taking"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                    android:id="@+id/editTextMedication"
                     android:padding="@dimen/space_md"
-                    android:textColor="@color/dark_gray"
-                    android:textColorHint="@color/gray" />
+                    android:textColor="@color/dark_gray" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -181,16 +191,21 @@
 
                 </LinearLayout>
 
-                <EditText
-                    android:id="@+id/et_note_other"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_md"
-                    android:background="@drawable/rounded_edittext"
                     android:hint="@string/additional_notes"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                    android:id="@+id/et_note_other"
                     android:padding="@dimen/space_md"
-                    android:textColor="@color/dark_gray"
-                    android:textColorHint="@color/gray" />
+                    android:textColor="@color/dark_gray" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Submit Button -->
                 <Button

@@ -8,6 +8,7 @@
     tools:context=".fragment.CancelledFragment">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layoutAnimation="@anim/layout_animation_list"
         android:id="@+id/recyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"

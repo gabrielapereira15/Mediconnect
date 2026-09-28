@@ -21,7 +21,7 @@
             android:layout_height="80dp"
             android:layout_marginEnd="@dimen/space_md"
             android:contentDescription="@string/logo"
-            android:src="@drawable/mediconnect_logo" />
+            android:src="@drawable/mediconnect" />
 
         <!-- Texto da mensagem -->
         <TextView

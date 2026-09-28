@@ -73,7 +73,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="@dimen/space_xs"
-                            android:src="@drawable/baseline_star_rate_24" />
+                            android:src="@drawable/baseline_star_rate_24" 
+            android:contentDescription="@null" />
 
                         <TextView
                             android:id="@+id/doctorScore"
@@ -167,6 +168,7 @@
 
                 <!-- Date & Time Slots -->
                 <androidx.recyclerview.widget.RecyclerView
+                    android:layoutAnimation="@anim/layout_animation_list"
                     android:id="@+id/timeSlotsRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -50,6 +50,12 @@ Conestoga College and has since been rebuilt as a portfolio piece.
 
 **Throughout**
 - Light and dark themes from a single set of role-named colour tokens
+- Every fetching screen has a loading skeleton, an empty state that offers a
+  way forward, and an error state with a retry — a failed request no longer
+  looks like an empty account
+- Material 3 components: outlined text fields with floating labels, cards,
+  a spacing scale and a type scale
+- Screen transitions and staggered list entry
 - Works offline: if the API is unreachable the app shows a bundled demo clinic
   rather than empty screens, so an installed APK is browsable on its own
 - Every network call runs off the UI thread

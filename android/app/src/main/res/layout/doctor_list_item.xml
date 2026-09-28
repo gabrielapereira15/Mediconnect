@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    app:strokeColor="@color/md_outline"
+    app:strokeWidth="1dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/space_sm"
@@ -80,7 +82,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/space_xs"
-                    android:src="@drawable/baseline_star_rate_24" />
+                    android:src="@drawable/baseline_star_rate_24" 
+        android:contentDescription="@string/cd_rating_star" />
 
                 <TextView
                     android:id="@+id/doctorScore"
@@ -114,4 +117,4 @@
             android:textColor="@color/md_on_primary" />
 
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

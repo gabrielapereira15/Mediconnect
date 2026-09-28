@@ -251,6 +251,7 @@
 
             <!-- Doctors List (RecyclerView) -->
             <androidx.recyclerview.widget.RecyclerView
+                android:layoutAnimation="@anim/layout_animation_list"
                 android:id="@+id/recyclerViewDoctors"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

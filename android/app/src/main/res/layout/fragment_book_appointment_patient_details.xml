@@ -91,16 +91,21 @@
                 android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
             <!-- Text Field for Note -->
-            <EditText
-                android:id="@+id/et_self_note"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_md"
-                android:background="@drawable/rounded_edittext"
                 android:hint="@string/note_for_the_doctor"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                android:id="@+id/et_self_note"
                 android:padding="@dimen/space_md"
-                android:textColor="@color/dark_gray"
-                android:textColorHint="@color/gray" />
+                android:textColor="@color/dark_gray" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Confirm Button -->
             <Button
@@ -124,59 +129,85 @@
             android:paddingTop="@dimen/space_lg"
             android:visibility="gone">
 
-            <EditText
-                android:id="@+id/et_first_name"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_edittext"
+                android:layout_marginTop="@dimen/space_md"
                 android:hint="@string/first_name"
-                android:padding="@dimen/space_md"
-                android:textColor="@color/dark_gray"
-                android:textColorHint="@color/gray" />
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
-            <EditText
-                android:id="@+id/et_last_name"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                android:id="@+id/et_first_name"
+                android:padding="@dimen/space_md"
+                android:textColor="@color/dark_gray" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_md"
-                android:background="@drawable/rounded_edittext"
                 android:hint="@string/last_name"
-                android:padding="@dimen/space_md"
-                android:textColor="@color/dark_gray"
-                android:textColorHint="@color/gray" />
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
-            <EditText
-                android:id="@+id/et_dob_other"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                android:id="@+id/et_last_name"
+                android:padding="@dimen/space_md"
+                android:textColor="@color/dark_gray" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_md"
-                android:background="@drawable/rounded_edittext"
                 android:hint="@string/date_of_birth"
-                android:padding="@dimen/space_md"
-                android:textColor="@color/dark_gray"
-                android:textColorHint="@color/gray" />
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
-            <EditText
-                android:id="@+id/tvPhoneNumber"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                android:id="@+id/et_dob_other"
+                android:padding="@dimen/space_md"
+                android:textColor="@color/dark_gray" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_md"
-                android:background="@drawable/rounded_edittext"
                 android:hint="@string/phone_number"
-                android:padding="@dimen/space_md"
-                android:textColor="@color/dark_gray"
-                android:textColorHint="@color/gray" />
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
-            <EditText
-                android:id="@+id/et_note_other"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                android:id="@+id/tvPhoneNumber"
+                android:padding="@dimen/space_md"
+                android:textColor="@color/dark_gray" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_md"
-                android:background="@drawable/rounded_edittext"
                 android:hint="@string/additional_notes"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                android:id="@+id/et_note_other"
                 android:padding="@dimen/space_md"
-                android:textColor="@color/dark_gray"
-                android:textColorHint="@color/gray" />
+                android:textColor="@color/dark_gray" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Confirm Button -->
             <Button
