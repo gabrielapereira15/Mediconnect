@@ -6,15 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".fragment.NotificationsFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layoutAnimation="@anim/layout_animation_list"
-        android:id="@+id/recyclerView"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/space_lg"
-        android:clipToPadding="false"
-        android:padding="@dimen/space_sm" />
+        android:layout_margin="@dimen/space_lg">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layoutAnimation="@anim/layout_animation_list"
+            android:id="@+id/recyclerView"
+            android:clipToPadding="false"
+            android:padding="@dimen/space_sm" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.example.mediconnect_android.view.StateView
         android:id="@+id/stateView"

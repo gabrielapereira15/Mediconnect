@@ -14,6 +14,8 @@ constraintlayout = "2.2.0"
 unirestJava = "3.14.3"
 okhttpclientVersion = "4.12.0"
 
+swiperefreshlayout = "1.1.0"
+
 [libraries]
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 fragment = { module = "androidx.fragment:fragment", version.ref = "fragment" }
@@ -29,6 +31,8 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 unirest-java = { module = "com.konghq:unirest-java", version.ref = "unirestJava" }
 okhttpclient = { module = "com.squareup.okhttp3:okhttp", name = "okhttpclient", version.ref = "okhttpclientVersion"}
+
+swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

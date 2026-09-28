@@ -41,6 +41,7 @@ Conestoga College and has since been rebuilt as a portfolio piece.
 - Leave a review after a visit
 - Pre-appointment and check-in forms
 - Clinic notifications with an unread badge
+- Pull down on any list to re-fetch
 - Passwordless sign-in by one-time passcode
 
 **Clinic back office** (`http://localhost:8080`)
@@ -143,14 +144,22 @@ JDBC_DATABASE_USERNAME=me JDBC_DATABASE_PASSWORD=secret \
 
 ### 2. Run the app
 
-Open `android/` in Android Studio and run it on an emulator, or from the
-command line:
+Open `android/` in Android Studio and press Run — it will create an emulator
+if you have none, and write the `local.properties` it needs.
+
+To build from the command line instead, tell Gradle where your Android SDK is:
 
 ```bash
 cd android
+echo "sdk.dir=/path/to/Android/Sdk" > local.properties   # macOS/Linux
+# Windows: sdk.dir=C:/Users/you/AppData/Local/Android/Sdk
+
 ./gradlew assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
+
+`local.properties` is machine-specific and git-ignored, which is why it is not
+in the repository.
 
 The app points at `http://10.0.2.2:8080` — the emulator's route to your
 machine's localhost. To use a different server:
@@ -179,6 +188,27 @@ a fresh patient record.
 
 > The production profile turns this off, so a real deployment never exposes a
 > passcode.
+
+### What to try
+
+Once you are signed in as `demo@mediconnect.ca`:
+
+- **Home** — browse doctors and specialties; the ratings come from real
+  reviews on completed visits
+- **Book Appointment** — pick a doctor, then a date and slot from their actual
+  schedule. Slots already taken are not offered.
+- **Medical History** — Upcoming, Completed and Cancelled tabs. **Pull down**
+  on any of them to re-fetch. Cancel an appointment and watch it move tabs.
+- **Leave a review** — on a completed visit, then see the doctor's rating
+  change on Home
+- **Profile** — edit and save; the email is deliberately read-only
+- **Empty states** — cancel every upcoming appointment to see the empty tab
+  and its "Book an appointment" shortcut
+- **Dark mode** — switch your device theme; the whole app follows
+- **Offline** — stop the backend and reopen the app. It shows the bundled demo
+  clinic with a notice, rather than empty screens.
+- **Back office** — http://localhost:8080 in a browser, to add a doctor or
+  send a notification and see it appear in the app
 
 ### Commands
 
@@ -209,6 +239,8 @@ a fresh patient record.
 | `CLEARTEXT communication not permitted` | Only debug builds allow plain HTTP, and only to local hosts. Use a debug build, or serve over HTTPS. |
 | 401 on appointments after restarting the backend | The session token outlived the server. Sign in again. |
 | `Could not resolve placeholder 'TOKEN_SECRET'` | You started the `production` profile without setting it. That is deliberate. |
+| `SDK location not found` when building from the terminal | Create `android/local.properties` with `sdk.dir=...`, as above. |
+| App says the server is unreachable, but `curl` works from your machine | The emulator's own network can get stuck, usually after throttling it. Check with `adb shell ping 10.0.2.2`; if that fails, cold-boot the emulator (**Wipe Data** in Device Manager). |
 
 ## Tests
 

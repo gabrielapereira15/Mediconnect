@@ -42,6 +42,23 @@ public class CancelledFragment extends Fragment {
 
     private void init() {
         bindAdapter();
+
+        // The tabs are handed their data by MedicalHistoryFragment, so a pull
+        // asks the parent to re-fetch rather than loading anything here.
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            Fragment parent = getParentFragment();
+            if (parent instanceof MedicalHistoryFragment) {
+                // The spinner stays up until the parent reports back, so the
+                // pull actually shows that something is happening.
+                ((MedicalHistoryFragment) parent).reload(() -> {
+                    if (binding != null) {
+                        binding.swipeRefresh.setRefreshing(false);
+                    }
+                });
+            } else {
+                binding.swipeRefresh.setRefreshing(false);
+            }
+        });
     }
 
     private void bindAdapter() {

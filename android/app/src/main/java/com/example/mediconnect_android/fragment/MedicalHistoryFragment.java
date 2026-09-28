@@ -55,9 +55,39 @@ public class MedicalHistoryFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Re-fetches the appointments. Called by the tab fragments when the
+     * patient pulls to refresh, since they are handed their data rather than
+     * loading it themselves.
+     */
+    public void reload(Runnable onFinished) {
+        SharedPreferences prefs = requireContext()
+                .getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
+        this.onRefreshFinished = onFinished;
+        loadAppointments(prefs.getString("email", ""), true);
+    }
+
+    /** Stops the pulling tab's spinner, whether the fetch worked or not. */
+    private void finishRefresh() {
+        if (onRefreshFinished != null) {
+            onRefreshFinished.run();
+            onRefreshFinished = null;
+        }
+    }
+
     private void loadAppointments(String email) {
+        loadAppointments(email, false);
+    }
+
+    private Runnable onRefreshFinished;
+
+    private void loadAppointments(String email, boolean isRefresh) {
         binding.stateView.setContentView(binding.fragmentContainer);
-        binding.stateView.showLoading();
+        // A refresh keeps the current list on screen behind the spinner;
+        // replacing it with a skeleton would be a step backwards.
+        if (!isRefresh) {
+            binding.stateView.showLoading();
+        }
 
         // Fetch off the UI thread, then show the Upcoming tab once it lands.
         Background.run(
@@ -66,17 +96,24 @@ public class MedicalHistoryFragment extends Fragment {
                     if (binding == null) {
                         return; // the view went away while the request was in flight
                     }
+                    finishRefresh();
                     appointmentsList = appointments;
                     binding.stateView.showContent();
                     FragmentUtils.loadFragment(fragmentManager, R.id.fragment_container,
                             new UpcomingFragment(appointmentsList));
                 },
                 error -> {
+                    finishRefresh();
                     if (binding == null) {
                         return;
                     }
                     binding.stateView.showError(() -> loadAppointments(email));
                 });
+    }
+
+    /** The currently visible tab, so a refresh can stop its spinner. */
+    public List<Appointment> getAppointments() {
+        return appointmentsList;
     }
 
     private void init() {

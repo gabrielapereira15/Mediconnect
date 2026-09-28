@@ -52,11 +52,20 @@ public class NotificationsFragment extends Fragment {
         String email = sharedPreferences.getString("email", "");
 
         loadNotifications(email);
+
+        binding.swipeRefresh.setOnRefreshListener(() -> loadNotifications(email, true));
     }
 
     private void loadNotifications(String email) {
+        loadNotifications(email, false);
+    }
+
+    private void loadNotifications(String email, boolean isRefresh) {
         binding.stateView.setContentView(binding.recyclerView);
-        binding.stateView.showLoading();
+        // On a refresh the existing list stays put behind the spinner.
+        if (!isRefresh) {
+            binding.stateView.showLoading();
+        }
 
         Background.run(
                 () -> notificationClient.getNotifications(email),
@@ -64,6 +73,7 @@ public class NotificationsFragment extends Fragment {
                     if (binding == null) {
                         return; // the view went away while the request was in flight
                     }
+                    binding.swipeRefresh.setRefreshing(false);
                     notifications = loaded;
                     bindAdapter();
                     binding.stateView.showContentOrEmpty(notifications.isEmpty(),
@@ -75,6 +85,7 @@ public class NotificationsFragment extends Fragment {
                     if (binding == null) {
                         return;
                     }
+                    binding.swipeRefresh.setRefreshing(false);
                     binding.stateView.showError(() -> loadNotifications(email));
                 });
     }
