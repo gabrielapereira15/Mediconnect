@@ -1,1 +1,31 @@
-services: {}
+# Postgres for local development.
+#
+# The app does not need this: by default it runs on an in-memory H2 database
+# and starts with no setup at all. Use this when you want a real database that
+# survives a restart:
+#
+#   docker compose up -d
+#   ./gradlew bootRun --args='--spring.profiles.active=postgres'
+#
+# With the postgres profile active, Spring Boot's docker-compose support starts
+# this file automatically, so the explicit `up` is only needed if you prefer it.
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: mediconnect-postgres
+    environment:
+      POSTGRES_DB: mediconnect
+      POSTGRES_USER: mediconnect
+      POSTGRES_PASSWORD: mediconnect
+    ports:
+      - '5432:5432'
+    volumes:
+      - mediconnect-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U mediconnect -d mediconnect']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mediconnect-pgdata:

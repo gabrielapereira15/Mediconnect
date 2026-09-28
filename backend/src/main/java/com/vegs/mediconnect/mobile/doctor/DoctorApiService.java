@@ -29,7 +29,7 @@ public class DoctorApiService {
     private final DoctorRepository doctorRepository;
     private final ReviewRepository reviewRepository;
 
-    @Value("${vegs.photo-baseurl}")
+    @Value("${mediconnect.photo-baseurl}")
     private String photoBaseulr;
 
     public List<DoctorSimpleResponse> getDoctors() {
