@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{doctor.list.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{doctor.list.headline}]]</h1>
+                <div>
+                    <a th:href="@{/doctors/add}" class="btn btn-primary ms-2">[[#{doctor.list.createNew}]]</a>
+                </div>
+            </div>
+            <div th:if="${doctors.empty}">[[#{doctor.list.empty}]]</div>
+            <div th:if="${!doctors.empty}" class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">[[#{doctor.firstName.label}]]</th>
+                            <th scope="col">[[#{doctor.lastName.label}]]</th>
+                            <th scope="col">[[#{doctor.experienceInYears.label}]]</th>
+                            <th scope="col">[[#{doctor.specialty.label}]]</th>
+                            <th><!-- --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="doctor : ${doctors}">
+                            <td>[[${doctor.firstName}]]</td>
+                            <td>[[${doctor.lastName}]]</td>
+                            <td>[[${doctor.experienceInYears}]]</td>
+                            <td>[[${doctor.specialty}]]</td>
+                            <td>
+                                <div class="float-end text-nowrap">
+                                    <a th:href="@{/doctors/newPhoto/{id}(id=${doctor.id})}" class="btn btn-sm btn-secondary">[[#{doctor.list.newPhoto}]]</a>
+                                    <a th:href="@{/doctors/edit/{id}(id=${doctor.id})}" class="btn btn-sm btn-secondary">[[#{doctor.list.edit}]]</a>
+                                    <form th:action="@{/doctors/delete/{id}(id=${doctor.id})}"
+                                            th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{doctor.list.delete}]]</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

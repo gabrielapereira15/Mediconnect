@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{doctor.add.headline}]]</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex flex-wrap mb-4">
+        <h1 class="flex-grow-1">[[#{doctor.add.headline}]]</h1>
+        <div>
+            <a th:href="@{/doctors}" class="btn btn-secondary">[[#{doctor.add.back}]]</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/forms::globalErrors('doctor')}" />
+    <form th:action="${requestUri}" method="post" enctype="multipart/form-data">
+        <div class="row mb-3">
+            <label for="image" class="col-md-2 col-form-label">
+                <span>[[#{doctor.image.label}]]</span>
+            </label>
+            <div class="col-md-10">
+                <input type="file" name="image" accept="image/*" class="form-control-file" id="image">
+            </div>
+        </div>
+        <input type="submit" th:value="#{doctor.add.headline}" class="btn btn-primary mt-4" />
+    </form>
+</div>
+</body>
+</html>
