@@ -8,19 +8,12 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
 
 public class PatientClientImpl implements PatientClient {
-    private final String baseurl = "https://mediconnect-latest.onrender.com";
-    private final OkHttpClient client = new OkHttpClient.Builder()
-            .readTimeout(30, TimeUnit.SECONDS)
-            .build();
 
     @Override
     public Patient getPatient(String patientEmail) {
-        String url = baseurl + "/api/mobile/patients/" + patientEmail;
+        String url = ApiConfig.url("/api/mobile/patients/") + patientEmail;
         ApiGenericResponse response = OkHttpClientHelper.get(url);
         if (response.isSuccess()) {
             // Use Gson to deserialize the response body
@@ -41,7 +34,7 @@ public class PatientClientImpl implements PatientClient {
 
     @Override
     public Boolean createPatient(String patient) {
-        String url = baseurl + "/api/mobile/patients";
+        String url = ApiConfig.url("/api/mobile/patients");
         ApiGenericResponse response = OkHttpClientHelper.post(url, patient);
         return response.isSuccess();
     }

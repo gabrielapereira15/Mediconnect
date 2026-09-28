@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class AppointmentClientImpl implements AppointmentClient {
-    private final String baseurl = "https://mediconnect-latest.onrender.com";
 
     @Override
     public List<Doctor> getDoctors() {
@@ -22,7 +21,7 @@ public class AppointmentClientImpl implements AppointmentClient {
 
     @Override
     public List<Appointment> getAppointments(String email) {
-        String url = baseurl + "/api/mobile/appointments/" + email;
+        String url = ApiConfig.url("/api/mobile/appointments/") + email;
         ApiGenericResponse response = OkHttpClientHelper.get(url);
         if (response.isSuccess()) {
             Type appointmentListType = new TypeToken<List<Appointment>>() {
@@ -37,7 +36,7 @@ public class AppointmentClientImpl implements AppointmentClient {
 
     @Override
     public Boolean createAppointment(String appointmentJson) {
-        String url = baseurl + "/api/mobile/appointments";
+        String url = ApiConfig.url("/api/mobile/appointments");
         ApiGenericResponse response = OkHttpClientHelper.post(url, appointmentJson);
         if (response.isSuccess()) {
             return true;
@@ -49,7 +48,7 @@ public class AppointmentClientImpl implements AppointmentClient {
 
     @Override
     public Boolean cancelAppointment(String appointmentId) {
-        String url = baseurl + "/api/mobile/appointments/cancel/" + appointmentId;
+        String url = ApiConfig.url("/api/mobile/appointments/cancel/") + appointmentId;
         ApiGenericResponse response = OkHttpClientHelper.put(url);
         if (response.isSuccess()) {
             return true;

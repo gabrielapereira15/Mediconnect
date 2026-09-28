@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.mediconnect_android.client.OTPClient;
 import com.example.mediconnect_android.client.OTPClientImpl;
 import com.example.mediconnect_android.databinding.ActivityWelcomeBinding;
+import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.util.Background;
 import com.example.mediconnect_android.util.DialogUtils;
 
 public class WelcomeActivity extends AppCompatActivity {
@@ -45,18 +47,31 @@ public class WelcomeActivity extends AppCompatActivity {
 
         welcomeBinding.submitButton.setOnClickListener(v -> {
             // Check if the fields are filled correctly
-            if (areFieldsFilled()) {
-                // If fields are filled, proceed to OTPActivity
-                email = welcomeBinding.emailEditText.getText().toString();
-                boolean isOtpSent = otpClient.sendOTP(email, "patient");
-                if (isOtpSent) {
-                    Intent intent = new Intent(WelcomeActivity.this, OTPActivity.class);
-                    intent.putExtra("email", email);
-                    startActivity(intent);
-                } else {
-                    DialogUtils.showMessageDialog(this, "OTP Error! Please contact Mediconnect support.");
-                }
+            if (!areFieldsFilled()) {
+                return;
             }
+
+            // If fields are filled, proceed to OTPActivity
+            email = welcomeBinding.emailEditText.getText().toString();
+            welcomeBinding.submitButton.setEnabled(false);
+
+            // Requesting a passcode hits the network, so keep it off the UI thread.
+            Background.run(
+                    () -> otpClient.sendOTP(email, "patient"),
+                    sent -> {
+                        welcomeBinding.submitButton.setEnabled(true);
+                        if (sent) {
+                            Intent otpIntent = new Intent(WelcomeActivity.this, OTPActivity.class);
+                            otpIntent.putExtra("email", email);
+                            startActivity(otpIntent);
+                        } else {
+                            DialogUtils.showMessageDialog(this, getString(R.string.error_no_server));
+                        }
+                    },
+                    error -> {
+                        welcomeBinding.submitButton.setEnabled(true);
+                        DialogUtils.showMessageDialog(this, getString(R.string.error_no_server));
+                    });
         });
         welcomeBinding.termsLink.setOnClickListener(v -> {
             Intent intent = new Intent(this, TermsConditionsActivity.class);

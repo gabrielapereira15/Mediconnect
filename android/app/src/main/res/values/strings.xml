@@ -150,4 +150,9 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="no_data_available">No data available</string>
     <string name="no_notifications_to_display">No notifications to display</string>
 
+    <!-- Networking and sign-in feedback -->
+    <string name="error_no_server">Could not reach the clinic server. Check your connection and try again.</string>
+    <string name="otp_invalid">That passcode is not valid or has expired.</string>
+    <string name="otp_resent">We have sent you a new passcode.</string>
+    <string name="demo_mode_banner">Demo mode — showing sample data because the server is not reachable.</string>
 </resources>

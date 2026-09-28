@@ -5,11 +5,10 @@ import android.util.Log;
 import com.example.mediconnect_android.client.response.ApiGenericResponse;
 
 public class ReviewClientImpl implements ReviewClient {
-    private final String baseurl = "https://mediconnect-latest.onrender.com";
 
     @Override
     public Boolean createReview(String appointmentId, Double score, String description) {
-        String url = baseurl + "/api/mobile/reviews";
+        String url = ApiConfig.url("/api/mobile/reviews");
 
         String reviewJson = String.format(
                 "{\"appointmentId\": \"%s\", \"score\": %s, \"description\": \"%s\"}",

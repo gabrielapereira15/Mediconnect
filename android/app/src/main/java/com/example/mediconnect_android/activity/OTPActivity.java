@@ -18,6 +18,9 @@ import com.example.mediconnect_android.databinding.ActivityOtpactivityBinding;
 import com.example.mediconnect_android.model.Patient;
 import com.example.mediconnect_android.util.ActivityUtils;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.client.response.AuthResult;
+import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.util.Background;
 import com.example.mediconnect_android.util.SessionManager;
 
 public class OTPActivity extends AppCompatActivity {
@@ -46,29 +49,47 @@ public class OTPActivity extends AppCompatActivity {
 
         binding.verifyButton.setOnClickListener(v -> {
             // Check if the OTP fields are filled
-            if (areOTPFieldsFilled()) {
-                String otp = getOTP();
-                boolean isOtpVerified = otpClient.verifyOTP(email, otp);
-                if (isOtpVerified) {
-                    loginUser(email);
-                } else {
-                    DialogUtils.showMessageDialog(this, "OTP Error! The OTP inserted is invalid.");
-                }
+            if (!areOTPFieldsFilled()) {
+                return;
             }
+
+            String otp = getOTP();
+            binding.verifyButton.setEnabled(false);
+
+            // Verifying hits the network, so it must not run on the UI thread.
+            Background.run(
+                    () -> otpClient.verifyOTP(email, otp),
+                    result -> {
+                        binding.verifyButton.setEnabled(true);
+                        if (result.isVerified()) {
+                            loginUser(result);
+                        } else {
+                            DialogUtils.showMessageDialog(this,
+                                    getString(R.string.otp_invalid));
+                        }
+                    },
+                    error -> {
+                        binding.verifyButton.setEnabled(true);
+                        DialogUtils.showMessageDialog(this, getString(R.string.error_no_server));
+                    });
         });
-        binding.resendOtpText.setOnClickListener(v -> {
-            boolean isOtpSent = otpClient.sendOTP(email, "patient");
-            if (isOtpSent) {
-                DialogUtils.showMessageDialog(this, "OTP re-sent successfully!");
-            }
-        });
+
+        binding.resendOtpText.setOnClickListener(v -> Background.run(
+                () -> otpClient.sendOTP(email, "patient"),
+                sent -> DialogUtils.showMessageDialog(this, sent
+                        ? getString(R.string.otp_resent)
+                        : getString(R.string.error_no_server))));
     }
 
-    private void loginUser(String email) {
-        if (isRegisteredPatient()) {
-            SessionManager sessionManager = new SessionManager(this);
-            sessionManager.createLoginSession(email);
-            // Navigate to the main activity
+    private void loginUser(AuthResult result) {
+        // Store the token first: every request after this point carries it.
+        new SessionManager(this).createLoginSession(
+                result.getEmail() == null ? email : result.getEmail(),
+                result.getToken(),
+                result.getExpiresInSeconds());
+
+        // A brand new account has no profile yet, so send them to fill it in.
+        if (!result.isNewPatient() && isRegisteredPatient()) {
             ActivityUtils.startActivity(this, MainActivity.class);
             finish();
         } else {
