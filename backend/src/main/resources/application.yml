@@ -64,8 +64,10 @@ mediconnect:
     # Lifetime of a one-time passcode, and of the token issued after verifying.
     otp-ttl-minutes: ${OTP_TTL_MINUTES:10}
     token-ttl-hours: ${TOKEN_TTL_HOURS:72}
-    # Signing secret. Override in production; a random one is generated if unset.
-    token-secret: ${TOKEN_SECRET:}
+    # Signing secret. A fixed development value so tokens survive a restart —
+    # without it every backend restart silently invalidates the session and the
+    # app starts getting 401s. The production profile requires a real one.
+    token-secret: ${TOKEN_SECRET:mediconnect-local-development-secret-not-for-production}
     # In demo mode the passcode is returned in the response and logged, because
     # there is no mail provider wired up. Never enable this in production.
     expose-otp: ${EXPOSE_OTP:true}
@@ -112,3 +114,5 @@ mediconnect:
     enabled: false
   auth:
     expose-otp: false
+    # No default: startup fails if TOKEN_SECRET is not set in production.
+    token-secret: ${TOKEN_SECRET}

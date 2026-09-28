@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.*;
 
 import static java.lang.String.format;
@@ -58,8 +59,8 @@ public class DoctorApiService {
         }
 
         var doctor = optDoctor.get();
-        var dateFormat = DateTimeFormatter.ofPattern("EEE, d MMM");
-        var timeFormat = DateTimeFormatter.ofPattern("h a");
+        var dateFormat = DateTimeFormatter.ofPattern("EEE, d MMM", Locale.ENGLISH);
+        var timeFormat = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
         var scheduleResponses = new ArrayList<ScheduleResponse>();
         doctor
                 .getSchedules()

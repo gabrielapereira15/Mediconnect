@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -103,8 +104,8 @@ public class AppointmentApiService {
         var scheduleTime = appointment.getScheduleTime();
         var doctor = scheduleTime.getSchedule().getDoctor();
         var schedule = scheduleTime.getSchedule();
-        var dataFormat = DateTimeFormatter.ofPattern("EEE, d MMM");
-        var timeFormat = DateTimeFormatter.ofPattern("h a");
+        var dataFormat = DateTimeFormatter.ofPattern("EEE, d MMM", Locale.ENGLISH);
+        var timeFormat = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
 
         var status = getStatus(appointment);
         boolean isReviewed = false;
