@@ -36,8 +36,10 @@ public class DoctorClientImpl implements DoctorClient {
             return DemoData.doctors();
         }
 
+        // The server answered and refused. Surfacing that as an empty list
+        // would make a failure look like an empty clinic.
         Log.e("DoctorClientImpl", "Error getting doctors: " + response.getResponseBody());
-        return Collections.emptyList();
+        throw new ApiException(response.getStatus(), "Could not load doctors");
     }
 
     @Override

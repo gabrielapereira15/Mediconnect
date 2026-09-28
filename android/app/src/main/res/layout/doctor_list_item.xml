@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="@dimen/space_sm"
     android:background="@color/white"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp">
@@ -14,14 +14,14 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="@dimen/space_md">
 
         <!-- Doctor Information -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginTop="@dimen/space_sm"
+            android:layout_marginBottom="@dimen/space_xs"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -30,7 +30,7 @@
                 android:id="@+id/doctor_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="@dimen/space_md"
                 android:background="@drawable/round_image_background"
                 android:clipToOutline="true"
                 android:contentDescription="@string/doctor_name"
@@ -43,10 +43,10 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/space_sm"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:paddingStart="5dp"
+                android:paddingStart="@dimen/space_xs"
                 tools:ignore="RtlSymmetry">
 
                 <TextView
@@ -55,8 +55,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/doctor_name"
                     android:textColor="@color/dark_gray"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold" 
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
                 <TextView
                     android:id="@+id/doctor_speacialty"
@@ -64,14 +64,14 @@
                     android:layout_height="wrap_content"
                     android:text="@string/speacialty_text"
                     android:textColor="@color/gray"
-                    android:textSize="14sp" />
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="@dimen/space_md"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -79,17 +79,17 @@
                     android:id="@+id/star"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
+                    android:layout_marginEnd="@dimen/space_xs"
                     android:src="@drawable/baseline_star_rate_24" />
 
                 <TextView
                     android:id="@+id/doctorScore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
+                    android:layout_marginEnd="@dimen/space_xs"
                     android:text="@string/doctor_score"
                     android:textColor="@color/yellow"
-                    android:textSize="14sp" />
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
                 <TextView
                     android:id="@+id/reviewCount"
@@ -97,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="@color/yellow"
-                    android:textSize="14sp" />
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
             </LinearLayout>
 
@@ -107,7 +107,7 @@
             android:id="@+id/book_appointment_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/space_sm"
             android:backgroundTint="@color/green"
             android:ems="8"
             android:text="@string/book_appointment_text"

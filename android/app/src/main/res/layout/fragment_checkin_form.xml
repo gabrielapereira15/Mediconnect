@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_background"
-    android:padding="16dp"
+    android:padding="@dimen/space_lg"
     tools:context=".fragment.CheckinFormFragment">
 
     <LinearLayout
@@ -12,14 +12,14 @@
         android:layout_height="match_parent"
         android:background="@drawable/card_background"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="@dimen/space_xl">
 
         <!-- RSVP -->
         <LinearLayout
             android:id="@+id/layout_rsvp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/space_lg"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
@@ -29,22 +29,22 @@
                 android:gravity="center"
                 android:text="@string/upcoming_appointments_text"
                 android:textColor="@color/dark_gray"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold" 
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
             <TextView
                 android:id="@+id/doctorName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/space_md"
                 android:text="@string/doctor_name_mock"
                 android:textColor="@color/dark_gray"
-                android:textSize="16sp" />
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/space_md"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
@@ -61,7 +61,7 @@
                     android:id="@+id/confirm_button"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="@dimen/space_sm"
                     android:backgroundTint="@color/green"
                     android:ems="8"
                     android:text="@string/rsvp_yes"
@@ -74,7 +74,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp">
+            android:padding="@dimen/space_lg">
 
             <!-- Check In PreAppointmentForm -->
             <LinearLayout
@@ -90,10 +90,10 @@
                     android:id="@+id/editTextCurrentSymptoms"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="@dimen/space_md"
                     android:background="@drawable/rounded_edittext"
                     android:hint="@string/current_symptoms"
-                    android:padding="12dp"
+                    android:padding="@dimen/space_md"
                     android:textColor="@color/dark_gray"
                     android:textColorHint="@color/gray" />
 
@@ -101,17 +101,17 @@
                     android:id="@+id/editTextMedication"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="@dimen/space_md"
                     android:background="@drawable/rounded_edittext"
                     android:hint="@string/medication_taking"
-                    android:padding="12dp"
+                    android:padding="@dimen/space_md"
                     android:textColor="@color/dark_gray"
                     android:textColorHint="@color/gray" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="@dimen/space_md"
                     android:text="@string/recent_symptoms"
                     android:textColor="@color/dark_gray" />
 
@@ -185,10 +185,10 @@
                     android:id="@+id/et_note_other"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="@dimen/space_md"
                     android:background="@drawable/rounded_edittext"
                     android:hint="@string/additional_notes"
-                    android:padding="12dp"
+                    android:padding="@dimen/space_md"
                     android:textColor="@color/dark_gray"
                     android:textColorHint="@color/gray" />
 
@@ -197,7 +197,7 @@
                     android:id="@+id/btn_submit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="@dimen/space_md"
                     android:backgroundTint="@color/green"
                     android:text="@string/submit"
                     android:textColor="@color/md_on_primary" />

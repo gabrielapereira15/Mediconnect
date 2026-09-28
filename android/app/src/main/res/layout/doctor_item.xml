@@ -2,10 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="10dp"
+    android:layout_marginEnd="@dimen/space_md"
     android:background="@drawable/doctor_card_background"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="@dimen/space_sm">
 
     <ImageView
         android:id="@+id/doctor_image"
@@ -22,9 +22,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="@dimen/space_xs"
         android:textColor="@color/dark_gray"
-        android:textSize="14sp" />
+        android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
     <TextView
         android:id="@+id/doctor_specialty"
@@ -32,16 +32,16 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textColor="@color/gray"
-        android:textSize="12sp" />
+        android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall" />
 
     <Button
         android:id="@+id/btn_book_appointment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="@dimen/space_xs"
         android:backgroundTint="@color/green"
         android:text="@string/book_appointment_text"
         android:textColor="@color/md_on_primary"
-        android:textSize="12sp" />
+        android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall" />
 </LinearLayout>

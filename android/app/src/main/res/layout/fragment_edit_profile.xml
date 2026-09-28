@@ -9,7 +9,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
+        android:padding="@dimen/space_lg">
 
         <!-- Patient Profile -->
         <LinearLayout
@@ -24,7 +24,7 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="@dimen/space_lg">
 
                 <ImageView
                     android:id="@+id/iv_profile_image"
@@ -40,7 +40,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_gravity="bottom|end"
-                    android:layout_margin="8dp"
+                    android:layout_margin="@dimen/space_sm"
                     android:background="@drawable/circle_overlay"
                     android:contentDescription="@string/edit_profile_picture"
                     android:src="@drawable/baseline_edit_24" />
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_edittext"
                 android:hint="@string/first_name"
-                android:padding="12dp"
+                android:padding="@dimen/space_md"
                 android:textColor="@color/dark_gray"
                 android:textColorHint="@color/gray" />
 
@@ -61,10 +61,10 @@
                 android:id="@+id/et_last_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/space_md"
                 android:background="@drawable/rounded_edittext"
                 android:hint="@string/last_name"
-                android:padding="12dp"
+                android:padding="@dimen/space_md"
                 android:textColor="@color/dark_gray"
                 android:textColorHint="@color/gray" />
 
@@ -72,20 +72,20 @@
                 android:id="@+id/et_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/space_md"
                 android:background="@drawable/rounded_edittext"
-                android:padding="12dp"
+                android:padding="@dimen/space_md"
                 android:textColor="@color/dark_gray" />
 
             <EditText
                 android:id="@+id/et_phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/space_md"
                 android:background="@drawable/rounded_edittext"
                 android:hint="@string/phone_number"
                 android:inputType="phone"
-                android:padding="12dp"
+                android:padding="@dimen/space_md"
                 android:textColor="@color/dark_gray"
                 android:textColorHint="@color/gray" />
 
@@ -93,11 +93,11 @@
                 android:id="@+id/et_clinic_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/space_md"
                 android:background="@drawable/rounded_edittext"
                 android:hint="@string/clinic_code"
                 android:inputType="numberDecimal"
-                android:padding="12dp"
+                android:padding="@dimen/space_md"
                 android:textColor="@color/dark_gray"
                 android:textColorHint="@color/gray" />
 
@@ -105,11 +105,11 @@
                 android:id="@+id/et_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/space_md"
                 android:background="@drawable/rounded_edittext"
                 android:hint="@string/address"
                 android:inputType="textPostalAddress"
-                android:padding="12dp"
+                android:padding="@dimen/space_md"
                 android:textColor="@color/dark_gray"
                 android:textColorHint="@color/gray" />
 
@@ -117,19 +117,19 @@
                 android:id="@+id/et_dob"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/space_md"
                 android:background="@drawable/rounded_edittext"
                 android:cursorVisible="false"
                 android:focusable="false"
                 android:hint="@string/date_of_birth"
-                android:padding="12dp"
+                android:padding="@dimen/space_md"
                 android:textColor="@color/dark_gray"
                 android:textColorHint="@color/gray" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/space_md"
                 android:text="@string/gender_label"
                 android:textColor="@color/dark_gray" />
 
@@ -168,7 +168,7 @@
                 android:id="@+id/btn_upload_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/space_lg"
                 android:backgroundTint="@color/green"
                 android:text="@string/upload_id"
                 android:textColor="@color/md_on_primary" />
@@ -186,7 +186,7 @@
                 android:id="@+id/btn_submit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="@dimen/space_xl"
                 android:backgroundTint="@color/green"
                 android:text="@string/submit"
                 android:textColor="@color/md_on_primary" />

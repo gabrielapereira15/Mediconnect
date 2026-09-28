@@ -37,7 +37,7 @@ public class AppointmentClientImpl implements AppointmentClient {
                 DemoMode.enable();
                 return DemoData.appointments();
             }
-            return Collections.emptyList();
+            throw new ApiException(response.getStatus(), "Could not load appointments");
         }
     }
 

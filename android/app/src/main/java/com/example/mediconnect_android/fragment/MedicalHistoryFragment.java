@@ -50,18 +50,33 @@ public class MedicalHistoryFragment extends Fragment {
         String email = sharedPreferences.getString("email", "");
 
         init();
-
-        // Fetch off the UI thread, then show the Upcoming tab once it lands.
-        Background.run(() -> appointmentClient.getAppointments(email), appointments -> {
-            if (binding == null) {
-                return; // the view went away while the request was in flight
-            }
-            appointmentsList = appointments;
-            FragmentUtils.loadFragment(fragmentManager, R.id.fragment_container,
-                    new UpcomingFragment(appointmentsList));
-        });
+        loadAppointments(email);
 
         return view;
+    }
+
+    private void loadAppointments(String email) {
+        binding.stateView.setContentView(binding.fragmentContainer);
+        binding.stateView.showLoading();
+
+        // Fetch off the UI thread, then show the Upcoming tab once it lands.
+        Background.run(
+                () -> appointmentClient.getAppointments(email),
+                appointments -> {
+                    if (binding == null) {
+                        return; // the view went away while the request was in flight
+                    }
+                    appointmentsList = appointments;
+                    binding.stateView.showContent();
+                    FragmentUtils.loadFragment(fragmentManager, R.id.fragment_container,
+                            new UpcomingFragment(appointmentsList));
+                },
+                error -> {
+                    if (binding == null) {
+                        return;
+                    }
+                    binding.stateView.showError(() -> loadAppointments(email));
+                });
     }
 
     private void init() {

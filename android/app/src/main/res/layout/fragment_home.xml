@@ -17,7 +17,7 @@
             android:layout_gravity="center"
             android:background="@color/gray_background"
             android:orientation="vertical"
-            android:paddingHorizontal="16dp"
+            android:paddingHorizontal="@dimen/space_lg"
             tools:ignore="UselessParent">
 
             <!-- Search Bar -->
@@ -25,14 +25,14 @@
                 android:id="@+id/search_bar"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="@dimen/space_xl"
                 android:background="@drawable/search_bar_background"
                 android:drawableStart="@drawable/baseline_search_24"
                 android:drawablePadding="@dimen/cardview_default_elevation"
                 android:drawableTint="@color/light_blue"
                 android:hint="@string/search_for_doctors_or_specialties"
                 android:inputType="textPersonName"
-                android:paddingStart="15dp"
+                android:paddingStart="@dimen/space_lg"
                 android:textColor="@color/dark_gray"
                 android:textColorHint="@color/gray"
                 tools:ignore="RtlSymmetry" />
@@ -42,18 +42,18 @@
                 android:id="@+id/specialties_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="@dimen/space_sm"
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/top_searched_specialties"
                 android:textColor="@color/dark_gray"
-                android:textSize="14sp" />
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
             <!-- Specialties Icons with Labels -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="@dimen/space_xs"
                 android:baselineAligned="false"
                 android:gravity="center"
                 android:orientation="horizontal">
@@ -63,13 +63,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="4dp"
+                    android:layout_marginEnd="@dimen/space_xs"
                     android:layout_weight="1"
                     android:background="@drawable/specialty_border"
                     android:clickable="true"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="7dp">
+                    android:padding="@dimen/space_sm">
 
                     <ImageView
                         android:id="@+id/optometrist_icon"
@@ -83,7 +83,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="@dimen/space_xs"
                         android:fontFamily="sans-serif"
                         android:gravity="center"
                         android:maxLines="1"
@@ -101,13 +101,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="4dp"
+                    android:layout_marginEnd="@dimen/space_xs"
                     android:layout_weight="1"
                     android:background="@drawable/specialty_border"
                     android:clickable="true"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="7dp">
+                    android:padding="@dimen/space_sm">
 
                     <ImageView
                         android:id="@+id/cardiologist_icon"
@@ -121,7 +121,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="@dimen/space_xs"
                         android:fontFamily="sans-serif"
                         android:text="@string/cardiologist"
                         android:gravity="center"
@@ -138,13 +138,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="4dp"
+                    android:layout_marginEnd="@dimen/space_xs"
                     android:layout_weight="1"
                     android:background="@drawable/specialty_border"
                     android:clickable="true"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="7dp">
+                    android:padding="@dimen/space_sm">
 
                     <ImageView
                         android:id="@+id/obgyn_icon"
@@ -158,7 +158,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="@dimen/space_xs"
                         android:fontFamily="sans-serif"
                         android:text="@string/gynecologist"
                         android:gravity="center"
@@ -177,13 +177,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="4dp"
+                    android:layout_marginEnd="@dimen/space_xs"
                     android:layout_weight="1"
                     android:background="@drawable/specialty_border"
                     android:clickable="true"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="7dp">
+                    android:padding="@dimen/space_sm">
 
                     <ImageView
                         android:id="@+id/pediatrician_icon"
@@ -197,7 +197,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="@dimen/space_xs"
                         android:fontFamily="sans-serif"
                         android:text="@string/pediatrician"
                         android:gravity="center"
@@ -217,36 +217,36 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginEnd="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_lg"
                 android:clickable="true"
                 android:text="@string/see_all_link"
                 android:textColor="@color/light_blue"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold" 
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
             <!-- Available Doctors Section -->
             <TextView
                 android:id="@+id/available_doctors_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="@dimen/space_sm"
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/available_doctors_text"
                 android:textColor="@color/dark_gray"
-                android:textSize="14sp" />
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
             <TextView
                 android:id="@+id/unavailable_doctors_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="@dimen/space_sm"
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/available_doctors_text"
                 android:textColor="@color/dark_gray"
-                android:textSize="14sp"
-                android:visibility="gone" />
+                android:visibility="gone" 
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
 
             <!-- Doctors List (RecyclerView) -->
@@ -254,23 +254,23 @@
                 android:id="@+id/recyclerViewDoctors"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="@dimen/space_xs"
                 android:clipToPadding="false"
-                android:paddingHorizontal="8dp" />
+                android:paddingHorizontal="@dimen/space_sm" />
 
             <TextView
                 android:id="@+id/see_all_doctors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginEnd="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_lg"
                 android:clickable="true"
                 android:minWidth="48dp"
                 android:text="@string/see_all_link"
                 android:textColor="@color/light_blue"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold" 
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
             <!-- Carousel -->
             <androidx.viewpager2.widget.ViewPager2

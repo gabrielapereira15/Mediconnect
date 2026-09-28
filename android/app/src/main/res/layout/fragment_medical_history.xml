@@ -39,4 +39,12 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+
+    <com.example.mediconnect_android.view.StateView
+        android:id="@+id/stateView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/space_lg"
+        android:visibility="gone" />
+
 </LinearLayout>

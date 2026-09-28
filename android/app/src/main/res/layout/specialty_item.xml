@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="@dimen/space_sm"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp">
 
@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="@dimen/space_lg">
 
         <ImageView
             android:id="@+id/specialtyIcon"
@@ -25,9 +25,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="@dimen/space_lg"
             android:textColor="@color/light_blue"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold" 
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

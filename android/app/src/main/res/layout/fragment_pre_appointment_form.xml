@@ -9,29 +9,29 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
+        android:padding="@dimen/space_lg">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@drawable/card_background"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="@dimen/space_xl">
 
             <!-- Surgery Question -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/space_lg"
                 android:text="@string/surgery_question"
                 android:textColor="@color/dark_gray"
-                android:textSize="16sp" />
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
             <RadioGroup
                 android:id="@+id/radioGroupSurgery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/space_sm"
                 android:orientation="horizontal">
 
                 <RadioButton
@@ -53,16 +53,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/space_lg"
                 android:text="@string/smoke_question"
                 android:textColor="@color/dark_gray"
-                android:textSize="16sp" />
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
             <RadioGroup
                 android:id="@+id/radioGroupSmoke"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/space_sm"
                 android:orientation="horizontal">
 
                 <RadioButton
@@ -84,16 +84,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/space_lg"
                 android:text="@string/alcohol_question"
                 android:textColor="@color/dark_gray"
-                android:textSize="16sp" />
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
             <RadioGroup
                 android:id="@+id/radioGroupAlcohol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/space_sm"
                 android:orientation="horizontal">
 
                 <RadioButton
@@ -115,15 +115,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/space_lg"
                 android:text="@string/chronic_condition"
                 android:textColor="@color/dark_gray"
-                android:textSize="16sp" />
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/space_sm"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -173,15 +173,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/space_lg"
                 android:text="@string/family_history_disease"
                 android:textColor="@color/dark_gray"
-                android:textSize="16sp" />
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/space_sm"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -233,7 +233,7 @@
                 android:id="@+id/btn_submit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/space_md"
                 android:backgroundTint="@color/green"
                 android:text="@string/submit"
                 android:textColor="@color/md_on_primary" />

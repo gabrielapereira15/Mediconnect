@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:padding="16dp">
+                android:padding="@dimen/space_lg">
 
                 <!-- Notification icon -->
                 <ImageView
@@ -46,8 +46,8 @@
                     android:layout_height="10dp"
                     android:layout_alignTop="@id/notificationIcon"
                     android:layout_alignEnd="@id/notificationIcon"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:layout_marginEnd="@dimen/space_xs"
                     android:background="@drawable/circle_red"
                     android:visibility="gone" />
             </RelativeLayout>

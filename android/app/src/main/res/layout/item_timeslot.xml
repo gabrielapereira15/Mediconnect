@@ -1,28 +1,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
+    android:layout_marginBottom="@dimen/space_xs"
     android:background="?attr/selectableItemBackground"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="@dimen/space_md">
 
     <!-- Date -->
     <TextView
         android:id="@+id/tv_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/space_sm"
         android:text="@string/date_slot_thu_8_jun"
         android:textColor="@color/dark_gray"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold" 
+        android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
     <!-- Time slots -->
     <GridLayout
         android:id="@+id/gl_timeslots"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_margin="@dimen/space_xs"
         android:columnCount="4"
         android:columnOrderPreserved="false"
         android:useDefaultMargins="true">

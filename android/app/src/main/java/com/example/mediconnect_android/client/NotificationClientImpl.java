@@ -32,7 +32,7 @@ public class NotificationClientImpl implements NotificationClient {
                 DemoMode.enable();
                 return DemoData.notifications();
             }
-            return Collections.emptyList();
+            throw new ApiException(response.getStatus(), "Could not load notifications");
         }
     }
 

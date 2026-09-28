@@ -16,24 +16,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
+            android:padding="@dimen/space_lg"
             tools:ignore="MissingConstraints">
 
             <!-- Doctor Information Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/space_lg"
                 android:background="@drawable/search_bar_background"
                 android:orientation="horizontal"
-                android:padding="16dp">
+                android:padding="@dimen/space_lg">
 
 
                 <ImageView
                     android:id="@+id/doctorImage"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="@dimen/space_lg"
                     android:background="@drawable/round_image_background"
                     android:clipToOutline="true"
                     android:contentDescription="@string/doctor_image"
@@ -52,8 +52,8 @@
                         android:layout_height="wrap_content"
                         android:text="@string/doctor_name"
                         android:textColor="@color/light_blue"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold" 
+                        android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium" />
 
                     <TextView
                         android:id="@+id/doctorSpecialty"
@@ -61,7 +61,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/speacialty_text"
                         android:textColor="@color/gray"
-                        android:textSize="14sp" />
+                        android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -72,17 +72,17 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="4dp"
+                            android:layout_marginEnd="@dimen/space_xs"
                             android:src="@drawable/baseline_star_rate_24" />
 
                         <TextView
                             android:id="@+id/doctorScore"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="4dp"
+                            android:layout_marginEnd="@dimen/space_xs"
                             android:text="@string/doctor_score"
                             android:textColor="@color/yellow"
-                            android:textSize="14sp" />
+                            android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
                         <TextView
                             android:id="@+id/reviewCount"
@@ -90,7 +90,7 @@
                             android:layout_height="wrap_content"
                             android:text=""
                             android:textColor="@color/yellow"
-                            android:textSize="14sp" />
+                            android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
                     </LinearLayout>
 
@@ -102,18 +102,18 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/space_lg"
                 android:background="@drawable/search_bar_background"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/space_lg">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/about_text"
                     android:textColor="@color/dark_gray"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold" 
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
                 <TextView
                     android:id="@+id/doctorDescription"
@@ -122,7 +122,7 @@
                     android:maxLines="2"
                     android:text="@string/about_description"
                     android:textColor="@color/gray"
-                    android:textSize="14sp" />
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
                 <TextView
                     android:id="@+id/readMoreLink"
@@ -130,8 +130,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/read_more_link"
                     android:textColor="@color/light_blue"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold" 
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
             </LinearLayout>
 
             <!-- Choose Date & Time Section -->
@@ -140,7 +140,7 @@
                 android:layout_height="300dp"
                 android:background="@drawable/search_bar_background"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/space_lg">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -154,8 +154,8 @@
                         android:layout_weight="1"
                         android:text="@string/choose_date__time"
                         android:textColor="@color/dark_gray"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold" 
+                        android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
                     <ImageView
                         android:layout_width="24dp"
@@ -170,7 +170,7 @@
                     android:id="@+id/timeSlotsRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp" />
+                    android:layout_marginBottom="@dimen/space_lg" />
 
             </LinearLayout>
 
@@ -179,12 +179,12 @@
                 android:id="@+id/btnNext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="@dimen/space_lg"
+                android:layout_marginBottom="@dimen/space_sm"
                 android:backgroundTint="@color/green"
                 android:text="@string/next_text"
                 android:textColor="@color/md_on_primary"
-                android:textSize="16sp" />
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
         </LinearLayout>
 
     </ScrollView>

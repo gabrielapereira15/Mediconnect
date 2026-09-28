@@ -15,6 +15,7 @@ import com.example.mediconnect_android.client.NotificationClient;
 import com.example.mediconnect_android.client.NotificationClientImpl;
 import com.example.mediconnect_android.databinding.FragmentNotificationsBinding;
 import com.example.mediconnect_android.model.Notification;
+import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.util.Background;
 
 import java.util.ArrayList;
@@ -50,30 +51,40 @@ public class NotificationsFragment extends Fragment {
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
         String email = sharedPreferences.getString("email", "");
 
-        Background.run(() -> notificationClient.getNotifications(email), loaded -> {
-            if (binding == null) {
-                return;
-            }
-            notifications = loaded;
-            bindAdapter();
-        });
+        loadNotifications(email);
+    }
+
+    private void loadNotifications(String email) {
+        binding.stateView.setContentView(binding.recyclerView);
+        binding.stateView.showLoading();
+
+        Background.run(
+                () -> notificationClient.getNotifications(email),
+                loaded -> {
+                    if (binding == null) {
+                        return; // the view went away while the request was in flight
+                    }
+                    notifications = loaded;
+                    bindAdapter();
+                    binding.stateView.showContentOrEmpty(notifications.isEmpty(),
+                            R.drawable.baseline_notifications_off_24,
+                            R.string.state_no_notifications_title,
+                            R.string.state_no_notifications_body);
+                },
+                error -> {
+                    if (binding == null) {
+                        return;
+                    }
+                    binding.stateView.showError(() -> loadNotifications(email));
+                });
     }
 
     private void bindAdapter() {
-        if (notifications.isEmpty()) {
-            binding.tvEmptyMessage.setVisibility(View.VISIBLE);
-            binding.recyclerView.setVisibility(View.GONE);
-
-            if (getActivity() instanceof NotificationBadgeHandler) {
-                ((NotificationBadgeHandler) getActivity()).updateNotificationBadgeVisibility(false);
-            }
-        } else {
-            binding.tvEmptyMessage.setVisibility(View.GONE);
-            binding.recyclerView.setVisibility(View.VISIBLE);
-
-            if (getActivity() instanceof NotificationBadgeHandler) {
-                ((NotificationBadgeHandler) getActivity()).updateNotificationBadgeVisibility(true);
-            }
+        // StateView owns the empty/content visibility; this only has to keep
+        // the toolbar badge in step.
+        if (getActivity() instanceof NotificationBadgeHandler) {
+            ((NotificationBadgeHandler) getActivity())
+                    .updateNotificationBadgeVisibility(!notifications.isEmpty());
         }
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

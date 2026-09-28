@@ -9,7 +9,7 @@
         android:layout_width="110dp"
         android:layout_height="110dp"
         android:layout_gravity="center"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="@dimen/space_lg"
         android:background="@drawable/round_image_background"
         android:clipToOutline="true"
         android:contentDescription="@string/profile_picture"
@@ -21,10 +21,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="@dimen/space_lg"
         android:fontFamily="@font/montserrat_regular"
         android:text=""
         android:textColor="@color/light_blue"
-        android:textSize="16sp" />
+        android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
 </LinearLayout>

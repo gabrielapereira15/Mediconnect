@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Type scale.
+
+    Sizes were previously chosen per view — 18sp here, 12sp there — so nothing
+    lined up between screens and there was no way to tell a heading from a
+    label except by eye. These are the Material 3 roles the app actually needs,
+    each carrying its own weight and colour so a view only has to say what kind
+    of text it is.
+-->
+<resources>
+
+    <!-- Screen titles, e.g. the toolbar. -->
+    <style name="TextAppearance.Mediconnect.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <!-- Card headings and section headers. -->
+    <style name="TextAppearance.Mediconnect.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <!-- A name inside a list row. -->
+    <style name="TextAppearance.Mediconnect.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <!-- Default running text. -->
+    <style name="TextAppearance.Mediconnect.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Mediconnect.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <!-- Supporting text: specialties, dates, captions. -->
+    <style name="TextAppearance.Mediconnect.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/md_on_surface_variant</item>
+    </style>
+
+    <!-- The smallest readable size. Below this, text fails accessibility. -->
+    <style name="TextAppearance.Mediconnect.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/md_on_surface_variant</item>
+    </style>
+</resources>

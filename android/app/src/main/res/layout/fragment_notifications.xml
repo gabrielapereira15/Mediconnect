@@ -6,28 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".fragment.NotificationsFragment">
 
-    <!-- TextView to display when the RecyclerView is empty -->
-    <TextView
-        android:id="@+id/tvEmptyMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/no_notifications_to_display"
-        android:textAlignment="center"
-        android:textColor="@color/light_blue"
-        android:textSize="18sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/recyclerView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/space_lg"
         android:clipToPadding="false"
-        android:padding="8dp" />
+        android:padding="@dimen/space_sm" />
+
+
+    <com.example.mediconnect_android.view.StateView
+        android:id="@+id/stateView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="@dimen/space_lg"
+        android:visibility="gone" />
 
 </FrameLayout>
