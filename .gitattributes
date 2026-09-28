@@ -1,0 +1,15 @@
+# Normalize line endings so the repo is identical on Windows, macOS and Linux.
+* text=auto eol=lf
+
+# Gradle wrappers must stay executable and unmodified.
+gradlew text eol=lf
+*.bat text eol=crlf
+gradle-wrapper.jar binary
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.ttf binary
+*.otf binary

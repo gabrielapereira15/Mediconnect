@@ -1,98 +1,307 @@
+<div align="center">
+
 # MediConnect
 
-Welcome to **MediConnect**, a comprehensive patient management app designed to enhance the efficiency of healthcare clinics in Canada. This app simplifies appointment scheduling, medical history access, and more, creating a seamless experience for both patients and healthcare providers.
+**A patient management system for healthcare clinics — Android app, REST API and clinic back office.**
+
+Appointment booking, medical history, pre-appointment forms and notifications,
+backed by a Spring Boot service with a Thymeleaf admin panel.
+
+[Features](#features) · [Screenshots](#screenshots) · [Run it locally](#run-it-locally) · [API](#api-reference) · [Architecture](#architecture)
+
+</div>
 
 ---
+
+<div align="center">
+  <img src="assets/home.png" width="240" alt="Home screen">
+  <img src="assets/book-appointment.png" width="240" alt="Booking a slot">
+  <img src="assets/appointments-upcoming.png" width="240" alt="Upcoming appointments">
+</div>
+
+## What this is
+
+MediConnect has three parts, all in this repository:
+
+| Part | What it does |
+|---|---|
+| **`android/`** | The patient app — browse doctors, book slots, manage appointments, fill in forms |
+| **`backend/` → `mobile/`** | The REST API the app talks to |
+| **`backend/` → `backoffice/`** | A server-rendered admin panel for clinic staff to manage doctors, patients, schedules and notifications |
+
+It started as a postgraduate project for the Mobile Solutions program at
+Conestoga College and has since been rebuilt as a portfolio piece.
 
 ## Features
 
-MediConnect offers the following features:
+**Patient app**
+- Browse doctors by specialty, with ratings drawn from completed visits
+- Book an appointment against a real schedule of free slots
+- Upcoming, completed and cancelled appointments, with reschedule and cancel
+- Leave a review after a visit
+- Pre-appointment and check-in forms
+- Clinic notifications with an unread badge
+- Passwordless sign-in by one-time passcode
 
-- **Appointment Scheduling**: Book in-person or online consultations.
-- **Medical History Access**: View detailed patient records and diagnoses.
-- **Wearable Device Integration**: Sync smartwatch data like heart rate and blood pressure for remote monitoring.
-- **Pre-Appointment Forms**: Patients can fill out forms prior to consultations.
-- **Medication Reminders**: Notify patients about their medication schedules.
-- **Virtual Check-ins and Triage**: Streamline patient flow with online check-ins.
-- **Payment Integration**: Manage billing and payments securely.
+**Clinic back office** (`http://localhost:8080`)
+- CRUD for doctors, patients, appointments, schedules and notifications
+- Doctor photo upload
+- Built with Thymeleaf, Bootstrap and htmx
 
----
-
-## Purpose
-
-MediConnect aims to:
-
-- Improve clinic operations by reducing manual tasks.
-- Enhance patient satisfaction with a user-friendly interface.
-- Enable better decision-making through integrated health data.
-
----
-
-## Technologies Used
-
-- **Programming Language**: Java
-- **Framework**: Android SDK
-- **Database**: MongoDB and Postgres
-- **Cloud Services**: Render
-- **UI Design**: Material Design principles
-
----
-
-## Getting Started
-
-1. Clone the repository to your local machine.
-2. Open the project in Android Studio.
-3. Configure the necessary API keys and database settings.
-4. Build and run the app on an emulator or physical device.
-
----
+**Throughout**
+- Light and dark themes from a single set of role-named colour tokens
+- Works offline: if the API is unreachable the app shows a bundled demo clinic
+  rather than empty screens, so an installed APK is browsable on its own
+- Every network call runs off the UI thread
+- OpenAPI docs at `/swagger-ui.html`
 
 ## Screenshots
 
-![Homepage](assets/Homepage.png)
+| Doctors | Booking | Upcoming |
+|---|---|---|
+| <img src="assets/doctors.png" width="220"> | <img src="assets/book-appointment.png" width="220"> | <img src="assets/appointments-upcoming.png" width="220"> |
 
-![Doctor List](assets/DoctorList.png)
-![Specialty List](assets/SpecialtiesList.png)
+| History | Profile | Menu |
+|---|---|---|
+| <img src="assets/appointments-completed.png" width="220"> | <img src="assets/profile.png" width="220"> | <img src="assets/menu.png" width="220"> |
 
-![Time Slots](assets/TimeSlots.png)
-![Book Appointment Step](assets/AppointMyself.png)
-![Book Appointment Step](assets/AppointOthers.png)
-![Appointment Confirmation](assets/AppointConfirmation.png)
-![Add Review](assets/AddReview.png)
+<div align="center">
+  <br>
+  <strong>Dark mode</strong><br>
+  <img src="assets/dark-mode.png" width="240" alt="Dark mode">
+</div>
 
-![Appointment Upcoming List](assets/UpcomingList.png)
-![Appointment Completed List](assets/CompletedList.png)
-![Appointment Cancelled List](assets/CancelledList.png)
+## Tech stack
 
-![Profile](assets/Profile.png)
-![Profile Form](assets/ProfileForm.png)
+| | |
+|---|---|
+| **App** | Java, Android SDK (min 26, target 34), Material 3, ViewBinding, OkHttp, Gson, Glide |
+| **API** | Java 17, Spring Boot 3.3, Spring Data JPA, springdoc-openapi |
+| **Back office** | Thymeleaf, Bootstrap 5, htmx |
+| **Database** | H2 in-memory by default, PostgreSQL for real use |
+| **Build** | Gradle (both halves), GitHub Actions |
 
-![Drawer](assets/Drawer.png)
-![Form List](assets/FormsList.png)
-![Check In Form](assets/CheckInForm.png)
-![Pre-Appointment Form](assets/PreAppointmentForm.png)
+## Run it locally
 
-![Notification List](assets/NotificationList.png)
-![Notification](assets/Notification.png)
+**Requirements:** JDK 17 or newer. Android Studio only if you want to run the app.
 
----
+```bash
+git clone https://github.com/YOUR-USERNAME/Mediconnect.git
+cd Mediconnect
+```
 
-## Future Enhancements
+### 1. Start the backend
 
-- Implement missing features:
-    - **Medical History Access**: View detailed patient records and diagnoses.
-    - **Wearable Device Integration**: Sync smartwatch data like heart rate and blood pressure for remote monitoring.
-    - **Medication Reminders**: Notify patients about their medication schedules.
-    - **Payment Integration**: Manage billing and payments securely.
-- Add multilingual support for broader accessibility.
-- Introduce AI-powered health insights and recommendations.
-- Enable telemedicine features for virtual consultations.
-- Expand smartwatch compatibility.
+```bash
+cd backend
+./gradlew bootRun
+```
 
----
+That is the whole setup. It runs on an **in-memory H2 database** and seeds
+itself with a small clinic on first start — 8 doctors, weekday slot grids three
+weeks either side of today, a patient with appointments in every state, plus
+reviews and notifications.
 
-## Contributing
+| What | Where |
+|---|---|
+| Clinic back office | http://localhost:8080 |
+| API docs (Swagger) | http://localhost:8080/swagger-ui.html |
+| Database console | http://localhost:8080/h2-console |
 
-We welcome contributions! If you’d like to improve MediConnect, please fork the repository, make your changes, and submit a pull request.
+Check it is up:
 
----
+```bash
+curl http://localhost:8080/api/mobile/doctors
+```
+
+<details>
+<summary><strong>Using PostgreSQL instead</strong></summary>
+
+The default H2 database is wiped on every restart. For one that persists:
+
+```bash
+cd backend
+docker compose up -d        # starts Postgres 17 on :5432
+./gradlew bootRun --args='--spring.profiles.active=postgres'
+```
+
+Or point it at any Postgres you already have:
+
+```bash
+JDBC_DATABASE_URL=jdbc:postgresql://localhost:5432/mediconnect \
+JDBC_DATABASE_USERNAME=me JDBC_DATABASE_PASSWORD=secret \
+./gradlew bootRun --args='--spring.profiles.active=postgres'
+```
+
+</details>
+
+### 2. Run the app
+
+Open `android/` in Android Studio and run it on an emulator, or from the
+command line:
+
+```bash
+cd android
+./gradlew assembleDebug
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
+
+The app points at `http://10.0.2.2:8080` — the emulator's route to your
+machine's localhost. To use a different server:
+
+```bash
+./gradlew assembleDebug -PapiBaseUrl=https://api.example.com
+```
+
+> **Without the backend running**, the app falls back to a bundled demo clinic
+> and shows a notice saying so. Browsing works; signing in does not, since
+> that needs the API.
+
+### 3. Sign in
+
+Sign-in is by one-time passcode. There is no mail provider wired up, so in
+development the passcode is **returned in the API response and printed to the
+backend log**:
+
+```
+Passcode for demo@mediconnect.ca is 418223 (valid 10 minutes)
+```
+
+Use the seeded patient — **`demo@mediconnect.ca`** — which already has
+appointments, reviews and notifications. Any other email works too and creates
+a fresh patient record.
+
+> The production profile turns this off, so a real deployment never exposes a
+> passcode.
+
+### Commands
+
+| Directory | Command | Does |
+|---|---|---|
+| `backend` | `./gradlew bootRun` | Start the API and back office |
+| `backend` | `./gradlew build` | Compile and run the tests |
+| `backend` | `./gradlew test` | Tests only |
+| `android` | `./gradlew assembleDebug` | Build the APK |
+| `android` | `./gradlew testDebugUnitTest` | Unit tests |
+| `android` | `./gradlew lintDebug` | Android lint |
+
+### Configuration
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `JDBC_DATABASE_URL` | in-memory H2 | Database connection |
+| `TOKEN_SECRET` | dev value | Token signing key — **required** in production |
+| `DEMO_DATA_ENABLED` | `true` | Seed an empty database |
+| `EXPOSE_OTP` | `true` | Return the passcode in the response |
+| `PHOTO_BASEURL` | `http://localhost:8080` | Where doctor photos are served from |
+
+### Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| App shows demo data with the server running | The emulator reaches your machine at `10.0.2.2`, not `localhost`. Rebuild with the right `-PapiBaseUrl` if you changed it. |
+| `CLEARTEXT communication not permitted` | Only debug builds allow plain HTTP, and only to local hosts. Use a debug build, or serve over HTTPS. |
+| 401 on appointments after restarting the backend | The session token outlived the server. Sign in again. |
+| `Could not resolve placeholder 'TOKEN_SECRET'` | You started the `production` profile without setting it. That is deliberate. |
+
+## Tests
+
+```bash
+cd backend && ./gradlew test                # 12 tests
+cd android && ./gradlew testDebugUnitTest   # 10 tests
+```
+
+The backend tests cover the two things that decide whether a patient's records
+are reachable: whether a passcode can be guessed (replay, brute-force burnout,
+expiry) and whether a token can be forged (wrong secret, tampered payload,
+signature swapped from another account).
+
+The app tests cover the demo catalogue — the thing an installed APK shows when
+no server is running — and the model setters.
+
+## API reference
+
+Base URL `http://localhost:8080`. Full schema at `/swagger-ui.html`.
+
+### Auth
+
+| Method | Route | Description |
+|---|---|---|
+| `POST` | `/auth/get-otp` | Send a passcode to an email |
+| `POST` | `/auth/verify-otp` | Exchange a passcode for a bearer token |
+
+```bash
+curl -X POST http://localhost:8080/auth/get-otp \
+  -H "Content-Type: application/json" \
+  -d '{"email":"demo@mediconnect.ca","role":"patient"}'
+```
+
+### Mobile
+
+Everything below the doctor directory requires `Authorization: Bearer <token>`,
+and the email in the URL must be the token's own.
+
+| Method | Route | Auth |
+|---|---|---|
+| `GET` | `/api/mobile/doctors` | public |
+| `GET` | `/api/mobile/doctors/{id}` | public |
+| `GET` | `/api/mobile/patients/{email}` | required |
+| `POST` | `/api/mobile/patients` | required |
+| `PUT` | `/api/mobile/patients/{id}` | required |
+| `GET` | `/api/mobile/appointments/{email}` | required |
+| `POST` | `/api/mobile/appointments` | required |
+| `PUT` | `/api/mobile/appointments/cancel/{id}` | required |
+| `GET` | `/api/mobile/notifications/{email}` | required |
+| `POST` | `/api/mobile/notifications/ack/{id}` | required |
+| `POST` | `/api/mobile/reviews` | required |
+
+## Architecture
+
+```
+android/
+└─ app/src/main/java/…/mediconnect_android/
+   ├─ activity/     Splash, Welcome, OTP, Main
+   ├─ fragment/     one per screen
+   ├─ adapter/      RecyclerView adapters
+   ├─ client/       API clients — ApiConfig holds the base URL and token
+   ├─ data/         bundled demo clinic, used when the API is unreachable
+   ├─ model/        response models
+   └─ util/         Background (threading), SessionManager, dialogs
+
+backend/src/main/java/com/vegs/mediconnect/
+├─ auth/            OTP issue/verify, HMAC tokens, request interceptor
+├─ mobile/          the REST API the app consumes
+├─ backoffice/      Thymeleaf admin panel
+├─ datasource/      JPA entities and repositories
+├─ demo/            seeds an empty database
+└─ config/          JPA, Jackson, Swagger
+```
+
+**A few decisions worth noting**
+
+- **No Spring Security.** The back office shares this application and is an
+  internal tool with its own story; adding a filter chain to protect the phone
+  endpoints would have locked it down as a side effect. Instead a single
+  interceptor guards the mobile routes and checks that the email in the URL
+  matches the token — a token proves who you are, it must not let you read
+  someone else.
+- **The app never blocks the UI thread.** Every client call goes through
+  `Background`, which is why a slow or missing server degrades instead of
+  freezing the app.
+- **Colours are named by role, not appearance.** `md_on_surface`, not
+  `dark_gray`. That is what makes a dark palette expressible; the old names are
+  kept as aliases so existing layouts pick up both themes unchanged.
+- **H2 by default, Postgres by profile.** A clone should run with one command
+  and no database install.
+
+## Credits
+
+Originally built as a team project for the Mobile Solutions postgraduate
+program at Conestoga College, Kitchener. The backend keeps its original
+`com.vegs` package namespace from that work.
+
+Fonts from [Google Fonts](https://fonts.google.com/specimen/Montserrat).
+
+## Licence
+
+MIT — see [LICENSE](LICENSE).
