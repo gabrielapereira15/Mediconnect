@@ -3,6 +3,8 @@ package com.example.mediconnect_android.client;
 import android.util.Log;
 
 import com.example.mediconnect_android.client.response.ApiGenericResponse;
+import com.example.mediconnect_android.data.DemoData;
+import com.example.mediconnect_android.data.DemoMode;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.model.DoctorDetails;
 import com.google.gson.Gson;
@@ -24,11 +26,18 @@ public class DoctorClientImpl implements DoctorClient {
             }.getType();
             Gson gson = new Gson();
             List<Doctor> doctors = gson.fromJson(response.getResponseBody(), doctorListType);
+            DemoMode.disable();
             return doctors;
-        } else {
-            Log.e("DoctorClientImpl", "Error getting doctors: " + response.getResponseBody());
-            return Collections.emptyList();
         }
+
+        // No server at all: show the bundled clinic rather than an empty screen.
+        if (OkHttpClientHelper.isOffline(response)) {
+            DemoMode.enable();
+            return DemoData.doctors();
+        }
+
+        Log.e("DoctorClientImpl", "Error getting doctors: " + response.getResponseBody());
+        return Collections.emptyList();
     }
 
     @Override

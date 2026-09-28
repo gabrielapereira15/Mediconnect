@@ -3,6 +3,8 @@ package com.example.mediconnect_android.client;
 import android.util.Log;
 
 import com.example.mediconnect_android.client.response.ApiGenericResponse;
+import com.example.mediconnect_android.data.DemoData;
+import com.example.mediconnect_android.data.DemoMode;
 import com.example.mediconnect_android.model.Notification;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -22,9 +24,14 @@ public class NotificationClientImpl implements NotificationClient {
             Type notificationListType = new TypeToken<List<Notification>>() {
             }.getType();
             Gson gson = new Gson();
+            DemoMode.disable();
             return gson.fromJson(response.getResponseBody(), notificationListType);
         } else {
             Log.e("NotificationClientImpl", "Error getting notifications: " + response.getResponseBody());
+            if (OkHttpClientHelper.isOffline(response)) {
+                DemoMode.enable();
+                return DemoData.notifications();
+            }
             return Collections.emptyList();
         }
     }

@@ -16,6 +16,7 @@ import com.example.mediconnect_android.client.AppointmentClientImpl;
 import com.example.mediconnect_android.databinding.FragmentMedicalHistoryBinding;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.util.FragmentUtils;
+import com.example.mediconnect_android.util.Background;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
@@ -48,13 +49,17 @@ public class MedicalHistoryFragment extends Fragment {
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
         String email = sharedPreferences.getString("email", "");
 
-        appointmentsList = appointmentClient.getAppointments(email);
-
-        // Set initial fragment to UpcomingFragment
-        UpcomingFragment upcomingFragment = new UpcomingFragment(appointmentsList);
-        FragmentUtils.loadFragment(fragmentManager, R.id.fragment_container, upcomingFragment);
-
         init();
+
+        // Fetch off the UI thread, then show the Upcoming tab once it lands.
+        Background.run(() -> appointmentClient.getAppointments(email), appointments -> {
+            if (binding == null) {
+                return; // the view went away while the request was in flight
+            }
+            appointmentsList = appointments;
+            FragmentUtils.loadFragment(fragmentManager, R.id.fragment_container,
+                    new UpcomingFragment(appointmentsList));
+        });
 
         return view;
     }

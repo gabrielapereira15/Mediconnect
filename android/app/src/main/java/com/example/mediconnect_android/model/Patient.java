@@ -25,7 +25,7 @@ public class Patient {
     }
 
     public void setfirstName(String firstName) {
-        firstName = firstName;
+        this.firstName = firstName;
     }
 
     public String getlastName() {
@@ -33,7 +33,7 @@ public class Patient {
     }
 
     public void setlastName(String lastName) {
-        lastName = lastName;
+        this.lastName = lastName;
     }
 
     public String getemail() {
@@ -41,7 +41,7 @@ public class Patient {
     }
 
     public void setemail(String email) {
-        email = email;
+        this.email = email;
     }
 
     public String getphoneNumber() {
@@ -49,7 +49,7 @@ public class Patient {
     }
 
     public void setphoneNumber(String phoneNumber) {
-        phoneNumber = phoneNumber;
+        this.phoneNumber = phoneNumber;
     }
 
     public String getclinicCode() {
@@ -57,7 +57,7 @@ public class Patient {
     }
 
     public void setclinicCode(String clinicCode) {
-        clinicCode = clinicCode;
+        this.clinicCode = clinicCode;
     }
 
     public String getaddress() {
@@ -65,7 +65,7 @@ public class Patient {
     }
 
     public void setaddress(String address) {
-        address = address;
+        this.address = address;
     }
 
     public String getbirthdate() {
@@ -81,7 +81,7 @@ public class Patient {
     }
 
     public void setgender(String gender) {
-        gender = gender;
+        this.gender = gender;
     }
 
     public String getDocument() {

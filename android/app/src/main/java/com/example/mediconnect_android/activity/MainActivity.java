@@ -34,6 +34,7 @@ import com.example.mediconnect_android.fragment.SettingsFragment;
 import com.example.mediconnect_android.model.Notification;
 import com.example.mediconnect_android.util.BottomNavigationManager;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.Background;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
@@ -71,17 +72,14 @@ public class MainActivity extends AppCompatActivity implements NotificationsFrag
 
     private void setNotificationIcon() {
         String email = sharedPreferences.getString("email", "");
-        List<Notification> notifications = notificationClient.getNotifications(email);
-
-        int notificationCount = notifications != null ? notifications.size() : 0;
-
         View notificationBadge = findViewById(R.id.notificationBadge);
 
-        if (notificationCount > 0) {
-            notificationBadge.setVisibility(View.VISIBLE);
-        } else {
-            notificationBadge.setVisibility(View.GONE);
-        }
+        // The badge is decoration; fetch it in the background so the activity
+        // is interactive straight away.
+        Background.run(() -> notificationClient.getNotifications(email), notifications -> {
+            int notificationCount = notifications != null ? notifications.size() : 0;
+            notificationBadge.setVisibility(notificationCount > 0 ? View.VISIBLE : View.GONE);
+        });
     }
 
     private void listeners() {

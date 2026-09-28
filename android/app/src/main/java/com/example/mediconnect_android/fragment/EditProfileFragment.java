@@ -37,6 +37,7 @@ import com.example.mediconnect_android.databinding.FragmentEditProfileBinding;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.SessionManager;
+import com.example.mediconnect_android.util.Background;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -232,11 +233,28 @@ public class EditProfileFragment extends Fragment {
                 address
         );
 
-        if (!isPatientcreated(jsonString)) {
-            DialogUtils.showMessageDialog(getContext(), "Error! Patient not created. Please, try again later.");
-            return;
-        }
+        // gender is reassigned above, so take a final copy for the lambda.
+        final String selectedGender = gender;
 
+        Background.run(
+                () -> isPatientcreated(jsonString),
+                created -> {
+                    if (!created) {
+                        DialogUtils.showMessageDialog(getContext(),
+                                "Error! Patient not created. Please, try again later.");
+                        return;
+                    }
+                    onProfileSaved(firstName, lastName, email, phoneNumber,
+                            clinicCode, address, dob, selectedGender);
+                },
+                error -> DialogUtils.showMessageDialog(getContext(),
+                        getString(R.string.error_no_server)));
+    }
+
+    /** Runs once the server has accepted the profile. */
+    private void onProfileSaved(String firstName, String lastName, String email,
+                                String phoneNumber, String clinicCode, String address,
+                                String dob, String gender) {
         saveToSharedPreferences(firstName, lastName, email, phoneNumber, clinicCode, address, dob, gender);
 
         SessionManager sessionManager = new SessionManager(requireContext());

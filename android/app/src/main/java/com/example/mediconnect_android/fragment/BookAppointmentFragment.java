@@ -19,6 +19,7 @@ import com.example.mediconnect_android.model.DoctorDetails;
 import com.example.mediconnect_android.model.TimSlotRecord;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
+import com.example.mediconnect_android.util.Background;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,15 +57,36 @@ public class BookAppointmentFragment extends Fragment {
             String doctorSpecialty = getArguments().getString("doctorSpecialty");
             String doctorName = getArguments().getString("doctorName");
 
-            DoctorDetails doctorDetail = doctorClient.getDoctor(doctorId);
-            if (doctorDetail == null) {
-                DialogUtils.showMessageDialog(getContext(), "Doctor unavailable");
-                return;
-            }
+            // Fetch the doctor off the UI thread, then fill the screen in.
+            final String finalName = doctorName != null ? doctorName : "No name available";
+            final String finalSpecialty =
+                    doctorSpecialty != null ? doctorSpecialty : "No specialty available";
+            final String finalPhoto = doctorPhoto;
 
-            // Set default or fetched doctor details
-            doctorName = doctorName != null ? doctorName : "No name available";
-            doctorSpecialty = doctorSpecialty != null ? doctorSpecialty : "No specialty available";
+            Background.run(
+                    () -> doctorClient.getDoctor(doctorId),
+                    doctorDetail -> bindDoctor(doctorDetail, finalName, finalSpecialty, finalPhoto),
+                    error -> DialogUtils.showMessageDialog(getContext(),
+                            getString(R.string.error_no_server)));
+        }
+
+        initReadMore();
+        bindAdapter();
+        initNextButton();
+    }
+
+    /** Fills in the doctor header and the available slots. */
+    private void bindDoctor(DoctorDetails doctorDetail, String doctorName,
+                            String doctorSpecialty, String doctorPhoto) {
+        if (binding == null) {
+            return; // the view went away while the request was in flight
+        }
+        if (doctorDetail == null) {
+            DialogUtils.showMessageDialog(getContext(), "Doctor unavailable");
+            return;
+        }
+
+        {
             String description = doctorDetail.getDescription() != null ? doctorDetail.getDescription() : "No description available";
             Double score = doctorDetail.getScore();
             String score_text = score != null ? String.valueOf(score) : "No score available";
@@ -91,7 +113,11 @@ public class BookAppointmentFragment extends Fragment {
             });
         }
 
-        // Handle 'Read More' functionality
+        bindAdapter();
+    }
+
+    /** Handle 'Read More' functionality. */
+    private void initReadMore() {
         binding.readMoreLink.setOnClickListener(v -> {
             // Check the current maxLines and toggle
             if (binding.doctorDescription.getMaxLines() == 2) {
@@ -102,11 +128,10 @@ public class BookAppointmentFragment extends Fragment {
                 binding.readMoreLink.setText(R.string.read_more_link);    // Change back to 'Read More'
             }
         });
+    }
 
-        // Initialize the RecyclerView
-        bindAdapter();
-
-        // Set the click listener for the 'Next' button
+    /** Set the click listener for the 'Next' button. */
+    private void initNextButton() {
         binding.btnNext.setOnClickListener(v -> {
             // Navigate to the next fragment
             if (adapter.selectedTimeSlotTime == null) {

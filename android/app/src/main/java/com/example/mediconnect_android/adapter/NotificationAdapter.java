@@ -14,6 +14,7 @@ import com.example.mediconnect_android.client.NotificationClientImpl;
 import com.example.mediconnect_android.databinding.NotificationItemBinding;
 import com.example.mediconnect_android.model.Notification;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.Background;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -102,7 +103,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             recyclerItemBinding.buttonClear.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    notificationClient.markAsRead(notification.getId());
+                    // Acknowledging is fire-and-forget: the row goes straight
+                    // away and the server catches up in the background.
+                    String notificationId = notification.getId();
+                    Background.run(() -> notificationClient.markAsRead(notificationId));
                     notificationList.remove(getAdapterPosition());
                     notifyItemRemoved(getAdapterPosition());
                     if (notificationList.isEmpty()) {

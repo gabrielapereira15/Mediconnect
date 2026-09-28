@@ -88,18 +88,30 @@ public class OTPActivity extends AppCompatActivity {
                 result.getToken(),
                 result.getExpiresInSeconds());
 
-        // A brand new account has no profile yet, so send them to fill it in.
-        if (!result.isNewPatient() && isRegisteredPatient()) {
-            ActivityUtils.startActivity(this, MainActivity.class);
-            finish();
-        } else {
-            // Navigate to the registration activity
-            saveToSharedPreferences(email);
-            Intent intent = new Intent(OTPActivity.this, MainActivity.class);
-            intent.putExtra("target_fragment", "EditProfileFragment");
-            startActivity(intent);
-            finish();
+        // A brand new account has no profile yet, so skip the lookup entirely.
+        if (result.isNewPatient()) {
+            goToProfileForm();
+            return;
         }
+
+        // Otherwise cache the profile before deciding where to land.
+        Background.run(this::isRegisteredPatient, registered -> {
+            if (registered) {
+                ActivityUtils.startActivity(this, MainActivity.class);
+                finish();
+            } else {
+                goToProfileForm();
+            }
+        }, error -> goToProfileForm());
+    }
+
+    /** Sends a patient with no saved profile to the form to fill one in. */
+    private void goToProfileForm() {
+        saveToSharedPreferences(email);
+        Intent intent = new Intent(OTPActivity.this, MainActivity.class);
+        intent.putExtra("target_fragment", "EditProfileFragment");
+        startActivity(intent);
+        finish();
     }
 
     private void saveToSharedPreferences(String email) {

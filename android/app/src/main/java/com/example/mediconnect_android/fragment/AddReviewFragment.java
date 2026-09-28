@@ -14,6 +14,7 @@ import com.example.mediconnect_android.client.ReviewClientImpl;
 import com.example.mediconnect_android.databinding.FragmentAddReviewBinding;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
+import com.example.mediconnect_android.util.Background;
 
 
 public class AddReviewFragment extends Fragment {
@@ -58,12 +59,33 @@ public class AddReviewFragment extends Fragment {
                     .into(binding.profileImage);
 
             binding.submitButton.setOnClickListener(v -> {
-                if (isReviewSubmitted(appointmentId, (double) binding.ratingBar.getRating(), binding.reviewInput.getText().toString())) {
-                    DialogUtils.showMessageDialog(getContext(), "Review submitted successfully");
-                    FragmentUtils.loadFragment(requireActivity().getSupportFragmentManager(), R.id.flFragment, new MedicalHistoryFragment());
-                } else {
-                    DialogUtils.showMessageDialog(getContext(), "ReviewClient submission failed. Try again later.");
-                }
+                double score = binding.ratingBar.getRating();
+                String description = binding.reviewInput.getText().toString();
+                binding.submitButton.setEnabled(false);
+
+                Background.run(
+                        () -> isReviewSubmitted(appointmentId, score, description),
+                        submitted -> {
+                            if (binding == null) {
+                                return;
+                            }
+                            binding.submitButton.setEnabled(true);
+                            if (submitted) {
+                                DialogUtils.showMessageDialog(getContext(), "Review submitted successfully");
+                                FragmentUtils.loadFragment(requireActivity().getSupportFragmentManager(),
+                                        R.id.flFragment, new MedicalHistoryFragment());
+                            } else {
+                                DialogUtils.showMessageDialog(getContext(),
+                                        "Review submission failed. Try again later.");
+                            }
+                        },
+                        error -> {
+                            if (binding != null) {
+                                binding.submitButton.setEnabled(true);
+                            }
+                            DialogUtils.showMessageDialog(getContext(),
+                                    getString(R.string.error_no_server));
+                        });
             });
         }
     }

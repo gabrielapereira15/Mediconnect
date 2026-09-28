@@ -15,6 +15,7 @@ import com.example.mediconnect_android.client.NotificationClient;
 import com.example.mediconnect_android.client.NotificationClientImpl;
 import com.example.mediconnect_android.databinding.FragmentNotificationsBinding;
 import com.example.mediconnect_android.model.Notification;
+import com.example.mediconnect_android.util.Background;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +50,13 @@ public class NotificationsFragment extends Fragment {
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
         String email = sharedPreferences.getString("email", "");
 
-        notifications = notificationClient.getNotifications(email);
-        bindAdapter();
+        Background.run(() -> notificationClient.getNotifications(email), loaded -> {
+            if (binding == null) {
+                return;
+            }
+            notifications = loaded;
+            bindAdapter();
+        });
     }
 
     private void bindAdapter() {

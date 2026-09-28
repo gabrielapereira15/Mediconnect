@@ -17,7 +17,7 @@ public class Appointment {
     }
 
     public void setReviewed(Boolean reviewed) {
-        reviewed = reviewed;
+        this.reviewed = reviewed;
     }
 
     public String getDate() {

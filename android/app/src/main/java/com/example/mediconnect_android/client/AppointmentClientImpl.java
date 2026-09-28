@@ -3,6 +3,8 @@ package com.example.mediconnect_android.client;
 import android.util.Log;
 
 import com.example.mediconnect_android.client.response.ApiGenericResponse;
+import com.example.mediconnect_android.data.DemoData;
+import com.example.mediconnect_android.data.DemoMode;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
 import com.google.gson.Gson;
@@ -27,9 +29,14 @@ public class AppointmentClientImpl implements AppointmentClient {
             Type appointmentListType = new TypeToken<List<Appointment>>() {
             }.getType();
             Gson gson = new Gson();
+            DemoMode.disable();
             return gson.fromJson(response.getResponseBody(), appointmentListType);
         } else {
             Log.e("AppointmentClientImpl", "Error getting appointments: " + response.getResponseBody());
+            if (OkHttpClientHelper.isOffline(response)) {
+                DemoMode.enable();
+                return DemoData.appointments();
+            }
             return Collections.emptyList();
         }
     }

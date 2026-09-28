@@ -17,6 +17,7 @@ import com.example.mediconnect_android.client.DoctorClientImpl;
 import com.example.mediconnect_android.databinding.FragmentSpecialtiesBinding;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.model.Specialty;
+import com.example.mediconnect_android.util.Background;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,6 @@ public class SpecialtiesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentSpecialtiesBinding.inflate(inflater, container, false);
-        doctorList = doctorClient.getDoctors(); // Ensure doctorClient is properly initialized
         return binding.getRoot();
     }
 
@@ -45,7 +45,14 @@ public class SpecialtiesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initSpecialties();
-        bindAdapter();
+
+        Background.run(doctorClient::getDoctors, doctors -> {
+            if (binding == null) {
+                return;
+            }
+            doctorList = doctors;
+            bindAdapter();
+        });
     }
 
     private void initSpecialties() {

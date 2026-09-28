@@ -27,6 +27,7 @@ import com.example.mediconnect_android.databinding.FragmentHomeBinding;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.KeyboardUtils;
+import com.example.mediconnect_android.util.Background;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,8 +68,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         imageList.add(R.drawable.adv2);
         imageList.add(R.drawable.adv3);
 
-        doctorList = doctorClient.getDoctors();
-
         binding.seeAllCategories.setOnClickListener(this);
         binding.seeAllDoctors.setOnClickListener(this);
         binding.cardiologistIcon.setOnClickListener(this);
@@ -76,9 +75,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         binding.pediatricianIcon.setOnClickListener(this);
         binding.obgynIcon.setOnClickListener(this);
 
-        bindAdapter();
         bindCarouselAdapter();
         setupKeyboardDismiss();
+
+        // Loading doctors touches the network; keep it off the UI thread and
+        // bind the adapter once the list arrives.
+        Background.run(doctorClient::getDoctors, doctors -> {
+            if (binding == null) {
+                return; // the view went away while the request was in flight
+            }
+            doctorList = doctors;
+            bindAdapter();
+        });
     }
 
     private void bindCarouselAdapter() {

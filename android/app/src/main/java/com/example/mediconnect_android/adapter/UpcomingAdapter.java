@@ -30,6 +30,7 @@ import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.Notification;
+import com.example.mediconnect_android.util.Background;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -267,14 +268,20 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
             new AlertDialog.Builder(context)
                     .setTitle("Reschedule Appointment")
                     .setMessage("Are you sure you want to reschedule the appointment? \n\n* This action will cancel the current appointment.")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        if (isAppointmentCancelled(appointment)) {
-                            BookAppointmentFragment bookAppointmentFragment = getBookAppointmentFragment(doctor);
-                            FragmentUtils.loadFragment(((AppCompatActivity) context).getSupportFragmentManager(), R.id.flFragment, bookAppointmentFragment);
-                        } else {
-                            DialogUtils.showMessageDialog(context, "Appointment not cancelled, please try again later");
-                        }
-                    })
+                    .setPositiveButton("Yes", (dialog, which) -> Background.run(
+                            () -> isAppointmentCancelled(appointment),
+                            cancelled -> {
+                                if (cancelled) {
+                                    FragmentUtils.loadFragment(
+                                            ((AppCompatActivity) context).getSupportFragmentManager(),
+                                            R.id.flFragment, getBookAppointmentFragment(doctor));
+                                } else {
+                                    DialogUtils.showMessageDialog(context,
+                                            "Appointment not cancelled, please try again later");
+                                }
+                            },
+                            error -> DialogUtils.showMessageDialog(context,
+                                    context.getString(R.string.error_no_server))))
                     .setNegativeButton("No", (dialog, which) -> {
                         dialog.dismiss();
                     })
@@ -285,13 +292,18 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
             new AlertDialog.Builder(context)
                     .setTitle("Cancel Appointment")
                     .setMessage("Are you sure you want to cancel the appointment?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        if (isAppointmentCancelled(appointment)) {
-                            showCancellationMessage();
-                        } else {
-                            DialogUtils.showMessageDialog(context, "Appointment not cancelled, please try again later");
-                        }
-                    })
+                    .setPositiveButton("Yes", (dialog, which) -> Background.run(
+                            () -> isAppointmentCancelled(appointment),
+                            cancelled -> {
+                                if (cancelled) {
+                                    showCancellationMessage();
+                                } else {
+                                    DialogUtils.showMessageDialog(context,
+                                            "Appointment not cancelled, please try again later");
+                                }
+                            },
+                            error -> DialogUtils.showMessageDialog(context,
+                                    context.getString(R.string.error_no_server))))
                     .setNegativeButton("No", (dialog, which) -> {
                         dialog.dismiss();
                     })

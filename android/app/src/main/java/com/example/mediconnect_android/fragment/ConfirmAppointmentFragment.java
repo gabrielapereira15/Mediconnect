@@ -17,6 +17,7 @@ import com.example.mediconnect_android.client.AppointmentClientImpl;
 import com.example.mediconnect_android.databinding.FragmentConfirmAppointmentBinding;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
+import com.example.mediconnect_android.util.Background;
 
 
 public class ConfirmAppointmentFragment extends Fragment {
@@ -103,12 +104,25 @@ public class ConfirmAppointmentFragment extends Fragment {
                     DialogUtils.showMessageDialog(getContext(), "Please accept the terms and conditions");
                     return;
                 }
-                if (!isAppointmentCreated(selectedTimeSlotId)) {
-                    DialogUtils.showMessageDialog(getContext(), "Appointment not created, please try again later.");
-                    return;
-                }
-                showConfirmationMessage();
-                FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, medicalHistoryFragment);
+                v.setEnabled(false);
+                Background.run(
+                        () -> isAppointmentCreated(selectedTimeSlotId),
+                        created -> {
+                            v.setEnabled(true);
+                            if (!created) {
+                                DialogUtils.showMessageDialog(getContext(),
+                                        "Appointment not created, please try again later.");
+                                return;
+                            }
+                            showConfirmationMessage();
+                            FragmentUtils.loadFragment(fragmentManager, R.id.flFragment,
+                                    medicalHistoryFragment);
+                        },
+                        error -> {
+                            v.setEnabled(true);
+                            DialogUtils.showMessageDialog(getContext(),
+                                    getString(R.string.error_no_server));
+                        });
             }
         });
     }
