@@ -1,15 +1,38 @@
+# ---- IDE ----------------------------------------------------------------
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
+*.iws
+.vscode/
+
+# ---- Gradle (shared by the Android app and the Spring Boot backend) -----
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# ---- Android ------------------------------------------------------------
+local.properties
 /captures
 .externalNativeBuild
 .cxx
-local.properties
+*.apk
+*.aab
+*.keystore
+!debug.keystore
+
+# ---- Backend ------------------------------------------------------------
+out/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ---- Environment --------------------------------------------------------
+.env
+.env.local
+*-local.yml
+application-local.yml
+
+# ---- OS -----------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# ---- Logs ---------------------------------------------------------------
+*.log
