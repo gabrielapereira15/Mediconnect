@@ -62,7 +62,7 @@ public class SpecialtiesFragment extends Fragment {
         specialties.add(new Specialty("Cardiologist", R.drawable.cardiologist));
         specialties.add(new Specialty("Gynecologist", R.drawable.gynecologist));
         specialties.add(new Specialty("Gastroenterologist", R.drawable.gastroenterologist));
-        specialties.add(new Specialty("Pediatrician", R.drawable.baseline_child_care_24));
+        specialties.add(new Specialty("Pediatrician", R.drawable.ic_smile));
         specialties.add(new Specialty("Neurologist", R.drawable.neurologist));
     }
 

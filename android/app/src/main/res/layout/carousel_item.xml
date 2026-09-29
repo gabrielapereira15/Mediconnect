@@ -1,7 +1,7 @@
 <!-- carousel_item.xml -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:strokeColor="@color/md_outline"
+    app:strokeColor="@color/md_outline_variant"
     app:strokeWidth="1dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

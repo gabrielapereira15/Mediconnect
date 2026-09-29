@@ -43,7 +43,7 @@
                     android:layout_margin="@dimen/space_sm"
                     android:background="@drawable/circle_overlay"
                     android:contentDescription="@string/edit_profile_picture"
-                    android:src="@drawable/baseline_edit_24" />
+                    android:src="@drawable/ic_edit" />
             </FrameLayout>
 
             <!-- Input Fields -->

@@ -33,7 +33,7 @@
                 android:layout_height="48dp"
                 android:layout_marginBottom="@dimen/space_xl"
                 android:background="@drawable/search_bar_background"
-                android:drawableStart="@drawable/baseline_search_24"
+                android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="@dimen/cardview_default_elevation"
                 android:drawableTint="@color/light_blue"
                 android:hint="@string/search_for_doctors_or_specialties"
@@ -198,7 +198,7 @@
                         android:clickable="true"
                         android:contentDescription="@string/pediatrician"
                         android:focusable="true"
-                        android:src="@drawable/baseline_child_care_24" app:tint="@color/md_on_primary_container" />
+                        android:src="@drawable/ic_smile" app:tint="@color/md_on_primary_container" />
 
                     <TextView
                         android:layout_width="match_parent"

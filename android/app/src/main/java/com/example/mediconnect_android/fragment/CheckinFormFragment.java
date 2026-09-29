@@ -85,7 +85,7 @@ public class CheckinFormFragment extends Fragment implements View.OnClickListene
         new AlertDialog.Builder(getContext())
                 .setTitle("Appointment Cancelled")
                 .setMessage("Your appointment has been successfully cancelled.")
-                .setIcon(R.drawable.baseline_check_circle_24)
+                .setIcon(R.drawable.ic_check_circle)
                 .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                 .show();
     }

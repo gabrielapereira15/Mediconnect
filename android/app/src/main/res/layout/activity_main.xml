@@ -37,7 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/notifications"
-                    android:src="@drawable/baseline_notifications_none_24" />
+                    android:src="@drawable/ic_bell" />
 
                 <!-- Red badge (dot) -->
                 <View

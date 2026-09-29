@@ -60,7 +60,7 @@
             android:layout_marginTop="@dimen/space_md"
             android:hint="@string/health_add_onset"
             app:endIconContentDescription="@string/dob_pick"
-            app:endIconDrawable="@drawable/baseline_calendar_today_24"
+            app:endIconDrawable="@drawable/ic_calendar"
             app:endIconMode="custom"
             app:helperText="@string/dob_format_hint">
 

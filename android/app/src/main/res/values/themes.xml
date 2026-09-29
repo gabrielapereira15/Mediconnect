@@ -28,7 +28,9 @@
         <item name="colorOnBackground">@color/md_on_background</item>
         <item name="colorSurface">@color/md_surface</item>
         <item name="colorOnSurface">@color/md_on_surface</item>
-        <item name="colorSurfaceVariant">@color/md_outline_variant</item>
+        <item name="colorSurfaceVariant">@color/md_surface_sunken</item>
+        <item name="colorSurfaceContainer">@color/md_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/md_surface_raised</item>
         <item name="colorOnSurfaceVariant">@color/md_on_surface_variant</item>
         <item name="colorOutline">@color/md_outline</item>
         <item name="colorOutlineVariant">@color/md_outline_variant</item>
@@ -36,6 +38,13 @@
         <!-- Status -->
         <item name="colorError">@color/md_error</item>
         <item name="colorOnError">@color/md_on_error</item>
+        <item name="colorErrorContainer">@color/md_error_container</item>
+
+        <!-- Selection, ripples and the focus ring all follow brand. -->
+        <item name="android:colorControlActivated">@color/md_primary</item>
+        <item name="android:colorControlHighlight">@color/md_primary_container</item>
+        <!-- md_scrim is applied by sheets and dialogs themselves; there is no
+             theme attribute for it. -->
 
         <!-- System bars follow the app rather than staying a stock purple. -->
         <item name="android:statusBarColor">@color/md_background</item>
@@ -43,16 +52,30 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
 
-        <!-- Typography -->
-        <item name="android:fontFamily">@font/montserrat_regular</item>
-        <item name="fontFamily">@font/montserrat_regular</item>
+        <!-- Typography: Plus Jakarta Sans, declared as a family so a style
+             can ask for a weight and Android picks the file. -->
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="fontFamily">@font/plus_jakarta_sans</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.Mediconnect.Display</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Mediconnect.Headline</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.Mediconnect.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.Mediconnect.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.Mediconnect.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.Mediconnect.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Mediconnect.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.Mediconnect.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.Mediconnect.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.Mediconnect.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.Mediconnect.LabelSmall</item>
 
         <!-- Rounded corners throughout, matching the card-based layouts. -->
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Mediconnect.Small</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Mediconnect.Medium</item>
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Mediconnect.Large</item>
+        <item name="shapeAppearanceCornerExtraLarge">@style/ShapeAppearance.Mediconnect.ExtraLarge</item>
 
         <item name="materialButtonStyle">@style/Widget.Mediconnect.Button</item>
+        <item name="bottomNavigationStyle">@style/Widget.Mediconnect.BottomNav</item>
     </style>
 
     <style name="Theme.Mediconnectandroid" parent="Base.Theme.Mediconnectandroid" />
@@ -73,12 +96,67 @@
         <item name="cornerSize">@dimen/radius_large</item>
     </style>
 
+    <!-- Bottom sheets and the home hero. -->
+    <style name="ShapeAppearance.Mediconnect.ExtraLarge" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/radius_xlarge</item>
+    </style>
+
     <!-- ==== Components ==================================================== -->
     <style name="Widget.Mediconnect.Button" parent="Widget.Material3.Button">
-        <item name="android:minHeight">@dimen/touch_target</item>
-        <item name="android:paddingStart">@dimen/space_lg</item>
-        <item name="android:paddingEnd">@dimen/space_lg</item>
+        <!-- control-lg: the design system's size for a primary mobile button. -->
+        <item name="android:minHeight">@dimen/control_lg</item>
+        <item name="android:paddingStart">@dimen/space_2xl</item>
+        <item name="android:paddingEnd">@dimen/space_2xl</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mediconnect.LabelLarge</item>
         <item name="cornerRadius">@dimen/radius_pill</item>
+        <item name="iconSize">@dimen/icon_size_button</item>
+    </style>
+
+    <!--
+        The active tab's pill. Material 3 fills it with secondaryContainer by
+        default, which in this palette is information blue — the design
+        system gives the nav pill brand-soft, so it is set explicitly.
+    -->
+    <style name="Widget.Mediconnect.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemActiveIndicatorStyle">@style/Widget.Mediconnect.BottomNav.Indicator</item>
+        <item name="itemIconSize">@dimen/icon_size</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.Mediconnect.LabelSmall</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.Mediconnect.LabelSmall</item>
+    </style>
+
+    <style name="Widget.Mediconnect.BottomNav.Indicator"
+        parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/md_primary_container</item>
+    </style>
+
+    <!--
+        A secondary button. Material 3's tonal button fills with
+        secondaryContainer, which this palette reserves for information, so
+        it would come out a flat blue beside a teal primary. The design
+        system's secondary button is brand-soft with on-brand-soft text.
+    -->
+    <style name="Widget.Mediconnect.Button.Tonal" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:minHeight">@dimen/control_lg</item>
+        <item name="android:paddingStart">@dimen/space_2xl</item>
+        <item name="android:paddingEnd">@dimen/space_2xl</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mediconnect.LabelLarge</item>
+        <item name="android:textColor">@color/md_on_primary_container</item>
+        <item name="backgroundTint">@color/md_primary_container</item>
+        <item name="iconTint">@color/md_on_primary_container</item>
+        <item name="iconSize">@dimen/icon_size_button</item>
+        <item name="cornerRadius">@dimen/radius_pill</item>
+    </style>
+
+    <!-- A text button: brand label, no fill. -->
+    <style name="Widget.Mediconnect.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">@dimen/touch_target</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mediconnect.LabelLarge</item>
+        <item name="android:textColor">@color/md_primary</item>
+        <item name="iconTint">@color/md_primary</item>
+        <item name="iconSize">@dimen/icon_size_button</item>
     </style>
 </resources>

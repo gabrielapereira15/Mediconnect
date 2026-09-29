@@ -10,7 +10,7 @@
         android:height="8dp"
         android:gravity="center">
         <shape android:shape="oval">
-            <solid android:color="@color/md_outline" />
+            <solid android:color="@color/md_outline_variant" />
         </shape>
     </item>
 </layer-list>

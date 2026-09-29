@@ -70,7 +70,7 @@ public class CompletedFragment extends Fragment {
         // of text that looked the same as a failure.
         binding.stateView.setContentView(binding.recyclerView);
         binding.stateView.showContentOrEmpty(filteredAppointments.isEmpty(),
-                R.drawable.baseline_check_circle_24,
+                R.drawable.ic_check_circle,
                 R.string.state_no_completed_title,
                 R.string.state_no_completed_body);
 

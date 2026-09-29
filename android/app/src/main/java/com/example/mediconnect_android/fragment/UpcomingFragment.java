@@ -72,7 +72,7 @@ public class UpcomingFragment extends Fragment {
         binding.stateView.setContentView(binding.recyclerView);
         if (filteredAppointments.isEmpty()) {
             binding.stateView.showEmpty(
-                    R.drawable.baseline_event_busy_24,
+                    R.drawable.ic_calendar,
                     R.string.state_no_upcoming_title,
                     R.string.state_no_upcoming_body,
                     R.string.state_book_appointment,

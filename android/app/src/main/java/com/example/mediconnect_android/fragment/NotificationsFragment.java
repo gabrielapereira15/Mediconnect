@@ -77,7 +77,7 @@ public class NotificationsFragment extends Fragment {
                     notifications = loaded;
                     bindAdapter();
                     binding.stateView.showContentOrEmpty(notifications.isEmpty(),
-                            R.drawable.baseline_notifications_off_24,
+                            R.drawable.ic_bell,
                             R.string.state_no_notifications_title,
                             R.string.state_no_notifications_body);
                 },

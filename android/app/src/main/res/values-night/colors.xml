@@ -1,49 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Dark colour scheme.
+    Dark colour scheme — the 2026 redesign palette.
 
-    Every name in values/colors.xml is redefined here. Previously this file did
-    not exist: the theme was Material3.DayNight, so Android switched to dark
-    mode, but all the app's own colours stayed at their light values — dark
-    text on dark surfaces, white cards on a dark background.
+    Every name in values/colors.xml is redefined here, with the same
+    role -> md_* mapping. The accents lighten and take dark text: on a dark
+    surface `md_on_primary` is nearly black, because teal light enough to
+    read against #0A1519 is far too light to put white on.
+
+    `deep` barely moves between themes on purpose — it is already a dark
+    ground, and the home hero and back office sidebar should look like the
+    same surface in both.
 -->
 <resources>
 
     <!-- ==== Brand ========================================================= -->
-    <!-- Lighter and less saturated, as a dark surface needs. -->
-    <color name="md_primary">#8FD6B0</color>
-    <color name="md_on_primary">#00391F</color>
-    <color name="md_primary_container">#14513A</color>
-    <color name="md_on_primary_container">#B2F1D0</color>
+    <color name="md_primary">#5BCACE</color>
+    <color name="md_on_primary">#02282B</color>
+    <color name="md_primary_container">#0E3A3E</color>
+    <color name="md_on_primary_container">#B8EDEE</color>
+    <color name="md_brand_strong">#8ADDE0</color>
 
-    <color name="md_secondary">#9BCBFA</color>
-    <color name="md_on_secondary">#003355</color>
-    <color name="md_secondary_container">#004A79</color>
-    <color name="md_on_secondary_container">#D2E8FF</color>
+    <color name="md_secondary">#8FB8F6</color>
+    <color name="md_on_secondary">#123E80</color>
+    <color name="md_secondary_container">#15305A</color>
+    <color name="md_on_secondary_container">#D0E1FC</color>
+
+    <color name="md_deep">#0F3440</color>
+    <color name="md_on_deep">#E8F4F5</color>
+    <color name="md_on_deep_muted">#9CC0C6</color>
 
     <!-- ==== Surfaces ====================================================== -->
-    <color name="md_background">#0E1210</color>
-    <color name="md_on_background">#E1E3DF</color>
-    <color name="md_surface">#0E1210</color>
-    <!-- Cards sit slightly above the background rather than below it. -->
-    <color name="md_surface_container">#1A211D</color>
-    <color name="md_on_surface">#E1E3DF</color>
-    <color name="md_on_surface_variant">#B4BDB6</color>
-    <color name="md_outline">#3A423D</color>
-    <color name="md_outline_variant">#272E2A</color>
+    <color name="md_background">#0A1519</color>
+    <color name="md_on_background">#E6EFF1</color>
+    <color name="md_surface">#101E23</color>
+    <!-- Cards sit above the background rather than below it. -->
+    <color name="md_surface_container">#101E23</color>
+    <!-- Menus and dialogs rise a step further in the dark theme. -->
+    <color name="md_surface_raised">#172A30</color>
+    <color name="md_surface_sunken">#1A2E35</color>
+
+    <color name="md_on_surface">#E6EFF1</color>
+    <color name="md_on_surface_variant">#A8BBC1</color>
+    <color name="md_on_surface_subtle">#8DA2A9</color>
+
+    <color name="md_outline">#5E767F</color>
+    <color name="md_outline_variant">#22363D</color>
 
     <!-- ==== Status ======================================================== -->
-    <color name="md_error">#FFB4AB</color>
-    <color name="md_on_error">#690005</color>
-    <color name="md_success">#8FD6B0</color>
-    <color name="md_rating">#F5C518</color>
+    <color name="md_success">#6DD19C</color>
+    <color name="md_success_container">#0F3323</color>
+    <color name="md_warning">#EFB45A</color>
+    <color name="md_warning_container">#3A290C</color>
+    <color name="md_error">#FF9C91</color>
+    <color name="md_error_container">#461A1A</color>
+    <color name="md_on_error">#3A0906</color>
+
+    <color name="md_rating">#F2C160</color>
+    <color name="md_rating_container">#3A2C0E</color>
+    <color name="md_on_rating_container">#F7DCA0</color>
+
+    <!-- ==== Interaction =================================================== -->
+    <color name="md_focus">#5BCACE</color>
+    <!-- 60% black, as the design system specifies for the dark theme. -->
+    <color name="md_scrim">#99000000</color>
+
+
+    <!--
+        The logo's teal on a `deep` ground. Deliberately the same value in
+        both themes: `deep` barely changes between them, so a cross that
+        followed the theme would be too dark on it in light mode.
+    -->
+    <color name="md_logo_on_deep">#5BCACE</color>
 
     <!-- ==== Legacy aliases ================================================ -->
     <color name="green">@color/md_primary</color>
-    <color name="light_blue">@color/md_secondary</color>
+    <!-- A link or a selected tab, not information: see values/colors.xml. -->
+    <color name="light_blue">@color/md_primary</color>
     <color name="dark_gray">@color/md_on_surface</color>
     <color name="gray">@color/md_on_surface_variant</color>
-    <color name="light_gray">@color/md_outline</color>
+    <!-- A sunken fill, not a line: see the note in values/colors.xml. -->
+    <color name="light_gray">@color/md_surface_sunken</color>
     <color name="gray_background">@color/md_background</color>
     <color name="white">@color/md_surface_container</color>
     <color name="black">@color/md_on_surface</color>

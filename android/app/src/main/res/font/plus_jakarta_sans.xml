@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Plus Jakarta Sans, the one family the redesign uses.
+
+    Declared as a family rather than referenced weight by weight so a style
+    can ask for a weight and let Android pick the file — `textFontWeight` on
+    API 28+, and `textStyle="bold"` before it. Montserrat had only one
+    weight, which is why the old type scale leant on size alone to tell a
+    heading from a label.
+
+    Licensed under the SIL Open Font License 1.1; the licence text is at
+    app/licenses/PlusJakartaSans-OFL.txt (res/font/ accepts font files only).
+-->
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <font
+        android:font="@font/plus_jakarta_sans_regular"
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        app:font="@font/plus_jakarta_sans_regular"
+        app:fontStyle="normal"
+        app:fontWeight="400" />
+
+    <font
+        android:font="@font/plus_jakarta_sans_medium"
+        android:fontStyle="normal"
+        android:fontWeight="500"
+        app:font="@font/plus_jakarta_sans_medium"
+        app:fontStyle="normal"
+        app:fontWeight="500" />
+
+    <font
+        android:font="@font/plus_jakarta_sans_semibold"
+        android:fontStyle="normal"
+        android:fontWeight="600"
+        app:font="@font/plus_jakarta_sans_semibold"
+        app:fontStyle="normal"
+        app:fontWeight="600" />
+
+    <font
+        android:font="@font/plus_jakarta_sans_bold"
+        android:fontStyle="normal"
+        android:fontWeight="700"
+        app:font="@font/plus_jakarta_sans_bold"
+        app:fontStyle="normal"
+        app:fontWeight="700" />
+</font-family>

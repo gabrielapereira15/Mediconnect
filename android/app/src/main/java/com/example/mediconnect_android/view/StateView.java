@@ -129,7 +129,7 @@ public class StateView extends FrameLayout {
         message.setVisibility(VISIBLE);
         setContentVisible(false);
 
-        icon.setImageResource(R.drawable.baseline_cloud_off_24);
+        icon.setImageResource(R.drawable.ic_alert);
         title.setText(titleRes);
         body.setText(bodyRes);
         bindAction(R.string.state_retry, onRetry);

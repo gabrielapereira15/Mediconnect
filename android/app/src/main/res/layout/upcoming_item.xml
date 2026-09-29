@@ -2,7 +2,7 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:strokeColor="@color/md_outline"
+    app:strokeColor="@color/md_outline_variant"
     app:strokeWidth="1dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_xs"
                     android:drawablePadding="4dp"
-                    android:drawableStart="@drawable/baseline_person_24"
+                    android:drawableStart="@drawable/ic_user"
                     android:drawableTint="@color/md_primary"
                     android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
                     android:textColor="@color/md_primary"
@@ -141,10 +141,10 @@
         -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/waitlist_button"
-            style="@style/Widget.Material3.Button.TextButton"
+            style="@style/Widget.Mediconnect.Button.Text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/waitlist_join"
-            app:icon="@drawable/baseline_notifications_none_24" />
+            app:icon="@drawable/ic_bell" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -12,7 +12,7 @@
     app:cardBackgroundColor="@color/md_surface_container"
     app:cardCornerRadius="@dimen/radius_medium"
     app:cardElevation="0dp"
-    app:strokeColor="@color/md_outline"
+    app:strokeColor="@color/md_outline_variant"
     app:strokeWidth="1dp">
 
     <LinearLayout

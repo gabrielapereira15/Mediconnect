@@ -2,7 +2,7 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:strokeColor="@color/md_outline"
+    app:strokeColor="@color/md_outline_variant"
     app:strokeWidth="1dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:contentDescription="@null"
-                    android:src="@drawable/baseline_star_rate_24"
+                    android:src="@drawable/ic_star"
                     app:tint="@color/md_on_secondary_container" />
 
                 <TextView

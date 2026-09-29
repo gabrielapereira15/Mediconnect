@@ -45,7 +45,7 @@
             android:alpha="0.7"
             android:contentDescription="@null"
             app:tint="@color/md_on_surface_variant"
-            tools:src="@drawable/baseline_event_busy_24" />
+            tools:src="@drawable/ic_calendar" />
 
         <TextView
             android:id="@+id/state_title"

@@ -182,7 +182,7 @@
                 android:layout_marginTop="@dimen/space_md"
                 android:hint="@string/date_of_birth"
                 app:endIconContentDescription="@string/dob_pick"
-                app:endIconDrawable="@drawable/baseline_calendar_today_24"
+                app:endIconDrawable="@drawable/ic_calendar"
                 app:endIconMode="custom"
                 app:helperText="@string/dob_format_hint"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox">

@@ -435,7 +435,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
             new AlertDialog.Builder(context)
                     .setTitle("Appointment Cancelled")
                     .setMessage("Your appointment has been successfully cancelled.")
-                    .setIcon(R.drawable.baseline_check_circle_24)
+                    .setIcon(R.drawable.ic_check_circle)
                     .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                     .show();
 

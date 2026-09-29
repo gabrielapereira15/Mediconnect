@@ -45,6 +45,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/space_lg"
         android:text="@string/health_add"
-        app:icon="@drawable/baseline_add_24" />
+        app:icon="@drawable/ic_plus" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

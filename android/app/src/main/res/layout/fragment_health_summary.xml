@@ -126,7 +126,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_md"
                     android:text="@string/summary_share"
-                    app:icon="@drawable/baseline_share_24" />
+                    app:icon="@drawable/ic_share" />
 
                 <!--
                     The document itself, for a clinic rather than a person.
@@ -135,12 +135,12 @@
                 -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnExport"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.Mediconnect.Button.Tonal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_sm"
                     android:text="@string/summary_export"
-                    app:icon="@drawable/baseline_download_24" />
+                    app:icon="@drawable/ic_download" />
 
                 <TextView
                     android:layout_width="match_parent"

@@ -59,7 +59,7 @@
                         android:contentDescription="@string/cd_your_photo"
                         android:padding="@dimen/space_lg"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/baseline_person_24"
+                        android:src="@drawable/ic_user"
                         app:tint="@color/md_on_surface_variant"
                         tools:ignore="UnusedAttribute" />
 
@@ -83,7 +83,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/space_xs"
                         android:drawablePadding="6dp"
-                        android:drawableStart="@drawable/baseline_badge_24"
+                        android:drawableStart="@drawable/ic_card"
                         android:drawableTint="@color/md_on_surface_variant"
                         android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
                         android:visibility="gone"
@@ -120,7 +120,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/space_md"
                             android:drawablePadding="@dimen/space_sm"
-                            android:drawableStart="@drawable/baseline_email_24"
+                            android:drawableStart="@drawable/ic_mail"
                             android:drawableTint="@color/md_on_surface_variant"
                             android:gravity="center_vertical"
                             android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
@@ -132,7 +132,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/space_sm"
                             android:drawablePadding="@dimen/space_sm"
-                            android:drawableStart="@drawable/baseline_call_24"
+                            android:drawableStart="@drawable/ic_phone"
                             android:drawableTint="@color/md_on_surface_variant"
                             android:gravity="center_vertical"
                             android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
@@ -144,7 +144,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/space_sm"
                             android:drawablePadding="@dimen/space_sm"
-                            android:drawableStart="@drawable/baseline_location_on_24"
+                            android:drawableStart="@drawable/ic_pin"
                             android:drawableTint="@color/md_on_surface_variant"
                             android:gravity="center_vertical"
                             android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
@@ -152,12 +152,12 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnEditProfile"
-                            style="@style/Widget.Material3.Button.TonalButton"
+                            style="@style/Widget.Mediconnect.Button.Tonal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/space_md"
                             android:text="@string/edit_profile"
-                            app:icon="@drawable/baseline_edit_24" />
+                            app:icon="@drawable/ic_edit" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -219,12 +219,12 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnManageHealth"
-                            style="@style/Widget.Material3.Button.TonalButton"
+                            style="@style/Widget.Mediconnect.Button.Tonal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/space_md"
                             android:text="@string/profile_manage_health"
-                            app:icon="@drawable/baseline_medical_information_24" />
+                            app:icon="@drawable/ic_record" />
 
                         <!--
                             The export. This is the FHIR work made visible: a
@@ -233,11 +233,11 @@
                         -->
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnDownloadSummary"
-                            style="@style/Widget.Material3.Button.TextButton"
+                            style="@style/Widget.Mediconnect.Button.Text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/profile_download_summary"
-                            app:icon="@drawable/baseline_download_24" />
+                            app:icon="@drawable/ic_download" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -316,12 +316,12 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSignOut"
-                    style="@style/Widget.Material3.Button.TextButton"
+                    style="@style/Widget.Mediconnect.Button.Text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/profile_sign_out"
                     android:textColor="@color/md_error"
-                    app:icon="@drawable/baseline_logout_24"
+                    app:icon="@drawable/ic_logout"
                     app:iconTint="@color/md_error" />
             </LinearLayout>
         </ScrollView>

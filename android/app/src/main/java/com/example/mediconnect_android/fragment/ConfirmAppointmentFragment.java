@@ -165,7 +165,7 @@ public class ConfirmAppointmentFragment extends Fragment {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Booking Confirmed")
                 .setMessage("Your appointment has been successfully booked.")
-                .setIcon(R.drawable.baseline_check_circle_24)
+                .setIcon(R.drawable.ic_check_circle)
                 .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                 .show();
     }

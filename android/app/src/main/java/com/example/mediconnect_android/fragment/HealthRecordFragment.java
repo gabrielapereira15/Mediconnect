@@ -73,7 +73,7 @@ public class HealthRecordFragment extends Fragment {
                     entries.addAll(loaded);
                     adapter.notifyDataSetChanged();
                     binding.stateView.showContentOrEmpty(entries.isEmpty(),
-                            R.drawable.baseline_medical_information_24,
+                            R.drawable.ic_record,
                             R.string.health_empty_title,
                             R.string.health_empty_body);
                 },

@@ -70,7 +70,7 @@ public class CancelledFragment extends Fragment {
         // of text that looked the same as a failure.
         binding.stateView.setContentView(binding.recyclerView);
         binding.stateView.showContentOrEmpty(filteredAppointments.isEmpty(),
-                R.drawable.baseline_event_busy_24,
+                R.drawable.ic_calendar,
                 R.string.state_no_cancelled_title,
                 R.string.state_no_cancelled_body);
 
