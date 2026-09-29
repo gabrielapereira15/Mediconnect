@@ -91,4 +91,6 @@
     <dimen name="icon_size_small">20dp</dimen>
     <!-- Big enough to tap comfortably and to read at a glance. -->
     <dimen name="review_star_size">48dp</dimen>
+    <!-- One box of the 6-digit passcode. -->
+    <dimen name="otp_cell_height">64dp</dimen>
 </resources>

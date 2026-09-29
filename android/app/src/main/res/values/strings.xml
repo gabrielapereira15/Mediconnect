@@ -43,12 +43,41 @@
     <string name="search_for_doctors_or_specialties">Search for doctors or specialties</string>
     <string name="agree">Agree</string>
     <string name="disagree">Disagree</string>
-    <string name="terms_conditions_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet ligula rutrum, dictum nisl a, aliquam felis. Aliquam nec nisi non urna fringilla varius. Etiam porta nulla sit amet diam fermentum pulvinar. Sed bibendum mauris in urna aliquet scelerisque et eu magna. Donec pellentesque a erat eget gravida. Phasellus id magna metus. Nunc pellentesque urna at facilisis egestas. Pellentesque volutpat eros sapien. Mauris imperdiet pellentesque tortor, vitae placerat lectus consectetur id.
-Nulla vitae neque nisl. Aenean vel libero eget justo efficitur efficitur. Praesent placerat at mauris vitae porttitor. Nam vel volutpat nibh, et semper lacus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque diam ligula, tempor viverra tempor eu, cursus ut sapien. Cras egestas dolor in bibendum fringilla. Proin lorem est, varius id justo tristique, facilisis condimentum nunc. Etiam sed erat risus. In dictum sem neque, vel tincidunt ante tincidunt ut.
-Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi consequat rutrum orci, vel congue magna finibus ac. Aenean faucibus risus nec mi ultricies, quis tincidunt lacus tempor. Etiam pellentesque tellus a sem hendrerit rutrum. Pellentesque id ligula nisl. Duis ex mi, blandit eget feugiat nec, tristique ac justo. Donec leo est, tincidunt eget blandit consequat, pharetra ut arcu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut dictum risus tellus, vel aliquam dolor laoreet sit amet. Praesent accumsan placerat elit id scelerisque. Cras vehicula semper nisl.
-Suspendisse lacinia elit id nisi rhoncus, dignissim elementum est sodales. Mauris aliquet nisi est, at mollis lectus fringilla sit amet. Proin blandit laoreet sagittis. Quisque condimentum ex eget libero consequat, eget tincidunt nibh auctor. Donec sollicitudin massa semper, sodales erat sed, molestie sapien. Pellentesque venenatis, velit non semper pharetra, orci odio aliquam odio, nec cursus mauris ligula vitae enim. Aenean tempus semper justo, non pretium tellus.
-Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. Etiam eu lacinia sem. Nulla facilisi. Vivamus at mollis massa. Vivamus pretium aliquam ornare. Nullam nec rutrum odio. Sed facilisis, massa sit amet volutpat maximus, quam mi eleifend lorem, sit amet bibendum enim eros in nulla. Nulla leo sapien, tincidunt dictum sem et, vestibulum faucibus eros. Nulla blandit in eros sit amet dignissim. Suspendisse fermentum venenatis sagittis.</string>
-    <string name="terms_and_conditions_title">Terms and Conditions</string>
+    <string name="terms_and_conditions_title">Terms and conditions</string>
+
+    <!-- ==== Welcome and sign in (P01–P03) ==== -->
+    <string name="welcome_headline">Your clinic, in your pocket</string>
+    <string name="welcome_body">Book visits, fill in forms before you arrive and keep your health record in one place.</string>
+    <string name="welcome_get_started">Get started</string>
+    <string name="welcome_staff">Clinic staff? Sign in to the back office on your computer.</string>
+    <string name="welcome_tile_book">Book in a minute</string>
+    <string name="welcome_tile_forms">Forms before you arrive</string>
+    <string name="welcome_tile_record">Your health record</string>
+
+    <string name="signin_title">Sign in</string>
+    <string name="signin_body">Enter your email and we will send you a 6-digit passcode. No password to remember.</string>
+    <string name="signin_email">Email</string>
+    <string name="signin_email_help">New here? The same email creates your account.</string>
+    <string name="signin_email_required">Please enter your email.</string>
+    <string name="signin_email_invalid">That does not look like an email address.</string>
+    <string name="signin_terms_required">Please accept the terms to continue.</string>
+    <string name="signin_privacy">Your record is private to you and your clinic. We never share it without your permission.</string>
+    <string name="signin_send">Send passcode</string>
+    <string name="signin_terms_link">terms and conditions</string>
+    <string name="signin_privacy_link">privacy notice</string>
+    <string name="signin_terms">I accept the %1$s and %2$s.</string>
+    <string name="signin_terms_body">MediConnect is how this clinic books and prepares for your visits. Book only appointments you intend to attend, and cancel ones you cannot make so the slot can go to someone else. What you enter here is used to treat you and for nothing else.</string>
+    <string name="signin_privacy_body">MediConnect holds the details you enter and the visits you book, so the clinic can treat you. Your health record is shown to the doctor you are booked with. Nothing is sold or shared with anyone else, and signing out removes it all from this device.</string>
+
+    <string name="passcode_title">Check your email</string>
+    <string name="passcode_body">We sent a 6-digit passcode to %1$s. It is valid for 10 minutes.</string>
+    <string name="passcode_label">Passcode</string>
+    <string name="passcode_verify">Verify and continue</string>
+    <string name="passcode_auto">We will verify automatically when all 6 digits are in.</string>
+    <string name="passcode_resend_in">Resend passcode in %1$s</string>
+    <string name="passcode_resend">Resend passcode</string>
+    <string name="passcode_different_email">Use a different email</string>
+    <string name="cd_passcode">Passcode, %1$d of 6 digits entered</string>
     <string name="back">Back</string>
     <string name="is_this_appointment_for_you_or_another_patient">Is this appointment for you or another patient?</string>
     <string name="for_myself">For Myself</string>
@@ -497,6 +526,7 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="cd_on">on</string>
     <string name="cd_off">off</string>
     <string name="cd_close">Close</string>
+    <string name="cd_back">Back</string>
     <string name="step_one">1</string>
     <string name="step_two">2</string>
     <string name="step_three">3</string>

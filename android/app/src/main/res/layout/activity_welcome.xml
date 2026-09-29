@@ -1,116 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Welcome (board P01).
+
+    The first screen said "Welcome" over an email field, a terms checkbox
+    and a link to a page of Lorem ipsum, and used to ask whether you were a
+    patient or a clinic — a question a patient cannot get wrong because the
+    back office is a website. It says what the app is for instead, and asks
+    for nothing until the next screen.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_background"
+    android:background="@color/md_deep"
     tools:context=".activity.WelcomeActivity">
 
+    <ImageView
+        android:id="@+id/wordmark"
+        android:layout_width="wrap_content"
+        android:layout_height="52dp"
+        android:layout_marginStart="@dimen/space_2xl"
+        android:layout_marginTop="@dimen/space_6xl"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/mediconnect_wordmark_on_deep"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!--
+        Three tiles, the middle one dropped, so the group reads as a set
+        rather than a row of buttons.
+    -->
     <LinearLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
+        android:id="@+id/tiles"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="@dimen/space_3xl"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/space_2xl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5">
+        app:layout_constraintTop_toBottomOf="@id/wordmark">
 
-        <!-- Welcome Text -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/space_lg"
-            android:gravity="center"
-            android:text="@string/welcome"
-            android:textColor="@color/green"
-            android:textStyle="bold" 
-            android:textAppearance="@style/TextAppearance.Mediconnect.TitleLarge" />
+        <include
+            android:id="@+id/tile_book"
+            layout="@layout/view_welcome_tile"
+            android:layout_width="0dp"
+            android:layout_height="132dp"
+            android:layout_weight="1" />
 
-        <!--
-                &lt;!&ndash; Radio Group for Patient or Clinic &ndash;&gt;
-                <RadioGroup
-                    android:id="@+id/radioGroupUserType"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/space_lg"
-                    android:orientation="horizontal">
+        <include
+            android:id="@+id/tile_forms"
+            layout="@layout/view_welcome_tile"
+            android:layout_width="0dp"
+            android:layout_height="132dp"
+            android:layout_marginStart="@dimen/space_md"
+            android:layout_marginTop="@dimen/space_3xl"
+            android:layout_weight="1" />
 
-                    <RadioButton
-                        android:id="@+id/radioPatient"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/space_sm"
-                        android:text="@string/patient"
-                        android:textColor="@color/dark_gray"
-                        android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
-
-                    <RadioButton
-                        android:id="@+id/radioClinic"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/space_sm"
-                        android:text="@string/clinic"
-                        android:textColor="@color/dark_gray"
-                        android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
-                </RadioGroup>
-        -->
-
-        <!-- Email Input Field -->
-        <EditText
-            android:id="@+id/emailEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/space_xl"
-            android:layout_marginEnd="@dimen/space_xl"
-            android:layout_marginBottom="@dimen/space_lg"
-            android:autofillHints=""
-            android:background="@drawable/rounded_edittext"
-            android:hint="@string/enter_your_email"
-            android:inputType="textEmailAddress"
-            android:padding="@dimen/space_lg"
-            android:textColor="@color/dark_gray"
-            android:textColorHint="@color/gray"
-            android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
-
-        <!-- Checkbox for Terms and Conditions -->
-        <CheckBox
-            android:id="@+id/checkboxTerms"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/i_accept_the_terms_and_conditions"
-            android:textColor="@color/dark_gray" />
-
-        <!-- Link for Terms and Conditions -->
-        <TextView
-            android:id="@+id/termsLink"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/space_lg"
-            android:clickable="true"
-            android:minHeight="48dp"
-            android:text="@string/read_more_link"
-            android:textColor="@color/light_blue"
-            android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
-
-        <!-- Submit Button -->
-        <Button
-            android:id="@+id/submitButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/space_xl"
-            android:layout_marginEnd="@dimen/space_xl"
-            android:backgroundTint="@color/green"
-            android:padding="@dimen/space_lg"
-            android:text="@string/get_otp"
-            android:textColor="@color/md_on_primary"
-            android:textStyle="bold" />
+        <include
+            android:id="@+id/tile_record"
+            layout="@layout/view_welcome_tile"
+            android:layout_width="0dp"
+            android:layout_height="132dp"
+            android:layout_marginStart="@dimen/space_md"
+            android:layout_weight="1" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/sheet_background"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/space_2xl"
+        android:paddingTop="@dimen/space_3xl"
+        android:paddingBottom="@dimen/space_4xl"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome_headline"
+            android:textAppearance="@style/TextAppearance.Mediconnect.Display" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:text="@string/welcome_body"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge"
+            android:textColor="@color/md_on_surface_variant" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_get_started"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_2xl"
+            android:minHeight="@dimen/control_lg"
+            android:text="@string/welcome_get_started"
+            app:icon="@drawable/ic_arrow_right"
+            app:iconGravity="end" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:gravity="center"
+            android:text="@string/welcome_staff"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+            android:textColor="@color/md_on_surface_variant" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

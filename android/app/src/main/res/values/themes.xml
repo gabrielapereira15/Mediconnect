@@ -85,6 +85,16 @@
     <style name="Theme.Mediconnectandroid" parent="Base.Theme.Mediconnectandroid" />
 
     <!--
+        The welcome screen fills the whole window with the deep colour, so
+        its status bar has to match and carry light icons. Otherwise a pale
+        band sits above it whichever way round the phone's theme is.
+    -->
+    <style name="Theme.Mediconnectandroid.Welcome" parent="Base.Theme.Mediconnectandroid">
+        <item name="android:statusBarColor">@color/md_deep</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+    </style>
+
+    <!--
         A bottom sheet.
 
         Its dialog is themed separately from the activity, so the app's own

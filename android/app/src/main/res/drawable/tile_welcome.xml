@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A value tile on the welcome screen; the colour is set per tile in code. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="@dimen/radius_xlarge" />
+    <solid android:color="@color/md_primary" />
+</shape>

@@ -19,4 +19,9 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
     </style>
+
+    <!-- The welcome screen is deep in either theme; only the bar differs. -->
+    <style name="Theme.Mediconnectandroid.Welcome" parent="Theme.Mediconnectandroid">
+        <item name="android:statusBarColor">@color/md_deep</item>
+    </style>
 </resources>
