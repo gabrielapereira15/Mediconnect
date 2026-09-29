@@ -345,7 +345,8 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="booking_pick_time">Pick a time</string>
     <string name="booking_date_range">%1$s – %2$s</string>
     <string name="booking_day_full_note">Full</string>
-    <string name="cd_slot_taken">%1$s, already taken</string>
+    <string name="cd_slot_taken">%1$s, taken</string>
+    <string name="cd_slot_available">%1$s, available</string>
 
     <string name="waitlist_sooner_title">Need something sooner?</string>
     <string name="waitlist_sooner_body">Join the waitlist and we will offer you any earlier slot that frees up.</string>

@@ -91,4 +91,6 @@
 
     <color name="transparent">#00000000</color>
     <color name="my_light_primary">@color/md_primary</color>
+    <color name="md_panel_on_deep">#17616B</color>
+    <color name="md_on_panel_on_deep">#E8F4F5</color>
 </resources>

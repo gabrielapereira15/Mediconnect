@@ -121,9 +121,8 @@
                 android:id="@+id/doctor_book"
                 style="@style/Widget.Mediconnect.Button.Tonal"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/control_md"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
+                android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_md"
                 android:minWidth="0dp"
                 android:paddingHorizontal="@dimen/space_2xl"
                 android:text="@string/doctors_book" />

@@ -120,7 +120,8 @@
         android:id="@+id/btn_send_review"
         style="@style/Widget.Mediconnect.Button"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/control_lg"
+        android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
         android:layout_marginTop="@dimen/space_lg"
         android:text="@string/review_send" />
 </LinearLayout>

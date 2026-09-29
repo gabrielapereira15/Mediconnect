@@ -16,39 +16,54 @@
     android:orientation="vertical"
     tools:context=".fragment.MedicalHistoryFragment">
 
-    <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/visit_filter"
+    <!--
+        The row scrolls rather than squeezing its labels. At a doubled font
+        size, three equal thirds turned "Upcoming" into "Upco…", and a word
+        cut in half is not something a patient can choose between.
+    -->
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/space_lg"
         android:layout_marginTop="@dimen/space_md"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/space_lg"
+        android:scrollbars="none">
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/visit_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:selectionRequired="true"
         app:singleSelection="true">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/filter_upcoming"
             style="@style/Widget.Mediconnect.Button.Segmented"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/control_lg"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+            android:minWidth="104dp"
             android:text="@string/upcoming" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/filter_past"
             style="@style/Widget.Mediconnect.Button.Segmented"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/control_lg"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+            android:minWidth="104dp"
             android:text="@string/visits_past" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/filter_cancelled"
             style="@style/Widget.Mediconnect.Button.Segmented"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/control_lg"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+            android:minWidth="104dp"
             android:text="@string/cancelled" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
+    </HorizontalScrollView>
 
     <FrameLayout
         android:layout_width="match_parent"

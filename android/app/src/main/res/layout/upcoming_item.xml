@@ -38,8 +38,12 @@
             <!-- The date badge: what the eye lands on first. -->
             <LinearLayout
                 android:id="@+id/date_badge"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="52dp"
+                android:minHeight="52dp"
+                android:paddingHorizontal="@dimen/space_sm"
+                android:paddingVertical="@dimen/space_xs"
                 android:background="@drawable/date_badge_brand"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -80,7 +84,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:maxLines="2"
+                    android:maxLines="3"
                     android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
                     tools:text="Dr. Robert Chase · Surgeon" />
 
@@ -149,8 +153,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
                 android:minHeight="@dimen/control_md"
                 android:paddingHorizontal="@dimen/space_sm"
                 android:text="@string/visit_reschedule"
@@ -162,8 +164,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/space_md"
                 android:layout_weight="1"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
                 android:minHeight="@dimen/control_md"
                 android:paddingHorizontal="@dimen/space_sm"
                 android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"

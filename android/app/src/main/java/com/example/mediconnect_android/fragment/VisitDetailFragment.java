@@ -108,6 +108,17 @@ public class VisitDetailFragment extends Fragment {
         bindChecklist();
         bindDoctor();
 
+        // Sending the form pops straight back here, to an instance holding
+        // the arguments it was opened with — so it hears about it rather
+        // than going on saying the form is pending.
+        getParentFragmentManager().setFragmentResultListener(
+                PreAppointmentFormFragment.RESULT_SENT, getViewLifecycleOwner(),
+                (key, result) -> {
+                    formSubmittedAt = result.getString(
+                            PreAppointmentFormFragment.RESULT_SUBMITTED_AT);
+                    bindChecklist();
+                });
+
         binding.directions.setOnClickListener(v -> openDirections());
         binding.btnCheckIn.setOnClickListener(v -> checkIn());
         binding.btnWaitlist.setOnClickListener(v -> askToJoinWaitlist());

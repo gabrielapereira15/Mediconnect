@@ -145,4 +145,14 @@
 
     <!-- Referenced by one layout left over from the project template. -->
     <color name="my_light_primary">@color/md_primary</color>
+    <!--
+        A panel inside the deep card, a step brighter than it.
+
+        Reusing the brand's strong tone put a near-white block inside a dark
+        card at night, because that token is a light tint after dark. This
+        pair is a step brighter than md_deep in both themes, and its text
+        clears 4.5:1 on it either way.
+    -->
+    <color name="md_panel_on_deep">#075A5F</color>
+    <color name="md_on_panel_on_deep">#FFFFFF</color>
 </resources>

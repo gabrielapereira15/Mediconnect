@@ -91,7 +91,7 @@
                             android:layout_height="@dimen/icon_size_small"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_pin"
-                            app:tint="@color/md_on_primary" />
+                            app:tint="@color/md_on_panel_on_deep" />
 
                         <TextView
                             android:id="@+id/check_in_note_text"
@@ -100,7 +100,7 @@
                             android:layout_marginStart="@dimen/space_sm"
                             android:layout_weight="1"
                             android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
-                            android:textColor="@color/md_on_primary"
+                            android:textColor="@color/md_on_panel_on_deep"
                             tools:text="At the clinic? Check in to let the front desk know." />
                     </LinearLayout>
                 </LinearLayout>
@@ -259,7 +259,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="?attr/selectableItemBackground"
-                            android:padding="@dimen/space_xs"
+                            android:gravity="center"
+                            android:minHeight="@dimen/touch_target"
+                            android:minWidth="@dimen/touch_target"
+                            android:paddingHorizontal="@dimen/space_sm"
                             android:text="@string/visit_directions"
                             android:textAppearance="@style/TextAppearance.Mediconnect.LabelLarge"
                             android:textColor="@color/md_primary" />
@@ -273,7 +276,8 @@
                 android:id="@+id/btn_waitlist"
                 style="@style/Widget.Mediconnect.Button.Text"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/control_lg"
+                android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
                 android:layout_marginHorizontal="@dimen/space_lg"
                 android:layout_marginTop="@dimen/space_lg"
                 android:text="@string/visit_waitlist"
@@ -290,14 +294,16 @@
                     android:id="@+id/btn_reschedule"
                     style="@style/Widget.Mediconnect.Button.Text"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/control_lg"
+                    android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
                     android:text="@string/visit_reschedule" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_cancel"
                     style="@style/Widget.Mediconnect.Button.Text"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/control_lg"
+                    android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
                     android:text="@string/visit_cancel"
                     android:textColor="@color/md_error"
                     app:rippleColor="@color/md_error_container" />
@@ -321,7 +327,8 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_check_in"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/control_lg"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
             android:text="@string/visit_check_in"
             app:icon="@drawable/ic_checkin" />
     </LinearLayout>

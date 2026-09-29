@@ -50,6 +50,10 @@ public class PreAppointmentFormFragment extends Fragment {
     /** Where drafts live, keyed by the visit they belong to. */
     private static final String DRAFTS = "PreVisitFormDrafts";
 
+    /** Reported to whatever opened the form, so it can stop saying "pending". */
+    public static final String RESULT_SENT = "preVisitFormSent";
+    public static final String RESULT_SUBMITTED_AT = "submittedAt";
+
     private static final String YES = "YES";
     private static final String NO = "NO";
     private static final String UNSURE = "UNSURE";
@@ -132,7 +136,37 @@ public class PreAppointmentFormFragment extends Fragment {
         binding.btnNext.setOnClickListener(v -> goNext());
 
         showStep();
+        loadSentAnswers();
         return binding.getRoot();
+    }
+
+    /**
+     * Fills the form in with what was already sent.
+     *
+     * Reopening a sent form showed four empty questions, and sending that
+     * replaced the patient's real answers with nothing. A local draft wins,
+     * because it is newer than anything the server has.
+     */
+    private void loadSentAnswers() {
+        if (appointmentId == null || hasAnswers()) {
+            return;
+        }
+        Background.run(
+                () -> formClient.get(appointmentId),
+                sent -> {
+                    if (binding == null || sent == null) {
+                        return;
+                    }
+                    answers.setReason(sent.getReason());
+                    answers.setHadSurgery(sent.getHadSurgery());
+                    answers.setSmokes(sent.getSmokes());
+                    answers.setDrinksAlcohol(sent.getDrinksAlcohol());
+                    answers.setNotes(sent.getNotes());
+                    symptoms.clear();
+                    symptoms.addAll(sent.getSymptoms());
+                    showStep();
+                },
+                error -> { /* an unreachable server leaves the form empty */ });
     }
 
     @Override
@@ -351,6 +385,11 @@ public class PreAppointmentFormFragment extends Fragment {
                         return;
                     }
                     clearDraft();
+                    // The screen behind this one is still showing "Form
+                    // pending" from the arguments it was opened with.
+                    Bundle result = new Bundle();
+                    result.putString(RESULT_SUBMITTED_AT, saved.getSubmittedAt());
+                    getParentFragmentManager().setFragmentResult(RESULT_SENT, result);
                     DialogUtils.showMessageDialog(getContext(), getString(R.string.form_sent));
                     getParentFragmentManager().popBackStack();
                 },

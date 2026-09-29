@@ -132,7 +132,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/space_xs"
                         android:background="?attr/selectableItemBackground"
-                        android:paddingVertical="@dimen/space_xs"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/touch_target"
                         android:text="@string/read_more_link"
                         android:textAppearance="@style/TextAppearance.Mediconnect.LabelLarge"
                         android:textColor="@color/md_primary" />
@@ -346,7 +347,8 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_next"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/control_lg"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
             android:layout_marginStart="@dimen/space_lg"
             android:paddingHorizontal="@dimen/space_3xl"
             android:text="@string/booking_continue" />

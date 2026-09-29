@@ -253,10 +253,9 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/next_visit_primary"
                             android:layout_width="0dp"
-                            android:layout_height="@dimen/control_md"
+                            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_md"
                             android:layout_weight="1"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
                             android:textColor="@color/md_deep"
                             app:backgroundTint="@color/md_on_deep"
                             tools:text="Fill in form" />
@@ -265,11 +264,10 @@
                             android:id="@+id/next_visit_details"
                             style="@style/Widget.Material3.Button.OutlinedButton"
                             android:layout_width="0dp"
-                            android:layout_height="@dimen/control_md"
+                            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_md"
                             android:layout_marginStart="@dimen/space_sm"
                             android:layout_weight="1"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
                             android:text="@string/home_visit_details"
                             android:textColor="@color/md_on_deep"
                             app:strokeColor="@color/md_on_deep_muted" />
@@ -313,10 +311,9 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/no_visit_book"
                         android:layout_width="wrap_content"
-                        android:layout_height="@dimen/control_md"
+                        android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_md"
                         android:layout_marginTop="@dimen/space_lg"
-                        android:insetTop="0dp"
-                        android:insetBottom="0dp"
                         android:text="@string/home_book_a_visit"
                         android:textColor="@color/md_deep"
                         app:backgroundTint="@color/md_on_deep" />

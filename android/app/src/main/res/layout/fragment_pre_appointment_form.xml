@@ -148,14 +148,16 @@
             android:id="@+id/btn_back"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="0dp"
-            android:layout_height="@dimen/control_lg"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
             android:layout_weight="1"
             android:text="@string/form_back" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_next"
             android:layout_width="0dp"
-            android:layout_height="@dimen/control_lg"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
             android:layout_marginStart="@dimen/space_md"
             android:layout_weight="2"
             android:text="@string/form_next" />

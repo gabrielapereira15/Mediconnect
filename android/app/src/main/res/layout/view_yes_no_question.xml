@@ -32,7 +32,8 @@
             android:id="@+id/answer_yes"
             style="@style/Widget.Mediconnect.Button.Segmented"
             android:layout_width="0dp"
-            android:layout_height="@dimen/control_lg"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
             android:layout_weight="1"
             android:text="@string/form_yes" />
 
@@ -40,7 +41,8 @@
             android:id="@+id/answer_no"
             style="@style/Widget.Mediconnect.Button.Segmented"
             android:layout_width="0dp"
-            android:layout_height="@dimen/control_lg"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
             android:layout_weight="1"
             android:text="@string/form_no" />
 
@@ -50,7 +52,8 @@
             android:id="@+id/answer_unsure"
             style="@style/Widget.Mediconnect.Button.Segmented"
             android:layout_width="0dp"
-            android:layout_height="@dimen/control_lg"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
             android:layout_weight="1.6"
             android:paddingHorizontal="@dimen/space_xs"
             android:text="@string/form_prefer_not" />

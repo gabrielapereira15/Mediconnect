@@ -286,7 +286,6 @@ public class BookAppointmentFragment extends Fragment {
 
     private void buildDateStrip() {
         binding.dateStrip.removeAllViews();
-        int width = getResources().getDimensionPixelSize(R.dimen.date_chip_width);
         int gap = getResources().getDimensionPixelSize(R.dimen.space_sm);
 
         for (Day day : days) {
@@ -304,8 +303,9 @@ public class BookAppointmentFragment extends Fragment {
             chip.getRoot().setContentDescription(day.date.format(DAY_TITLE));
             chip.getRoot().setOnClickListener(v -> selectDay(day.date));
 
-            LinearLayout.LayoutParams params =
-                    new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
             params.setMarginEnd(gap);
             binding.dateStrip.addView(chip.getRoot(), params);
         }
@@ -332,13 +332,23 @@ public class BookAppointmentFragment extends Fragment {
             return;
         }
 
-        // A slot taken while the patient was on the review screen must not
-        // stay selected: selected draws over disabled, so the footer would
-        // still offer Continue on a time that is gone.
-        if (selectedSlotId != null && day.slots.stream().noneMatch(
-                s -> selectedSlotId.equals(s.getId()) && s.isAvailable())) {
+        // Two things at once. A slot taken while the patient was on the
+        // review screen must not stay selected — selected draws over
+        // disabled, so the footer would still offer Continue on a time that
+        // is gone. And only the id survives a rotation or a switch to dark
+        // mode, so the time behind it is found again here; without it the
+        // slot drew as chosen while the footer still said "Pick a time".
+        DoctorDetails.Schedule.TimeSlot chosen = selectedSlotId == null
+                ? null
+                : day.slots.stream()
+                        .filter(s -> selectedSlotId.equals(s.getId()) && s.isAvailable())
+                        .findFirst()
+                        .orElse(null);
+        if (chosen == null) {
             selectedSlotId = null;
             selectedTime = null;
+        } else if (selectedTime == null) {
+            selectedTime = parseTime(chosen.getTime());
         }
 
         binding.dayTitle.setText(day.date.format(DAY_TITLE));
@@ -373,16 +383,20 @@ public class BookAppointmentFragment extends Fragment {
         view.slot.setText(label);
         view.slot.setEnabled(slot.isAvailable());
         view.slot.setSelected(slot.getId() != null && slot.getId().equals(selectedSlotId));
-        if (!slot.isAvailable()) {
-            view.slot.setContentDescription(getString(R.string.cd_slot_taken, label));
-        }
+        // Announced with its state: a screen reader hearing eight times in
+        // a row has no other way to tell which of them can be booked.
+        view.slot.setContentDescription(getString(slot.isAvailable()
+                ? R.string.cd_slot_available
+                : R.string.cd_slot_taken, label));
         view.slot.setOnClickListener(v -> selectSlot(slot, at));
 
         int column = indexInGrid % SLOT_COLUMNS;
         int gap = getResources().getDimensionPixelSize(R.dimen.space_sm);
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
-        params.height = getResources().getDimensionPixelSize(R.dimen.control_lg);
+        // Wrap rather than fix: at a large font size a fixed cell cuts the
+        // time through the middle.
+        params.height = GridLayout.LayoutParams.WRAP_CONTENT;
         params.columnSpec = GridLayout.spec(column, 1f);
         params.rowSpec = GridLayout.spec(indexInGrid / SLOT_COLUMNS);
         params.setMargins(0, 0, column == SLOT_COLUMNS - 1 ? 0 : gap, gap);

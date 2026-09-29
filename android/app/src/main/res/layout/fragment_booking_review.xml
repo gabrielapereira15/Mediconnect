@@ -95,7 +95,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="?attr/selectableItemBackground"
-                            android:padding="@dimen/space_xs"
+                            android:gravity="center"
+                            android:minHeight="@dimen/touch_target"
+                            android:minWidth="@dimen/touch_target"
+                            android:paddingHorizontal="@dimen/space_sm"
                             android:text="@string/review_change"
                             android:textAppearance="@style/TextAppearance.Mediconnect.LabelLarge"
                             android:textColor="@color/md_primary" />
@@ -385,7 +388,8 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_confirm"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/control_lg"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
             android:text="@string/review_confirm" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

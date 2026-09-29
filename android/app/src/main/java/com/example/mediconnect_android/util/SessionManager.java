@@ -16,14 +16,32 @@ import com.example.mediconnect_android.client.ApiConfig;
 public class SessionManager {
 
     private static final String PREF_NAME = "UserSession";
+
+    /**
+     * Every store that belongs to the signed-in patient.
+     *
+     * Signing out has to empty all of them. It used to clear only the
+     * session, which left the profile, the reminder switches and the
+     * half-written answers to a pre-appointment form on the device for
+     * whoever signed in next.
+     */
+    private static final String[] PATIENT_STORES = {
+            PREF_NAME,
+            "UserProfile",
+            "ReminderPrefs",
+            "PreVisitFormDrafts",
+    };
+
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
     private static final String KEY_USER_EMAIL = "userEmail";
     private static final String KEY_TOKEN = "authToken";
     private static final String KEY_TOKEN_EXPIRES_AT = "authTokenExpiresAt";
 
     private final SharedPreferences sharedPreferences;
+    private final Context context;
 
     public SessionManager(Context context) {
+        this.context = context.getApplicationContext();
         sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         restoreToken();
     }
@@ -75,7 +93,9 @@ public class SessionManager {
 
     /** Clears the session locally; there is no server-side session to end. */
     public void logoutUser() {
-        sharedPreferences.edit().clear().apply();
+        for (String store : PATIENT_STORES) {
+            context.getSharedPreferences(store, Context.MODE_PRIVATE).edit().clear().apply();
+        }
         ApiConfig.clearToken();
     }
 
