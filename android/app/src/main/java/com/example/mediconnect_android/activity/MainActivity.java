@@ -1,50 +1,41 @@
 package com.example.mediconnect_android.activity;
 
 import static com.example.mediconnect_android.util.FragmentUtils.loadFragment;
-import static com.example.mediconnect_android.util.ImageUtils.getImageFromInternalStorage;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.client.NotificationClient;
 import com.example.mediconnect_android.client.NotificationClientImpl;
 import com.example.mediconnect_android.databinding.ActivityMainBinding;
 import com.example.mediconnect_android.fragment.EditProfileFragment;
-import com.example.mediconnect_android.fragment.FormFragment;
 import com.example.mediconnect_android.fragment.HomeFragment;
-import com.example.mediconnect_android.fragment.LogoutFragment;
 import com.example.mediconnect_android.fragment.NotificationsFragment;
-import com.example.mediconnect_android.fragment.ProfileFragment;
-import com.example.mediconnect_android.fragment.SettingsFragment;
-import com.example.mediconnect_android.model.Notification;
+import com.example.mediconnect_android.util.Background;
 import com.example.mediconnect_android.util.BottomNavigationManager;
 import com.example.mediconnect_android.util.DialogUtils;
-import com.example.mediconnect_android.util.Background;
-import com.google.android.material.navigation.NavigationView;
 
-import java.util.List;
+/**
+ * The shell the four top-level screens live in.
+ *
+ * The navigation drawer is gone. It held Profile, Forms, Settings and
+ * Logout, which put the health record three taps deep and the way out of the
+ * app behind a hamburger. Profile and Health are tabs now, Forms belongs to
+ * the visit it is for, and signing out is a row on Profile — so there was
+ * nothing left for a drawer to hold.
+ */
+public class MainActivity extends AppCompatActivity
+        implements NotificationsFragment.NotificationBadgeHandler {
 
-public class MainActivity extends AppCompatActivity implements NotificationsFragment.NotificationBadgeHandler {
-
-    ActivityMainBinding mainBinding;
-    ActionBarDrawerToggle mToggle;
-    NotificationClient notificationClient;
-    SharedPreferences sharedPreferences;
+    private ActivityMainBinding mainBinding;
+    private NotificationClient notificationClient;
+    private SharedPreferences sharedPreferences;
     private BottomNavigationManager bottomNavigationManager;
 
     @Override
@@ -52,13 +43,12 @@ public class MainActivity extends AppCompatActivity implements NotificationsFrag
         super.onCreate(savedInstanceState);
         mainBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mainBinding.getRoot());
-        notificationClient = new NotificationClientImpl();
-        init();
-    }
 
-    private void init() {
+        notificationClient = new NotificationClientImpl();
+        sharedPreferences = getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
+
+        setSupportActionBar(mainBinding.materialToolbar);
         setNavigationBottom();
-        setNavigationDrawer();
         setNotificationIcon();
         listeners();
     }
@@ -72,37 +62,32 @@ public class MainActivity extends AppCompatActivity implements NotificationsFrag
 
     private void setNotificationIcon() {
         String email = sharedPreferences.getString("email", "");
-        View notificationBadge = findViewById(R.id.notificationBadge);
 
         // The badge is decoration; fetch it in the background so the activity
         // is interactive straight away.
         Background.run(() -> notificationClient.getNotifications(email), notifications -> {
-            int notificationCount = notifications != null ? notifications.size() : 0;
-            notificationBadge.setVisibility(notificationCount > 0 ? View.VISIBLE : View.GONE);
+            int count = notifications == null ? 0 : notifications.size();
+            mainBinding.notificationBadge.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
+            // A dot says nothing to a screen reader, so the count goes on the
+            // button's own label.
+            mainBinding.notificationIcon.setContentDescription(count > 0
+                    ? getString(R.string.cd_notifications_unread, count)
+                    : getString(R.string.cd_notifications));
         });
     }
 
     private void listeners() {
-        mainBinding.notificationIcon.setOnClickListener(v -> {
-            loadFragment(getSupportFragmentManager(), R.id.flFragment, new NotificationsFragment());
-        });
+        mainBinding.notificationIcon.setOnClickListener(v -> loadFragment(
+                getSupportFragmentManager(), R.id.flFragment, new NotificationsFragment()));
     }
 
     private void setNavigationBottom() {
         bottomNavigationManager = new BottomNavigationManager(
                 getSupportFragmentManager(),
                 R.id.flFragment,
-                mainBinding.materialToolbar
-        );
-
-        mainBinding.bottomNavigationView.setOnItemSelectedListener(item -> {
-            if (!isUserDataComplete()) {
-                DialogUtils.showMessageDialog(this, "Please complete your profile before navigating.");
-                loadFragment(getSupportFragmentManager(), R.id.flFragment, new EditProfileFragment());
-                return false; // Prevent navigation
-            }
-            return true; // Allow navigation
-        });
+                mainBinding.materialToolbar,
+                this::isUserDataComplete,
+                this::sendToProfileForm);
 
         bottomNavigationManager.setupBottomNavigationListener(mainBinding.bottomNavigationView);
 
@@ -116,113 +101,29 @@ public class MainActivity extends AppCompatActivity implements NotificationsFrag
         }
 
         Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("target_fragment")) {
-            String targetFragment = intent.getStringExtra("target_fragment");
-
-            // Load the specified fragment
-            if ("EditProfileFragment".equals(targetFragment)) {
-                loadFragment(getSupportFragmentManager(), R.id.flFragment, new EditProfileFragment());
-            } else {
-                // Default to HomeFragment if no specific fragment is specified
-                bottomNavigationManager.loadFragment(new HomeFragment());
-            }
-        } else {
-            // Default behavior
-            bottomNavigationManager.loadFragment(new HomeFragment());
+        if (intent != null && "EditProfileFragment".equals(intent.getStringExtra("target_fragment"))) {
+            loadFragment(getSupportFragmentManager(), R.id.flFragment, new EditProfileFragment());
+            return;
         }
-
-
+        bottomNavigationManager.loadFragment(new HomeFragment());
     }
 
-    private void setNavigationDrawer() {
-        mToggle = new ActionBarDrawerToggle(this, mainBinding.drawerLayout, mainBinding.materialToolbar, R.string.nav_open, R.string.nav_close);
-        mainBinding.drawerLayout.addDrawerListener(mToggle);
-        mToggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this, R.color.light_blue));
-        mToggle.syncState();
-
-        setSupportActionBar(mainBinding.materialToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        mainBinding.navView.setNavigationItemSelectedListener(item -> {
-            if (!isUserDataComplete()) {
-                DialogUtils.showMessageDialog(this, "Please complete your profile before navigating.");
-                loadFragment(getSupportFragmentManager(), R.id.flFragment, new EditProfileFragment());
-                return false; // Prevent navigation
-            }
-            return true; // Allow navigation
-        });
-
-        View headerView = mainBinding.navView.getHeaderView(0);
-        ImageView profileImageView = headerView.findViewById(R.id.iv_profile_image);
-
-        Bitmap profileImage = getImageFromInternalStorage(MainActivity.this, "profile_image.jpg");
-        if (profileImage != null) {
-            profileImageView.setImageBitmap(profileImage);
-        }
-
-        sharedPreferences = this.getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
-        String first_name = sharedPreferences.getString("first_name", "");
-        String last_name = sharedPreferences.getString("last_name", "");
-        String fullName = first_name + " " + last_name;
-
-        TextView user = headerView.findViewById(R.id.textView);
-        user.setText(fullName);
-
-        mainBinding.navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment frag = null;
-                int itemId = item.getItemId();
-                if (itemId == R.id.nav_profile_menu) {
-                    frag = new ProfileFragment();
-                } else if (itemId == R.id.nav_forms_menu) {
-                    frag = new FormFragment();
-                } else if (itemId == R.id.nav_settings_menu) {
-                    frag = new SettingsFragment();
-                } else if (itemId == R.id.nav_logout_menu) {
-                    frag = new LogoutFragment();
-                } else {
-                    frag = new HomeFragment();
-                }
-                if (frag != null) {
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.flFragment, frag);
-                    ft.commit();
-                    mainBinding.drawerLayout.closeDrawers();
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-
-    public void updateUserName(String fullName) {
-        View headerView = mainBinding.navView.getHeaderView(0);
-        TextView user = headerView.findViewById(R.id.textView);
-        user.setText(fullName);
+    /**
+     * A half-filled profile cannot book anything, so the tabs stay shut
+     * until the details the clinic needs are there.
+     */
+    private void sendToProfileForm() {
+        DialogUtils.showMessageDialog(this, getString(R.string.profile_incomplete));
+        loadFragment(getSupportFragmentManager(), R.id.flFragment, new EditProfileFragment());
     }
 
     private boolean isUserDataComplete() {
-        SharedPreferences sharedPreferences = getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
-        String firstName = sharedPreferences.getString("first_name", null);
-        String lastName = sharedPreferences.getString("last_name", null);
-        String dob = sharedPreferences.getString("dob", null);
-        String phoneNumber = sharedPreferences.getString("phone_number", null);
-
-        // Check if any of the required fields is null or empty
-        return firstName != null && !firstName.isEmpty()
-                && lastName != null && !lastName.isEmpty()
-                && dob != null && !dob.isEmpty()
-                && phoneNumber != null && !phoneNumber.isEmpty();
+        return notBlank("first_name") && notBlank("last_name")
+                && notBlank("dob") && notBlank("phone_number");
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (mToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    private boolean notBlank(String key) {
+        String value = sharedPreferences.getString(key, null);
+        return value != null && !value.isEmpty();
     }
-
 }

@@ -260,12 +260,8 @@ public class EditProfileFragment extends Fragment {
         SessionManager sessionManager = new SessionManager(requireContext());
         sessionManager.createLoginSession(email);
 
-        MainActivity mainActivity = (MainActivity) getActivity();
-        if (mainActivity != null) {
-            String fullName = firstName + " " + lastName;
-            mainActivity.updateUserName(fullName);
-        }
-
+        // The drawer header this used to refresh is gone; Profile reads the
+        // name from preferences every time it binds.
 
         // Navigate to the next fragment
         HomeFragment homeFragment = new HomeFragment();

@@ -19,12 +19,12 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.activity.WelcomeActivity;
-import com.example.mediconnect_android.client.ApiConfig;
 import com.example.mediconnect_android.client.HealthClient;
 import com.example.mediconnect_android.client.HealthClientImpl;
 import com.example.mediconnect_android.databinding.FragmentProfileBinding;
 import com.example.mediconnect_android.model.HealthEntry;
 import com.example.mediconnect_android.util.Background;
+import com.example.mediconnect_android.util.SessionManager;
 import com.example.mediconnect_android.util.ThemePreference;
 
 import java.util.List;
@@ -218,9 +218,11 @@ public class ProfileFragment extends Fragment {
 
     private void signOut() {
         prefs().edit().clear().apply();
-        // The token is what actually grants access, so it goes too —
-        // clearing the profile alone would leave a signed-in session behind.
-        ApiConfig.clearToken();
+        // The session lives in its own preferences file and holds the saved
+        // token, which the SessionManager puts back into circulation on the
+        // next start. Clearing the profile and the in-memory token alone
+        // left that file untouched, so the next launch was still signed in.
+        new SessionManager(requireContext()).logoutUser();
 
         Intent intent = new Intent(requireContext(), WelcomeActivity.class);
         // Nothing from the signed-in session should be reachable with Back.

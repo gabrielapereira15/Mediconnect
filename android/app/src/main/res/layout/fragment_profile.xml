@@ -287,7 +287,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/themeSystem"
-                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                style="@style/Widget.Mediconnect.Button.Segmented"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -295,7 +295,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/themeLight"
-                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                style="@style/Widget.Mediconnect.Button.Segmented"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -303,7 +303,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/themeDark"
-                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                style="@style/Widget.Mediconnect.Button.Segmented"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"

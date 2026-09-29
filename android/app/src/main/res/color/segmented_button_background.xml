@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The selected segment's fill. Material's outlined button defaults to
+    secondaryContainer when checked, which this palette keeps for
+    information; the design system's selected state is brand-soft.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/md_primary_container" android:state_checked="true" />
+    <item android:color="@android:color/transparent" />
+</selector>

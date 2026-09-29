@@ -1,94 +1,94 @@
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The shell every top-level screen sits in: app bar, content, bottom
+    navigation.
+
+    The DrawerLayout is gone. It held Profile, Forms, Settings and Logout
+    behind a hamburger, which meant the health record was three taps deep and
+    the way out of the app was somewhere a patient had to go looking. Those
+    destinations are now either a tab or a row inside one, so the drawer had
+    nothing left to hold.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_background"
     tools:context=".activity.MainActivity">
 
-    <!-- Conteúdo Principal -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/materialToolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/app_name"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/TextAppearance.Mediconnect.TitleLarge">
 
-        <!-- Toolbar -->
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/materialToolbar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:title="@string/app_name"
-            app:titleCentered="true"
-            app:titleTextColor="@color/light_blue">
-
-            <!-- Container for the notification icon and badge -->
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:padding="@dimen/space_lg">
-
-                <!-- Notification icon -->
-                <ImageView
-                    android:id="@+id/notificationIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/notifications"
-                    android:src="@drawable/ic_bell" />
-
-                <!-- Red badge (dot) -->
-                <View
-                    android:id="@+id/notificationBadge"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_alignTop="@id/notificationIcon"
-                    android:layout_alignEnd="@id/notificationIcon"
-                    android:layout_marginTop="@dimen/space_xs"
-                    android:layout_marginEnd="@dimen/space_xs"
-                    android:background="@drawable/circle_red"
-                    android:visibility="gone" />
-            </RelativeLayout>
-
-        </com.google.android.material.appbar.MaterialToolbar>
-
-
-        <!-- Fragment Container -->
+        <!--
+            The bell, with its unread dot. A frame rather than a menu item so
+            the dot can sit on the icon's corner; the touch target is padded
+            out to 48dp, which the icon alone is not.
+        -->
         <FrameLayout
-            android:id="@+id/flFragment"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/materialToolbar" />
+            android:id="@+id/notificationIcon"
+            android:layout_width="@dimen/touch_target"
+            android:layout_height="@dimen/touch_target"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/space_sm"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/cd_notifications"
+            android:focusable="true">
 
-        <!-- Bottom Navigation -->
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigationView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@drawable/bottom_background"
-            app:itemIconTint="@color/nav_item_color"
-            app:itemTextColor="@color/nav_item_color"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/bottom_nav_menu" />
+            <ImageView
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_bell"
+                app:tint="@color/md_on_surface" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <View
+                android:id="@+id/notificationBadge"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/circle_red"
+                android:visibility="gone" />
+        </FrameLayout>
+    </com.google.android.material.appbar.MaterialToolbar>
 
-    <!-- Navigation Drawer -->
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@color/gray_background"
-        app:headerLayout="@layout/drawer_header"
-        app:menu="@menu/drawer_menu" />
+    <FrameLayout
+        android:id="@+id/flFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/materialToolbar" />
 
-</androidx.drawerlayout.widget.DrawerLayout>
+    <!--
+        labelVisibilityMode is set because Material hides the inactive
+        labels once there are four items, and an unlabelled icon is a guess.
+    -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bottom_background"
+        app:itemIconTint="@color/nav_item_color"
+        app:itemTextColor="@color/nav_item_color"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

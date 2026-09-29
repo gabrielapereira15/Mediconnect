@@ -267,4 +267,14 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="waitlist_join_body">If someone cancels with %1$s before this appointment, we will send you a notification so you can take the slot.</string>
     <string name="waitlist_join_confirm">Add me</string>
     <string name="waitlist_joined">You are on the waitlist. Watch your notifications.</string>
+
+    <!-- The four bottom-navigation destinations. -->
+    <string name="nav_home">Home</string>
+    <string name="nav_visits">Visits</string>
+    <string name="nav_health">Health</string>
+    <string name="nav_profile">Profile</string>
+    <string name="cd_notifications_unread">Notifications, %1$d unread</string>
+    <string name="cd_notifications">Notifications</string>
+    <string name="visit_fill_in_form">Fill in form</string>
+    <string name="profile_incomplete">Please finish your profile first — the clinic needs these details to book you in.</string>
 </resources>

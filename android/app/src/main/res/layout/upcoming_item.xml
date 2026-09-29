@@ -146,5 +146,19 @@
             android:layout_height="wrap_content"
             android:text="@string/waitlist_join"
             app:icon="@drawable/ic_bell" />
+
+        <!--
+            The pre-appointment form, on the visit it belongs to. It used to
+            be reachable only from the navigation drawer, as a list of forms
+            detached from any appointment — so a patient had to work out
+            which form went with which visit.
+        -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/form_button"
+            style="@style/Widget.Mediconnect.Button.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/visit_fill_in_form"
+            app:icon="@drawable/ic_form" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

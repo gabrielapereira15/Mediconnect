@@ -30,6 +30,7 @@ import com.example.mediconnect_android.client.WaitlistClientImpl;
 import com.example.mediconnect_android.databinding.UpcomingItemBinding;
 import com.example.mediconnect_android.fragment.BookAppointmentFragment;
 import com.example.mediconnect_android.fragment.MedicalHistoryFragment;
+import com.example.mediconnect_android.fragment.PreAppointmentFormFragment;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.util.DialogUtils;
@@ -129,6 +130,11 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
             recyclerItemBinding.switchRemindMe.setChecked(isReminderEnabled);
 
             recyclerItemBinding.waitlistButton.setOnClickListener(v -> joinWaitlist(appointment, doctor));
+
+            // The form belongs to this visit, so it opens from this card.
+            recyclerItemBinding.formButton.setOnClickListener(v -> FragmentUtils.loadFragment(
+                    ((AppCompatActivity) context).getSupportFragmentManager(),
+                    R.id.flFragment, new PreAppointmentFormFragment()));
 
             recyclerItemBinding.rescheduleButton.setOnClickListener(new View.OnClickListener() {
                 @Override
