@@ -133,5 +133,18 @@
                 android:text="@string/reschedule"
                 android:textColor="@color/md_on_primary" />
         </LinearLayout>
+
+        <!--
+            The waitlist. Offered on the card for the appointment it would
+            improve on, because that is the moment someone realises the date
+            they were given is further off than they wanted.
+        -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/waitlist_button"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/waitlist_join"
+            app:icon="@drawable/baseline_notifications_none_24" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

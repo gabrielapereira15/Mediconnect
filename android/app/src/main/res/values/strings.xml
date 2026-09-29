@@ -258,4 +258,13 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="summary_generated">Generated %1$s</string>
     <string name="summary_share_subject">My health summary</string>
     <string name="health_count">%1$d recorded</string>
+    <string name="summary_export">Export for a clinic</string>
+    <string name="summary_export_hint">Sends the summary as a FHIR document that another clinic system can read.</string>
+    <string name="summary_export_unavailable">Sign in again to export your summary.</string>
+
+    <!-- Waitlist. -->
+    <string name="waitlist_join">Tell me if something earlier opens up</string>
+    <string name="waitlist_join_body">If someone cancels with %1$s before this appointment, we will send you a notification so you can take the slot.</string>
+    <string name="waitlist_join_confirm">Add me</string>
+    <string name="waitlist_joined">You are on the waitlist. Watch your notifications.</string>
 </resources>

@@ -15,6 +15,7 @@ import org.hl7.fhir.r4.model.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -36,6 +37,11 @@ import java.util.function.Function;
 @RestController
 @RequestMapping(value = "/fhir", produces = FhirController.FHIR_JSON)
 @RequiredArgsConstructor
+// Mapping an appointment walks scheduleTime -> schedule -> doctor, and those
+// associations are lazy. Without a transaction open while the response is
+// built, the first of them throws LazyInitializationException and the whole
+// endpoint returns a 500.
+@Transactional(readOnly = true)
 public class FhirController {
 
     public static final String FHIR_JSON = "application/fhir+json";
@@ -75,14 +81,20 @@ public class FhirController {
         CapabilityStatement.CapabilityStatementRestComponent rest = statement.addRest();
         rest.setMode(CapabilityStatement.RestfulCapabilityMode.SERVER);
 
-        supportedResource(rest, "Patient", FhirProfiles.CA_PATIENT);
-        supportedResource(rest, "Practitioner", FhirProfiles.CA_PRACTITIONER);
-        supportedResource(rest, "PractitionerRole", FhirProfiles.CA_PRACTITIONER_ROLE);
-        supportedResource(rest, "Organization", FhirProfiles.CA_ORGANIZATION);
-        // No Canadian profile exists for these, so none is claimed.
+        // CA Core+ is named as the profile and CA Baseline as an additional
+        // supported one, since CapabilityStatement allows exactly one of the
+        // former and any number of the latter.
+        supportedResource(rest, "Patient", FhirProfiles.CACORE_PATIENT, FhirProfiles.CA_PATIENT);
+        supportedResource(rest, "Practitioner", FhirProfiles.CACORE_PRACTITIONER,
+                FhirProfiles.CA_PRACTITIONER);
+        supportedResource(rest, "PractitionerRole", FhirProfiles.CACORE_PRACTITIONER_ROLE,
+                FhirProfiles.CA_PRACTITIONER_ROLE);
+        supportedResource(rest, "Organization", FhirProfiles.CACORE_ORGANIZATION,
+                FhirProfiles.CA_ORGANIZATION);
+        supportedResource(rest, "Appointment", FhirProfiles.CACORE_APPOINTMENT);
+        // No Canadian guide profiles these two, so none is claimed.
         supportedResource(rest, "Schedule", null);
         supportedResource(rest, "Slot", null);
-        supportedResource(rest, "Appointment", null);
 
         rest.addOperation()
                 .setName("summary")
@@ -92,10 +104,13 @@ public class FhirController {
     }
 
     private void supportedResource(CapabilityStatement.CapabilityStatementRestComponent rest,
-                                   String type, String profile) {
+                                   String type, String profile, String... alsoSupported) {
         var resource = rest.addResource()
                 .setType(type)
                 .setProfile(profile);
+        for (String supported : alsoSupported) {
+            resource.addSupportedProfile(supported);
+        }
         resource.addInteraction().setCode(CapabilityStatement.TypeRestfulInteraction.READ);
         resource.addInteraction().setCode(CapabilityStatement.TypeRestfulInteraction.SEARCHTYPE);
     }

@@ -85,7 +85,7 @@ public class AppointmentController {
             redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR,
                     WebUtils.getMessage(referencedWarning.getKey(), referencedWarning.getParams().toArray()));
         } else {
-            appointmentApiService.cancelAppointment(id);
+            appointmentApiService.cancelAppointmentAsClinic(id);
             redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("appointment.delete.success"));
         }
         return "redirect:/appointments";

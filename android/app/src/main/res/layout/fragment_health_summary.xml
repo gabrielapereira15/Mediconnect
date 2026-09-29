@@ -127,6 +127,27 @@
                     android:layout_marginTop="@dimen/space_md"
                     android:text="@string/summary_share"
                     app:icon="@drawable/baseline_share_24" />
+
+                <!--
+                    The document itself, for a clinic rather than a person.
+                    Separate from Share because the two go to different
+                    kinds of recipient and only one of them can read FHIR.
+                -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnExport"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:text="@string/summary_export"
+                    app:icon="@drawable/baseline_download_24" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:text="@string/summary_export_hint"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall" />
             </LinearLayout>
 
             <com.example.mediconnect_android.view.StateView

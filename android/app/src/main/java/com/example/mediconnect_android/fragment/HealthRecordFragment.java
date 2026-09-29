@@ -171,6 +171,14 @@ public class HealthRecordFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // Reached from the Profile tab, which otherwise leaves its own title
+        // on the toolbar and makes this look like part of that screen.
+        requireActivity().setTitle(R.string.health_record_title);
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;

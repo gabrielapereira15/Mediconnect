@@ -1,7 +1,8 @@
 # FHIR and the Canadian standards
 
-Mediconnect exposes its data as **HL7 FHIR R4** and can export a patient's
-record as a **pan-Canadian Patient Summary (PS-CA)**.
+Mediconnect exposes its data as **HL7 FHIR R4**, profiled against
+**CA Core+** and **CA Baseline**, and can export a patient's record as a
+**pan-Canadian Patient Summary (PS-CA)**.
 
 This document says exactly what that means, what has been verified, and what
 has not — because "FHIR compliant" is a claim people make loosely, and the
@@ -49,22 +50,31 @@ Only HAPI's R4 model classes and its validator are used.
 `GET /fhir/metadata` returns the CapabilityStatement — what a FHIR client
 asks for first, and the machine-readable version of this table.
 
-| Resource | Profile claimed | Notes |
+| Resource | Profiles claimed | Notes |
 |---|---|---|
-| `Patient` | CA Baseline `profile-patient` | Includes the jurisdictional health number |
-| `Practitioner` | CA Baseline `profile-practitioner` | |
-| `PractitionerRole` | CA Baseline `profile-practitionerrole` | Carries the specialty |
-| `Organization` | CA Baseline `profile-organization` | The clinic |
+| `Patient` | CA Core+ `patient-ca-core`, CA Baseline `profile-patient` | Carries the jurisdictional health number |
+| `Practitioner` | CA Core+ `practitioner-ca-core`, CA Baseline `profile-practitioner` | |
+| `PractitionerRole` | CA Core+ `practitionerRole-ca-core`, CA Baseline `profile-practitionerrole` | Carries the specialty |
+| `Organization` | CA Core+ `organization-ca-core`, CA Baseline `profile-organization` | The clinic |
+| `Appointment` | CA Core+ `appointment-ca-core` | `?patient={id}` |
 | `Schedule` | *(none)* | See below |
 | `Slot` | *(none)* | `?status=free` filters to bookable slots |
-| `Appointment` | *(none)* | `?patient={id}` |
 | `Patient/{id}/$summary` | PS-CA `bundle-ca-ps` | The patient summary document |
 
-**Why scheduling claims no Canadian profile.** CA Baseline publishes no
-`Appointment`, `Schedule` or `Slot` profile, and PS-CA is a patient-summary
-guide with no scheduling content. These are therefore plain FHIR R4.
-Stamping a Canadian profile URL on them would be inventing one, and a
-profile URL that does not resolve is worse than none — it claims a
+Two profiles are claimed where both apply. CA Core+ and CA Baseline are not
+rivals: Baseline is HL7 Canada's floor for a resource, Core+ is Infoway's
+expression of the Canadian Core Data for Interoperability on top of it, and
+`meta.profile` is a list precisely so a resource can declare both. The
+CapabilityStatement names CA Core+ as `profile` and CA Baseline as
+`supportedProfile`, since it allows one of the former and many of the
+latter.
+
+**Why Schedule and Slot claim no Canadian profile.** CA Core+ profiles
+`Appointment`, but no Canadian guide profiles `Schedule` or `Slot` — CA
+Baseline has none of the three, and PS-CA is a patient-summary guide with
+no scheduling content at all. Those two are therefore plain FHIR R4.
+Stamping a Canadian profile URL on them would mean inventing one, and a
+profile URL that does not resolve is worse than none: it claims a
 conformance nobody can check.
 
 ## The patient summary
@@ -131,16 +141,26 @@ the evidence behind every claim above; it is not a README assertion.
 | Check | Status |
 |---|---|
 | Resources are valid FHIR R4 | ✅ verified by `FhirInstanceValidator` |
-| Claimed profile URLs resolve in the published packages | ✅ verified |
+| Every claimed profile URL resolves in the published packages | ✅ verified |
+| `Patient` satisfies CA Core+ structurally | ✅ verified |
 | `Patient` satisfies CA Baseline structurally | ✅ verified |
-| Summary is a valid document Bundle with all three sections | ✅ verified |
+| `Practitioner` and `PractitionerRole` satisfy CA Core+ | ✅ verified |
+| `Appointment` satisfies CA Core+ | ✅ verified |
+| The summary satisfies the PS-CA document profile | ✅ verified |
+| An empty summary still satisfies PS-CA | ✅ verified |
 | Summary is self-contained (no dangling references) | ✅ verified |
+| Every endpoint actually serves what the mapper builds | ✅ verified by `FhirEndpointIT` |
 | Terminology bindings (SNOMED CT, LOINC) | ⚠️ not checked — needs a terminology server |
 
-CA Baseline 1.2.0 and PS-CA 2.1.1-DFT are vendored as published `.tgz`
-packages under `src/test/resources/fhir-packages`, so conformance tests run
-without network access in CI. A test that silently skips when a download
-fails is worse than no test.
+The endpoint tests exist because the unit tests could not have caught the
+last row of that list being wrong: mapping an appointment walks three lazy
+associations, and for a while the endpoint returned a 500 while every
+resource-level test stayed green.
+
+CA Core+ 1.2.1-dft, CA Baseline 1.2.0 and PS-CA 2.1.1-DFT are vendored as
+published `.tgz` packages under `src/test/resources/fhir-packages`, so
+conformance tests run without network access in CI. A test that silently
+skips when a download fails is worse than no test.
 
 Two things worth knowing about those packages:
 
@@ -168,6 +188,7 @@ Two things worth knowing about those packages:
 ## References
 
 - [CA Core+ (Canada Health Infoway)](https://infoscribe.infoway-inforoute.ca/spaces/PCI/pages/237240617/Pan-Canadian+Core+FHIR+Profile+Set+CA+Core)
+- [CA Core+ package](https://packages.simplifier.net/ca.infoway.io.core)
 - [CA Baseline (HL7 Canada)](https://build.fhir.org/ig/HL7-Canada/ca-baseline/)
 - [PS-CA package](https://packages.simplifier.net/ca.infoway.io.psca)
 - [HL7 FHIR R4](https://hl7.org/fhir/R4/)

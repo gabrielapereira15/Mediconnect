@@ -11,6 +11,9 @@ public class Patient {
     String birthdate;
     String gender;
     String document;
+    /** The provincial health card, and which province issued it. */
+    String healthCardNumber;
+    String healthCardProvince;
 
     public String getid() {
         return id;
@@ -18,6 +21,22 @@ public class Patient {
 
     public void setid(String id) {
         this.id = id;
+    }
+
+    public String getHealthCardNumber() {
+        return healthCardNumber;
+    }
+
+    public void setHealthCardNumber(String healthCardNumber) {
+        this.healthCardNumber = healthCardNumber;
+    }
+
+    public String getHealthCardProvince() {
+        return healthCardProvince;
+    }
+
+    public void setHealthCardProvince(String healthCardProvince) {
+        this.healthCardProvince = healthCardProvince;
     }
 
     public String getfirstName() {

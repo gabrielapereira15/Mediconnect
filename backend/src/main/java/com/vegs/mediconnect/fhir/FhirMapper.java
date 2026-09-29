@@ -38,6 +38,7 @@ public class FhirMapper {
     public org.hl7.fhir.r4.model.Patient toPatient(Patient patient) {
         var fhir = new org.hl7.fhir.r4.model.Patient();
         fhir.setId(patient.getId().toString());
+        fhir.getMeta().addProfile(FhirProfiles.CACORE_PATIENT);
         fhir.getMeta().addProfile(FhirProfiles.CA_PATIENT);
 
         // The clinic's own record number, always present.
@@ -116,6 +117,7 @@ public class FhirMapper {
     public Practitioner toPractitioner(Doctor doctor) {
         var fhir = new Practitioner();
         fhir.setId(doctor.getId().toString());
+        fhir.getMeta().addProfile(FhirProfiles.CACORE_PRACTITIONER);
         fhir.getMeta().addProfile(FhirProfiles.CA_PRACTITIONER);
 
         fhir.addIdentifier()
@@ -142,6 +144,7 @@ public class FhirMapper {
     public PractitionerRole toPractitionerRole(Doctor doctor) {
         var role = new PractitionerRole();
         role.setId(doctor.getId().toString());
+        role.getMeta().addProfile(FhirProfiles.CACORE_PRACTITIONER_ROLE);
         role.getMeta().addProfile(FhirProfiles.CA_PRACTITIONER_ROLE);
         role.setActive(true);
         role.setPractitioner(new Reference("Practitioner/" + doctor.getId()));
@@ -157,9 +160,9 @@ public class FhirMapper {
 
     // ---- Scheduling -----------------------------------------------------
     //
-    // Neither CA Baseline nor PS-CA profiles Appointment, Schedule or Slot,
-    // so these are plain FHIR R4 with no meta.profile. Claiming a Canadian
-    // profile here would mean inventing one.
+    // Appointment carries the CA Core+ profile. Schedule and Slot do not,
+    // because no Canadian guide profiles them — they are plain FHIR R4, and
+    // claiming a profile for them would mean inventing one.
 
     public Slot toSlot(ScheduleTime scheduleTime) {
         var slot = new Slot();
@@ -187,6 +190,7 @@ public class FhirMapper {
     public org.hl7.fhir.r4.model.Appointment toAppointment(Appointment appointment) {
         var fhir = new org.hl7.fhir.r4.model.Appointment();
         fhir.setId(appointment.getId().toString());
+        fhir.getMeta().addProfile(FhirProfiles.CACORE_APPOINTMENT);
 
         var scheduleTime = appointment.getScheduleTime();
         LocalDateTime start = LocalDateTime.of(
@@ -312,8 +316,16 @@ public class FhirMapper {
                 : MedicationStatement.MedicationStatementStatus.STOPPED);
         statement.setMedication(codeableConcept(entry));
         statement.setSubject(new Reference("Patient/" + entry.getPatient().getId()));
+
+        // PS-CA requires effective[x] on every medication statement, and
+        // patients routinely cannot say when they started something. FHIR's
+        // answer to a mandatory element with a genuinely unknown value is to
+        // present it with a data-absent-reason rather than to invent a date
+        // or to omit it and fail the profile.
         if (entry.getOnsetDate() != null) {
             statement.setEffective(new DateTimeType(toDate(entry.getOnsetDate())));
+        } else {
+            statement.setEffective(unknownDateTime());
         }
         if (notBlank(entry.getNote())) {
             statement.addNote().setText(entry.getNote());
@@ -342,10 +354,25 @@ public class FhirMapper {
     public Organization organization() {
         var organization = new Organization();
         organization.setId("mediconnect");
+        organization.getMeta().addProfile(FhirProfiles.CACORE_ORGANIZATION);
         organization.getMeta().addProfile(FhirProfiles.CA_ORGANIZATION);
         organization.setActive(true);
         organization.setName(properties.getOrganizationName());
         return organization;
+    }
+
+    /**
+     * A date-time that says "we do not know" rather than carrying a value.
+     *
+     * Valid FHIR: a required element may be present with no value so long as
+     * it explains its own absence.
+     */
+    private static DateTimeType unknownDateTime() {
+        DateTimeType unknown = new DateTimeType();
+        unknown.addExtension(
+                "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+                new CodeType("unknown"));
+        return unknown;
     }
 
     static Date toDate(LocalDateTime dateTime) {

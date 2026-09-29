@@ -106,6 +106,33 @@ public class WaitlistService {
     }
 
     /**
+     * Takes a patient off this doctor's waitlist once they book something
+     * earlier than the appointment they were waiting to improve on.
+     *
+     * Without this they would keep being offered slots they no longer want,
+     * which is the fastest way to teach someone to ignore notifications.
+     */
+    @Transactional
+    public void onAppointmentBooked(Patient patient, com.vegs.mediconnect.datasource.doctor.Doctor doctor,
+                                    LocalDate bookedDate) {
+        try {
+            var entries = waitlistRepository.findAllByPatientOrderByDateCreatedDesc(patient);
+            for (WaitlistEntry entry : entries) {
+                boolean sameDoctor = entry.getDoctor().getId().equals(doctor.getId());
+                boolean stillOpen = entry.getStatus() == WaitlistStatus.WAITING
+                        || entry.getStatus() == WaitlistStatus.OFFERED;
+                if (sameDoctor && stillOpen && bookedDate.isBefore(entry.getCurrentAppointmentDate())) {
+                    entry.setStatus(WaitlistStatus.BOOKED);
+                    waitlistRepository.save(entry);
+                }
+            }
+        } catch (RuntimeException e) {
+            // Tidying the waitlist must never cost the patient their booking.
+            log.error("Could not close the waitlist entry after a booking", e);
+        }
+    }
+
+    /**
      * Called when an appointment is cancelled and its slot goes back on
      * sale.
      *
@@ -114,9 +141,13 @@ public class WaitlistService {
      * others find it gone. That is blunt, but a clinic that offers a slot to
      * one person at a time and waits for an answer usually loses the slot.
      *
-     * Deliberately never throws: this runs as a consequence of a
-     * cancellation, and a failure to notify must not roll back the
-     * cancellation the patient asked for.
+     * Catches everything it can, because a failure to notify should not be
+     * what stops a patient cancelling. That is not an absolute guarantee:
+     * this runs inside the cancellation's transaction, and a persistence
+     * error marks that transaction rollback-only whether or not the
+     * exception is caught here. Moving it to an after-commit event would
+     * make the guarantee real, and is the right change if notification ever
+     * grows past writing one row.
      */
     @Transactional
     public int offerFreedSlot(Appointment cancelled) {
@@ -125,8 +156,13 @@ public class WaitlistService {
             LocalDate slotDate = scheduleTime.getSchedule().getDate();
             var doctor = scheduleTime.getSchedule().getDoctor();
 
-            List<WaitlistEntry> waiting = waitlistRepository
-                    .findAllByDoctorAndStatusOrderByDateCreatedAsc(doctor, WaitlistStatus.WAITING);
+            // Both WAITING and OFFERED are still on the list: an earlier
+            // offer that somebody else won does not remove them.
+            List<WaitlistEntry> waiting = new java.util.ArrayList<>(waitlistRepository
+                    .findAllByDoctorAndStatusOrderByDateCreatedAsc(doctor, WaitlistStatus.WAITING));
+            waiting.addAll(waitlistRepository
+                    .findAllByDoctorAndStatusOrderByDateCreatedAsc(doctor, WaitlistStatus.OFFERED));
+            waiting.sort(java.util.Comparator.comparing(WaitlistEntry::getDateCreated));
 
             int offered = 0;
             for (WaitlistEntry entry : waiting) {
@@ -140,6 +176,9 @@ public class WaitlistService {
 
                 notifyOffer(entry, doctor.getFirstName() + " " + doctor.getLastName(),
                         slotDate, scheduleTime.getTime());
+                // Still on the list. OFFERED only records that they have
+                // been told about something; it is not a state they get
+                // stuck in.
                 entry.setStatus(WaitlistStatus.OFFERED);
                 entry.setLastOfferedAt(OffsetDateTime.now());
                 waitlistRepository.save(entry);

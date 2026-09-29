@@ -43,6 +43,22 @@
             android:windowSoftInputMode="adjustPan"
             android:exported="false" />
 
+        <!--
+            Lets the health summary be handed to another app as a file.
+            Health data, so it is granted per share rather than exported:
+            the receiving app gets read access to that one URI and nothing
+            else, and only because the patient chose to send it.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <receiver android:name=".util.Notification" />
     </application>
 

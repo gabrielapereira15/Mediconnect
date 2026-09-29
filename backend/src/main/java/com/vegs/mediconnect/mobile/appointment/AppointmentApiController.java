@@ -5,6 +5,8 @@ import com.vegs.mediconnect.mobile.appointment.model.AppointmentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import com.vegs.mediconnect.auth.AuthInterceptor;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,10 +35,21 @@ public class AppointmentApiController {
         return ResponseEntity.ok(appointmentApiService.getAppointments(email));
     }
 
+    /**
+     * Cancels an appointment.
+     *
+     * The route carries no email, so the interceptor cannot check ownership
+     * from the path the way it does elsewhere — the caller's own email is
+     * taken from their token and checked against the appointment instead.
+     * Without it, any signed-in patient could cancel a stranger's visit by
+     * guessing an id.
+     */
     @PutMapping("/cancel/{id}")
     public ResponseEntity<Void> cancelAppointment(
-            @PathVariable(name = "id") final UUID id) {
-        appointmentApiService.cancelAppointment(id);
+            @PathVariable(name = "id") final UUID id,
+            final HttpServletRequest request) {
+        Object email = request.getAttribute(AuthInterceptor.AUTHENTICATED_EMAIL);
+        appointmentApiService.cancelAppointment(id, String.valueOf(email));
         return ResponseEntity.accepted().build();
     }
 

@@ -46,6 +46,8 @@ public class PatientApiService {
         patient.setBirthdate(patientDetailResponse.getBirthdate());
         patient.setPhoneNumber(patientDetailResponse.getPhoneNumber());
         patient.setAddress(patientDetailResponse.getAddress());
+        patient.setHealthCardNumber(patientDetailResponse.getHealthCardNumber());
+        patient.setHealthCardProvince(patientDetailResponse.getHealthCardProvince());
     }
 
     private Patient mapToEntity(PatientDetailRequest patientDetailRequest) {
@@ -59,6 +61,8 @@ public class PatientApiService {
                 .birthdate(patientDetailRequest.getBirthdate())
                 .phoneNumber(patientDetailRequest.getPhoneNumber())
                 .address(patientDetailRequest.getAddress())
+                .healthCardNumber(patientDetailRequest.getHealthCardNumber())
+                .healthCardProvince(patientDetailRequest.getHealthCardProvince())
                 .build();
     }
 
@@ -74,6 +78,8 @@ public class PatientApiService {
                 .birthdate(patientDetailResponse.getBirthdate())
                 .phoneNumber(patientDetailResponse.getPhoneNumber())
                 .address(patientDetailResponse.getAddress())
+                .healthCardNumber(patientDetailResponse.getHealthCardNumber())
+                .healthCardProvince(patientDetailResponse.getHealthCardProvince())
                 .build();
     }
 
@@ -90,6 +96,8 @@ public class PatientApiService {
                 .birthdate(patient.getBirthdate())
                 .phoneNumber(patient.getPhoneNumber())
                 .address(patient.getAddress())
+                .healthCardNumber(patient.getHealthCardNumber())
+                .healthCardProvince(patient.getHealthCardProvince())
                 .build();
     }
 }

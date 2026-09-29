@@ -121,18 +121,30 @@ public class OTPActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    private void saveCompletedataToSharedPreferences(String name, String lastName, String email, String phoneNumber, String clinicCode, String address, String dob, String gender) {
+    /**
+     * Stores everything the signed-in patient's screens need.
+     *
+     * Takes the patient rather than eight positional strings, because the
+     * call site already has one and adding a field previously meant editing
+     * both ends and hoping the order still lined up.
+     */
+    private void saveCompletedataToSharedPreferences(Patient patient, String email) {
         SharedPreferences sharedPreferences = this.getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.putString("first_name", name);
-        editor.putString("last_name", lastName);
+        // The id is what the FHIR endpoints address this patient by, so the
+        // health summary export needs it.
+        editor.putString("patient_id", patient.getid());
+        editor.putString("first_name", patient.getfirstName());
+        editor.putString("last_name", patient.getlastName());
         editor.putString("email", email);
-        editor.putString("phone_number", phoneNumber);
-        editor.putString("clinic_code", clinicCode);
-        editor.putString("address", address);
-        editor.putString("dob", dob);
-        editor.putString("gender", gender);
+        editor.putString("phone_number", patient.getphoneNumber());
+        editor.putString("clinic_code", patient.getclinicCode());
+        editor.putString("address", patient.getaddress());
+        editor.putString("dob", patient.getbirthdate());
+        editor.putString("gender", patient.getgender());
+        editor.putString("health_card_number", patient.getHealthCardNumber());
+        editor.putString("health_card_province", patient.getHealthCardProvince());
 
         editor.apply();
     }
@@ -144,7 +156,7 @@ public class OTPActivity extends AppCompatActivity {
         if (patient == null) {
             return false;
         }
-        saveCompletedataToSharedPreferences(patient.getfirstName(), patient.getlastName(), patientEmail, patient.getphoneNumber(), patient.getclinicCode(), patient.getaddress(), patient.getbirthdate(), patient.getgender());
+        saveCompletedataToSharedPreferences(patient, patientEmail);
         return true;
     }
 

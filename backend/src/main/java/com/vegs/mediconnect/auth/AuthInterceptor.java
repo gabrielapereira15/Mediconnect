@@ -10,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 
@@ -68,17 +70,29 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     /**
-     * The mobile routes address a patient by email in the last path segment,
-     * e.g. /api/mobile/appointments/{email}. Returns null when the last
-     * segment is not an email, which covers the collection and action routes.
+     * The patient's email, wherever it appears in the path.
+     *
+     * This used to look only at the last segment, which was true of
+     * /api/mobile/appointments/{email} and quietly false of every route that
+     * puts an action after it — /api/mobile/health/{email}/{id}/stop ends in
+     * "stop", so the check was skipped entirely and any signed-in patient
+     * could edit another patient's record by changing the email.
+     *
+     * Every segment is checked instead, so adding a route with a trailing
+     * action cannot silently opt out of the ownership check again.
      */
     private String emailFromPath(String uri) {
-        int lastSlash = uri.lastIndexOf('/');
-        if (lastSlash < 0 || lastSlash == uri.length() - 1) {
-            return null;
+        for (String segment : uri.split("/")) {
+            // Decoded first, not after: getRequestURI returns the raw path,
+            // so a client that percent-encodes the @ as %40 would otherwise
+            // produce a segment this never recognises as an email — and an
+            // unrecognised email means no ownership check at all.
+            String decoded = URLDecoder.decode(segment, StandardCharsets.UTF_8);
+            if (decoded.contains("@")) {
+                return decoded;
+            }
         }
-        String last = uri.substring(lastSlash + 1);
-        return last.contains("@") ? last : null;
+        return null;
     }
 
     private boolean reject(HttpServletResponse response, HttpStatus status, String message)

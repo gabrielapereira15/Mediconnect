@@ -8,14 +8,40 @@ package com.vegs.mediconnect.fhir;
  * profile URL at all — it claims a conformance that cannot be checked.
  *
  * Sources:
+ *  - CA Core+ 1.2.1-dft, package ca.infoway.io.core
  *  - CA Baseline 1.2.0, package hl7.fhir.ca.baseline
- *  - PS-CA 2.3.0-ti-ballot, package ca.infoway.io.psca
- * Both build on FHIR R4 (4.0.1).
+ *  - PS-CA 2.1.1-DFT, package ca.infoway.io.psca
+ * All three build on FHIR R4 (4.0.1).
+ *
+ * CA Core+ and CA Baseline are both claimed where both apply. They are not
+ * rivals: Baseline is HL7 Canada's floor for a resource, Core+ is Infoway's
+ * expression of the Canadian Core Data for Interoperability on top of it,
+ * and meta.profile is a list precisely so a resource can say it satisfies
+ * more than one.
  */
 public final class FhirProfiles {
 
     private FhirProfiles() {
     }
+
+    // ---- CA Core+ (Canada Health Infoway) -------------------------------
+
+    private static final String CA_CORE = "http://fhir.infoway-inforoute.ca/cacore/StructureDefinition/";
+
+    public static final String CACORE_PATIENT = CA_CORE + "patient-ca-core";
+    public static final String CACORE_PRACTITIONER = CA_CORE + "practitioner-ca-core";
+    public static final String CACORE_PRACTITIONER_ROLE = CA_CORE + "practitionerRole-ca-core";
+    public static final String CACORE_ORGANIZATION = CA_CORE + "organization-ca-core";
+
+    /**
+     * The one scheduling resource Canada profiles.
+     *
+     * CA Baseline has no Appointment, Schedule or Slot profile, so the
+     * earlier version of this file claimed none for any of them. That was
+     * only true of Baseline: CA Core+ does profile Appointment. Schedule and
+     * Slot remain unprofiled, and are served as plain R4.
+     */
+    public static final String CACORE_APPOINTMENT = CA_CORE + "appointment-ca-core";
 
     // ---- CA Baseline (HL7 Canada) ---------------------------------------
 

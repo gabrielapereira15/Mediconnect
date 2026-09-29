@@ -78,10 +78,17 @@ public class WaitlistEntry {
      * Whether this entry would be interested in a slot on the given date.
      *
      * Earlier than what they hold, not before they are available, and only
-     * while they are still waiting.
+     * while they are still on the list.
+     *
+     * Having been told about a previous slot deliberately does not
+     * disqualify anyone. An offer is an invitation, not a reservation:
+     * whoever books first takes it, and the rest are still waiting. Treating
+     * OFFERED as "done" meant everybody who lost one race never heard about
+     * another slot again, which killed the waitlist after a single
+     * cancellation.
      */
     public boolean wants(LocalDate slotDate) {
-        if (status != WaitlistStatus.WAITING) {
+        if (status == WaitlistStatus.BOOKED || status == WaitlistStatus.WITHDRAWN) {
             return false;
         }
         if (!slotDate.isBefore(currentAppointmentDate)) {

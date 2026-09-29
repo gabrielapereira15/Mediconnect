@@ -72,6 +72,21 @@ public class HealthClientImpl implements HealthClient {
     }
 
     @Override
+    public String getSummaryDocument(String patientId) {
+        // $ is legal in a path segment but has to survive being written into
+        // a URL, so it is sent as-is rather than encoded — the server routes
+        // on the literal "$summary", as the IPS operation is named.
+        String url = ApiConfig.url("/fhir/Patient/") + patientId + "/$summary";
+        ApiGenericResponse response = OkHttpClientHelper.get(url);
+
+        if (response.isSuccess()) {
+            return response.getResponseBody();
+        }
+        Log.e(TAG, "Error fetching the patient summary: " + response.getResponseBody());
+        throw new ApiException(response.getStatus(), "Could not build your health summary");
+    }
+
+    @Override
     public boolean stopEntry(String email, String entryId) {
         String url = ApiConfig.url("/api/mobile/health/") + email + "/" + entryId + "/stop";
         ApiGenericResponse response = OkHttpClientHelper.post(url, "");

@@ -24,6 +24,9 @@ import com.bumptech.glide.Glide;
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.client.AppointmentClient;
 import com.example.mediconnect_android.client.AppointmentClientImpl;
+import com.example.mediconnect_android.client.ApiException;
+import com.example.mediconnect_android.client.WaitlistClient;
+import com.example.mediconnect_android.client.WaitlistClientImpl;
 import com.example.mediconnect_android.databinding.UpcomingItemBinding;
 import com.example.mediconnect_android.fragment.BookAppointmentFragment;
 import com.example.mediconnect_android.fragment.MedicalHistoryFragment;
@@ -51,6 +54,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
 
     private final Context context;
     private final List<Appointment> appointmentList;
+    private final WaitlistClient waitlistClient = new WaitlistClientImpl();
     UpcomingItemBinding upcomingItemBindingbinding;
     AppointmentClient appointmentClient;
 
@@ -124,6 +128,8 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
             boolean isReminderEnabled = getReminderState(appointment.getId());
             recyclerItemBinding.switchRemindMe.setChecked(isReminderEnabled);
 
+            recyclerItemBinding.waitlistButton.setOnClickListener(v -> joinWaitlist(appointment, doctor));
+
             recyclerItemBinding.rescheduleButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -175,6 +181,47 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
                         context.getString(R.string.reminder_tomorrow_body,
                                 doctor.getName(), appointment.getTime()));
             });
+        }
+
+        /**
+         * Asks to be told if this doctor gets an earlier opening.
+         *
+         * The date sent is the one they already hold, parsed from the ISO
+         * timestamp rather than the display string — the server only offers
+         * slots earlier than it, so getting it wrong would either flood them
+         * with useless offers or silently exclude them.
+         */
+        private void joinWaitlist(Appointment appointment, Doctor doctor) {
+            Optional<Calendar> start = appointmentStart(appointment);
+            if (start.isEmpty()) {
+                DialogUtils.showMessageDialog(context,
+                        context.getString(R.string.reminder_unavailable));
+                return;
+            }
+
+            String isoDate = String.format(Locale.ENGLISH, "%04d-%02d-%02d",
+                    start.get().get(Calendar.YEAR),
+                    start.get().get(Calendar.MONTH) + 1,
+                    start.get().get(Calendar.DAY_OF_MONTH));
+
+            new AlertDialog.Builder(context)
+                    .setTitle(R.string.waitlist_join)
+                    .setMessage(context.getString(R.string.waitlist_join_body, doctor.getName()))
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(R.string.waitlist_join_confirm, (dialog, which) -> Background.run(
+                            () -> waitlistClient.join(email(), doctor.getId(), isoDate),
+                            joined -> DialogUtils.showMessageDialog(context,
+                                    context.getString(R.string.waitlist_joined)),
+                            error -> DialogUtils.showMessageDialog(context,
+                                    error instanceof ApiException
+                                            ? error.getMessage()
+                                            : context.getString(R.string.error_no_server))))
+                    .show();
+        }
+
+        private String email() {
+            return context.getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                    .getString("email", "");
         }
 
         /** Whether the system will let this app set an alarm to the minute. */

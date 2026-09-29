@@ -50,6 +50,14 @@ public class AppointmentApiService {
         scheduleTimeRepository.save(scheduleTime);
         // Create new appointment
         var createdAppointment = appointmentRepository.save(appointment);
+
+        // If they were waiting for something earlier with this doctor and
+        // this is it, they come off the list.
+        waitlistService.onAppointmentBooked(
+                createdAppointment.getPatient(),
+                createdAppointment.getDoctor(),
+                scheduleTime.getSchedule().getDate());
+
         return mapToAppointmentResponse(createdAppointment);
     }
 
@@ -112,8 +120,36 @@ public class AppointmentApiService {
         return !AppointmentStatus.REMOVED.getStatus().equals(appointment.getStatus());
     }
 
+    /**
+     * Cancels an appointment on behalf of the patient who booked it.
+     *
+     * The email comes from the caller's token. An appointment belonging to
+     * somebody else is reported as missing rather than forbidden, because
+     * saying "forbidden" would confirm that the id exists.
+     */
     @Transactional
-    public void cancelAppointment(UUID appointmentId) {
+    public void cancelAppointment(UUID appointmentId, String requestingEmail) {
+        var appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(AppointmentNotFoundException::new);
+
+        if (requestingEmail == null
+                || !requestingEmail.equalsIgnoreCase(appointment.getPatient().getEmail())) {
+            throw new AppointmentNotFoundException();
+        }
+
+        cancelAppointment(appointment);
+    }
+
+    /**
+     * Cancels on behalf of the clinic rather than the patient.
+     *
+     * Staff in the back office can cancel anyone's appointment — that is
+     * their job — so there is no email to check. Kept as a separate method
+     * so that exemption is explicit rather than an overload someone calls
+     * by accident from the patient-facing API.
+     */
+    @Transactional
+    public void cancelAppointmentAsClinic(UUID appointmentId) {
         appointmentRepository.findById(appointmentId)
                 .ifPresentOrElse(this::cancelAppointment, AppointmentNotFoundException::new);
     }

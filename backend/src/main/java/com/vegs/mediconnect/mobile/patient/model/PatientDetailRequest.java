@@ -27,4 +27,14 @@ public class PatientDetailRequest {
     @NotNull
     private String address;
 
+    /**
+     * The provincial health card. In FHIR this becomes the jurisdictional
+     * health number CA Baseline and CA Core+ slice Patient.identifier on, so
+     * without it a patient is only identifiable inside this clinic.
+     */
+    private String healthCardNumber;
+
+    /** Two-letter province code; the identifier system differs per province. */
+    private String healthCardProvince;
+
 }

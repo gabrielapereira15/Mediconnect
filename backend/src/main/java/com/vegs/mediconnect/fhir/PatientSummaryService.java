@@ -49,6 +49,11 @@ public class PatientSummaryService {
                 .findAllByPatientOrderByDateCreatedAsc(patient);
 
         org.hl7.fhir.r4.model.Patient subject = mapper.toPatient(patient);
+        // PS-CA slices Bundle.entry by the profile each resource declares,
+        // so the patient inside a summary has to say it is a PS-CA patient
+        // and not only a CA Baseline one. It conforms to both, and
+        // meta.profile is a list, so both are declared.
+        subject.getMeta().addProfile(FhirProfiles.PSCA_PATIENT);
         Organization author = mapper.organization();
         Date now = new Date();
 

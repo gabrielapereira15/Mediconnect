@@ -310,9 +310,10 @@ and the email in the URL must be the token's own.
 ### FHIR
 
 A read-only view of the same data, shaped by HL7 FHIR R4 rather than by the
-app's screens, so another Canadian system can read it. Patient, Practitioner,
-PractitionerRole and Organization carry CA Baseline profiles; `$summary`
-returns a pan-Canadian Patient Summary (PS-CA) document.
+app's screens, so another Canadian system can read it. Patient,
+Practitioner, PractitionerRole, Organization and Appointment carry **CA
+Core+** profiles (and CA Baseline where it also applies); `$summary`
+returns a pan-Canadian Patient Summary (**PS-CA**) document.
 
 | Method | Route | Auth |
 |---|---|---|

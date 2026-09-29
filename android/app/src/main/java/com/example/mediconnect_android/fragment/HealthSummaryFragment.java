@@ -2,12 +2,14 @@ package com.example.mediconnect_android.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.example.mediconnect_android.R;
@@ -15,8 +17,14 @@ import com.example.mediconnect_android.client.HealthClient;
 import com.example.mediconnect_android.client.HealthClientImpl;
 import com.example.mediconnect_android.databinding.FragmentHealthSummaryBinding;
 import com.example.mediconnect_android.model.HealthEntry;
+import com.example.mediconnect_android.data.DemoMode;
 import com.example.mediconnect_android.util.Background;
+import com.example.mediconnect_android.util.DialogUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -29,10 +37,11 @@ import java.util.stream.Collectors;
  * a FHIR document another Canadian system can read directly. This screen is
  * the human side of it: what the summary says, and a way to pass it on.
  *
- * What is shared is the readable summary rather than the raw FHIR document.
- * The structured version exists for systems, and is fetched by them from
- * the API; a patient sharing their record with a person wants something
- * that person can read.
+ * Two things can leave this screen. Share sends the readable summary as
+ * text, which is what a person wants. Export sends the PS-CA document
+ * itself — a FHIR Bundle another Canadian system can ingest — because that
+ * is the whole point of implementing the standard, and a screenshot of this
+ * page would not give a clinic anything it could use.
  */
 public class HealthSummaryFragment extends Fragment {
 
@@ -57,6 +66,9 @@ public class HealthSummaryFragment extends Fragment {
         binding.btnShare.setEnabled(false);
         binding.btnShare.setOnClickListener(v -> share());
 
+        binding.btnExport.setEnabled(false);
+        binding.btnExport.setOnClickListener(v -> exportDocument());
+
         load();
     }
 
@@ -77,6 +89,10 @@ public class HealthSummaryFragment extends Fragment {
                     render(entries);
                     binding.stateView.showContent();
                     binding.btnShare.setEnabled(true);
+                    // The document comes from the server, so there is
+                    // nothing to export while the app is running on its
+                    // bundled demo data.
+                    binding.btnExport.setEnabled(!DemoMode.isActive());
                 },
                 error -> {
                     if (binding == null) {
@@ -153,6 +169,80 @@ public class HealthSummaryFragment extends Fragment {
         intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.summary_share_subject));
         intent.putExtra(Intent.EXTRA_TEXT, summaryText);
         startActivity(Intent.createChooser(intent, getString(R.string.summary_share)));
+    }
+
+    /**
+     * Fetches the PS-CA document and hands it over as a .json file.
+     *
+     * Written to the app's own cache and shared through a FileProvider, so
+     * the receiving app is granted read access to this one file and nothing
+     * else. The patient picks the destination; health data does not leave
+     * the device on anyone else's decision.
+     */
+    private void exportDocument() {
+        String patientId = requireContext()
+                .getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                .getString("patient_id", "");
+
+        if (patientId.isEmpty()) {
+            DialogUtils.showMessageDialog(getContext(), getString(R.string.summary_export_unavailable));
+            return;
+        }
+
+        binding.btnExport.setEnabled(false);
+        Background.run(
+                () -> {
+                    String document = healthClient.getSummaryDocument(patientId);
+                    return writeToCache(document);
+                },
+                file -> {
+                    if (binding == null) {
+                        return;
+                    }
+                    binding.btnExport.setEnabled(true);
+                    shareFile(file);
+                },
+                error -> {
+                    if (binding == null) {
+                        return;
+                    }
+                    binding.btnExport.setEnabled(true);
+                    DialogUtils.showMessageDialog(getContext(), getString(R.string.error_no_server));
+                });
+    }
+
+    private File writeToCache(String document) throws IOException {
+        File directory = new File(requireContext().getCacheDir(), "exports");
+        if (!directory.exists() && !directory.mkdirs()) {
+            throw new IOException("Could not create the export folder");
+        }
+        // One fixed name, overwritten each time: a folder quietly filling up
+        // with old copies of somebody's health record is not something to
+        // leave behind.
+        File file = new File(directory, "mediconnect-patient-summary.json");
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            out.write(document.getBytes(StandardCharsets.UTF_8));
+        }
+        return file;
+    }
+
+    private void shareFile(File file) {
+        Uri uri = FileProvider.getUriForFile(requireContext(),
+                requireContext().getPackageName() + ".fileprovider", file);
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("application/fhir+json");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.summary_share_subject));
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        startActivity(Intent.createChooser(intent, getString(R.string.summary_export)));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        requireActivity().setTitle(R.string.summary_title);
     }
 
     @Override

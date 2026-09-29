@@ -13,4 +13,12 @@ public interface HealthClient {
 
     /** Marks an entry no longer current. Nothing is deleted. */
     boolean stopEntry(String email, String entryId);
+
+    /**
+     * The patient summary as a PS-CA FHIR document, exactly as the server
+     * produced it. Returned as raw JSON because its value is being a
+     * standard document another system can read, not a shape this app
+     * happens to parse.
+     */
+    String getSummaryDocument(String patientId);
 }

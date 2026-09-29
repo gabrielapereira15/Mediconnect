@@ -57,10 +57,21 @@ class WaitlistEntryTest {
     }
 
     @Test
-    @DisplayName("someone already offered a slot is not offered another")
-    void alreadyOfferedIsNotWanted() {
+    @DisplayName("someone who missed an earlier offer is still told about the next slot")
+    void alreadyOfferedIsStillWaiting() {
         var entry = waiting();
         entry.setStatus(WaitlistStatus.OFFERED);
+
+        assertTrue(entry.wants(HELD.minusDays(5)),
+                "an offer is an invitation, not a reservation: losing one race "
+                        + "must not remove someone from the list");
+    }
+
+    @Test
+    @DisplayName("someone who took an earlier slot is off the list")
+    void bookedIsNotWanted() {
+        var entry = waiting();
+        entry.setStatus(WaitlistStatus.BOOKED);
 
         assertFalse(entry.wants(HELD.minusDays(5)));
     }

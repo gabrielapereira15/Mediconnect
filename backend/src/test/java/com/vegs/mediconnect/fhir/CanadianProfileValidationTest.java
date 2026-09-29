@@ -43,6 +43,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CanadianProfileValidationTest {
 
+    private static final String CA_CORE_PACKAGE =
+            "/fhir-packages/ca.infoway.io.core-1.2.1-dft.tgz";
     private static final String CA_BASELINE_PACKAGE =
             "/fhir-packages/hl7.fhir.ca.baseline-1.2.0.tgz";
     /**
@@ -68,6 +70,7 @@ class CanadianProfileValidationTest {
         fhirContext = FhirContext.forR4();
 
         packageSupport = new NpmPackageValidationSupport(fhirContext);
+        packageSupport.loadPackageFromClasspath(CA_CORE_PACKAGE);
         packageSupport.loadPackageFromClasspath(CA_BASELINE_PACKAGE);
         packageSupport.loadPackageFromClasspath(PSCA_PACKAGE);
 
@@ -94,6 +97,11 @@ class CanadianProfileValidationTest {
     @DisplayName("every profile URL this codebase claims exists in the published packages")
     void claimedProfilesResolve() {
         List<String> claimed = List.of(
+                FhirProfiles.CACORE_PATIENT,
+                FhirProfiles.CACORE_PRACTITIONER,
+                FhirProfiles.CACORE_PRACTITIONER_ROLE,
+                FhirProfiles.CACORE_ORGANIZATION,
+                FhirProfiles.CACORE_APPOINTMENT,
                 FhirProfiles.CA_PATIENT,
                 FhirProfiles.CA_PRACTITIONER,
                 FhirProfiles.CA_PRACTITIONER_ROLE,
@@ -137,6 +145,95 @@ class CanadianProfileValidationTest {
     @Test
     @DisplayName("a mapped patient satisfies the CA Baseline patient profile")
     void patientConformsToCaBaseline() {
+        Patient patient = mapper.toPatient(samplePatient());
+        assertStructurallyValid(patient, FhirProfiles.CA_PATIENT);
+    }
+
+    @Test
+    @DisplayName("a mapped patient satisfies the CA Core+ patient profile")
+    void patientConformsToCaCore() {
+        assertStructurallyValid(mapper.toPatient(samplePatient()), FhirProfiles.CACORE_PATIENT);
+    }
+
+    @Test
+    @DisplayName("a practitioner and their role satisfy the CA Core+ profiles")
+    void practitionerConformsToCaCore() {
+        var doctor = new com.vegs.mediconnect.datasource.doctor.Doctor();
+        doctor.setId(UUID.randomUUID());
+        doctor.setFirstName("Allison");
+        doctor.setLastName("Cameron");
+        doctor.setSpecialty("Cardiologist");
+
+        assertStructurallyValid(mapper.toPractitioner(doctor), FhirProfiles.CACORE_PRACTITIONER);
+        assertStructurallyValid(mapper.toPractitionerRole(doctor),
+                FhirProfiles.CACORE_PRACTITIONER_ROLE);
+    }
+
+    @Test
+    @DisplayName("an appointment satisfies the CA Core+ appointment profile")
+    void appointmentConformsToCaCore() {
+        // The one scheduling resource Canada profiles. CA Baseline has none,
+        // which is why Schedule and Slot stay plain R4.
+        var doctor = new com.vegs.mediconnect.datasource.doctor.Doctor();
+        doctor.setId(UUID.randomUUID());
+        doctor.setFirstName("Allison");
+        doctor.setLastName("Cameron");
+        doctor.setSpecialty("Cardiologist");
+
+        var schedule = new com.vegs.mediconnect.datasource.schedule.Schedule();
+        schedule.setId(UUID.randomUUID());
+        schedule.setDate(java.time.LocalDate.now().plusDays(3));
+        schedule.setDoctor(doctor);
+
+        var slot = new com.vegs.mediconnect.datasource.schedule.ScheduleTime();
+        slot.setId(UUID.randomUUID());
+        slot.setTime(java.time.LocalTime.of(10, 0));
+        slot.setSchedule(schedule);
+        slot.setAvailable(false);
+
+        var appointment = new com.vegs.mediconnect.datasource.appointment.Appointment();
+        appointment.setId(UUID.randomUUID());
+        appointment.setPatient(samplePatient());
+        appointment.setDoctor(doctor);
+        appointment.setScheduleTime(slot);
+        appointment.setCanceled(false);
+
+        assertStructurallyValid(mapper.toAppointment(appointment),
+                FhirProfiles.CACORE_APPOINTMENT);
+    }
+
+    @Test
+    @DisplayName("a patient summary satisfies the PS-CA document profile")
+    void summaryConformsToPsCa() {
+        var patient = samplePatient();
+        var entries = List.of(
+                healthEntry(patient, com.vegs.mediconnect.datasource.health
+                        .HealthEntryType.ALLERGY, "Penicillin"),
+                healthEntry(patient, com.vegs.mediconnect.datasource.health
+                        .HealthEntryType.MEDICATION, "Metformin 500mg"),
+                healthEntry(patient, com.vegs.mediconnect.datasource.health
+                        .HealthEntryType.CONDITION, "Type 2 diabetes"));
+
+        var summary = new PatientSummaryService(
+                new StubHealthEntryRepository(entries), mapper, new FhirProperties())
+                .buildSummary(patient);
+
+        assertStructurallyValid(summary, FhirProfiles.PSCA_BUNDLE);
+    }
+
+    @Test
+    @DisplayName("an empty summary still satisfies PS-CA")
+    void emptySummaryConformsToPsCa() {
+        // The three sections are mandatory, so this is the case most likely
+        // to fail the profile rather than merely look sparse.
+        var summary = new PatientSummaryService(
+                new StubHealthEntryRepository(List.of()), mapper, new FhirProperties())
+                .buildSummary(samplePatient());
+
+        assertStructurallyValid(summary, FhirProfiles.PSCA_BUNDLE);
+    }
+
+    private com.vegs.mediconnect.datasource.patient.Patient samplePatient() {
         var source = new com.vegs.mediconnect.datasource.patient.Patient();
         source.setId(UUID.randomUUID());
         source.setFirstName("Gabriela");
@@ -147,9 +244,20 @@ class CanadianProfileValidationTest {
         source.setBirthdate("1990-04-27");
         source.setHealthCardNumber("1234567890");
         source.setHealthCardProvince("ON");
+        return source;
+    }
 
-        Patient patient = mapper.toPatient(source);
-        assertStructurallyValid(patient, FhirProfiles.CA_PATIENT);
+    private com.vegs.mediconnect.datasource.health.HealthEntry healthEntry(
+            com.vegs.mediconnect.datasource.patient.Patient patient,
+            com.vegs.mediconnect.datasource.health.HealthEntryType type,
+            String description) {
+        var entry = new com.vegs.mediconnect.datasource.health.HealthEntry();
+        entry.setId(UUID.randomUUID());
+        entry.setPatient(patient);
+        entry.setType(type);
+        entry.setDescription(description);
+        entry.setActive(true);
+        return entry;
     }
 
     /**
