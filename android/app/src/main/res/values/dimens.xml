@@ -89,4 +89,6 @@
     <!-- One day in the booking screen's date strip. -->
     <dimen name="date_chip_width">60dp</dimen>
     <dimen name="icon_size_small">20dp</dimen>
+    <!-- Big enough to tap comfortably and to read at a glance. -->
+    <dimen name="review_star_size">44dp</dimen>
 </resources>

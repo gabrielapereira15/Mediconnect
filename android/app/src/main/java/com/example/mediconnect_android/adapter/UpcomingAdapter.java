@@ -247,7 +247,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 } else {
                     FragmentUtils.loadFragment(
                             ((AppCompatActivity) context).getSupportFragmentManager(),
-                            R.id.flFragment, new PreAppointmentFormFragment());
+                            R.id.flFragment, PreAppointmentFormFragment.of(appointment));
                 }
             });
 

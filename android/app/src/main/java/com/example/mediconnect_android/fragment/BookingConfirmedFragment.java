@@ -36,6 +36,7 @@ import java.time.ZoneId;
  */
 public class BookingConfirmedFragment extends Fragment {
 
+    private static final String ARG_APPOINTMENT_ID = "appointmentId";
     private static final String ARG_DOCTOR_NAME = "doctorName";
     private static final String ARG_DATE = "date";
     private static final String ARG_TIME = "time";
@@ -45,13 +46,16 @@ public class BookingConfirmedFragment extends Fragment {
 
     private FragmentBookingConfirmedBinding binding;
 
+    private String appointmentId;
     private String doctorName;
     private LocalDate date;
     private LocalTime time;
 
-    public static BookingConfirmedFragment of(String doctorName, LocalDate date, LocalTime time) {
+    public static BookingConfirmedFragment of(String appointmentId, String doctorName,
+                                              LocalDate date, LocalTime time) {
         BookingConfirmedFragment fragment = new BookingConfirmedFragment();
         Bundle args = new Bundle();
+        args.putString(ARG_APPOINTMENT_ID, appointmentId);
         args.putString(ARG_DOCTOR_NAME, doctorName);
         args.putString(ARG_DATE, date.toString());
         args.putString(ARG_TIME, time.toString());
@@ -63,6 +67,7 @@ public class BookingConfirmedFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = requireArguments();
+        appointmentId = args.getString(ARG_APPOINTMENT_ID);
         doctorName = args.getString(ARG_DOCTOR_NAME, "");
         date = LocalDate.parse(args.getString(ARG_DATE));
         time = LocalTime.parse(args.getString(ARG_TIME));
@@ -78,7 +83,8 @@ public class BookingConfirmedFragment extends Fragment {
                 WhenLabel.whenWords(requireContext(), LocalDateTime.of(date, time)));
         binding.stepFormSub.setText(getString(R.string.confirmed_step_form_sub, doctorName));
 
-        binding.btnStartForm.setOnClickListener(v -> show(new PreAppointmentFormFragment()));
+        binding.btnStartForm.setOnClickListener(
+                v -> show(PreAppointmentFormFragment.of(appointmentId)));
         binding.btnAddCalendar.setOnClickListener(v -> addToCalendar());
         // Both ways out go through the bottom navigation rather than
         // loading a tab's fragment directly, which left Home lit up over

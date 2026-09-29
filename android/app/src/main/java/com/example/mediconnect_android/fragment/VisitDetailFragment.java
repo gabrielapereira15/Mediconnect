@@ -238,8 +238,8 @@ public class VisitDetailFragment extends Fragment {
             binding.rowForm.rowAction.setText(R.string.visit_form_fill);
         }
         binding.rowForm.rowAction.setVisibility(View.VISIBLE);
-        binding.rowForm.rowAction.setOnClickListener(v -> show(new PreAppointmentFormFragment()));
-        binding.rowForm.visitRow.setOnClickListener(v -> show(new PreAppointmentFormFragment()));
+        binding.rowForm.rowAction.setOnClickListener(v -> show(PreAppointmentFormFragment.of(appointmentId)));
+        binding.rowForm.visitRow.setOnClickListener(v -> show(PreAppointmentFormFragment.of(appointmentId)));
 
         bindHealthCard();
     }

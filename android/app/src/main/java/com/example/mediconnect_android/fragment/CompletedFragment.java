@@ -16,7 +16,7 @@ import com.example.mediconnect_android.model.Appointment;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CompletedFragment extends Fragment {
+public class CompletedFragment extends Fragment implements LeaveReviewSheet.OnReviewSent {
 
     FragmentCompletedBinding binding;
     CompletedAdapter adapter;
@@ -75,8 +75,28 @@ public class CompletedFragment extends Fragment {
                 R.string.state_no_completed_body);
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new CompletedAdapter(filteredAppointments, getContext());
+        adapter = new CompletedAdapter(filteredAppointments, getContext(), this::showReviewSheet);
         binding.recyclerView.setAdapter(adapter);
+    }
+
+    private void showReviewSheet(Appointment appointment) {
+        LeaveReviewSheet.of(appointment)
+                .show(getChildFragmentManager(), LeaveReviewSheet.TAG);
+    }
+
+    /**
+     * Refetches so the card the review came from shows it.
+     *
+     * The rating is the server's to report — a review that failed to save
+     * should not leave a badge behind claiming it did.
+     */
+    @Override
+    public void onReviewSent() {
+        Fragment parent = getParentFragment();
+        if (parent instanceof MedicalHistoryFragment) {
+            ((MedicalHistoryFragment) parent).reload(() -> {
+            });
+        }
     }
 
     @Override

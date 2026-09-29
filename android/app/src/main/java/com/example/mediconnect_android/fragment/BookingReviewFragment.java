@@ -256,8 +256,11 @@ public class BookingReviewFragment extends Fragment {
             FragmentManager fragmentManager = getParentFragmentManager();
             fragmentManager.popBackStack(BookAppointmentFragment.BACK_STACK,
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            String id = result.getAppointment() == null
+                    ? null
+                    : result.getAppointment().getId();
             FragmentUtils.loadFragment(fragmentManager, R.id.flFragment,
-                    BookingConfirmedFragment.of(doctorName, date, time));
+                    BookingConfirmedFragment.of(id, doctorName, date, time));
             return;
         }
         if (result.isSlotTaken()) {

@@ -28,6 +28,7 @@ import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.model.HealthEntry;
 import com.example.mediconnect_android.util.Background;
+import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.KeyboardUtils;
 import com.example.mediconnect_android.util.WhenLabel;
@@ -61,6 +62,9 @@ public class HomeFragment extends Fragment {
     private final DoctorClient doctorClient = new DoctorClientImpl();
     private final AppointmentClient appointmentClient = new AppointmentClientImpl();
     private final HealthClient healthClient = new HealthClientImpl();
+
+    /** The soonest visit ahead of us, or null if there is none. */
+    private Appointment nextVisit;
 
     private final List<Doctor> doctorList = new ArrayList<>();
 
@@ -137,13 +141,27 @@ public class HomeFragment extends Fragment {
 
     // ---- quick actions --------------------------------------------------
 
+    /**
+     * The form for the next visit, since a form belongs to one.
+     *
+     * With nothing booked there is nothing to fill in, and saying so beats
+     * opening four questions that cannot be sent anywhere.
+     */
+    private void openNextVisitForm() {
+        if (nextVisit == null) {
+            DialogUtils.showMessageDialog(getContext(), getString(R.string.home_form_no_visit));
+            return;
+        }
+        show(PreAppointmentFormFragment.of(nextVisit));
+    }
+
     private void bindQuickActions() {
         // The primary one is filled; the rest are tonal, so there is one
         // obvious first move rather than four equal squares.
         bindAction(binding.actionBook, R.drawable.ic_calendar_plus, R.string.home_action_book,
                 true, () -> show(new DoctorsFragment()));
         bindAction(binding.actionForms, R.drawable.ic_form, R.string.home_action_forms,
-                false, () -> show(new PreAppointmentFormFragment()));
+                false, this::openNextVisitForm);
         bindAction(binding.actionRecord, R.drawable.ic_record, R.string.home_action_record,
                 false, () -> show(new HealthRecordFragment()));
         bindAction(binding.actionMessages, R.drawable.ic_mail, R.string.home_action_messages,
@@ -207,6 +225,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void bindNextVisit(Appointment appointment) {
+        // Held so the Forms quick action knows which visit it is for: a
+        // form belongs to a visit, and the next one is the only one a
+        // patient could mean from here.
+        nextVisit = appointment;
         binding.nextVisitCard.setVisibility(View.VISIBLE);
         binding.noVisitCard.setVisibility(View.GONE);
 
@@ -239,13 +261,14 @@ public class HomeFragment extends Fragment {
                 ? R.string.visit_fill_in_form
                 : R.string.visit_details);
         binding.nextVisitPrimary.setOnClickListener(v -> show(formNeeded
-                ? new PreAppointmentFormFragment()
+                ? PreAppointmentFormFragment.of(appointment)
                 : VisitDetailFragment.of(appointment)));
         binding.nextVisitDetails.setOnClickListener(
                 v -> show(VisitDetailFragment.of(appointment)));
     }
 
     private void bindNoVisit() {
+        nextVisit = null;
         binding.nextVisitCard.setVisibility(View.GONE);
         binding.noVisitCard.setVisibility(View.VISIBLE);
     }

@@ -110,7 +110,6 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="service_days">Service Days</string>
     <string name="service_hours">Service Hours</string>
     <string name="see_all_link">See all</string>
-    <string name="form_title">Form Title</string>
     <string name="form_description_mock">Short description about the form to give the user context.</string>
     <string name="form_status_mock">Pending</string>
     <string name="edit">Edit</string>
@@ -442,4 +441,81 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="confirmed_done">Done</string>
     <string name="confirmed_no_calendar">No calendar app to add this to.</string>
     <string name="confirmed_calendar_title">%1$s at %2$s</string>
+
+    <!-- ==== Pre-appointment form (P10) ==== -->
+    <string name="form_title">Pre-appointment form</string>
+
+    <!-- ==== Leaving a review (P11) ==== -->
+    <string name="review_book_again">Book again</string>
+    <string name="review_leave">Leave a review</string>
+    <string name="review_sheet_question">How was your visit with %1$s?</string>
+    <string name="review_sheet_sub">%1$s · Your review is shown without your full name.</string>
+    <string name="review_tell_others">Tell others about it</string>
+    <string name="review_text_hint">What should another patient know?</string>
+    <string name="review_send">Send review</string>
+    <string name="review_pick_score">Choose a rating first, so the score means something.</string>
+    <string name="review_sent">Thank you — your review is with the clinic.</string>
+    <string name="review_send_failed">We could not send that review. Please try again.</string>
+    <string name="cd_star">%1$d out of 5</string>
+    <string-array name="review_score_words">
+        <item>Poor</item>
+        <item>Not great</item>
+        <item>Fine</item>
+        <item>Very good</item>
+        <item>Excellent</item>
+    </string-array>
+    <string name="home_form_no_visit">There is no visit to fill a form in for yet. Book one first.</string>
+    <string name="form_step">Step %1$d of %2$d · %3$s</string>
+    <string name="form_draft_saved">Draft saved</string>
+    <string name="form_back">Back</string>
+    <string name="form_next">Next</string>
+    <string name="form_send">Send to the doctor</string>
+    <string name="form_yes">Yes</string>
+    <string name="form_no">No</string>
+    <string name="form_prefer_not">Prefer not to say</string>
+
+    <string name="form_step_reason">Reason</string>
+    <string name="form_q_reason">What brings you in?</string>
+    <string name="form_q_reason_help">A sentence or two is plenty. The doctor reads this before you arrive.</string>
+    <string name="form_q_reason_hint">For example: a cough that has not cleared in three weeks</string>
+    <string name="form_reason_required">Please say what brings you in, so the doctor can prepare.</string>
+
+    <string name="form_step_symptoms">Symptoms</string>
+    <string name="form_q_symptoms">Have you had any of these recently?</string>
+    <string name="form_q_symptoms_help">Select all that apply.</string>
+
+    <string name="form_step_history">History</string>
+    <string name="form_q_history">A few things about your health</string>
+    <string name="form_q_history_help">Answer what you are comfortable answering.</string>
+    <string name="form_q_surgery">Have you had surgery in the last year?</string>
+    <string name="form_q_smoke">Do you smoke?</string>
+    <string name="form_q_alcohol">Do you drink alcohol?</string>
+
+    <string name="form_step_notes">Anything else</string>
+    <string name="form_q_notes">Anything else the doctor should know?</string>
+    <string name="form_q_notes_help">Optional. Medication you are taking, something that worries you, anything at all.</string>
+    <string name="form_q_notes_hint">Leave blank if there is nothing</string>
+
+    <string name="form_sent">Sent to the doctor</string>
+    <string name="form_send_failed">We could not send that. Your answers are still here — please try again.</string>
+    <string name="form_no_appointment">Open the form from the visit it belongs to, so the doctor knows which one it is about.</string>
+
+    <string-array name="form_symptom_codes">
+        <item>fever</item>
+        <item>cough</item>
+        <item>chest_pain</item>
+        <item>fatigue</item>
+        <item>breathlessness</item>
+        <item>headache</item>
+        <item>none</item>
+    </string-array>
+    <string-array name="form_symptom_labels">
+        <item>Fever</item>
+        <item>Cough</item>
+        <item>Chest pain</item>
+        <item>Fatigue</item>
+        <item>Shortness of breath</item>
+        <item>Headache</item>
+        <item>None of these</item>
+    </string-array>
 </resources>

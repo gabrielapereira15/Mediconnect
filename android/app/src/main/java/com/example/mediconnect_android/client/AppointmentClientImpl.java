@@ -47,7 +47,8 @@ public class AppointmentClientImpl implements AppointmentClient {
         String url = ApiConfig.url("/api/mobile/appointments");
         ApiGenericResponse response = OkHttpClientHelper.post(url, appointmentJson);
         if (response.isSuccess()) {
-            return BookingResult.booked();
+            return BookingResult.booked(
+                    new Gson().fromJson(response.getResponseBody(), Appointment.class));
         }
         Log.e("AppointmentClientImpl", "Error creating appointment: " + response.getResponseBody());
         // 409 means the slot went between the patient seeing it and

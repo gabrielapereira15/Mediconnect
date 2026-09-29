@@ -147,21 +147,25 @@
                 android:id="@+id/reschedule_button"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/control_md"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
+                android:minHeight="@dimen/control_md"
+                android:paddingHorizontal="@dimen/space_sm"
                 android:text="@string/visit_reschedule"
                 android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/primary_button"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/control_md"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/space_md"
                 android:layout_weight="1"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
+                android:minHeight="@dimen/control_md"
+                android:paddingHorizontal="@dimen/space_sm"
                 android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
                 tools:text="Fill in form" />
         </LinearLayout>
