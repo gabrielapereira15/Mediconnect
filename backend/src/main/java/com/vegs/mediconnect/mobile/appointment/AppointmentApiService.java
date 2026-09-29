@@ -13,6 +13,7 @@ import com.vegs.mediconnect.mobile.appointment.model.AppointmentRequest;
 import com.vegs.mediconnect.mobile.appointment.model.AppointmentResponse;
 import com.vegs.mediconnect.mobile.appointment.model.AppointmentStatus;
 import com.vegs.mediconnect.mobile.doctor.DoctorApiService;
+import com.vegs.mediconnect.mobile.waitlist.WaitlistService;
 import com.vegs.mediconnect.mobile.patient.PatientNotFoundException;
 import com.vegs.mediconnect.mobile.schedule.ScheduleTimeNotFoundException;
 import jakarta.transaction.Transactional;
@@ -37,6 +38,7 @@ public class AppointmentApiService {
     private final ScheduleTimeRepository scheduleTimeRepository;
     private final DoctorApiService doctorApiService;
     private final ReviewRepository reviewRepository;
+    private final WaitlistService waitlistService;
 
     @Transactional
     public AppointmentResponse create(AppointmentRequest appointmentRequest) {
@@ -129,6 +131,10 @@ public class AppointmentApiService {
         var schedule = appointment.getScheduleTime();
         schedule.setAvailable(true);
         scheduleTimeRepository.save(schedule);
+
+        // The slot is back on sale, and it is worth nothing once the day
+        // passes. Anyone waiting for something earlier hears about it now.
+        waitlistService.offerFreedSlot(appointment);
     }
 
     private void removeAppointment(Appointment appointment) {
@@ -138,6 +144,9 @@ public class AppointmentApiService {
         var schedule = appointment.getScheduleTime();
         schedule.setAvailable(true);
         scheduleTimeRepository.save(schedule);
+
+        // Rescheduling frees the old slot just as cancelling does.
+        waitlistService.offerFreedSlot(appointment);
     }
 
     // Mapping to AppointmentResponse

@@ -28,6 +28,8 @@ public class AuthConfig implements WebMvcConfigurer {
                         "/api/mobile/appointments/**",
                         "/api/mobile/notifications/**",
                         "/api/mobile/reviews/**",
+                        "/api/mobile/health/**",
+                        "/api/mobile/waitlist/**",
                         // The FHIR facade serves the same health data under
                         // a different shape, so it needs the same guard.
                         "/fhir/**")

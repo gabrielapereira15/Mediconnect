@@ -80,8 +80,12 @@ class AppointmentApiServiceTest {
         when(doctorApiService.mapToDoctorSimpleResponse(any(Doctor.class)))
                 .thenReturn(DoctorSimpleResponse.builder().build());
 
+        // The waitlist is told when a booking frees a slot; these tests are
+        // about creating one, so a mock is enough.
+        var waitlistService = mock(com.vegs.mediconnect.mobile.waitlist.WaitlistService.class);
+
         service = new AppointmentApiService(appointmentRepository, patientRepository,
-                scheduleTimeRepository, doctorApiService, reviewRepository);
+                scheduleTimeRepository, doctorApiService, reviewRepository, waitlistService);
     }
 
     @Test

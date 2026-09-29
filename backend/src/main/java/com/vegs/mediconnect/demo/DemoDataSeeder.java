@@ -2,6 +2,7 @@ package com.vegs.mediconnect.demo;
 
 import com.vegs.mediconnect.datasource.appointment.Appointment;
 import com.vegs.mediconnect.datasource.appointment.AppointmentRepository;
+import com.vegs.mediconnect.datasource.health.HealthEntryType;
 import com.vegs.mediconnect.datasource.doctor.Doctor;
 import com.vegs.mediconnect.datasource.doctor.DoctorRepository;
 import com.vegs.mediconnect.datasource.notification.Notification;
@@ -71,6 +72,7 @@ public class DemoDataSeeder implements ApplicationRunner {
     private final NotificationRepository notificationRepository;
     private final NotificationPatientRepository notificationPatientRepository;
     private final ReviewRepository reviewRepository;
+    private final com.vegs.mediconnect.datasource.health.HealthEntryRepository healthEntryRepository;
 
     @Override
     @Transactional
@@ -88,6 +90,7 @@ public class DemoDataSeeder implements ApplicationRunner {
         List<Appointment> appointments = seedAppointments(doctors, patients, slots);
         seedReviews(doctors, appointments);
         seedNotifications(patients);
+        seedHealthRecord(patients.getFirst());
 
         log.info("Demo data: seeded {} doctors, {} patients, {} slots, {} appointments.",
                 doctors.size(), patients.size(), slots.size(), appointments.size());
@@ -152,6 +155,9 @@ public class DemoDataSeeder implements ApplicationRunner {
         patient.setGender(gender);
         patient.setBirthdate(birthdate);
         patient.setPhoneNumber(phone);
+        // Exercises the CA Baseline jurisdictional health number identifier.
+        patient.setHealthCardNumber("1234567890");
+        patient.setHealthCardProvince("ON");
         patient.setAddress(address);
         return patient;
     }
@@ -339,6 +345,45 @@ public class DemoDataSeeder implements ApplicationRunner {
         review.setScore(score);
         review.setDescription(description);
         return review;
+    }
+
+    /**
+     * Gives the demo patient an allergy, a medication and a condition.
+     *
+     * Without these the patient summary is three empty sections, which is
+     * valid PS-CA but shows nothing of what the export is for.
+     */
+    private void seedHealthRecord(Patient patient) {
+        var entries = List.of(
+                healthEntry(patient, HealthEntryType.ALLERGY, "Penicillin",
+                        "Rash and swelling within an hour of the first dose.",
+                        LocalDate.of(2012, 6, 1)),
+                healthEntry(patient, HealthEntryType.ALLERGY, "Peanuts",
+                        "Mild — itching in the mouth.", null),
+                healthEntry(patient, HealthEntryType.MEDICATION, "Metformin 500mg",
+                        "Twice a day with meals.", LocalDate.of(2023, 2, 14)),
+                healthEntry(patient, HealthEntryType.MEDICATION, "Vitamin D 1000 IU",
+                        "Once daily through the winter.", null),
+                healthEntry(patient, HealthEntryType.CONDITION, "Type 2 diabetes",
+                        "Managed with medication and diet.", LocalDate.of(2023, 2, 1)),
+                healthEntry(patient, HealthEntryType.CONDITION, "Asthma",
+                        "Exercise-induced; inhaler as needed.", LocalDate.of(2008, 9, 1)));
+
+        healthEntryRepository.saveAll(entries);
+        log.info("Demo data: seeded {} health record entries", entries.size());
+    }
+
+    private com.vegs.mediconnect.datasource.health.HealthEntry healthEntry(
+            Patient patient, HealthEntryType type, String description,
+            String note, LocalDate onset) {
+        var entry = new com.vegs.mediconnect.datasource.health.HealthEntry();
+        entry.setPatient(patient);
+        entry.setType(type);
+        entry.setDescription(description);
+        entry.setNote(note);
+        entry.setOnsetDate(onset);
+        entry.setActive(true);
+        return entry;
     }
 
     private void seedNotifications(List<Patient> patients) {
