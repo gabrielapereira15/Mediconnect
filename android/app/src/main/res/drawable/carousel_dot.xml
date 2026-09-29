@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Page indicator for the home carousel: filled for the current advert. -->
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/carousel_dot_selected" android:state_selected="true" />
-    <item android:drawable="@drawable/carousel_dot_unselected" />
-</selector>

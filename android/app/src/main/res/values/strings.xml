@@ -184,7 +184,6 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
 
     <!-- Accessibility -->
     <string name="cd_app_logo">MediConnect</string>
-    <string name="cd_carousel_page">Advert %1$d of %2$d</string>
     <string name="cd_doctor_photo">Photo of the doctor</string>
     <string name="cd_your_photo">Your profile photo</string>
     <string name="cd_rating_star">Rating</string>
@@ -277,4 +276,59 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="cd_notifications">Notifications</string>
     <string name="visit_fill_in_form">Fill in form</string>
     <string name="profile_incomplete">Please finish your profile first — the clinic needs these details to book you in.</string>
+
+    <!-- ==== Home (board Main) ============================================ -->
+    <string name="home_search_hint">Search doctors or specialties</string>
+    <string name="home_greeting_morning">Good morning</string>
+    <string name="home_greeting_afternoon">Good afternoon</string>
+    <string name="home_greeting_evening">Good evening</string>
+    <string name="home_next_visit">Next visit</string>
+    <string name="home_visit_details">Details</string>
+    <string name="home_no_visit_title">No visits booked</string>
+    <string name="home_no_visit_body">Book one and it will show up here with everything you need to do before it.</string>
+    <string name="home_book_a_visit">Book a visit</string>
+    <string name="home_browse_specialty">Browse by specialty</string>
+    <string name="home_available_today">Available today</string>
+    <string name="home_available_soon">Next available</string>
+    <string name="home_action_book">Book a visit</string>
+    <string name="home_action_forms">Forms</string>
+    <string name="home_action_record">Health record</string>
+    <string name="home_action_messages">Messages</string>
+    <string name="home_form_pending">Form pending</string>
+    <string name="home_checked_in">Checked in</string>
+    <string name="home_confirmed">Confirmed</string>
+    <string name="home_check_in">Check in</string>
+    <string name="home_record_up_to_date">Your health record is up to date</string>
+    <string name="home_record_empty">Add your health information</string>
+    <string name="home_record_empty_body">Allergies, medications and conditions, so your doctor has them before you arrive.</string>
+    <string name="home_record_counts">%1$d allergies · %2$d medications · %3$d conditions</string>
+
+    <!-- Relative times on a card. -->
+    <string name="when_today">Today, %1$s</string>
+    <string name="when_tomorrow">Tomorrow, %1$s</string>
+    <string name="when_other">%1$s, %2$s</string>
+    <string name="day_today">Today</string>
+    <string name="day_tomorrow">Tomorrow</string>
+    <string name="slot_today">Today %1$s</string>
+    <string name="slot_next">Next: %1$s</string>
+    <string name="slot_none">No slots open</string>
+
+    <!-- ==== Find a doctor (board P04) ==================================== -->
+    <string name="doctors_title">Find a doctor</string>
+    <string name="doctors_search_hint">Name or specialty</string>
+    <string name="doctors_count">%1$d doctors · soonest first</string>
+    <string name="doctors_count_one">1 doctor</string>
+    <string name="doctors_filter_all">All</string>
+    <string name="doctors_filter_today">Available today</string>
+    <string name="doctors_no_reviews">No reviews yet</string>
+    <string name="doctors_years">%1$s · %2$s yrs</string>
+    <string name="doctors_book">Book</string>
+    <string name="doctors_empty_title">No doctors match</string>
+    <string name="doctors_empty_body">Try a different specialty, or clear the filters.</string>
+    <string name="cd_rating">Rated %1$s out of 5, %2$d reviews</string>
+
+    <plurals name="doctors_rating">
+        <item quantity="one">%1$s (1 review)</item>
+        <item quantity="other">%1$s (%2$d reviews)</item>
+    </plurals>
 </resources>

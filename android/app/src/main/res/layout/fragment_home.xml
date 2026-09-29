@@ -1,312 +1,513 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Home (board Main).
+
+    The old home screen opened with a search field, a row of clip-art
+    specialties, a doctor grid and an advert carousel — nothing about the
+    patient, and nothing about the appointment they already had. This one
+    leads with who they are and what happens next; the adverts are gone.
+
+    The screen draws its own greeting header rather than using the shared app
+    bar, which HomeFragment hides. Every other tab keeps the bar.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gray_background"
     tools:context=".fragment.HomeFragment">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/home_scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/space_2xl">
 
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:descendantFocusability="beforeDescendants"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@color/gray_background"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/space_lg"
-            android:paddingTop="@dimen/space_lg"
-            android:paddingBottom="@dimen/space_lg"
-            tools:ignore="UselessParent">
+            android:orientation="vertical">
 
-            <!-- Search Bar -->
-            <EditText
-                android:id="@+id/search_bar"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginBottom="@dimen/space_xl"
-                android:background="@drawable/search_bar_background"
-                android:drawableStart="@drawable/ic_search"
-                android:drawablePadding="@dimen/cardview_default_elevation"
-                android:drawableTint="@color/light_blue"
-                android:hint="@string/search_for_doctors_or_specialties"
-                android:inputType="textPersonName"
-                android:paddingStart="@dimen/space_lg"
-                android:textColor="@color/dark_gray"
-                android:textColorHint="@color/gray"
-                tools:ignore="RtlSymmetry" />
+            <!-- ==== Greeting ============================================= -->
 
-            <!-- Specialties Title -->
-            <TextView
-                android:id="@+id/specialties_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/space_sm"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/top_searched_specialties"
-                android:textColor="@color/dark_gray"
-                android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
-
-            <!-- Specialties Icons with Labels -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/space_xs"
-                android:baselineAligned="false"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/space_lg"
+                android:paddingTop="@dimen/space_md"
+                android:paddingEnd="@dimen/space_sm"
+                android:paddingBottom="@dimen/space_md">
 
-                <!-- Video Visit Specialty -->
+                <TextView
+                    android:id="@+id/avatar_initials"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/avatar_brand_soft"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                    android:textColor="@color/md_on_primary_container"
+                    tools:text="GP" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="@dimen/space_xs"
+                    android:layout_marginStart="@dimen/space_md"
                     android:layout_weight="1"
-                    android:background="@drawable/specialty_border"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="@dimen/space_sm">
-
-                    <ImageView
-                        android:id="@+id/optometrist_icon"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:clickable="true"
-                        android:contentDescription="@string/ophthalmologists"
-                        android:focusable="true"
-                        android:src="@drawable/ophthalmologists" app:tint="@color/md_on_primary_container" />
+                    android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:id="@+id/greeting"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_xs"
-                        android:fontFamily="sans-serif"
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:text="@string/ophthalmologists"
-                        android:textColor="@color/md_on_primary_container"
-                        app:autoSizeMaxTextSize="12sp"
-                        app:autoSizeMinTextSize="9sp"
-                        app:autoSizeTextType="uniform"
-                        android:textSize="12sp"
-                        tools:ignore="SmallSp" />
-                </LinearLayout>
-
-                <!-- Psychiatrist Specialty -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="@dimen/space_xs"
-                    android:layout_weight="1"
-                    android:background="@drawable/specialty_border"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="@dimen/space_sm">
-
-                    <ImageView
-                        android:id="@+id/cardiologist_icon"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:clickable="true"
-                        android:contentDescription="@string/cardiologist"
-                        android:focusable="true"
-                        android:src="@drawable/cardiologist" app:tint="@color/md_on_primary_container" />
+                        android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                        tools:text="Good morning" />
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:id="@+id/greeting_name"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_xs"
-                        android:fontFamily="sans-serif"
-                        android:text="@string/cardiologist"
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:textColor="@color/md_on_primary_container"
-                        app:autoSizeMaxTextSize="12sp"
-                        app:autoSizeMinTextSize="9sp"
-                        app:autoSizeTextType="uniform"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.Mediconnect.TitleLarge"
+                        tools:text="Gabriela" />
                 </LinearLayout>
 
-                <!-- OBGYN Specialty -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="@dimen/space_xs"
-                    android:layout_weight="1"
-                    android:background="@drawable/specialty_border"
+                <FrameLayout
+                    android:id="@+id/notification_button"
+                    android:layout_width="@dimen/touch_target"
+                    android:layout_height="@dimen/touch_target"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="@dimen/space_sm">
+                    android:focusable="true">
 
                     <ImageView
-                        android:id="@+id/obgyn_icon"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:clickable="true"
-                        android:contentDescription="@string/gynecologist"
-                        android:focusable="true"
-                        android:src="@drawable/gynecologist" app:tint="@color/md_on_primary_container" />
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_bell"
+                        app:tint="@color/md_on_surface" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_xs"
-                        android:fontFamily="sans-serif"
-                        android:text="@string/gynecologist"
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:textColor="@color/md_on_primary_container"
-                        app:autoSizeMaxTextSize="12sp"
-                        app:autoSizeMinTextSize="9sp"
-                        app:autoSizeTextType="uniform"
-                        android:textSize="12sp"
-                        tools:ignore="SmallSp" />
-
-                </LinearLayout>
-
-                <!-- Dermatologist Specialty -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="@dimen/space_xs"
-                    android:layout_weight="1"
-                    android:background="@drawable/specialty_border"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="@dimen/space_sm">
-
-                    <ImageView
-                        android:id="@+id/pediatrician_icon"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:clickable="true"
-                        android:contentDescription="@string/pediatrician"
-                        android:focusable="true"
-                        android:src="@drawable/ic_smile" app:tint="@color/md_on_primary_container" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_xs"
-                        android:fontFamily="sans-serif"
-                        android:text="@string/pediatrician"
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:textColor="@color/md_on_primary_container"
-                        app:autoSizeMaxTextSize="12sp"
-                        app:autoSizeMinTextSize="9sp"
-                        app:autoSizeTextType="uniform"
-                        android:textSize="12sp"
-                        tools:ignore="SmallSp" />
-                </LinearLayout>
-
+                    <View
+                        android:id="@+id/notification_dot"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/circle_red"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+                </FrameLayout>
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/see_all_categories"
-                android:layout_width="wrap_content"
+            <!-- ==== Search ============================================== -->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/search_layout"
+                style="@style/Widget.Material3.TextInputLayout.FilledBox"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginEnd="@dimen/space_md"
-                android:layout_marginBottom="@dimen/space_lg"
-                android:clickable="true"
-                android:text="@string/see_all_link"
-                android:textColor="@color/light_blue"
-                android:textStyle="bold" 
-                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
+                android:layout_marginHorizontal="@dimen/space_lg"
+                app:boxBackgroundColor="@color/md_surface_sunken"
+                app:boxCornerRadiusBottomEnd="@dimen/radius_pill"
+                app:boxCornerRadiusBottomStart="@dimen/radius_pill"
+                app:boxCornerRadiusTopEnd="@dimen/radius_pill"
+                app:boxCornerRadiusTopStart="@dimen/radius_pill"
+                app:hintEnabled="false"
+                app:startIconDrawable="@drawable/ic_search">
 
-            <!-- Available Doctors Section -->
-            <TextView
-                android:id="@+id/available_doctors_title"
-                android:layout_width="wrap_content"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/search_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/control_lg"
+                    android:background="@null"
+                    android:hint="@string/home_search_hint"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- ==== Next visit ==========================================
+                 The thing the patient most likely opened the app for, and
+                 the one action it still needs from them.
+            -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/next_visit_card"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/space_sm"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/available_doctors_text"
-                android:textColor="@color/dark_gray"
-                android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/md_deep"
+                app:cardCornerRadius="@dimen/radius_xlarge"
+                app:cardElevation="0dp"
+                tools:visibility="visible">
 
-            <TextView
-                android:id="@+id/unavailable_doctors_title"
-                android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_xl">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/home_next_visit"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.Overline"
+                            android:textColor="@color/md_on_deep_muted" />
+
+                        <TextView
+                            android:id="@+id/next_visit_badge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/badge_sun"
+                            android:paddingHorizontal="@dimen/space_sm"
+                            android:paddingVertical="@dimen/space_xs"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                            android:textColor="@color/md_on_rating_container"
+                            android:visibility="gone"
+                            tools:text="Form pending"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/next_visit_when"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.Headline"
+                        android:textColor="@color/md_on_deep"
+                        tools:text="Tomorrow, 10:00 AM" />
+
+                    <TextView
+                        android:id="@+id/next_visit_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                        android:textColor="@color/md_on_deep_muted"
+                        tools:text="Wed 30 Sep" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/next_visit_doctor_initials"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/avatar_brand_soft"
+                            android:backgroundTint="@color/md_primary"
+                            android:gravity="center"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                            android:textColor="@color/md_on_primary"
+                            tools:text="RC" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_md"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/next_visit_doctor"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+                                android:textColor="@color/md_on_deep"
+                                tools:text="Dr. Robert Chase" />
+
+                            <TextView
+                                android:id="@+id/next_visit_specialty"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                                android:textColor="@color/md_on_deep_muted"
+                                tools:text="Surgeon" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/next_visit_primary"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/control_md"
+                            android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:textColor="@color/md_deep"
+                            app:backgroundTint="@color/md_on_deep"
+                            tools:text="Fill in form" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/next_visit_details"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/control_md"
+                            android:layout_marginStart="@dimen/space_sm"
+                            android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:text="@string/home_visit_details"
+                            android:textColor="@color/md_on_deep"
+                            app:strokeColor="@color/md_on_deep_muted" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Shown instead of the hero when nothing is booked. -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/no_visit_card"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/space_sm"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/available_doctors_text"
-                android:textColor="@color/dark_gray"
-                android:visibility="gone" 
-                android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/md_deep"
+                app:cardCornerRadius="@dimen/radius_xlarge"
+                app:cardElevation="0dp">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_xl">
 
-            <!-- Doctors List (RecyclerView) -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_no_visit_title"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium"
+                        android:textColor="@color/md_on_deep" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:text="@string/home_no_visit_body"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                        android:textColor="@color/md_on_deep_muted" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/no_visit_book"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/control_md"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="@string/home_book_a_visit"
+                        android:textColor="@color/md_deep"
+                        app:backgroundTint="@color/md_on_deep" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ==== Quick actions ======================================== -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_lg">
+
+                <include
+                    android:id="@+id/action_book"
+                    layout="@layout/view_quick_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/action_forms"
+                    layout="@layout/view_quick_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/action_record"
+                    layout="@layout/view_quick_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/action_messages"
+                    layout="@layout/view_quick_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <!-- ==== Specialties ========================================== -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_lg">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/home_browse_specialty"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium" />
+
+                <TextView
+                    android:id="@+id/see_all_categories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:minHeight="@dimen/touch_target"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="@dimen/space_xs"
+                    android:text="@string/see_all_link"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                    android:textColor="@color/md_primary" />
+            </LinearLayout>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:clipToPadding="false"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/specialty_chips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:chipSpacingHorizontal="@dimen/space_sm"
+                    app:singleLine="true" />
+            </HorizontalScrollView>
+
+            <!-- ==== Available today ====================================== -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_lg">
+
+                <TextView
+                    android:id="@+id/available_doctors_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/home_available_today"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium" />
+
+                <TextView
+                    android:id="@+id/see_all_doctors"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:minHeight="@dimen/touch_target"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="@dimen/space_xs"
+                    android:text="@string/see_all_link"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                    android:textColor="@color/md_primary" />
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
-                android:layoutAnimation="@anim/layout_animation_list"
                 android:id="@+id/recyclerViewDoctors"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/space_xs"
-                android:clipToPadding="false"
-                android:paddingHorizontal="@dimen/space_sm" />
-
-            <TextView
-                android:id="@+id/see_all_doctors"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginEnd="@dimen/space_md"
-                android:layout_marginBottom="@dimen/space_lg"
-                android:clickable="true"
-                android:minWidth="48dp"
-                android:text="@string/see_all_link"
-                android:textColor="@color/light_blue"
-                android:textStyle="bold" 
-                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
-
-            <!-- Carousel -->
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/carouselViewPager"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:elevation="2dp" />
-
-            <!--
-                Page indicator. Tells the patient how many adverts there are
-                and which one they are on — without it the carousel just moves
-                on its own with no sense of position.
-            -->
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/carouselIndicator"
-                android:layout_width="wrap_content"
-                android:layout_height="24dp"
-                android:focusable="false"
-                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/space_md"
-                android:background="@android:color/transparent"
-                app:tabBackground="@drawable/carousel_dot"
-                app:tabGravity="center"
-                app:tabIndicatorHeight="0dp"
-                app:tabPaddingEnd="@dimen/space_xs"
-                app:tabPaddingStart="@dimen/space_xs" />
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_lg"
+                tools:itemCount="2"
+                tools:listitem="@layout/doctor_item" />
 
+            <!-- ==== Health record ======================================== -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/health_summary_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_2xl"
+                app:cardBackgroundColor="@color/md_primary_container"
+                app:cardCornerRadius="@dimen/radius_large"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/space_lg">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_shield"
+                        app:tint="@color/md_on_primary_container" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_md"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/health_summary_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+                            android:textColor="@color/md_on_primary_container"
+                            tools:text="Your health record is up to date" />
+
+                        <TextView
+                            android:id="@+id/health_summary_counts"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                            android:textColor="@color/md_on_primary_container"
+                            tools:text="2 allergies · 2 medications · 2 conditions" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/md_on_primary_container" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
-
-    </ScrollView>
-
+    </androidx.core.widget.NestedScrollView>
 </FrameLayout>

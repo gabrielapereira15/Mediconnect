@@ -8,7 +8,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.client.NotificationClient;
@@ -48,9 +51,35 @@ public class MainActivity extends AppCompatActivity
         sharedPreferences = getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
 
         setSupportActionBar(mainBinding.materialToolbar);
+        // The toolbar carries no title of its own: a title set in the layout
+        // is latched, and every setTitle a screen makes afterwards is
+        // silently dropped. Each fragment names itself in onResume.
+        setTitle(R.string.app_name);
+        resetTitleBetweenScreens();
         setNavigationBottom();
         setNotificationIcon();
         listeners();
+    }
+
+    /**
+     * Clears the app bar back to the app's name as each screen arrives.
+     *
+     * A screen that names itself does so in onResume, which runs after this;
+     * one that does not would otherwise keep whatever the screen before it
+     * left behind, which is how a back-office-looking title ends up over a
+     * patient's visit list.
+     */
+    private void resetTitleBetweenScreens() {
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(
+                new FragmentManager.FragmentLifecycleCallbacks() {
+                    @Override
+                    public void onFragmentViewCreated(@NonNull FragmentManager fm,
+                                                      @NonNull Fragment f,
+                                                      @NonNull View v,
+                                                      Bundle savedInstanceState) {
+                        setTitle(R.string.app_name);
+                    }
+                }, false);
     }
 
     @Override

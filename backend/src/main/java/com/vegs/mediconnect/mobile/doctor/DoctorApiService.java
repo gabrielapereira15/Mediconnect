@@ -33,14 +33,36 @@ public class DoctorApiService {
     @Value("${mediconnect.photo-baseurl}")
     private String photoBaseulr;
 
+    /**
+     * The doctor directory, soonest free first.
+     *
+     * It used to sort by score ascending, so the directory opened on the
+     * lowest-rated doctor and the best one was last. A patient looking for
+     * an appointment is choosing on when they can be seen, so that is the
+     * order; rating breaks ties, highest first, and anyone with nothing free
+     * sits at the end rather than being hidden.
+     *
+     * Transactional because building each row walks the doctor's schedules,
+     * which are lazy.
+     */
+    @Transactional
     public List<DoctorSimpleResponse> getDoctors() {
         return doctorRepository.findAll()
                 .stream()
                 .map(this::mapToDoctorSimpleResponse)
-                .sorted(Comparator.comparing(
-                        doctor -> Optional.ofNullable(doctor.getScore()).orElse(0.0f))
-                )
+                .sorted(Comparator
+                        .comparing(DoctorApiService::nextAvailableOrFarFuture)
+                        .thenComparing(
+                                doctor -> Optional.ofNullable(doctor.getScore()).orElse(0.0f),
+                                Comparator.reverseOrder()))
                 .toList();
+    }
+
+    /** Doctors with nothing free sort last rather than first. */
+    private static LocalDateTime nextAvailableOrFarFuture(DoctorSimpleResponse doctor) {
+        return doctor.getNextAvailableAt() == null
+                ? LocalDateTime.MAX
+                : LocalDateTime.parse(doctor.getNextAvailableAt());
     }
 
     public Doctor getDoctor(UUID doctorId) {
@@ -103,7 +125,9 @@ public class DoctorApiService {
     }
 
     public DoctorSimpleResponse mapToDoctorSimpleResponse(Doctor doctor) {
-        var randomReview = calculateReview(doctor);
+        var review = calculateReview(doctor);
+        var nextFree = nextAvailableSlot(doctor);
+
         return DoctorSimpleResponse
                 .builder()
                 .id(doctor.getId())
@@ -112,9 +136,33 @@ public class DoctorApiService {
                 .name(doctor.getFullName())
                 .firstName(doctor.getFirstName())
                 .lastName(doctor.getLastName())
-                .score(randomReview.score())
-                .reviewCount(randomReview.count())
+                .experienceYears(doctor.getExperienceInYears())
+                .score(review.score())
+                .reviewCount(review.count())
+                .nextAvailableAt(nextFree
+                        .map(slot -> slot.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                        .orElse(null))
                 .build();
+    }
+
+    /**
+     * The earliest slot this doctor still has open.
+     *
+     * Only slots that are both free and actually still ahead of us: a
+     * morning slot on today's schedule is no use at four in the afternoon,
+     * and offering it is how a directory loses a patient's trust on their
+     * first tap.
+     */
+    private Optional<LocalDateTime> nextAvailableSlot(Doctor doctor) {
+        LocalDateTime now = LocalDateTime.now();
+
+        return doctor.getSchedules().stream()
+                .filter(schedule -> !LocalDate.now().isAfter(schedule.getDate()))
+                .flatMap(schedule -> schedule.getScheduleTimes().stream()
+                        .filter(time -> Boolean.TRUE.equals(time.getAvailable()))
+                        .map(time -> LocalDateTime.of(schedule.getDate(), time.getTime())))
+                .filter(slot -> slot.isAfter(now))
+                .min(Comparator.naturalOrder());
     }
 
     private List<ScheduleTimeResponse> getTimes(Schedule schedule, DateTimeFormatter timeFormat) {

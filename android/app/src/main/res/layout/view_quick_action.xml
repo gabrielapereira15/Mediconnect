@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One of the four quick actions under the next-visit hero: a tinted tile
+    with an icon, a caption under it, and an optional count in the corner.
+
+    Included four times rather than built by an adapter — there are exactly
+    four, they never change, and each goes somewhere different.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/space_sm">
+
+    <FrameLayout
+        android:layout_width="56dp"
+        android:layout_height="56dp">
+
+        <FrameLayout
+            android:id="@+id/action_tile"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/tile_brand_soft">
+
+            <ImageView
+                android:id="@+id/action_icon"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                app:tint="@color/md_on_primary_container"
+                tools:src="@drawable/ic_form" />
+        </FrameLayout>
+
+        <!-- Pending forms, say. Hidden at zero rather than showing "0". -->
+        <TextView
+            android:id="@+id/action_count"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="top|end"
+            android:background="@drawable/count_badge"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+            android:textColor="@color/md_on_error"
+            android:visibility="gone"
+            tools:text="1"
+            tools:visibility="visible" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/action_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+        android:textColor="@color/md_on_surface"
+        tools:text="Forms" />
+</LinearLayout>

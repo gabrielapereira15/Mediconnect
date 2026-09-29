@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- "Today 2:30 PM": a free slot today. Always carries the time as words too. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/md_success_container" />
+    <corners android:radius="@dimen/radius_xs" />
+</shape>
