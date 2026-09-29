@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentManager;
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.client.NotificationClient;
 import com.example.mediconnect_android.client.NotificationClientImpl;
+import com.example.mediconnect_android.data.DemoMode;
 import com.example.mediconnect_android.databinding.ActivityMainBinding;
 import com.example.mediconnect_android.fragment.EditProfileFragment;
 import com.example.mediconnect_android.fragment.HomeFragment;
@@ -56,9 +57,29 @@ public class MainActivity extends AppCompatActivity
         // silently dropped. Each fragment names itself in onResume.
         setTitle(R.string.app_name);
         resetTitleBetweenScreens();
+        watchDemoMode();
         setNavigationBottom();
         setNotificationIcon();
         listeners();
+    }
+
+    /**
+     * Shows a banner whenever the app is falling back to sample data.
+     *
+     * The flag flips on whichever background thread made the failed
+     * request, so the update is posted to the main thread before it touches
+     * the view.
+     */
+    private void watchDemoMode() {
+        bindDemoBanner();
+        DemoMode.observe(() -> runOnUiThread(this::bindDemoBanner));
+    }
+
+    private void bindDemoBanner() {
+        if (mainBinding != null) {
+            mainBinding.demoBanner.setVisibility(
+                    DemoMode.isActive() ? View.VISIBLE : View.GONE);
+        }
     }
 
     /**

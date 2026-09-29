@@ -64,6 +64,43 @@
         </FrameLayout>
     </com.google.android.material.appbar.MaterialToolbar>
 
+    <!--
+        Sample data is never passed off as the clinic's. The banner belongs
+        to the shell rather than to each screen, because the server can go
+        away on any of them.
+    -->
+    <LinearLayout
+        android:id="@+id/demoBanner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/md_rating_container"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/space_lg"
+        android:paddingVertical="@dimen/space_sm"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/materialToolbar"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="@dimen/icon_size_small"
+            android:layout_height="@dimen/icon_size_small"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_info"
+            app:tint="@color/md_on_rating_container" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_sm"
+            android:layout_weight="1"
+            android:text="@string/demo_mode_banner"
+            android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+            android:textColor="@color/md_on_rating_container" />
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/flFragment"
         android:layout_width="0dp"
@@ -71,7 +108,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/materialToolbar" />
+        app:layout_constraintTop_toBottomOf="@id/demoBanner" />
 
     <!--
         labelVisibilityMode is set because Material hides the inactive

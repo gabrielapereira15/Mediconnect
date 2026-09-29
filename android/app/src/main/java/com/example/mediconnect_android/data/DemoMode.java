@@ -11,7 +11,21 @@ public final class DemoMode {
 
     private static volatile boolean active;
 
+    /** Told whenever the answer changes, so a banner can appear at once. */
+    private static volatile Runnable onChange;
+
     private DemoMode() {
+    }
+
+    /**
+     * Watches for changes.
+     *
+     * The flag is set from whichever background thread made the request, so
+     * the listener has to get itself onto the main thread before touching a
+     * view.
+     */
+    public static void observe(Runnable listener) {
+        onChange = listener;
     }
 
     public static boolean isActive() {
@@ -20,11 +34,22 @@ public final class DemoMode {
 
     /** Called by the clients when a request could not reach the server. */
     public static void enable() {
-        active = true;
+        set(true);
     }
 
     /** Called by the clients after any successful response. */
     public static void disable() {
-        active = false;
+        set(false);
+    }
+
+    private static void set(boolean value) {
+        if (active == value) {
+            return;
+        }
+        active = value;
+        Runnable listener = onChange;
+        if (listener != null) {
+            listener.run();
+        }
     }
 }
