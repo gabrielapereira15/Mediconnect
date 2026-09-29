@@ -54,7 +54,10 @@ public final class DemoData {
         appointments.add(appointment("demo-a1", "UPCOMING", businessDays(2), "10 a.m.", doctors.get(0)));
         appointments.add(appointment("demo-a2", "UPCOMING", businessDays(5), "2 p.m.", doctors.get(2)));
         appointments.add(appointment("demo-a3", "COMPLETED", businessDays(-6), "9:30 a.m.", doctors.get(1)));
-        appointments.add(appointment("demo-a4", "COMPLETED", businessDays(-13), "11 a.m.", doctors.get(0)));
+        var reviewed = appointment("demo-a4", "COMPLETED", businessDays(-13), "11 a.m.", doctors.get(0));
+        reviewed.setReviewed(true);
+        reviewed.setReviewScore(5f);
+        appointments.add(reviewed);
         appointments.add(appointment("demo-a5", "CANCELED", businessDays(3), "11 a.m.", doctors.get(5)));
 
         return appointments;

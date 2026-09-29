@@ -95,6 +95,43 @@
                 android:text="@string/re_book"
                 android:textColor="@color/dark_gray" />
 
+            <!--
+                Shown in place of the button once a review exists. Hiding the
+                button alone left a gap that read as the option disappearing,
+                so the row now says the review was made and what was given.
+            -->
+            <LinearLayout
+                android:id="@+id/reviewed_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/space_sm"
+                android:background="@drawable/bg_reviewed_badge"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/space_sm"
+                android:paddingTop="6dp"
+                android:paddingEnd="@dimen/space_sm"
+                android:paddingBottom="6dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/baseline_star_rate_24"
+                    app:tint="@color/md_rating" />
+
+                <TextView
+                    android:id="@+id/reviewed_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                    tools:text="You rated 5.0" />
+            </LinearLayout>
+
             <Button
                 android:id="@+id/add_review_button"
                 android:layout_width="wrap_content"

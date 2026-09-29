@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.FragmentBookAppointmentPatientDetailsBinding;
+import com.example.mediconnect_android.util.DateFields;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 
@@ -77,7 +78,9 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
             }
         });
 
-        binding.etDobOther.setOnClickListener(v -> showDatePickerDialog());
+        // Opens a picker rather than the keyboard, and cannot produce a
+        // future date or an impossible one.
+        DateFields.asDateOfBirth(requireContext(), binding.etDobOther);
 
         binding.btnConfirmSelf.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,22 +138,6 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
         });
     }
 
-    private void showDatePickerDialog() {
-        final Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                requireContext(),
-                (view, selectedYear, selectedMonth, selectedDay) -> {
-                    @SuppressLint("DefaultLocale") String formattedDate = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
-                    binding.etDobOther.setText(formattedDate);
-                },
-                year, month, day
-        );
-        datePickerDialog.show();
-    }
 
 
     private boolean isInfoPatientValid() {
@@ -170,12 +157,17 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
                 binding.etLastName.setError("Last name is required");
                 return true;
             }
-            if (dob.isEmpty()) {
-                binding.etDobOther.setError("Date of birth is required");
+            String dobProblem = DateFields.validateDateOfBirth(dob);
+            if (dobProblem != null) {
+                binding.etDobOther.setError(dobProblem);
                 return true;
             }
             if (phoneNumber.isEmpty()) {
                 binding.tvPhoneNumber.setError("Phone number is required");
+                return true;
+            }
+            if (phoneNumber.replaceAll("[^0-9]", "").length() < 10) {
+                binding.tvPhoneNumber.setError("Enter a 10-digit phone number.");
                 return true;
             }
             return false;

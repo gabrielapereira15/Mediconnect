@@ -4,7 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,8 @@ import com.example.mediconnect_android.model.TimSlotRecord;
 import java.util.List;
 
 public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.TimeslotViewHolder> {
+
+    private ChipGroup lastSelectedGroup;
 
     private final List<String> dateList;
     private final List<List<TimSlotRecord>> timeSlotsList;
@@ -44,39 +47,31 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.Timesl
         List<TimSlotRecord> timeSlots = timeSlotsList.get(position);
 
         holder.tvDate.setText(date);
-        holder.glTimeSlots.removeAllViews(); // Remove existing views to avoid duplicates
+        holder.cgTimeSlots.removeAllViews();
 
-        // Dynamically add time slots to the GridLayout
         for (TimSlotRecord timeSlot : timeSlots) {
-            TextView timeSlotView = new TextView(context);
-            timeSlotView.setTag(timeSlot.id());
-            timeSlotView.setText(timeSlot.time());
-            timeSlotView.setPadding(16, 16, 16, 16);
-            timeSlotView.setBackgroundResource(R.drawable.time_slot_background);
-            timeSlotView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            Chip chip = new Chip(context);
+            chip.setText(timeSlot.time());
+            chip.setTag(timeSlot.id());
+            chip.setCheckable(true);
+            chip.setCheckedIconVisible(false);
+            // Give each chip a stable id so ChipGroup's single-selection works.
+            chip.setId(View.generateViewId());
 
-            // Set click listener if needed
-            timeSlotView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (lastSelectedView != null && lastSelectedView != v) {
-                        lastSelectedView.setSelected(false);
-                        lastSelectedView.setBackgroundResource(R.drawable.time_slot_background);
-                    }
+            chip.setOnClickListener(v -> {
+                selectedTimeSlotId = String.valueOf(v.getTag());
+                selectedTimeSlotTime = ((Chip) v).getText().toString();
+                selectedDate = holder.tvDate.getText().toString();
 
-                    v.setSelected(true);
-                    v.setBackgroundResource(R.drawable.time_slot_background);
-
-                    lastSelectedView = v;
-                    var textViewTimeSlot = ((TextView) lastSelectedView);
-                    selectedTimeSlotId = String.valueOf(textViewTimeSlot.getTag());
-                    selectedTimeSlotTime = String.valueOf(textViewTimeSlot.getText());
-                    selectedDate = holder.tvDate.getText().toString();
+                // ChipGroup only deselects within its own group, so clear the
+                // selection on the other days too — a booking is one slot.
+                if (lastSelectedGroup != null && lastSelectedGroup != holder.cgTimeSlots) {
+                    lastSelectedGroup.clearCheck();
                 }
+                lastSelectedGroup = holder.cgTimeSlots;
             });
 
-            // Add the time slot to the GridLayout
-            holder.glTimeSlots.addView(timeSlotView);
+            holder.cgTimeSlots.addView(chip);
         }
     }
 
@@ -87,12 +82,12 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.Timesl
 
     static class TimeslotViewHolder extends RecyclerView.ViewHolder {
         TextView tvDate;
-        GridLayout glTimeSlots;
+        ChipGroup cgTimeSlots;
 
         public TimeslotViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDate = itemView.findViewById(R.id.tv_date);
-            glTimeSlots = itemView.findViewById(R.id.gl_timeslots);
+            cgTimeSlots = itemView.findViewById(R.id.cg_timeslots);
         }
     }
 }

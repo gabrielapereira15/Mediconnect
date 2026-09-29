@@ -175,9 +175,21 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
 
     <string name="state_no_doctors_title">No doctors available</string>
     <string name="state_no_doctors_body">The clinic has not published any availability yet.</string>
+    <!-- Appointment reminders -->
+    <string name="reminder_unavailable">We could not work out when this appointment starts, so no reminder was set.</string>
+    <string name="reminder_soon_title">Appointment soon</string>
+    <string name="reminder_soon_body">Your appointment with %1$s is in 30 minutes.</string>
+    <string name="reminder_tomorrow_title">Appointment tomorrow</string>
+    <string name="reminder_tomorrow_body">You have an appointment with %1$s tomorrow at %2$s.</string>
+
     <!-- Accessibility -->
     <string name="cd_app_logo">MediConnect</string>
+    <string name="cd_carousel_page">Advert %1$d of %2$d</string>
     <string name="cd_doctor_photo">Photo of the doctor</string>
     <string name="cd_your_photo">Your profile photo</string>
     <string name="cd_rating_star">Rating</string>
+
+    <!-- Shown on a completed visit the patient has already reviewed. -->
+    <string name="review_left">Review sent</string>
+    <string name="review_left_score">You rated %1$.1f</string>
 </resources>

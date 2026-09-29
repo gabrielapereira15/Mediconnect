@@ -219,6 +219,9 @@ public class DemoDataSeeder implements ApplicationRunner {
         appointments.add(appointment(demoPatient, doctors.get(2),
                 findSlot(slots, doctors.get(2), businessDaysFromToday(-14), LocalTime.of(15, 0)),
                 AppointmentStatus.COMPLETED));
+        appointments.add(appointment(demoPatient, doctors.get(7),
+                findSlot(slots, doctors.get(7), businessDaysFromToday(-9), LocalTime.of(13, 30)),
+                AppointmentStatus.COMPLETED));
 
         // And one the patient called off.
         appointments.add(appointment(demoPatient, doctors.get(5),
@@ -293,16 +296,18 @@ public class DemoDataSeeder implements ApplicationRunner {
     }
 
     /**
-     * One review per completed appointment — review.appointment_id is both
-     * NOT NULL and UNIQUE, so a review cannot exist without its own visit.
+     * Reviews a couple of past visits, deliberately not all of them.
+     *
+     * review.appointment_id is NOT NULL and UNIQUE, so a review needs its own
+     * visit — and the app hides "Add Review" on a visit that already has one.
+     * Leaving some unreviewed is what makes that flow reachable in the demo.
      */
     private void seedReviews(List<Doctor> doctors, List<Appointment> appointments) {
         List<String> comments = List.of(
                 "Very thorough and took the time to explain everything clearly.",
-                "Excellent care and the follow-up was well organised.",
-                "Helpful appointment, though the wait was a little longer than expected."
+                "Excellent care and the follow-up was well organised."
         );
-        List<Float> scores = List.of(5f, 4.5f, 4f);
+        List<Float> scores = List.of(5f, 4.5f);
 
         List<Appointment> completed = appointments.stream()
                 .filter(a -> AppointmentStatus.COMPLETED.getStatus().equals(a.getStatus()))

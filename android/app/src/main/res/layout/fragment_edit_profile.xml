@@ -59,7 +59,10 @@
                     android:layout_height="wrap_content"
                 android:id="@+id/et_first_name"
                 android:padding="@dimen/space_md"
-                android:textColor="@color/dark_gray" />
+                android:textColor="@color/dark_gray" 
+                    android:inputType="textPersonName|textCapWords"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -75,7 +78,10 @@
                     android:layout_height="wrap_content"
                 android:id="@+id/et_last_name"
                 android:padding="@dimen/space_md"
-                android:textColor="@color/dark_gray" />
+                android:textColor="@color/dark_gray" 
+                    android:inputType="textPersonName|textCapWords"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -166,7 +172,10 @@
                 android:cursorVisible="false"
                 android:focusable="false"
                 android:padding="@dimen/space_md"
-                android:textColor="@color/dark_gray" />
+                android:textColor="@color/dark_gray" 
+                    android:inputType="date"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

@@ -5,6 +5,7 @@ import com.vegs.mediconnect.datasource.appointment.AppointmentRepository;
 import com.vegs.mediconnect.datasource.doctor.Doctor;
 import com.vegs.mediconnect.datasource.patient.Patient;
 import com.vegs.mediconnect.datasource.patient.PatientRepository;
+import com.vegs.mediconnect.datasource.review.Review;
 import com.vegs.mediconnect.datasource.review.ReviewRepository;
 import com.vegs.mediconnect.datasource.schedule.ScheduleTime;
 import com.vegs.mediconnect.datasource.schedule.ScheduleTimeRepository;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Comparator;
@@ -109,10 +111,11 @@ public class AppointmentApiService {
 
         var status = getStatus(appointment);
         boolean isReviewed = false;
+        Float reviewScore = null;
         if (AppointmentStatus.COMPLETED.getStatus().equals(status)) {
-            isReviewed = reviewRepository
-                    .findByAppointment(appointment)
-                    .isPresent();
+            var review = reviewRepository.findByAppointment(appointment);
+            isReviewed = review.isPresent();
+            reviewScore = review.map(Review::getScore).orElse(null);
         }
 
         return AppointmentResponse
@@ -120,7 +123,10 @@ public class AppointmentApiService {
                 .id(appointment.getId())
                 .date(schedule.getDate().format(dataFormat))
                 .time(scheduleTime.getTime().format(timeFormat))
+                .startsAt(LocalDateTime.of(schedule.getDate(), scheduleTime.getTime())
+                        .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .isReviewed(isReviewed)
+                .reviewScore(reviewScore)
                 .status(status)
                 .doctor(doctorApiService.mapToDoctorSimpleResponse(doctor))
                 .build();

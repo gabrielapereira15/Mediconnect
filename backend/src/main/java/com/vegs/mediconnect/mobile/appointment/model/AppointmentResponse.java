@@ -16,7 +16,24 @@ public class AppointmentResponse {
     private String status;
     private String date;
     private String time;
+
+    /**
+     * ISO-8601 local date-time, e.g. 2026-09-30T10:00:00.
+     *
+     * `date` and `time` are formatted for display and are not safe to parse:
+     * they change with the display format and the locale. Anything that needs
+     * the actual moment — scheduling a reminder, sorting — uses this.
+     */
+    private String startsAt;
     private boolean isReviewed;
+
+    /**
+     * The score the patient gave, 0.5-5.0, or null if they have not reviewed
+     * this visit. Without it the app can only hide the "Add review" button,
+     * which reads as the option having vanished rather than being done.
+     */
+    private Float reviewScore;
+
     private DoctorSimpleResponse doctor;
 
 }

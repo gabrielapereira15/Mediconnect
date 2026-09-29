@@ -12,12 +12,16 @@
 
         <LinearLayout
             android:id="@+id/linearLayout"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@color/gray_background"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/space_lg"
+            android:paddingTop="@dimen/space_lg"
+            android:paddingBottom="@dimen/space_lg"
             tools:ignore="UselessParent">
 
             <!-- Search Bar -->
@@ -279,6 +283,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:elevation="2dp" />
+
+            <!--
+                Page indicator. Tells the patient how many adverts there are
+                and which one they are on — without it the carousel just moves
+                on its own with no sense of position.
+            -->
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/carouselIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/space_md"
+                android:background="@android:color/transparent"
+                app:tabBackground="@drawable/carousel_dot"
+                app:tabGravity="center"
+                app:tabIndicatorHeight="0dp"
+                app:tabPaddingEnd="@dimen/space_xs"
+                app:tabPaddingStart="@dimen/space_xs" />
 
         </LinearLayout>
 

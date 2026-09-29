@@ -34,12 +34,18 @@ import com.example.mediconnect_android.util.Background;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import android.util.Log;
+import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Date;
 import java.util.List;
 
 public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHolder> {
+
+    private static final String TAG = "UpcomingAdapter";
 
     private final Context context;
     private final List<Appointment> appointmentList;
@@ -124,88 +130,93 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
             recyclerItemBinding.switchRemindMe.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 saveReminderState(appointment.getId(), isChecked);
 
-                if (isChecked) {
-                    Calendar calendar = parseAndSetCalendar(String.valueOf(appointment));
-                    Calendar now = Calendar.getInstance();
-
-                    System.out.println("Now: " + now.getTime());
-                    System.out.println("Appointment: " + calendar.getTime());
-
-                    Calendar thirtyMinutesBefore = (Calendar) calendar.clone();
-                    thirtyMinutesBefore.add(Calendar.MINUTE, -30);
-
-                    System.out.println("30 min before: " + thirtyMinutesBefore.getTime());
-
-                    if (thirtyMinutesBefore.after(now)) {
-                        scheduleExactAlarm(
-                                context.getApplicationContext(),
-                                "Reminder: Appointment Soon",
-                                "Your appointment with " + doctor.getName() + " is in 30 minutes.",
-                                thirtyMinutesBefore
-                        );
-                    } else {
-                        System.out.println("Skipping 30 minutes before, it’s in the past.");
-                    }
-
-                    Calendar twentyFourHoursBefore = (Calendar) calendar.clone();
-                    twentyFourHoursBefore.add(Calendar.HOUR_OF_DAY, -24);
-
-                    System.out.println("24 hours before: " + twentyFourHoursBefore.getTime());
-
-                    if (twentyFourHoursBefore.after(now)) {
-                        scheduleExactAlarm(
-                                context.getApplicationContext(),
-                                "Reminder: Appointment Tomorrow",
-                                "You have an appointment with " + doctor.getName() + " tomorrow at " + appointment.toString() + ".",
-                                twentyFourHoursBefore
-                        );
-                    } else {
-                        System.out.println("Skipping 24 hours before, it’s in the past.");
-                    }
-
-                    Calendar oneMinuteFromNow = Calendar.getInstance();
-                    oneMinuteFromNow.add(Calendar.SECOND, 10);
-
-                    System.out.println("10 secs from now: " + oneMinuteFromNow.getTime());
-
-                    scheduleExactAlarm(
-                            context.getApplicationContext(),
-                            "Reminder: Upcoming appointment",
-                            "This is a test reminder set for 1 minute from now.",
-                            oneMinuteFromNow
-                    );
+                if (!isChecked) {
+                    return;
                 }
+
+                Optional<Calendar> start = appointmentStart(appointment);
+                if (start.isEmpty()) {
+                    // Cannot work out when it is, so there is nothing to
+                    // schedule. Previously this dereferenced null and crashed
+                    // the app, which looked like being logged out.
+                    buttonView.setChecked(false);
+                    saveReminderState(appointment.getId(), false);
+                    DialogUtils.showMessageDialog(context,
+                            context.getString(R.string.reminder_unavailable));
+                    return;
+                }
+
+                Calendar now = Calendar.getInstance();
+                scheduleIfFuture(start.get(), -30, Calendar.MINUTE, now,
+                        context.getString(R.string.reminder_soon_title),
+                        context.getString(R.string.reminder_soon_body, doctor.getName()));
+                scheduleIfFuture(start.get(), -24, Calendar.HOUR_OF_DAY, now,
+                        context.getString(R.string.reminder_tomorrow_title),
+                        context.getString(R.string.reminder_tomorrow_body,
+                                doctor.getName(), appointment.getTime()));
             });
         }
 
-        public Calendar parseAndSetCalendar(String appointmentDateTime) {
-            String dateTimeFormat = "EEE, d MMM | h a";
-            SimpleDateFormat sdf = new SimpleDateFormat(dateTimeFormat, Locale.ENGLISH);
-
-            try {
-                Date date = sdf.parse(appointmentDateTime);
-
-                Calendar currentCalendar = Calendar.getInstance();
-                Calendar eventCalendar = Calendar.getInstance();
-
-                if (date != null) {
-                    eventCalendar.setTime(date);
-
-                    eventCalendar.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR));
-
-                    if (eventCalendar.before(currentCalendar)) {
-                        eventCalendar.add(Calendar.YEAR, 1);
-                    }
-                }
-
-                System.out.println("Scheduled Event Calendar: " + eventCalendar.getTime());
-                return eventCalendar;
-
-            } catch (ParseException e) {
-                e.printStackTrace();
-                System.out.println("Failed to parse the appointment date and time.");
-                return null;
+        /** Schedules a reminder at an offset from the appointment, if not already past. */
+        private void scheduleIfFuture(Calendar start, int amount, int unit,
+                                      Calendar now, String title, String body) {
+            Calendar when = (Calendar) start.clone();
+            when.add(unit, amount);
+            if (when.after(now)) {
+                scheduleExactAlarm(context.getApplicationContext(), title, body, when);
             }
+        }
+
+        /**
+         * The moment an appointment starts.
+         *
+         * Prefers the API's ISO timestamp. The fallback parses the display
+         * string, which is fragile — it broke the moment the server started
+         * including minutes in the time — so it is only a last resort, and it
+         * returns empty rather than null so a failure cannot crash the caller.
+         */
+        private Optional<Calendar> appointmentStart(Appointment appointment) {
+            String iso = appointment.getStartsAt();
+            if (iso != null && !iso.isEmpty()) {
+                try {
+                    LocalDateTime parsed = LocalDateTime.parse(iso);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(parsed.getYear(), parsed.getMonthValue() - 1, parsed.getDayOfMonth(),
+                            parsed.getHour(), parsed.getMinute(), 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+                    return Optional.of(calendar);
+                } catch (DateTimeParseException e) {
+                    Log.w(TAG, "Unreadable startsAt: " + iso, e);
+                }
+            }
+            return parseDisplayString(appointment.getDate() + " | " + appointment.getTime());
+        }
+
+        /** Last resort: read back a string that was formatted for humans. */
+        private Optional<Calendar> parseDisplayString(String appointmentDateTime) {
+            // Both are tried because the server's time format has changed once
+            // already, and a reminder is not worth a crash.
+            for (String pattern : new String[]{"EEE, d MMM | h:mm a", "EEE, d MMM | h a"}) {
+                try {
+                    Date date = new SimpleDateFormat(pattern, Locale.ENGLISH).parse(appointmentDateTime);
+                    if (date == null) {
+                        continue;
+                    }
+                    Calendar now = Calendar.getInstance();
+                    Calendar event = Calendar.getInstance();
+                    event.setTime(date);
+                    // The pattern carries no year, so it defaults to 1970.
+                    event.set(Calendar.YEAR, now.get(Calendar.YEAR));
+                    if (event.before(now)) {
+                        event.add(Calendar.YEAR, 1);
+                    }
+                    return Optional.of(event);
+                } catch (ParseException ignored) {
+                    // try the next pattern
+                }
+            }
+            Log.w(TAG, "Could not read an appointment time from: " + appointmentDateTime);
+            return Optional.empty();
         }
 
         @RequiresApi(api = Build.VERSION_CODES.S)
@@ -243,8 +254,6 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
                     requestExactAlarmPermission(context);
                 }
             }
-
-            System.out.println("Scheduled time: " + calendar.getTime());
         }
 
         public void requestExactAlarmPermission(Context context) {

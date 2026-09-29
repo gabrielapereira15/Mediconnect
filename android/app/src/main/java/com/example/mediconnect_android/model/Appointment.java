@@ -6,9 +6,13 @@ public class Appointment {
     private String status;
     private String date;
     private String time;
+    /** ISO-8601 local date-time from the API; safe to parse, unlike date/time. */
+    private String startsAt;
     private Doctor doctor;
     private Schedule schedule;
     private Boolean reviewed;
+    /** The score this patient gave, or null if they have not reviewed it. */
+    private Float reviewScore;
     private boolean isVirtual;
 
 
@@ -18,6 +22,14 @@ public class Appointment {
 
     public void setReviewed(Boolean reviewed) {
         this.reviewed = reviewed;
+    }
+
+    public Float getReviewScore() {
+        return reviewScore;
+    }
+
+    public void setReviewScore(Float reviewScore) {
+        this.reviewScore = reviewScore;
     }
 
     public String getDate() {
@@ -79,6 +91,14 @@ public class Appointment {
     @Override
     public String toString() {
         return date + " | " + time;
+    }
+
+    public String getStartsAt() {
+        return startsAt;
+    }
+
+    public void setStartsAt(String startsAt) {
+        this.startsAt = startsAt;
     }
 
     public Schedule getSchedule() {

@@ -203,7 +203,9 @@
                         android:layout_height="wrap_content"
                     android:id="@+id/et_note_other"
                     android:padding="@dimen/space_md"
-                    android:textColor="@color/dark_gray" />
+                    android:textColor="@color/dark_gray" 
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:imeOptions="actionDone" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 

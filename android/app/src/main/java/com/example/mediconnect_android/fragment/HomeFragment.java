@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.mediconnect_android.R;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.example.mediconnect_android.adapter.CarouselAdapter;
 import com.example.mediconnect_android.adapter.DoctorHomeScreenAdapter;
 import com.example.mediconnect_android.client.DoctorClient;
@@ -95,6 +96,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         // Set the adapter to ViewPager2
         binding.carouselViewPager.setAdapter(carouselAdapter);
+
+        // One dot per advert, kept in step with the pager. The dots are not
+        // tappable labels, so each gets a content description instead of text.
+        new TabLayoutMediator(binding.carouselIndicator, binding.carouselViewPager,
+                (tab, position) -> tab.setContentDescription(
+                        getString(R.string.cd_carousel_page, position + 1, imageList.size()))
+        ).attach();
 
         // Optionally set a page transformer for visual effects (optional)
         binding.carouselViewPager.setPageTransformer((page, position) -> {

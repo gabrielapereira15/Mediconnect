@@ -103,17 +103,42 @@ public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.View
             recyclerItemBinding.doctorName.setText(doctor.getName());
             recyclerItemBinding.doctorSpeacialty.setText(doctor.getSpecialty());
 
-            if (appointment.getReviewed()) {
-                recyclerItemBinding.addReviewButton.setVisibility(View.GONE);
-            } else {
-                recyclerItemBinding.addReviewButton.setVisibility(View.VISIBLE);
-            }
+            bindReviewState(appointment);
 
             Glide.with(context)
                     .load(doctor.getPhoto())
                     .placeholder(R.drawable.doctorimage)
                     .error(R.drawable.doctorimage)
                     .into(recyclerItemBinding.doctorImage);
+        }
+
+        /**
+         * Either offers the review or confirms one was left.
+         *
+         * Previously the button simply disappeared once reviewed, which looks
+         * the same as the option never being there. Swapping in a badge keeps
+         * the row's own record of what the patient did.
+         */
+        private void bindReviewState(Appointment appointment) {
+            boolean reviewed = Boolean.TRUE.equals(appointment.getReviewed());
+
+            recyclerItemBinding.addReviewButton.setVisibility(reviewed ? View.GONE : View.VISIBLE);
+            recyclerItemBinding.reviewedBadge.setVisibility(reviewed ? View.VISIBLE : View.GONE);
+
+            if (!reviewed) {
+                return;
+            }
+
+            Float score = appointment.getReviewScore();
+            if (score == null) {
+                // Reviewed, but the score did not come back — say so without a number.
+                recyclerItemBinding.reviewedLabel.setText(R.string.review_left);
+            } else {
+                recyclerItemBinding.reviewedLabel.setText(
+                        context.getString(R.string.review_left_score, score));
+            }
+            recyclerItemBinding.reviewedBadge.setContentDescription(
+                    recyclerItemBinding.reviewedLabel.getText());
         }
     }
 }

@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/space_xs"
@@ -17,16 +18,20 @@
         android:textStyle="bold" 
         android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
 
-    <!-- Time slots -->
-    <GridLayout
-        android:id="@+id/gl_timeslots"
+    <!--
+        Time slots.
+
+        Was a GridLayout pinned to four columns, which clipped anything wider
+        than a quarter of the screen — and the slot labels grew when the API
+        started including minutes. A ChipGroup wraps to as many rows as it
+        needs, sizes each chip to its own text, and handles single selection.
+    -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/cg_timeslots"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/space_xs"
-        android:columnCount="4"
-        android:columnOrderPreserved="false"
-        android:useDefaultMargins="true">
-
-    </GridLayout>
+        android:layout_marginTop="@dimen/space_xs"
+        app:singleSelection="true"
+        app:selectionRequired="false" />
 
 </LinearLayout>
