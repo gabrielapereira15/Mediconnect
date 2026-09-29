@@ -205,4 +205,57 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="reminder_permission_body">To remind you at the right moment, Mediconnect needs permission to set exact alarms. Android keeps this off until you allow it.</string>
     <string name="reminder_permission_open">Open settings</string>
     <string name="reminder_permission_unavailable">This device has no setting for exact alarms, so reminders cannot be scheduled.</string>
+
+    <!-- Profile screen sections. -->
+    <string name="profile_personal_details">Personal details</string>
+    <string name="profile_health_info">Health information</string>
+    <string name="profile_health_info_body">What your doctor should know before your appointment.</string>
+    <string name="profile_manage_health">Manage health information</string>
+    <string name="profile_download_summary">Download my health summary</string>
+    <string name="profile_preferences">Preferences</string>
+    <string name="profile_appearance">Appearance</string>
+    <string name="profile_appearance_body">System follows the setting on your phone.</string>
+    <string name="profile_sign_out">Sign out</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+
+    <!-- Health record. -->
+    <string name="health_allergies">Allergies</string>
+    <string name="health_medications">Medications</string>
+    <string name="health_conditions">Conditions</string>
+    <string name="health_none_recorded">None recorded</string>
+    <string name="health_line">%1$s · %2$s</string>
+    <string name="health_card_masked">Health card ••• %1$s · %2$s</string>
+    <string name="sign_out_title">Sign out?</string>
+    <string name="sign_out_body">You will need your email and a passcode to sign back in.</string>
+
+    <!-- Health record screen. -->
+    <string name="health_record_title">Health information</string>
+    <string name="health_add">Add</string>
+    <string name="health_add_title">Add to your health record</string>
+    <string name="health_add_description">What is it?</string>
+    <string name="health_add_note">Notes (optional)</string>
+    <string name="health_add_onset">Since (optional)</string>
+    <string name="health_add_save">Save</string>
+    <string name="health_add_required">Please say what it is.</string>
+    <string name="health_stop">Stop</string>
+    <string name="health_stop_title">Stop %1$s?</string>
+    <string name="health_stop_body">It stays on your record marked as no longer current, so a doctor can still see you had it.</string>
+    <string name="health_stop_confirm">Mark as stopped</string>
+    <string name="health_no_longer_current">No longer current</string>
+    <string name="health_type_allergy">Allergy</string>
+    <string name="health_type_medication">Medication</string>
+    <string name="health_type_condition">Condition</string>
+    <string name="health_empty_title">Nothing recorded yet</string>
+    <string name="health_empty_body">Add your allergies, medications and conditions so your doctor has them before your appointment.</string>
+
+    <!-- Health summary export. -->
+    <string name="summary_title">Health summary</string>
+    <string name="summary_intro">A standard summary of your health record that another clinic or hospital in Canada can read.</string>
+    <string name="summary_standard">Follows the pan-Canadian Patient Summary (PS-CA), built on HL7 FHIR R4.</string>
+    <string name="summary_share">Share</string>
+    <string name="summary_generated">Generated %1$s</string>
+    <string name="summary_share_subject">My health summary</string>
+    <string name="health_count">%1$d recorded</string>
 </resources>

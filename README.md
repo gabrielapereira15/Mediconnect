@@ -41,11 +41,19 @@ Conestoga College and has since been rebuilt as a portfolio piece.
 - Leave a review after a visit
 - Pre-appointment and check-in forms
 - Clinic notifications with an unread badge
+- A health record of allergies, medications and conditions, kept once
+  instead of rewritten on paper at every visit
+- Export a health summary in the pan-Canadian standard, to hand to another
+  clinic
+- Join a waitlist and be told when an earlier appointment frees up
+- Light, dark or follow-the-system, chosen in the app
 - Pull down on any list to re-fetch
 - Passwordless sign-in by one-time passcode
 
 **Clinic back office** (`http://localhost:8080`)
 - CRUD for doctors, patients, appointments, schedules and notifications
+- A cancelled appointment puts its slot back on sale and tells everyone on
+  that doctor's waitlist who could use it
 - Doctor photo upload
 - Built with Thymeleaf, Bootstrap and htmx
 
@@ -292,6 +300,31 @@ and the email in the URL must be the token's own.
 | `GET` | `/api/mobile/notifications/{email}` | required |
 | `POST` | `/api/mobile/notifications/ack/{id}` | required |
 | `POST` | `/api/mobile/reviews` | required |
+| `GET` | `/api/mobile/health/{email}` | required |
+| `POST` | `/api/mobile/health/{email}` | required |
+| `POST` | `/api/mobile/health/{email}/{id}/stop` | required |
+| `GET` | `/api/mobile/waitlist/{email}` | required |
+| `POST` | `/api/mobile/waitlist/{email}` | required |
+| `POST` | `/api/mobile/waitlist/{email}/{id}/leave` | required |
+
+### FHIR
+
+A read-only view of the same data, shaped by HL7 FHIR R4 rather than by the
+app's screens, so another Canadian system can read it. Patient, Practitioner,
+PractitionerRole and Organization carry CA Baseline profiles; `$summary`
+returns a pan-Canadian Patient Summary (PS-CA) document.
+
+| Method | Route | Auth |
+|---|---|---|
+| `GET` | `/fhir/metadata` | public |
+| `GET` | `/fhir/Practitioner`, `/fhir/PractitionerRole` | public |
+| `GET` | `/fhir/Schedule`, `/fhir/Slot?status=free` | public |
+| `GET` | `/fhir/Patient/{id}` | required |
+| `GET` | `/fhir/Patient/{id}/$summary` | required |
+| `GET` | `/fhir/Appointment?patient={id}` | required |
+
+What is verified and what is not — including why scheduling claims no
+Canadian profile — is in **[docs/FHIR.md](docs/FHIR.md)**.
 
 ## Architecture
 

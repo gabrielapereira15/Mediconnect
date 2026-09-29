@@ -106,6 +106,15 @@ public class MainActivity extends AppCompatActivity implements NotificationsFrag
 
         bottomNavigationManager.setupBottomNavigationListener(mainBinding.bottomNavigationView);
 
+        // A recreated activity already has its fragment back, and the
+        // navigation bar has restored which tab was selected. Loading Home
+        // over the top would leave the two disagreeing — which is what
+        // changing the theme used to do, since applying a night mode
+        // recreates every activity.
+        if (getSupportFragmentManager().findFragmentById(R.id.flFragment) != null) {
+            return;
+        }
+
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("target_fragment")) {
             String targetFragment = intent.getStringExtra("target_fragment");

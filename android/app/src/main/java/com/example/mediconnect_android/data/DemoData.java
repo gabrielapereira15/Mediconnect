@@ -118,6 +118,31 @@ public final class DemoData {
         return appointment;
     }
 
+    /** The offline stand-in for the patient's health record. */
+    public static java.util.List<com.example.mediconnect_android.model.HealthEntry> healthEntries() {
+        var entries = new java.util.ArrayList<com.example.mediconnect_android.model.HealthEntry>();
+        entries.add(healthEntry("demo-h1", com.example.mediconnect_android.model.HealthEntry.TYPE_ALLERGY,
+                "Penicillin", "Rash and swelling within an hour of the first dose."));
+        entries.add(healthEntry("demo-h2", com.example.mediconnect_android.model.HealthEntry.TYPE_ALLERGY,
+                "Peanuts", "Mild — itching in the mouth."));
+        entries.add(healthEntry("demo-h3", com.example.mediconnect_android.model.HealthEntry.TYPE_MEDICATION,
+                "Metformin 500mg", "Twice a day with meals."));
+        entries.add(healthEntry("demo-h4", com.example.mediconnect_android.model.HealthEntry.TYPE_CONDITION,
+                "Type 2 diabetes", "Managed with medication and diet."));
+        return entries;
+    }
+
+    private static com.example.mediconnect_android.model.HealthEntry healthEntry(
+            String id, String type, String description, String note) {
+        var entry = new com.example.mediconnect_android.model.HealthEntry();
+        entry.setId(id);
+        entry.setType(type);
+        entry.setDescription(description);
+        entry.setNote(note);
+        entry.setActive(true);
+        return entry;
+    }
+
     private static Notification notification(String id, String title, String message) {
         var notification = new Notification();
         notification.setId(id);

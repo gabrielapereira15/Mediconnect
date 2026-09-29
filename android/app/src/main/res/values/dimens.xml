@@ -20,4 +20,7 @@
 
     <dimen name="elevation_card">1dp</dimen>
     <dimen name="elevation_raised">3dp</dimen>
+
+    <!-- Enough room below a list for a floating action button to clear it. -->
+    <dimen name="space_fab_clearance">96dp</dimen>
 </resources>
