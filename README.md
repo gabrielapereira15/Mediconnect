@@ -93,7 +93,7 @@ Conestoga College and has since been rebuilt as a portfolio piece.
 **Requirements:** JDK 17 or newer. Android Studio only if you want to run the app.
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/Mediconnect.git
+git clone https://github.com/gabrielapereira15/Mediconnect.git
 cd Mediconnect
 ```
 
