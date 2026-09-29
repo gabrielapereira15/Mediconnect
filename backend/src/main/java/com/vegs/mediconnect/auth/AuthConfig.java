@@ -27,11 +27,24 @@ public class AuthConfig implements WebMvcConfigurer {
                         "/api/mobile/patients/**",
                         "/api/mobile/appointments/**",
                         "/api/mobile/notifications/**",
-                        "/api/mobile/reviews/**")
+                        "/api/mobile/reviews/**",
+                        // The FHIR facade serves the same health data under
+                        // a different shape, so it needs the same guard.
+                        "/fhir/**")
                 // The doctor directory is what the app shows before sign-in,
                 // and photos are referenced by <img> tags that carry no header.
                 .excludePathPatterns(
                         "/api/mobile/doctors/**",
-                        "/auth/**");
+                        "/auth/**",
+                        // A FHIR client has to be able to discover what the
+                        // server supports before it has anything to sign in
+                        // with, and the directory is already public.
+                        "/fhir/metadata",
+                        "/fhir/Practitioner",
+                        "/fhir/Practitioner/*",
+                        "/fhir/PractitionerRole",
+                        "/fhir/Organization/*",
+                        "/fhir/Schedule",
+                        "/fhir/Slot");
     }
 }

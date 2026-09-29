@@ -54,6 +54,25 @@ public class Patient {
     @Column
     private String address;
 
+    /**
+     * The provincial health card number.
+     *
+     * In FHIR this is the Jurisdictional Health Number that CA Baseline
+     * slices Patient.identifier on, so it is the one identifier that makes
+     * this patient recognisable to another Canadian system. Nullable: a
+     * patient can use the app without giving it.
+     */
+    @Column
+    private String healthCardNumber;
+
+    /**
+     * Which province issued the card, as a two-letter code such as ON.
+     * The identifier system URI differs per province, so the number alone
+     * does not identify anyone.
+     */
+    @Column
+    private String healthCardProvince;
+
     @OneToMany(mappedBy = "patient")
     private List<Appointment> appointments;
 

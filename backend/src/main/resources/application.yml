@@ -54,6 +54,17 @@ springdoc:
     path: /swagger-ui.html
 
 mediconnect:
+  fhir:
+    # The address this server's FHIR resources are published under. It ends
+    # up in every Bundle.entry.fullUrl, so a client that follows one has to
+    # arrive back here.
+    base-url: ${FHIR_BASE_URL:http://localhost:8080/fhir}
+    organization-name: ${CLINIC_NAME:Mediconnect Clinic}
+    # Health card identifier systems come from the Canadian URI Registry and
+    # differ per province. Override for a real deployment; the defaults in
+    # FhirProperties follow the Infoway naming pattern and should be
+    # confirmed against the registry before anyone relies on them.
+
   # Where doctor photos are served from. Defaults to this server.
   photo-baseurl: ${PHOTO_BASEURL:http://localhost:8080}
   demo-data:
