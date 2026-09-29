@@ -1,33 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Messages (board P13).
+
+    Called Messages rather than Notifications: what arrives here is the
+    clinic talking to the patient — an offer, a reminder, news — not a
+    system tray. Read ones stay on the list, so a patient who glanced at
+    something can find it again.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gray_background"
     tools:context=".fragment.NotificationsFragment">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefresh"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/space_lg">
+        android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <LinearLayout
+            android:id="@+id/messages_header"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layoutAnimation="@anim/layout_animation_list"
-            android:id="@+id/recyclerView"
-            android:clipToPadding="false"
-            android:padding="@dimen/space_sm" />
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/space_lg"
+            android:paddingTop="@dimen/space_sm"
+            android:paddingEnd="@dimen/space_sm">
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            <TextView
+                android:id="@+id/unread_count"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                tools:text="2 unread" />
 
-    <com.example.mediconnect_android.view.StateView
-        android:id="@+id/stateView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="@dimen/space_lg"
-        android:visibility="gone" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_mark_all_read"
+                style="@style/Widget.Mediconnect.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/touch_target"
+                android:text="@string/messages_mark_all_read" />
+        </LinearLayout>
 
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingTop="@dimen/space_sm"
+                    android:paddingBottom="@dimen/space_2xl"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/notification_item" />
+
+                <com.example.mediconnect_android.view.StateView
+                    android:id="@+id/stateView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </LinearLayout>
 </FrameLayout>

@@ -4,6 +4,7 @@ import com.vegs.mediconnect.datasource.appointment.Appointment;
 import com.vegs.mediconnect.datasource.notification.Notification;
 import com.vegs.mediconnect.datasource.notification.NotificationPatient;
 import com.vegs.mediconnect.datasource.notification.NotificationPatientRepository;
+import com.vegs.mediconnect.datasource.notification.NotificationKind;
 import com.vegs.mediconnect.datasource.notification.NotificationRepository;
 import com.vegs.mediconnect.datasource.patient.Patient;
 import com.vegs.mediconnect.datasource.patient.PatientRepository;
@@ -198,6 +199,7 @@ public class WaitlistService {
     private void notifyOffer(WaitlistEntry entry, String doctorName,
                              LocalDate date, java.time.LocalTime time) {
         var notification = new Notification();
+        notification.setKind(NotificationKind.WAITLIST_OFFER);
         notification.setTitle("An earlier appointment is available");
         notification.setMessage(String.format(
                 "%s has a slot on %s at %s. Open Mediconnect to book it before someone else does.",

@@ -201,6 +201,19 @@
         <item name="strokeColor">@color/md_outline</item>
     </style>
 
+    <!--
+        A secondary action on a tinted card.
+
+        The tonal style fills with the primary container, which is what
+        those cards are made of, so a tonal button on one vanishes into it.
+    -->
+    <style name="Widget.Mediconnect.Button.OnTint" parent="Widget.Mediconnect.Button">
+        <item name="backgroundTint">@color/md_surface</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+        <item name="iconTint">@color/md_on_surface</item>
+        <item name="rippleColor">@color/md_primary_container</item>
+    </style>
+
     <!-- A text button: brand label, no fill. -->
     <style name="Widget.Mediconnect.Button.Text" parent="Widget.Material3.Button.TextButton">
         <item name="android:minHeight">@dimen/touch_target</item>

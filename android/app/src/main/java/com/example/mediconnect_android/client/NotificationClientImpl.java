@@ -37,6 +37,17 @@ public class NotificationClientImpl implements NotificationClient {
     }
 
     @Override
+    public Boolean markAllRead(String email) {
+        String url = ApiConfig.url("/api/mobile/notifications/read-all/") + email;
+        ApiGenericResponse response = OkHttpClientHelper.post(url, "");
+        if (response.isSuccess()) {
+            return true;
+        }
+        Log.e("NotificationClientImpl", "Error marking all read: " + response.getResponseBody());
+        return false;
+    }
+
+    @Override
     public Boolean markAsRead(String notificationId) {
         String url = ApiConfig.url("/api/mobile/notifications/ack/") + notificationId;
         ApiGenericResponse response = OkHttpClientHelper.post(url, "");

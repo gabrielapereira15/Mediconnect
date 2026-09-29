@@ -6,6 +6,12 @@ public class Notification {
     private String message;
     private String creationDate;
 
+    /** WAITLIST_OFFER, APPOINTMENT or ANNOUNCEMENT. */
+    private String kind;
+
+    /** Whether the patient has seen it. */
+    private boolean read;
+
     public String getId() {
         return id;
     }
@@ -38,4 +44,20 @@ public class Notification {
         this.creationDate = creationDate;
     }
 
+
+    public String getKind() {
+        return kind;
+    }
+
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
+    }
 }

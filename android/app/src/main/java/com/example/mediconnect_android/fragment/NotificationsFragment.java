@@ -1,106 +1,186 @@
 package com.example.mediconnect_android.fragment;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.adapter.NotificationAdapter;
 import com.example.mediconnect_android.client.NotificationClient;
 import com.example.mediconnect_android.client.NotificationClientImpl;
 import com.example.mediconnect_android.databinding.FragmentNotificationsBinding;
 import com.example.mediconnect_android.model.Notification;
-import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.util.Background;
+import com.example.mediconnect_android.util.FragmentUtils;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Messages (board P13).
+ *
+ * The clinic talking to the patient: an earlier slot, a reminder, news.
+ * Called Messages rather than Notifications because that is what they are —
+ * a system tray is something you dismiss, and these are worth keeping.
+ *
+ * Reading one used to remove it from the list: the server filtered
+ * acknowledged messages out, so glancing at an offer lost it. They stay
+ * now, marked read, and one button clears the lot.
+ */
 public class NotificationsFragment extends Fragment {
 
-    FragmentNotificationsBinding binding;
-    NotificationAdapter adapter;
-    List<Notification> notifications = new ArrayList<>();
-    NotificationClient notificationClient;
+    private static final String KIND_WAITLIST_OFFER = "WAITLIST_OFFER";
 
-    public NotificationsFragment() {
-        notificationClient = new NotificationClientImpl();
-    }
+    private FragmentNotificationsBinding binding;
+    private final NotificationClient notificationClient = new NotificationClientImpl();
+    private final List<Notification> notifications = new ArrayList<>();
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
-        View view = binding.getRoot();
         init();
-        return view;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        requireActivity().setTitle(R.string.messages_title);
     }
 
     private void init() {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
-        String email = sharedPreferences.getString("email", "");
-
-        loadNotifications(email);
-
-        binding.swipeRefresh.setOnRefreshListener(() -> loadNotifications(email, true));
-    }
-
-    private void loadNotifications(String email) {
-        loadNotifications(email, false);
-    }
-
-    private void loadNotifications(String email, boolean isRefresh) {
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.stateView.setContentView(binding.recyclerView);
+        binding.swipeRefresh.setOnRefreshListener(() -> load(true));
+        binding.btnMarkAllRead.setOnClickListener(v -> markAllRead());
+
+        load(false);
+    }
+
+    // ---- loading ----------------------------------------------------------
+
+    private void load(boolean isRefresh) {
         // On a refresh the existing list stays put behind the spinner.
         if (!isRefresh) {
             binding.stateView.showLoading();
         }
 
         Background.run(
-                () -> notificationClient.getNotifications(email),
+                () -> notificationClient.getNotifications(email()),
                 loaded -> {
                     if (binding == null) {
-                        return; // the view went away while the request was in flight
+                        return;
                     }
                     binding.swipeRefresh.setRefreshing(false);
-                    notifications = loaded;
-                    bindAdapter();
-                    binding.stateView.showContentOrEmpty(notifications.isEmpty(),
-                            R.drawable.ic_bell,
-                            R.string.state_no_notifications_title,
-                            R.string.state_no_notifications_body);
+                    notifications.clear();
+                    if (loaded != null) {
+                        notifications.addAll(loaded);
+                    }
+                    bind();
                 },
                 error -> {
                     if (binding == null) {
                         return;
                     }
                     binding.swipeRefresh.setRefreshing(false);
-                    binding.stateView.showError(() -> loadNotifications(email));
+                    binding.stateView.showError(() -> load(false));
                 });
     }
 
-    private void bindAdapter() {
-        // StateView owns the empty/content visibility; this only has to keep
-        // the toolbar badge in step.
+    private void bind() {
+        binding.recyclerView.setAdapter(new NotificationAdapter(
+                notifications, requireContext(), this::open, this::act));
+
+        long unread = notifications.stream().filter(n -> !n.isRead()).count();
+        binding.unreadCount.setText(unread == 0
+                ? getString(R.string.messages_all_read)
+                : getString(R.string.messages_unread, (int) unread));
+        binding.btnMarkAllRead.setVisibility(unread == 0 ? View.GONE : View.VISIBLE);
+        binding.messagesHeader.setVisibility(notifications.isEmpty() ? View.GONE : View.VISIBLE);
+
+        updateBellBadge(unread > 0);
+
+        binding.stateView.showContentOrEmpty(notifications.isEmpty(),
+                R.drawable.ic_bell,
+                R.string.state_no_notifications_title,
+                R.string.state_no_notifications_body);
+    }
+
+    // ---- acting on one -----------------------------------------------------
+
+    /**
+     * Opening a message marks it read, which is what opening means. The
+     * list is not refetched for it: the row is already on screen and a
+     * whole reload to grey one dot would be a visible jolt.
+     */
+    private void open(Notification notification) {
+        if (notification.isRead()) {
+            return;
+        }
+        notification.setRead(true);
+        bind();
+
+        Background.run(
+                () -> notificationClient.markAsRead(notification.getId()),
+                marked -> { /* the row already shows it */ },
+                error -> { /* it will still be unread next time, which is honest */ });
+    }
+
+    /** The button inside a message, which depends on what kind it is. */
+    private void act(Notification notification) {
+        open(notification);
+
+        if (KIND_WAITLIST_OFFER.equals(notification.getKind())) {
+            // The offer is against a doctor's freed slot, so the place to
+            // act on it is the visit list it will appear in.
+            goToTab(R.id.visits_fragment);
+            return;
+        }
+        FragmentUtils.loadFragment(getParentFragmentManager(), R.id.flFragment,
+                new MedicalHistoryFragment());
+    }
+
+    private void markAllRead() {
+        for (Notification notification : notifications) {
+            notification.setRead(true);
+        }
+        bind();
+
+        Background.run(
+                () -> notificationClient.markAllRead(email()),
+                marked -> { /* the list already shows it */ },
+                error -> load(true));
+    }
+
+    // ---- plumbing -----------------------------------------------------------
+
+    private void updateBellBadge(boolean hasUnread) {
         if (getActivity() instanceof NotificationBadgeHandler) {
             ((NotificationBadgeHandler) getActivity())
-                    .updateNotificationBadgeVisibility(!notifications.isEmpty());
+                    .updateNotificationBadgeVisibility(hasUnread);
         }
+    }
 
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new NotificationAdapter(notifications, getContext());
-        binding.recyclerView.setAdapter(adapter);
+    private void goToTab(int itemId) {
+        BottomNavigationView nav = requireActivity().findViewById(R.id.bottomNavigationView);
+        if (nav != null) {
+            nav.setSelectedItemId(itemId);
+        }
+    }
+
+    private String email() {
+        return requireContext()
+                .getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                .getString("email", "");
     }
 
     @Override

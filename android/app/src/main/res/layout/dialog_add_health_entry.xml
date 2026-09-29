@@ -13,11 +13,6 @@
         android:paddingTop="@dimen/space_md"
         android:paddingEnd="@dimen/space_lg">
 
-        <Spinner
-            android:id="@+id/spinnerType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilDescription"

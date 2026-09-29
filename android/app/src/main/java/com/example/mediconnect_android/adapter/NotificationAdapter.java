@@ -6,143 +6,215 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mediconnect_android.activity.MainActivity;
-import com.example.mediconnect_android.client.NotificationClient;
-import com.example.mediconnect_android.client.NotificationClientImpl;
+import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.NotificationItemBinding;
+import com.example.mediconnect_android.databinding.ViewSectionHeaderBinding;
 import com.example.mediconnect_android.model.Notification;
-import com.example.mediconnect_android.util.DialogUtils;
-import com.example.mediconnect_android.util.Background;
+import com.example.mediconnect_android.util.WhenLabel;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Locale;
+import java.util.function.Consumer;
 
-public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
-    NotificationItemBinding notificationItemBinding;
-    NotificationClient notificationClient;
-    private final List<Notification> notificationList;
+/**
+ * The messages list (board P13).
+ *
+ * Grouped into today and earlier, because "when" is the first thing a
+ * patient checks about a message and a flat list makes them read every
+ * timestamp to find it. A waitlist offer is tinted and carries its own
+ * action: it expires, and the others do not.
+ */
+public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_MESSAGE = 1;
+
+    /** Kinds the server sends, which decide the icon and the action. */
+    private static final String KIND_WAITLIST_OFFER = "WAITLIST_OFFER";
+    private static final String KIND_APPOINTMENT = "APPOINTMENT";
+
+    private static final DateTimeFormatter DAY =
+            DateTimeFormatter.ofPattern("EEE d MMM", Locale.ENGLISH);
+
     private final Context context;
+    private final List<Object> rows = new ArrayList<>();
 
-    public NotificationAdapter(List<Notification> notificationList, Context context) {
-        this.notificationList = notificationList;
+    /** Tapping a message, and tapping the action inside one. */
+    private final Consumer<Notification> onOpen;
+    private final Consumer<Notification> onAction;
+
+    public NotificationAdapter(List<Notification> notifications, Context context,
+                               Consumer<Notification> onOpen,
+                               Consumer<Notification> onAction) {
         this.context = context;
+        this.onOpen = onOpen;
+        this.onAction = onAction;
+        buildRows(notifications);
+    }
+
+    private void buildRows(List<Notification> notifications) {
+        if (notifications == null) {
+            return;
+        }
+        List<Notification> today = new ArrayList<>();
+        List<Notification> earlier = new ArrayList<>();
+
+        LocalDate now = LocalDate.now();
+        for (Notification notification : notifications) {
+            LocalDate day = WhenLabel.parse(notification.getCreationDate())
+                    .map(LocalDateTime::toLocalDate)
+                    .orElse(null);
+            if (day != null && day.isEqual(now)) {
+                today.add(notification);
+            } else {
+                earlier.add(notification);
+            }
+        }
+
+        if (!today.isEmpty()) {
+            rows.add(context.getString(R.string.messages_today));
+            rows.addAll(today);
+        }
+        if (!earlier.isEmpty()) {
+            rows.add(context.getString(R.string.messages_earlier));
+            rows.addAll(earlier);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return rows.get(position) instanceof Notification ? TYPE_MESSAGE : TYPE_HEADER;
     }
 
     @NonNull
     @Override
-    public NotificationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        notificationItemBinding = NotificationItemBinding.inflate(layoutInflater, parent, false);
-        notificationClient = new NotificationClientImpl();
-        listeners();
-        return new NotificationAdapter.ViewHolder(notificationItemBinding);
-    }
-
-    private void listeners() {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        if (viewType == TYPE_HEADER) {
+            return new HeaderViewHolder(ViewSectionHeaderBinding.inflate(inflater, parent, false));
+        }
+        return new ViewHolder(NotificationItemBinding.inflate(inflater, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NotificationAdapter.ViewHolder holder, int position) {
-        holder.bindView(notificationList.get(position));
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        Object row = rows.get(position);
+        if (holder instanceof ViewHolder) {
+            ((ViewHolder) holder).bind((Notification) row);
+        } else {
+            ((HeaderViewHolder) holder).binding.sectionTitle.setText((String) row);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return notificationList.size();
+        return rows.size();
     }
 
-    private String createTimeAgo(Notification notification) {
-        LocalDateTime creationDate = LocalDateTime.parse(notification.getCreationDate());
-        LocalDateTime now = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
-        long diffInSeconds = Math.abs(now.toEpochSecond(ZoneOffset.UTC) - creationDate.toEpochSecond(ZoneOffset.UTC));
-        long days = TimeUnit.DAYS.convert(diffInSeconds, TimeUnit.SECONDS);
-        long hours = TimeUnit.HOURS.convert(diffInSeconds, TimeUnit.SECONDS);
-        long minutes = TimeUnit.MINUTES.convert(diffInSeconds, TimeUnit.SECONDS);
+    static class HeaderViewHolder extends RecyclerView.ViewHolder {
 
-        if (days > 0) {
-            if (days == 1) {
-                return "Yesterday";
-            }
-            return days + " days ago";
+        final ViewSectionHeaderBinding binding;
+
+        HeaderViewHolder(ViewSectionHeaderBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
-        if (hours > 0) {
-            if (hours == 1) {
-                return "1 hour ago";
-            }
-            return hours + " hours ago";
-        }
-        if (minutes > 0) {
-            if (minutes == 1) {
-                return "1 minute ago";
-            }
-            return minutes + " minutes ago";
-        }
-        return "Just now";
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        NotificationItemBinding recyclerItemBinding;
-        Notification notification;
 
-        public ViewHolder(NotificationItemBinding recyclerItemBinding) {
-            super(recyclerItemBinding.getRoot());
-            this.recyclerItemBinding = recyclerItemBinding;
+        private final NotificationItemBinding binding;
 
-            recyclerItemBinding.buttonRead.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    DialogUtils.showMessageDialog(context, notification.getMessage());
-                }
-            });
-
-            recyclerItemBinding.buttonClear.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Acknowledging is fire-and-forget: the row goes straight
-                    // away and the server catches up in the background.
-                    String notificationId = notification.getId();
-                    Background.run(() -> notificationClient.markAsRead(notificationId));
-                    notificationList.remove(getAdapterPosition());
-                    notifyItemRemoved(getAdapterPosition());
-                    if (notificationList.isEmpty()) {
-                        ((MainActivity) context).updateNotificationBadgeVisibility(false);
-                    }
-                }
-            });
+        ViewHolder(NotificationItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
-        public void bindView(Notification notification) {
-            this.notification = notification;
-            setupMessage(notification);
-            recyclerItemBinding.notificationTitle.setText(notification.getTitle());
-            recyclerItemBinding.notificationBody.setText(notification.getMessage());
+        void bind(Notification notification) {
+            binding.messageTitle.setText(notification.getTitle());
+            binding.messageBody.setText(notification.getMessage());
+            binding.messageWhen.setText(whenWords(notification));
+            binding.messageUnread.setVisibility(
+                    notification.isRead() ? View.INVISIBLE : View.VISIBLE);
+
+            bindKind(notification);
+
+            binding.messageCard.setContentDescription(context.getString(R.string.cd_message,
+                    notification.getTitle(), notification.getMessage()));
+            binding.messageCard.setOnClickListener(v -> onOpen.accept(notification));
         }
 
-        private void setupMessage(Notification notification) {
-            recyclerItemBinding.notificationBody.setText(notification.getMessage());
-            recyclerItemBinding.notificationBody.post(() -> {
-                if (recyclerItemBinding.notificationBody.getLineCount() > 2) {
-                    String fullText = notification.getMessage();
+        /**
+         * A waitlist offer looks different because it behaves differently:
+         * it expires, and the only useful thing to do with it is look at it
+         * now. Everything else is news the patient can read whenever.
+         */
+        private void bindKind(Notification notification) {
+            String kind = notification.getKind() == null ? "" : notification.getKind();
 
-                    int endOfSecondLine = recyclerItemBinding.notificationBody.getLayout()
-                            .getLineEnd(1);
-                    String truncatedText = fullText.substring(0, endOfSecondLine - 3) + "...";
+            if (KIND_WAITLIST_OFFER.equals(kind)) {
+                binding.messageCard.setCardBackgroundColor(
+                        ContextCompat.getColor(context, R.color.md_rating_container));
+                binding.messageIcon.setImageResource(R.drawable.ic_hourglass);
+                binding.messageIcon.setBackgroundResource(R.drawable.tile_surface);
+                binding.messageIcon.setImageTintList(ContextCompat.getColorStateList(
+                        context, R.color.md_on_rating_container));
+                binding.messageAction.setVisibility(View.VISIBLE);
+                binding.messageAction.setText(R.string.messages_see_offer);
+                binding.messageAction.setOnClickListener(v -> onAction.accept(notification));
+                return;
+            }
 
-                    recyclerItemBinding.notificationBody.setText(truncatedText);
-                    recyclerItemBinding.buttonRead.setVisibility(View.VISIBLE);
-                } else {
-                    recyclerItemBinding.buttonRead.setVisibility(View.GONE);
-                }
-            });
+            binding.messageCard.setCardBackgroundColor(
+                    ContextCompat.getColor(context, R.color.md_surface));
 
-            String timeText = createTimeAgo(notification);
+            if (KIND_APPOINTMENT.equals(kind)) {
+                binding.messageIcon.setImageResource(R.drawable.ic_bell);
+                binding.messageIcon.setBackgroundResource(R.drawable.tile_blue_soft);
+                binding.messageIcon.setImageTintList(ContextCompat.getColorStateList(
+                        context, R.color.md_on_secondary_container));
+                binding.messageAction.setVisibility(View.VISIBLE);
+                binding.messageAction.setText(R.string.messages_fill_form);
+                binding.messageAction.setOnClickListener(v -> onAction.accept(notification));
+                return;
+            }
 
-            recyclerItemBinding.notificationTime.setText(timeText);
+            binding.messageIcon.setImageResource(R.drawable.ic_megaphone);
+            binding.messageIcon.setBackgroundResource(R.drawable.tile_brand_soft);
+            binding.messageIcon.setImageTintList(ContextCompat.getColorStateList(
+                    context, R.color.md_on_primary_container));
+            binding.messageAction.setVisibility(View.GONE);
+        }
+
+        /**
+         * How long ago, in the units a person would use: minutes for the
+         * last hour, hours for today, the day itself after that.
+         */
+        private String whenWords(Notification notification) {
+            LocalDateTime at = WhenLabel.parse(notification.getCreationDate()).orElse(null);
+            if (at == null) {
+                return "";
+            }
+
+            Duration since = Duration.between(at, LocalDateTime.now());
+            if (since.isNegative() || since.toMinutes() < 1) {
+                return context.getString(R.string.messages_just_now);
+            }
+            if (since.toHours() < 1) {
+                return context.getString(R.string.messages_minutes, since.toMinutes());
+            }
+            if (at.toLocalDate().isEqual(LocalDate.now())) {
+                return context.getString(R.string.messages_hours, since.toHours());
+            }
+            return at.format(DAY);
         }
     }
 }

@@ -35,6 +35,16 @@ public class Notification {
     @Column
     private Boolean isDeleted;
 
+    /**
+     * What sort of message this is, so the app can give it the right icon
+     * and the right thing to do next.
+     *
+     * Null means an announcement from the clinic, which is what every
+     * notification was before the waitlist started sending offers.
+     */
+    @Column
+    private String kind;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private OffsetDateTime dateCreated;

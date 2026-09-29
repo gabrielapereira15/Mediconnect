@@ -1,78 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    One entry. The kind is a small label rather than a heading so a mixed
-    list still reads at a glance, and "no longer current" is stated on the
-    row rather than the entry being hidden.
+    One entry on the health record (board P12).
+
+    The leading tile carries the kind, so the row does not have to spell it
+    out in words the section heading has already said. An entry that is no
+    longer current stays on the record and says so: a reaction someone had
+    five years ago still matters to whoever treats them next.
 -->
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/entry_row"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/space_md"
-    android:layout_marginVertical="@dimen/space_xs"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="1dp"
-    app:strokeColor="@color/md_outline_variant"
-    app:strokeWidth="1dp">
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/touch_target"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/space_lg"
+    android:paddingVertical="@dimen/space_md">
+
+    <ImageView
+        android:id="@+id/entry_icon"
+        android:layout_width="@dimen/control_md"
+        android:layout_height="@dimen/control_md"
+        android:background="@drawable/tile_danger_soft"
+        android:contentDescription="@null"
+        android:padding="@dimen/space_sm"
+        android:src="@drawable/ic_alert"
+        app:tint="@color/md_error" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="@dimen/space_md">
+        android:layout_marginStart="@dimen/space_md"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/entry_description"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+            tools:text="Penicillin" />
 
-            <TextView
-                android:id="@+id/entryType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAllCaps="true"
-                android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
-                tools:text="Allergy" />
+        <TextView
+            android:id="@+id/entry_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+            tools:text="Rash and swelling within an hour of the first dose." />
 
-            <TextView
-                android:id="@+id/entryDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
-                tools:text="Penicillin" />
-
-            <TextView
-                android:id="@+id/entryNote"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
-                android:visibility="gone"
-                tools:text="Rash within an hour of the first dose."
-                tools:visibility="visible" />
-
-            <TextView
-                android:id="@+id/entryInactive"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xs"
-                android:text="@string/health_no_longer_current"
-                android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
-                android:textColor="@color/md_on_surface_variant"
-                android:visibility="gone"
-                tools:visibility="visible" />
-        </LinearLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnStop"
-            style="@style/Widget.Mediconnect.Button.Text"
+        <TextView
+            android:id="@+id/entry_inactive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/health_stop" />
+            android:layout_marginTop="@dimen/space_xs"
+            android:background="@drawable/badge_neutral"
+            android:paddingHorizontal="@dimen/space_sm"
+            android:paddingVertical="2dp"
+            android:text="@string/health_no_longer_current"
+            android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+            android:textColor="@color/md_on_surface_variant"
+            android:visibility="gone"
+            tools:visibility="visible" />
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+
+    <ImageView
+        android:id="@+id/entry_chevron"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_chevron_right"
+        app:tint="@color/md_on_surface_subtle" />
+</LinearLayout>

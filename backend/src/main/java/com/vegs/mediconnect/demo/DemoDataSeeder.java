@@ -6,6 +6,7 @@ import com.vegs.mediconnect.datasource.health.HealthEntryType;
 import com.vegs.mediconnect.datasource.doctor.Doctor;
 import com.vegs.mediconnect.datasource.doctor.DoctorRepository;
 import com.vegs.mediconnect.datasource.notification.Notification;
+import com.vegs.mediconnect.datasource.notification.NotificationKind;
 import com.vegs.mediconnect.datasource.notification.NotificationPatient;
 import com.vegs.mediconnect.datasource.notification.NotificationPatientRepository;
 import com.vegs.mediconnect.datasource.notification.NotificationRepository;
@@ -388,13 +389,13 @@ public class DemoDataSeeder implements ApplicationRunner {
 
     private void seedNotifications(List<Patient> patients) {
         var notifications = List.of(
-                notification("Appointment reminder",
+                notification(NotificationKind.APPOINTMENT, "Appointment reminder",
                         "You have an appointment with Dr. Chase in two days. "
                                 + "Please complete your pre-appointment form beforehand."),
-                notification("Flu shots available",
+                notification(NotificationKind.ANNOUNCEMENT, "Flu shots available",
                         "Walk-in flu vaccinations are available at the clinic every weekday "
                                 + "between 9am and 4pm, no appointment needed."),
-                notification("Clinic hours over the holidays",
+                notification(NotificationKind.ANNOUNCEMENT, "Clinic hours over the holidays",
                         "The clinic will close at 1pm on December 24th and reopen on December 27th.")
         );
 
@@ -414,8 +415,9 @@ public class DemoDataSeeder implements ApplicationRunner {
         notificationPatientRepository.saveAll(links);
     }
 
-    private Notification notification(String title, String message) {
+    private Notification notification(String kind, String title, String message) {
         var notification = new Notification();
+        notification.setKind(kind);
         notification.setTitle(title);
         notification.setMessage(message);
         notification.setSendAllPatients(true);

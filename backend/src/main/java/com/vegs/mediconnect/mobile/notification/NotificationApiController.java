@@ -25,6 +25,18 @@ public class NotificationApiController {
         return ResponseEntity.ok(notificationApiService.getNotifications(email));
     }
 
+    /**
+     * Marks everything this patient can see as read.
+     *
+     * The email is in the path so the interceptor checks ownership the way
+     * it does for the list itself.
+     */
+    @PostMapping("/read-all/{email}")
+    public ResponseEntity<Void> markAllRead(@PathVariable(name = "email") final String email) {
+        notificationApiService.markAllRead(email);
+        return ResponseEntity.accepted().build();
+    }
+
     @PostMapping("/ack/{notificationId}")
     public ResponseEntity<Void> acknowledgeNotification(
             @PathVariable(name = "notificationId") final UUID notificationId) {

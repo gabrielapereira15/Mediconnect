@@ -45,7 +45,31 @@ import java.util.stream.Collectors;
  */
 public class HealthSummaryFragment extends Fragment {
 
+    /** What the screen should do as soon as it has the summary. */
+    public static final String ACTION_SHARE = "share";
+    public static final String ACTION_DOWNLOAD = "download";
+
+    private static final String ARG_ACTION = "action";
+
+    /**
+     * Opens the summary and carries out one action once it has loaded.
+     *
+     * The health record offers Share and Download as two buttons, but the
+     * document is built in one place; this is how those buttons reach it
+     * without a second implementation.
+     */
+    public static HealthSummaryFragment of(String action) {
+        HealthSummaryFragment fragment = new HealthSummaryFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_ACTION, action);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     private FragmentHealthSummaryBinding binding;
+
+    /** Runs once, when the summary first arrives. */
+    private String pendingAction;
     private final HealthClient healthClient = new HealthClientImpl();
 
     /** Held so Share does not have to rebuild it. */
@@ -60,6 +84,9 @@ public class HealthSummaryFragment extends Fragment {
     }
 
     private void init() {
+        Bundle args = getArguments();
+        pendingAction = args == null ? null : args.getString(ARG_ACTION);
+
         binding.tvGenerated.setText(getString(R.string.summary_generated,
                 DateFormat.getDateInstance(DateFormat.LONG).format(new Date())));
 
@@ -123,6 +150,28 @@ public class HealthSummaryFragment extends Fragment {
                 + section(entries, HealthEntry.TYPE_MEDICATION) + "\n\n"
                 + getString(R.string.health_conditions) + ":\n"
                 + section(entries, HealthEntry.TYPE_CONDITION);
+
+        runPendingAction();
+    }
+
+    /**
+     * Carries out whatever the health record's button asked for, once.
+     *
+     * Only after the summary exists: sharing an empty string because the
+     * request had not landed yet is worse than a moment's wait.
+     */
+    private void runPendingAction() {
+        if (pendingAction == null) {
+            return;
+        }
+        String action = pendingAction;
+        pendingAction = null;
+
+        if (ACTION_SHARE.equals(action)) {
+            share();
+        } else if (ACTION_DOWNLOAD.equals(action)) {
+            exportDocument();
+        }
     }
 
     /**

@@ -15,6 +15,11 @@ import com.example.mediconnect_android.client.AppointmentClient;
 import com.example.mediconnect_android.client.AppointmentClientImpl;
 import com.example.mediconnect_android.databinding.FragmentMedicalHistoryBinding;
 import com.example.mediconnect_android.model.Appointment;
+import com.example.mediconnect_android.client.WaitlistClient;
+import com.example.mediconnect_android.client.WaitlistClientImpl;
+import com.example.mediconnect_android.model.WaitlistEntry;
+import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.WhenLabel;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.Background;
 
@@ -26,6 +31,11 @@ public class MedicalHistoryFragment extends Fragment {
     FragmentMedicalHistoryBinding binding;
     AppointmentClient appointmentClient;
     List<Appointment> appointmentsList;
+
+    private final WaitlistClient waitlistClient = new WaitlistClientImpl();
+
+    /** The earlier slot the clinic is holding, if there is one. */
+    private WaitlistEntry offer;
 
     public MedicalHistoryFragment() {
         appointmentClient = new AppointmentClientImpl();
@@ -118,6 +128,64 @@ public class MedicalHistoryFragment extends Fragment {
 
     private void init() {
         setFilterListener();
+        loadOffers();
+    }
+
+    /**
+     * An earlier slot the clinic is holding, above everything else.
+     *
+     * It is the only thing on this screen that expires, so it goes at the
+     * top; the rest of the list will still be true tomorrow.
+     */
+    private void loadOffers() {
+        Background.run(
+                () -> waitlistClient.list(email()),
+                entries -> {
+                    if (binding == null || entries == null) {
+                        return;
+                    }
+                    offer = entries.stream()
+                            .filter(WaitlistEntry::isOffered)
+                            .findFirst()
+                            .orElse(null);
+                    bindOffer();
+                },
+                error -> { /* the list is the screen; a missing offer is not an error */ });
+    }
+
+    private void bindOffer() {
+        if (offer == null) {
+            binding.offerBanner.offerCard.setVisibility(View.GONE);
+            return;
+        }
+        binding.offerBanner.offerCard.setVisibility(View.VISIBLE);
+        binding.offerBanner.offerBody.setText(getString(R.string.offer_body,
+                WhenLabel.doctorName(offer.getDoctorName())));
+
+        binding.offerBanner.offerTake.setOnClickListener(v -> BookAppointmentFragment.open(
+                requireActivity().getSupportFragmentManager(),
+                offer.getDoctorId(), offer.getDoctorName(), ""));
+
+        binding.offerBanner.offerKeep.setOnClickListener(v -> keepMine());
+    }
+
+    /** Declining takes them off that doctor's list, which is what it means. */
+    private void keepMine() {
+        WaitlistEntry declined = offer;
+        offer = null;
+        bindOffer();
+
+        Background.run(
+                () -> waitlistClient.leave(email(), declined.getId()),
+                left -> DialogUtils.showMessageDialog(getContext(), getString(
+                        R.string.offer_kept, WhenLabel.doctorName(declined.getDoctorName()))),
+                error -> loadOffers());
+    }
+
+    private String email() {
+        return requireContext()
+                .getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                .getString("email", "");
     }
 
     /**

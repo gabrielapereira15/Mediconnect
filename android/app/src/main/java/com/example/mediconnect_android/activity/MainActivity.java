@@ -95,7 +95,11 @@ public class MainActivity extends AppCompatActivity
         // The badge is decoration; fetch it in the background so the activity
         // is interactive straight away.
         Background.run(() -> notificationClient.getNotifications(email), notifications -> {
-            int count = notifications == null ? 0 : notifications.size();
+            // Unread, not "any". Read messages stay on the list now, so
+            // counting them all would leave the bell dotted for ever.
+            int count = notifications == null
+                    ? 0
+                    : (int) notifications.stream().filter(n -> !n.isRead()).count();
             mainBinding.notificationBadge.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
             // A dot says nothing to a screen reader, so the count goes on the
             // button's own label.

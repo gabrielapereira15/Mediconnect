@@ -216,6 +216,35 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="profile_appearance">Appearance</string>
     <string name="profile_appearance_body">System follows the setting on your phone.</string>
     <string name="profile_sign_out">Sign out</string>
+    <string name="profile_edit">Edit</string>
+    <string name="profile_personal">Personal details</string>
+    <string name="profile_your_data">Your data</string>
+    <string name="profile_theme_light">Light</string>
+    <string name="profile_theme_dark">Dark</string>
+    <string name="profile_theme_system">System</string>
+    <string name="profile_phone">Phone</string>
+    <string name="profile_address">Address</string>
+    <string name="profile_dob">Date of birth</string>
+    <string name="profile_health_card">Health card</string>
+    <string name="profile_clinic">Clinic</string>
+    <string name="profile_clinic_value">%1$s · code %2$s</string>
+    <string name="profile_not_given">Not given yet</string>
+    <string name="profile_health_card_value">Ending %1$s · %2$s</string>
+    <string name="profile_reminders">Visit reminders</string>
+    <string name="profile_reminders_body">The day before and 30 minutes before, for visits you switch on.</string>
+    <string name="profile_offers">Earlier-slot offers</string>
+    <string name="profile_offers_body_on">You are on %1$d waitlist. Turning this off leaves them all.</string>
+    <string name="profile_offers_body_many">You are on %1$d waitlists. Turning this off leaves them all.</string>
+    <string name="profile_offers_body_off">Ask for these from a visit, or when you are booking.</string>
+    <string name="profile_offers_left">You have left every waitlist.</string>
+    <string name="profile_offers_leave">Leave them</string>
+    <string name="profile_row_record">Your health record</string>
+    <string name="profile_row_record_sub">Allergies, medications and conditions</string>
+    <string name="profile_row_summary">Download my health summary</string>
+    <string name="profile_row_summary_sub">A PS-CA document another Canadian clinic can read</string>
+    <string name="profile_privacy">Privacy and terms</string>
+    <string name="profile_privacy_sub">What we hold, and what we do with it</string>
+    <string name="profile_privacy_body">MediConnect holds the details you enter and the visits you book, so the clinic can treat you. Your health record is shown to the doctor you are booked with. Nothing is sold or shared with anyone else, and signing out removes it all from this device.</string>
     <string name="theme_system">System</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
@@ -231,7 +260,7 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="sign_out_body">You will need your email and a passcode to sign back in.</string>
 
     <!-- Health record screen. -->
-    <string name="health_record_title">Health information</string>
+    <string name="health_record_title">Health record</string>
     <string name="health_add">Add</string>
     <string name="health_add_title">Add to your health record</string>
     <string name="health_add_description">What is it?</string>
@@ -247,6 +276,41 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="health_type_allergy">Allergy</string>
     <string name="health_type_medication">Medication</string>
     <string name="health_type_condition">Condition</string>
+    <!-- ==== Waitlist offers ==== -->
+    <string name="offer_title">An earlier slot opened up</string>
+    <string name="offer_body">%1$s has something earlier than the visit you hold. Open their times to take it.</string>
+    <string name="offer_keep">Keep mine</string>
+    <string name="offer_take">See times</string>
+    <string name="offer_kept">We will stop offering earlier slots with %1$s.</string>
+
+    <!-- ==== Messages (P13) ==== -->
+    <string name="messages_title">Messages</string>
+    <string name="messages_mark_all_read">Mark all read</string>
+    <string name="messages_unread">%1$d unread</string>
+    <string name="messages_all_read">All caught up</string>
+    <string name="messages_unread_dot">Unread</string>
+    <string name="messages_today">Today</string>
+    <string name="messages_earlier">Earlier</string>
+    <string name="messages_see_offer">See offer</string>
+    <string name="messages_fill_form">Fill in form</string>
+    <string name="messages_just_now">Just now</string>
+    <string name="messages_minutes">%1$d min</string>
+    <string name="messages_hours">%1$d h</string>
+    <string name="cd_message">%1$s, %2$s</string>
+
+    <string name="health_intro">What your doctor should know before your appointment. Kept once, instead of rewritten on paper at every visit.</string>
+    <string name="health_share_title">Share your health summary</string>
+    <string name="health_share_body">A standard summary another clinic or hospital in Canada can read (PS-CA).</string>
+    <string name="health_share">Share</string>
+    <string name="health_download">Download</string>
+    <string name="health_stopped_note">Stopped items stay on your record marked as no longer current.</string>
+    <string name="health_section_empty_allergies">Nothing on file. Add anything you react to, however mild.</string>
+    <string name="health_section_empty_medications">Nothing on file. Add anything you take regularly, including vitamins.</string>
+    <string name="health_section_empty_conditions">Nothing on file. Add anything you are treated for or live with.</string>
+    <string name="health_since">Since %1$s</string>
+    <string name="health_entry_actions">%1$s</string>
+    <string name="health_add_kind">Add %1$s</string>
+    <string name="cd_health_entry">%1$s, %2$s</string>
     <string name="health_empty_title">Nothing recorded yet</string>
     <string name="health_empty_body">Add your allergies, medications and conditions so your doctor has them before your appointment.</string>
 

@@ -11,104 +11,157 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import androidx.annotation.StringRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.activity.WelcomeActivity;
-import com.example.mediconnect_android.client.HealthClient;
-import com.example.mediconnect_android.client.HealthClientImpl;
+import com.example.mediconnect_android.client.WaitlistClient;
+import com.example.mediconnect_android.client.WaitlistClientImpl;
 import com.example.mediconnect_android.databinding.FragmentProfileBinding;
-import com.example.mediconnect_android.model.HealthEntry;
+import com.example.mediconnect_android.databinding.ViewDetailRowBinding;
+import com.example.mediconnect_android.model.WaitlistEntry;
 import com.example.mediconnect_android.util.Background;
+import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.ReminderPreference;
 import com.example.mediconnect_android.util.SessionManager;
 import com.example.mediconnect_android.util.ThemePreference;
+import com.example.mediconnect_android.util.WhenLabel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Everything about the person using the app.
+ * Profile and settings (board P14).
  *
- * Four things live here, in the order someone is likely to want them: who
- * they are, what the clinic knows about their health, how the app should
- * behave, and the way out. It used to be a photo, four lines of text and an
- * edit button — enough to prove the data existed, not enough to open twice.
+ * Who the clinic thinks you are, how the app behaves, and what you can do
+ * with your own data — in that order, because that is the order a patient
+ * asks them in. Settings and Sign out used to live behind a hamburger.
  */
 public class ProfileFragment extends Fragment {
 
-    /** Beyond this many, the line becomes a count instead of a list. */
-    private static final int MAX_NAMED_ENTRIES = 3;
-
     private FragmentProfileBinding binding;
-    private final HealthClient healthClient = new HealthClientImpl();
+    private final WaitlistClient waitlistClient = new WaitlistClientImpl();
 
-    public ProfileFragment() {
-    }
+    /** The queues this patient is in, which the offers switch reflects. */
+    private final List<WaitlistEntry> waitlists = new ArrayList<>();
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         init();
         return binding.getRoot();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        requireActivity().setTitle(R.string.nav_profile);
+    }
+
     private void init() {
+        bindHeader();
         bindDetails();
         bindThemeToggle();
+        bindReminderSwitch();
+        bindDataRows();
         bindActions();
-        loadHealthRecord();
+        loadWaitlists();
 
         binding.swipeRefresh.setOnRefreshListener(() -> {
+            bindHeader();
             bindDetails();
-            loadHealthRecord();
+            loadWaitlists();
         });
     }
 
-    private void bindDetails() {
-        SharedPreferences prefs = prefs();
+    // ---- who you are -------------------------------------------------------
 
+    private void bindHeader() {
+        SharedPreferences prefs = prefs();
         String fullName = (prefs.getString("first_name", "") + " "
                 + prefs.getString("last_name", "")).trim();
+
         binding.tvFirstName.setText(fullName);
         binding.tvEmail.setText(prefs.getString("email", ""));
-        binding.tvPhoneNumber.setText(prefs.getString("phone_number", ""));
-        binding.tvAddress.setText(prefs.getString("address", ""));
-
-        bindHealthCard(prefs.getString("health_card_number", ""),
-                prefs.getString("health_card_province", ""));
+        binding.profileInitials.setText(WhenLabel.initials(fullName));
 
         Bitmap photo = getImageFromInternalStorage(getContext(), "profile_image.jpg");
+        binding.profileImage.setVisibility(photo == null ? View.GONE : View.VISIBLE);
         if (photo != null) {
-            // The placeholder is an inset, tinted icon; a real photo has to
-            // fill the circle instead of inheriting either.
-            binding.profileImage.setPadding(0, 0, 0, 0);
-            binding.profileImage.setImageTintList(null);
             binding.profileImage.setImageBitmap(photo);
         }
     }
 
+    private void bindDetails() {
+        SharedPreferences prefs = prefs();
+        binding.detailRows.removeAllViews();
+
+        addDetail(R.string.profile_phone, prefs.getString("phone_number", ""));
+        addDetail(R.string.profile_address, prefs.getString("address", ""));
+        addDetail(R.string.profile_dob, prefs.getString("dob", ""));
+        addDetail(R.string.profile_health_card, healthCard(prefs));
+        addDetail(R.string.profile_clinic, clinic(prefs));
+    }
+
+    private void addDetail(int labelRes, String value) {
+        ViewDetailRowBinding row =
+                ViewDetailRowBinding.inflate(getLayoutInflater(), binding.detailRows, false);
+        row.detailLabel.setText(labelRes);
+        // A blank row would read as though the clinic has it and is not
+        // showing it, which is the opposite of true.
+        row.detailValue.setText(value == null || value.trim().isEmpty()
+                ? getString(R.string.profile_not_given)
+                : value);
+
+        if (binding.detailRows.getChildCount() > 0) {
+            binding.detailRows.addView(divider());
+        }
+        binding.detailRows.addView(row.getRoot());
+    }
+
     /**
-     * Shows the card with only its last digits.
+     * The card with only its last digits.
      *
      * A health card number identifies someone to an entire provincial
-     * system, so the whole of it does not belong on a screen being held on a
-     * bus. The last three are enough to tell which card it is.
+     * system, so the whole of it does not belong on a screen being held on
+     * a bus. The last four are enough to tell which card it is.
      */
-    private void bindHealthCard(String number, String province) {
-        if (number == null || number.length() < 3) {
-            binding.tvHealthCard.setVisibility(View.GONE);
-            return;
+    private String healthCard(SharedPreferences prefs) {
+        String number = prefs.getString("health_card_number", "");
+        String province = prefs.getString("health_card_province", "");
+        if (number == null || number.length() < 4) {
+            return "";
         }
-        binding.tvHealthCard.setVisibility(View.VISIBLE);
-        binding.tvHealthCard.setText(getString(R.string.health_card_masked,
-                number.substring(number.length() - 3),
-                province == null ? "" : province));
+        return getString(R.string.profile_health_card_value,
+                number.substring(number.length() - 4),
+                province == null ? "" : province);
     }
+
+    private String clinic(SharedPreferences prefs) {
+        String code = prefs.getString("clinic_code", "");
+        if (code == null || code.trim().isEmpty()) {
+            return "";
+        }
+        return getString(R.string.profile_clinic_value, getString(R.string.clinic_name), code);
+    }
+
+    private View divider() {
+        View line = new View(requireContext());
+        line.setLayoutParams(new android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                getResources().getDimensionPixelSize(R.dimen.stroke_hairline)));
+        line.setBackgroundColor(androidx.core.content.ContextCompat.getColor(
+                requireContext(), R.color.md_outline_variant));
+        return line;
+    }
+
+    // ---- preferences --------------------------------------------------------
 
     private void bindThemeToggle() {
         int saved = ThemePreference.get(requireContext());
@@ -137,18 +190,161 @@ public class ProfileFragment extends Fragment {
         });
     }
 
+    /**
+     * Whether a newly booked visit starts with its reminder on.
+     *
+     * Each visit still has its own switch; this is what a new one inherits,
+     * so a patient who wants reminders does not have to say so eight times.
+     */
+    private void bindReminderSwitch() {
+        binding.switchReminders.switchIcon.setImageResource(R.drawable.ic_bell);
+        binding.switchReminders.switchTitle.setText(R.string.profile_reminders);
+        binding.switchReminders.switchSub.setText(R.string.profile_reminders_body);
+        binding.switchReminders.switchToggle.setChecked(
+                ReminderPreference.defaultOn(requireContext()));
+
+        binding.switchReminders.switchRow.setOnClickListener(v -> {
+            boolean on = !binding.switchReminders.switchToggle.isChecked();
+            binding.switchReminders.switchToggle.setChecked(on);
+            ReminderPreference.setDefaultOn(requireContext(), on);
+        });
+    }
+
+    /**
+     * Whether the clinic may offer earlier slots.
+     *
+     * It reflects something real: the queues the patient is actually in.
+     * Turning it off leaves all of them, which is the only thing "no
+     * thank you" could honestly mean.
+     */
+    private void loadWaitlists() {
+        bindOffersSwitch();
+
+        Background.run(
+                () -> waitlistClient.list(email()),
+                entries -> {
+                    if (binding == null) {
+                        return;
+                    }
+                    binding.swipeRefresh.setRefreshing(false);
+                    waitlists.clear();
+                    if (entries != null) {
+                        waitlists.addAll(entries.stream()
+                                .filter(WaitlistEntry::isOpen)
+                                .collect(Collectors.toList()));
+                    }
+                    bindOffersSwitch();
+                },
+                error -> {
+                    if (binding != null) {
+                        binding.swipeRefresh.setRefreshing(false);
+                    }
+                });
+    }
+
+    private void bindOffersSwitch() {
+        int count = waitlists.size();
+        boolean on = count > 0;
+
+        binding.switchOffers.switchIcon.setImageResource(R.drawable.ic_hourglass);
+        binding.switchOffers.switchTitle.setText(R.string.profile_offers);
+        binding.switchOffers.switchToggle.setChecked(on);
+        binding.switchOffers.switchToggle.setEnabled(on);
+
+        if (count == 1) {
+            binding.switchOffers.switchSub.setText(
+                    getString(R.string.profile_offers_body_on, count));
+        } else if (count > 1) {
+            binding.switchOffers.switchSub.setText(
+                    getString(R.string.profile_offers_body_many, count));
+        } else {
+            binding.switchOffers.switchSub.setText(R.string.profile_offers_body_off);
+        }
+
+        // With no waitlists there is nothing to turn off, and turning it on
+        // is done from a visit — which is where the doctor is named.
+        binding.switchOffers.switchRow.setOnClickListener(on ? v -> confirmLeaveAll() : null);
+        binding.switchOffers.switchRow.setClickable(on);
+    }
+
+    private void confirmLeaveAll() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.profile_offers)
+                .setMessage(getString(waitlists.size() == 1
+                        ? R.string.profile_offers_body_on
+                        : R.string.profile_offers_body_many, waitlists.size()))
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.profile_offers_leave, (dialog, which) -> leaveAll())
+                .show();
+    }
+
+    private void leaveAll() {
+        List<WaitlistEntry> leaving = new ArrayList<>(waitlists);
+        Background.run(
+                () -> {
+                    for (WaitlistEntry entry : leaving) {
+                        waitlistClient.leave(email(), entry.getId());
+                    }
+                    return true;
+                },
+                left -> {
+                    if (binding == null) {
+                        return;
+                    }
+                    waitlists.clear();
+                    bindOffersSwitch();
+                    DialogUtils.showMessageDialog(getContext(),
+                            getString(R.string.profile_offers_left));
+                },
+                error -> {
+                    if (binding != null) {
+                        DialogUtils.showMessageDialog(getContext(),
+                                getString(R.string.error_no_server));
+                        loadWaitlists();
+                    }
+                });
+    }
+
+    // ---- your data ----------------------------------------------------------
+
+    private void bindDataRows() {
+        bindRow(binding.rowHealthRecord.rowIcon, binding.rowHealthRecord.rowTitle,
+                binding.rowHealthRecord.rowSub, R.drawable.ic_record,
+                R.string.profile_row_record, R.string.profile_row_record_sub);
+        binding.rowHealthRecord.visitRow.setOnClickListener(
+                v -> show(new HealthRecordFragment()));
+
+        bindRow(binding.rowSummary.rowIcon, binding.rowSummary.rowTitle,
+                binding.rowSummary.rowSub, R.drawable.ic_download,
+                R.string.profile_row_summary, R.string.profile_row_summary_sub);
+        binding.rowSummary.visitRow.setOnClickListener(
+                v -> show(HealthSummaryFragment.of(HealthSummaryFragment.ACTION_DOWNLOAD)));
+
+        bindRow(binding.rowPrivacy.rowIcon, binding.rowPrivacy.rowTitle,
+                binding.rowPrivacy.rowSub, R.drawable.ic_shield,
+                R.string.profile_privacy, R.string.profile_privacy_sub);
+        binding.rowPrivacy.visitRow.setOnClickListener(v -> showPrivacy());
+    }
+
+    private void bindRow(android.widget.ImageView icon, android.widget.TextView title,
+                         android.widget.TextView sub, int iconRes, int titleRes, int subRes) {
+        icon.setImageResource(iconRes);
+        title.setText(titleRes);
+        sub.setText(subRes);
+    }
+
+    private void showPrivacy() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.profile_privacy)
+                .setMessage(R.string.profile_privacy_body)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
+    }
+
+    // ---- leaving -------------------------------------------------------------
+
     private void bindActions() {
-        binding.btnEditProfile.setOnClickListener(v -> loadFragment(
-                requireActivity().getSupportFragmentManager(),
-                R.id.flFragment, new EditProfileFragment()));
-
-        binding.btnManageHealth.setOnClickListener(v -> loadFragment(
-                requireActivity().getSupportFragmentManager(),
-                R.id.flFragment, new HealthRecordFragment()));
-
-        binding.btnDownloadSummary.setOnClickListener(v -> loadFragment(
-                requireActivity().getSupportFragmentManager(),
-                R.id.flFragment, new HealthSummaryFragment()));
+        binding.btnEditProfile.setOnClickListener(v -> show(new EditProfileFragment()));
 
         binding.btnSignOut.setOnClickListener(v -> new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.sign_out_title)
@@ -158,70 +354,10 @@ public class ProfileFragment extends Fragment {
                 .show());
     }
 
-    /**
-     * Loads the health record and reduces it to one line per kind.
-     *
-     * The full list has its own screen; this is the glance that says whether
-     * there is anything there at all.
-     */
-    private void loadHealthRecord() {
-        String email = prefs().getString("email", "");
-
-        Background.run(
-                () -> healthClient.getEntries(email),
-                entries -> {
-                    if (binding == null) {
-                        return;
-                    }
-                    binding.swipeRefresh.setRefreshing(false);
-                    bindHealthLine(binding.tvAllergies, R.string.health_allergies,
-                            entries, HealthEntry.TYPE_ALLERGY);
-                    bindHealthLine(binding.tvMedications, R.string.health_medications,
-                            entries, HealthEntry.TYPE_MEDICATION);
-                    bindHealthLine(binding.tvConditions, R.string.health_conditions,
-                            entries, HealthEntry.TYPE_CONDITION);
-                },
-                error -> {
-                    if (binding == null) {
-                        return;
-                    }
-                    binding.swipeRefresh.setRefreshing(false);
-                    // The rest of this screen is local and still useful, so a
-                    // failed fetch says so on the one line it affects rather
-                    // than replacing the whole page with an error.
-                    binding.tvAllergies.setText(R.string.error_no_server);
-                    binding.tvMedications.setText("");
-                    binding.tvConditions.setText("");
-                });
-    }
-
-    private void bindHealthLine(TextView view, @StringRes int labelRes,
-                                List<HealthEntry> entries, String type) {
-        List<HealthEntry> matching = entries.stream()
-                .filter(entry -> type.equals(entry.getType()) && entry.isActive())
-                .collect(Collectors.toList());
-
-        String summary;
-        if (matching.isEmpty()) {
-            summary = getString(R.string.health_none_recorded);
-        } else if (matching.size() <= MAX_NAMED_ENTRIES) {
-            summary = matching.stream()
-                    .map(HealthEntry::getDescription)
-                    .collect(Collectors.joining(", "));
-        } else {
-            // Naming a dozen medications on one line helps nobody.
-            summary = getString(R.string.health_count, matching.size());
-        }
-
-        view.setText(getString(R.string.health_line, getString(labelRes), summary));
-    }
-
     private void signOut() {
-        prefs().edit().clear().apply();
-        // The session lives in its own preferences file and holds the saved
-        // token, which the SessionManager puts back into circulation on the
-        // next start. Clearing the profile and the in-memory token alone
-        // left that file untouched, so the next launch was still signed in.
+        // Every store that belongs to the patient, not only the session:
+        // the profile, the reminder switches and any drafted form answers
+        // are theirs too.
         new SessionManager(requireContext()).logoutUser();
 
         Intent intent = new Intent(requireContext(), WelcomeActivity.class);
@@ -231,14 +367,16 @@ public class ProfileFragment extends Fragment {
         requireActivity().finish();
     }
 
+    private void show(Fragment fragment) {
+        loadFragment(requireActivity().getSupportFragmentManager(), R.id.flFragment, fragment);
+    }
+
     private SharedPreferences prefs() {
         return requireContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        requireActivity().setTitle(R.string.nav_profile);
+    private String email() {
+        return prefs().getString("email", "");
     }
 
     @Override

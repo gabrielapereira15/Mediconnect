@@ -37,6 +37,7 @@ import com.example.mediconnect_android.fragment.VisitDetailFragment;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.ReminderPreference;
 import com.example.mediconnect_android.util.WhenLabel;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.Notification;
@@ -504,9 +505,16 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             editor.apply();
         }
 
+        /**
+         * This visit's switch, or the patient's own default if they have
+         * not touched it — so someone who asked for reminders in Profile
+         * does not have to say so again on every card.
+         */
         private boolean getReminderState(String appointmentId) {
-            SharedPreferences sharedPreferences = context.getSharedPreferences("ReminderPrefs", Context.MODE_PRIVATE);
-            return sharedPreferences.getBoolean(appointmentId, false);
+            SharedPreferences sharedPreferences =
+                    context.getSharedPreferences("ReminderPrefs", Context.MODE_PRIVATE);
+            return sharedPreferences.getBoolean(appointmentId,
+                    ReminderPreference.defaultOn(context));
         }
 
         private void rescheduleAppointmentDialog(Appointment appointment, Doctor doctor) {
