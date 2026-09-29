@@ -85,4 +85,7 @@
 
     <!-- Enough room below a list for a floating action button to clear it. -->
     <dimen name="space_fab_clearance">96dp</dimen>
+
+    <!-- One day in the booking screen's date strip. -->
+    <dimen name="date_chip_width">60dp</dimen>
 </resources>

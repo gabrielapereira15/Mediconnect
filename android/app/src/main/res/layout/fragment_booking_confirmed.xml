@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Booked (board P07).
+
+    The flow used to end in an alert dialog that said "Booking Confirmed"
+    over the screen the patient had just filled in, and then dropped them
+    into their medical history. A booking has things that follow it — the
+    form the doctor reads beforehand, the reminders, checking in on the day
+    — and this is the one moment a patient is certain to be looking.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_background"
+    tools:context=".fragment.BookingConfirmedFragment">
+
+    <ImageView
+        android:id="@+id/btn_close"
+        android:layout_width="@dimen/touch_target"
+        android:layout_height="@dimen/touch_target"
+        android:layout_margin="@dimen/space_sm"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cd_close"
+        android:padding="@dimen/space_md"
+        android:src="@drawable/ic_x"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/md_on_surface" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toTopOf="@id/footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_close">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/space_2xl">
+
+            <ImageView
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/circle_success_soft"
+                android:contentDescription="@null"
+                android:padding="@dimen/space_xl"
+                android:src="@drawable/ic_check"
+                app:tint="@color/md_success" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:gravity="center"
+                android:text="@string/confirmed_title"
+                android:textAppearance="@style/TextAppearance.Mediconnect.Display" />
+
+            <TextView
+                android:id="@+id/confirmed_doctor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge"
+                android:textColor="@color/md_on_surface_variant"
+                tools:text="Dr. James Wilson" />
+
+            <TextView
+                android:id="@+id/confirmed_when"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge"
+                android:textColor="@color/md_on_surface_variant"
+                tools:text="Wed 30 Sep, 10:00 AM" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:layout_marginBottom="@dimen/space_lg"
+                app:cardCornerRadius="@dimen/radius_large"
+                app:cardElevation="@dimen/elevation_card"
+                app:strokeColor="@color/md_outline_variant"
+                app:strokeWidth="@dimen/stroke_hairline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_xl">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/confirmed_before"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.Overline"
+                        android:textColor="@color/md_on_surface_variant" />
+
+                    <!-- Step 1: the form, the only step with anything to do now. -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="@dimen/control_sm"
+                            android:layout_height="@dimen/control_sm"
+                            android:background="@drawable/avatar_brand"
+                            android:gravity="center"
+                            android:text="@string/step_one"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                            android:textColor="@color/md_on_primary" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_md"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/confirmed_step_form"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall" />
+
+                            <TextView
+                                android:id="@+id/step_form_sub"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_xs"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                                tools:text="Takes about 3 minutes. Dr. Wilson reads it before you arrive." />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_start_form"
+                                style="@style/Widget.Mediconnect.Button.Tonal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/control_md"
+                                android:layout_marginTop="@dimen/space_md"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:minWidth="0dp"
+                                android:paddingHorizontal="@dimen/space_xl"
+                                android:text="@string/confirmed_step_form_action" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/stroke_hairline"
+                        android:layout_marginVertical="@dimen/space_lg"
+                        android:background="@color/md_outline_variant" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="@dimen/control_sm"
+                            android:layout_height="@dimen/control_sm"
+                            android:background="@drawable/avatar_brand_soft"
+                            android:gravity="center"
+                            android:text="@string/step_two"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                            android:textColor="@color/md_on_primary_container" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_md"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/confirmed_step_remind"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/confirmed_step_remind_sub"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/stroke_hairline"
+                        android:layout_marginVertical="@dimen/space_lg"
+                        android:background="@color/md_outline_variant" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="@dimen/control_sm"
+                            android:layout_height="@dimen/control_sm"
+                            android:background="@drawable/avatar_brand_soft"
+                            android:gravity="center"
+                            android:text="@string/step_three"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                            android:textColor="@color/md_on_primary_container" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_md"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/confirmed_step_checkin"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/confirmed_step_checkin_sub"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/space_2xl"
+        android:paddingTop="@dimen/space_md"
+        android:paddingBottom="@dimen/space_2xl"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!--
+            Both buttons wrap rather than sit at a fixed height: half a
+            phone's width is not enough for "Add to calendar" on one line,
+            and a clipped label on the screen that confirms a booking is the
+            last thing a patient should be left looking at.
+        -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add_calendar"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="@dimen/control_lg"
+            android:paddingHorizontal="@dimen/space_sm"
+            android:text="@string/confirmed_add_calendar"
+            android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+            app:icon="@drawable/ic_calendar_plus"
+            app:iconPadding="@dimen/space_xs"
+            app:iconSize="18dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_done"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_md"
+            android:layout_weight="1"
+            android:minHeight="@dimen/control_lg"
+            android:text="@string/confirmed_done"
+            android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

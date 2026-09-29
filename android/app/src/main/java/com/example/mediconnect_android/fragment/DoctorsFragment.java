@@ -80,11 +80,34 @@ public class DoctorsFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * The arguments are read here rather than with the view, because the
+     * view is built again every time the patient comes back from booking.
+     * Reading them there put a patient who had opened the screen on a
+     * specialty and then switched to All back on that specialty on the way
+     * back — a filter they had already changed their mind about.
+     */
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle args = getArguments();
+        if (args != null) {
+            activeFilter = args.getString(ARG_SPECIALTY, FILTER_ALL);
+            query = args.getString(ARG_QUERY, "");
+        }
+        // After the process was killed, what the patient last chose wins
+        // over what the screen was opened with.
+        if (savedInstanceState != null) {
+            activeFilter = savedInstanceState.getString(STATE_FILTER, activeFilter);
+        }
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentDoctorsBinding.inflate(inflater, container, false);
-        init(savedInstanceState);
+        init();
         return binding.getRoot();
     }
 
@@ -94,18 +117,7 @@ public class DoctorsFragment extends Fragment {
         requireActivity().setTitle(R.string.doctors_title);
     }
 
-    private void init(@Nullable Bundle savedInstanceState) {
-        Bundle args = getArguments();
-        if (args != null) {
-            activeFilter = args.getString(ARG_SPECIALTY, FILTER_ALL);
-            query = args.getString(ARG_QUERY, "");
-        }
-        // A chip the patient chose has to survive a rotation or a switch to
-        // dark mode; otherwise the list silently widens back to everyone.
-        if (savedInstanceState != null) {
-            activeFilter = savedInstanceState.getString(STATE_FILTER, activeFilter);
-        }
-
+    private void init() {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.stateView.setContentView(binding.recyclerView);
 

@@ -15,7 +15,9 @@ import com.vegs.mediconnect.mobile.appointment.model.AppointmentStatus;
 import com.vegs.mediconnect.mobile.doctor.DoctorApiService;
 import com.vegs.mediconnect.mobile.waitlist.WaitlistService;
 import com.vegs.mediconnect.mobile.patient.PatientNotFoundException;
+import com.vegs.mediconnect.mobile.schedule.BookingRules;
 import com.vegs.mediconnect.mobile.schedule.ScheduleTimeNotFoundException;
+import com.vegs.mediconnect.mobile.schedule.SlotNoLongerAvailableException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -235,6 +237,17 @@ public class AppointmentApiService {
         // Get ScheduleTime Entity
         var scheduleTime = scheduleTimeRepository.findById(scheduleTimeId)
                 .orElseThrow(ScheduleTimeNotFoundException::new);
+
+        // The booking screen shows taken slots, and two patients can reach
+        // the same free one seconds apart, so the slot is checked here as
+        // well as there. Without this the second booking quietly won and
+        // both patients were told they had the appointment.
+        if (!Boolean.TRUE.equals(scheduleTime.getAvailable())) {
+            throw new SlotNoLongerAvailableException("That time has just been taken.");
+        }
+        if (!BookingRules.hasEnoughNotice(scheduleTime)) {
+            throw new SlotNoLongerAvailableException("That time is too close to now to book.");
+        }
 
         // Get Patient Entity
         var patient = patientRepository.findByEmail(patientEmail)

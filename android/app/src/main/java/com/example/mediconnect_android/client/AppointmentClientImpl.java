@@ -6,6 +6,7 @@ import com.example.mediconnect_android.client.response.ApiGenericResponse;
 import com.example.mediconnect_android.data.DemoData;
 import com.example.mediconnect_android.data.DemoMode;
 import com.example.mediconnect_android.model.Appointment;
+import com.example.mediconnect_android.model.BookingResult;
 import com.example.mediconnect_android.model.Doctor;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -42,15 +43,19 @@ public class AppointmentClientImpl implements AppointmentClient {
     }
 
     @Override
-    public Boolean createAppointment(String appointmentJson) {
+    public BookingResult createAppointment(String appointmentJson) {
         String url = ApiConfig.url("/api/mobile/appointments");
         ApiGenericResponse response = OkHttpClientHelper.post(url, appointmentJson);
         if (response.isSuccess()) {
-            return true;
-        } else {
-            Log.e("AppointmentClientImpl", "Error creating appointment: " + response.getResponseBody());
-            return false;
+            return BookingResult.booked();
         }
+        Log.e("AppointmentClientImpl", "Error creating appointment: " + response.getResponseBody());
+        // 409 means the slot went between the patient seeing it and
+        // confirming, which is worth saying in those words.
+        if (response.getStatus() == 409) {
+            return BookingResult.slotTaken(response.getResponseBody());
+        }
+        return BookingResult.failed();
     }
 
     @Override

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One day in the "Choose a day" strip (board P05).
+
+    A fully booked day stays in the strip rather than disappearing from it:
+    a patient scanning for the soonest opening needs to see that Friday was
+    considered and is gone, not wonder why the week skips a day.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/date_chip"
+    android:layout_width="60dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/date_chip_background"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/space_md">
+
+    <TextView
+        android:id="@+id/date_weekday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:duplicateParentState="true"
+        android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+        android:textColor="@color/date_chip_label"
+        tools:text="Wed" />
+
+    <TextView
+        android:id="@+id/date_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:duplicateParentState="true"
+        android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium"
+        android:textColor="@color/date_chip_text"
+        tools:text="30" />
+
+    <TextView
+        android:id="@+id/date_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:duplicateParentState="true"
+        android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+        android:textColor="@color/date_chip_label"
+        android:visibility="gone"
+        tools:text="Full"
+        tools:visibility="visible" />
+</LinearLayout>

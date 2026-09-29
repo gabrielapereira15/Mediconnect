@@ -8,6 +8,7 @@ import com.vegs.mediconnect.datasource.schedule.ScheduleTime;
 import com.vegs.mediconnect.mobile.doctor.model.DoctorResponse;
 import com.vegs.mediconnect.mobile.doctor.model.DoctorSimpleResponse;
 import com.vegs.mediconnect.mobile.review.model.ReviewDTO;
+import com.vegs.mediconnect.mobile.schedule.BookingRules;
 import com.vegs.mediconnect.mobile.schedule.model.ScheduleResponse;
 import com.vegs.mediconnect.mobile.schedule.model.ScheduleTimeResponse;
 import jakarta.transaction.Transactional;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.*;
 
 import static java.lang.String.format;
@@ -81,15 +81,13 @@ public class DoctorApiService {
         }
 
         var doctor = optDoctor.get();
-        var dateFormat = DateTimeFormatter.ofPattern("EEE, d MMM", Locale.ENGLISH);
-        var timeFormat = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
         var scheduleResponses = new ArrayList<ScheduleResponse>();
         doctor
                 .getSchedules()
                 .stream()
                 .filter(DoctorApiService::isTodayOrLate)
                 .sorted(Comparator.comparing(Schedule::getDate))
-                .forEach(schedule -> addIfApplicable(schedule, dateFormat, timeFormat, scheduleResponses));
+                .forEach(schedule -> addIfApplicable(schedule, scheduleResponses));
 
         var randomReview = calculateReview(doctor);
 
@@ -107,14 +105,12 @@ public class DoctorApiService {
                 .build();
     }
 
-    private void addIfApplicable(Schedule schedule,
-                                 DateTimeFormatter dateFormat, DateTimeFormatter timeFormat,
-                                 List<ScheduleResponse> scheduleResponses) {
-        var times = getTimes(schedule, timeFormat);
+    private void addIfApplicable(Schedule schedule, List<ScheduleResponse> scheduleResponses) {
+        var times = getTimes(schedule);
         if (!times.isEmpty()) {
             scheduleResponses.add(ScheduleResponse
                     .builder()
-                    .date(schedule.getDate().format(dateFormat))
+                    .date(schedule.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE))
                     .times(times)
                     .build());
         }
@@ -148,44 +144,41 @@ public class DoctorApiService {
     /**
      * The earliest slot this doctor still has open.
      *
-     * Only slots that are both free and actually still ahead of us: a
-     * morning slot on today's schedule is no use at four in the afternoon,
-     * and offering it is how a directory loses a patient's trust on their
-     * first tap.
+     * It has to answer with the same rule the booking screen uses. When it
+     * only asked whether the slot was still ahead of us, the directory
+     * advertised "Today 3:30 PM" at quarter past three and the slot picker
+     * then showed nothing for today — the one promise a directory cannot
+     * afford to break is the one on its own card.
      */
     private Optional<LocalDateTime> nextAvailableSlot(Doctor doctor) {
-        LocalDateTime now = LocalDateTime.now();
-
         return doctor.getSchedules().stream()
                 .filter(schedule -> !LocalDate.now().isAfter(schedule.getDate()))
-                .flatMap(schedule -> schedule.getScheduleTimes().stream()
-                        .filter(time -> Boolean.TRUE.equals(time.getAvailable()))
-                        .map(time -> LocalDateTime.of(schedule.getDate(), time.getTime())))
-                .filter(slot -> slot.isAfter(now))
+                .flatMap(schedule -> schedule.getScheduleTimes().stream())
+                .filter(BookingRules::isBookable)
+                .map(ScheduleTime::getDateTime)
                 .min(Comparator.naturalOrder());
     }
 
-    private List<ScheduleTimeResponse> getTimes(Schedule schedule, DateTimeFormatter timeFormat) {
+    /**
+     * A day's slots, taken ones included.
+     *
+     * Slots too close to now are left out altogether rather than sent as
+     * taken, so that "taken" on the booking screen means another patient
+     * has it — not that the clinic needs more notice.
+     */
+    private List<ScheduleTimeResponse> getTimes(Schedule schedule) {
         return schedule
                 .getScheduleTimes()
                 .stream()
-                .filter(ScheduleTime::getAvailable)
-                .filter(this::isAtLeastSixHoursAhead)
+                .filter(BookingRules::hasEnoughNotice)
                 .sorted(Comparator.comparing(ScheduleTime::getTime))
                 .map(scheduleTime -> ScheduleTimeResponse
                         .builder()
                         .id(scheduleTime.getId())
-                        .time(scheduleTime.getTime().format(timeFormat))
+                        .time(scheduleTime.getTime().format(DateTimeFormatter.ISO_LOCAL_TIME))
+                        .available(Boolean.TRUE.equals(scheduleTime.getAvailable()))
                         .build())
                 .toList();
-    }
-
-    private boolean isAtLeastSixHoursAhead(ScheduleTime scheduleTime) {
-        return scheduleTime
-                .getDateTime()
-                .isAfter(LocalDateTime
-                        .now()
-                        .plusHours(6));
     }
 
     private String getPhotoUrl(Doctor doctor) {

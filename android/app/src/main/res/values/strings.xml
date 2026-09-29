@@ -331,4 +331,68 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
         <item quantity="one">%1$s (1 review)</item>
         <item quantity="other">%1$s (%2$d reviews)</item>
     </plurals>
+
+    <!-- ==== Booking: day, time, review, confirmation (P05–P07) ==== -->
+    <string name="booking_title">Book a visit</string>
+    <string name="booking_choose_day">Choose a day</string>
+    <string name="booking_morning">Morning</string>
+    <string name="booking_afternoon">Afternoon</string>
+    <string name="booking_day_full">Every time on this day is taken. Try another day, or join the waitlist below.</string>
+    <string name="booking_day_none_title">No days open</string>
+    <string name="booking_day_none">This doctor has no appointments open at the moment. Join the waitlist and we will tell you when one appears.</string>
+    <string name="booking_continue">Continue</string>
+    <string name="booking_pick_day">Pick a day</string>
+    <string name="booking_pick_time">Pick a time</string>
+    <string name="booking_date_range">%1$s – %2$s</string>
+    <string name="booking_day_full_note">Full</string>
+    <string name="cd_slot_taken">%1$s, already taken</string>
+
+    <string name="waitlist_sooner_title">Need something sooner?</string>
+    <string name="waitlist_sooner_body">Join the waitlist and we will offer you any earlier slot that frees up.</string>
+    <string name="waitlist_sooner_confirm">If a slot with %1$s opens up before %2$s, we will send you a notification so you can take it.</string>
+
+    <string name="review_title">Review and confirm</string>
+    <string name="review_change">Change</string>
+    <string name="review_who_for">Who is this visit for?</string>
+    <string name="review_for_me">For me</string>
+    <string name="review_for_someone">For someone else</string>
+    <string name="review_for_someone_sub">A child or someone you care for</string>
+    <string name="review_their_name">Their full name</string>
+    <string name="review_their_dob">Their date of birth</string>
+    <string name="review_their_phone">A phone number we can reach</string>
+    <string name="review_note_label">Note for the doctor</string>
+    <string name="review_note_optional">(optional)</string>
+    <string name="review_note_hint">What would you like to talk about?</string>
+    <string name="review_record_shared">%1$s will see your health record: %2$s. Review it</string>
+    <string name="review_record_shared_unknown">%1$s will see your health record. Review it</string>
+    <string name="review_record_empty">%1$s will see your health record, which is empty at the moment. Fill it in</string>
+    <string name="review_record_loading">loading</string>
+    <string name="clinic_name">MediConnect Clinic</string>
+    <string name="clinic_address">Kitchener, ON</string>
+    <string name="review_duration_unknown">In person</string>
+    <string name="review_record_review">Review it</string>
+    <string name="review_terms">I accept the booking terms, including cancelling at least 24 hours ahead.</string>
+    <string name="review_terms_required">Please accept the booking terms to continue.</string>
+    <string name="review_name_required">Please give the name of the person this visit is for.</string>
+    <string name="review_confirm">Confirm appointment</string>
+    <string name="review_slot_taken">That time has just been taken. Please choose another.</string>
+    <string name="review_failed">We could not book that. Please try again.</string>
+
+    <string name="confirmed_title">You are booked</string>
+    <string name="confirmed_before">Before your visit</string>
+    <string name="cd_close">Close</string>
+    <string name="step_one">1</string>
+    <string name="step_two">2</string>
+    <string name="step_three">3</string>
+    <string name="confirmed_step_form">Fill in your pre-appointment form</string>
+    <string name="confirmed_step_form_sub">Takes about 3 minutes. %1$s reads it before you arrive.</string>
+    <string name="confirmed_step_form_action">Start form</string>
+    <string name="confirmed_step_remind">We will remind you</string>
+    <string name="confirmed_step_remind_sub">The day before, and 30 minutes before.</string>
+    <string name="confirmed_step_checkin">Check in from the app</string>
+    <string name="confirmed_step_checkin_sub">When you arrive, tap Check in — no queue at the desk.</string>
+    <string name="confirmed_add_calendar">Add to calendar</string>
+    <string name="confirmed_done">Done</string>
+    <string name="confirmed_no_calendar">No calendar app to add this to.</string>
+    <string name="confirmed_calendar_title">%1$s at %2$s</string>
 </resources>

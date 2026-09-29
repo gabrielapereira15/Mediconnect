@@ -110,7 +110,8 @@ public final class WhenLabel {
      *
      * Reads the name the way the card shows it, so the directory's
      * "Chase, Robert" gives RC beside "Dr. Robert Chase" — CR next to a
-     * spoken name looks like a different person's badge.
+     * spoken name looks like a different person's badge. A title is not a
+     * name either: every doctor would otherwise wear a D.
      */
     public static String initials(String name) {
         if (name == null || name.trim().isEmpty()) {
@@ -119,7 +120,7 @@ public final class WhenLabel {
         String[] parts = spokenOrder(name).split("\s+");
         StringBuilder out = new StringBuilder();
         for (String part : parts) {
-            if (!part.isEmpty() && out.length() < 2) {
+            if (!part.isEmpty() && !isTitle(part) && out.length() < 2) {
                 out.append(Character.toUpperCase(part.charAt(0)));
             }
         }
@@ -138,6 +139,13 @@ public final class WhenLabel {
         }
         String name = spokenOrder(apiName);
         return name.startsWith("Dr.") ? name : "Dr. " + name;
+    }
+
+    /** An honorific rather than part of the person's name. */
+    private static boolean isTitle(String part) {
+        String word = part.replace(".", "").toLowerCase(Locale.ROOT);
+        return word.equals("dr") || word.equals("mr") || word.equals("mrs")
+                || word.equals("ms") || word.equals("mx") || word.equals("prof");
     }
 
     /** "Chase, Robert" as a person says it: "Robert Chase". */

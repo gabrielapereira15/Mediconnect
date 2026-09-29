@@ -98,9 +98,25 @@ public class DoctorDetails {
             this.times = times;
         }
 
+        /**
+         * One slot on a day, free or already taken.
+         *
+         * Taken slots come down too: a day showing only its four remaining
+         * times looks quiet, where the same day showing which eight are
+         * gone tells a patient how quickly to decide.
+         */
         public static class TimeSlot {
             private String time;
             private String id;
+            private boolean available;
+
+            public boolean isAvailable() {
+                return available;
+            }
+
+            public void setAvailable(boolean available) {
+                this.available = available;
+            }
 
             public String getId() {
                 return id;

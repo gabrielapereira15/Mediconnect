@@ -2,6 +2,7 @@ package com.example.mediconnect_android.client;
 
 import com.example.mediconnect_android.client.response.DoctorsResponse;
 import com.example.mediconnect_android.model.Appointment;
+import com.example.mediconnect_android.model.BookingResult;
 import com.example.mediconnect_android.model.Doctor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,8 +69,8 @@ public class AppointmentMock implements AppointmentClient {
     }
 
     @Override
-    public Boolean createAppointment(String appointmentJson) {
-        return null;
+    public BookingResult createAppointment(String appointmentJson) {
+        return BookingResult.failed();
     }
 
     @Override

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One time on the chosen day (board P05). -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/slot"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/control_lg"
+    android:background="@drawable/slot_background"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center"
+    android:minWidth="104dp"
+    android:textAppearance="@style/TextAppearance.Mediconnect.LabelLarge"
+    android:textColor="@color/slot_text"
+    tools:text="10:00 AM" />
