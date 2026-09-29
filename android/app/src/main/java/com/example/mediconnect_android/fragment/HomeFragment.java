@@ -110,6 +110,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             page.setAlpha(1 - Math.abs(position));
         });
         setupAutoScroll();
+
+        // The adapters above attach after the first layout pass, and whichever
+        // list asked for focus dragged the ScrollView with it — far enough to
+        // put the search bar behind the toolbar. Marking the container focusable
+        // covers the initial pass; this covers the ones that come after.
+        binding.homeScroll.post(() -> {
+            if (binding != null) {
+                binding.homeScroll.scrollTo(0, 0);
+            }
+        });
     }
 
     private void setupAutoScroll() {

@@ -121,7 +121,7 @@
                     android:layout_height="16dp"
                     android:contentDescription="@null"
                     android:src="@drawable/baseline_star_rate_24"
-                    app:tint="@color/md_rating" />
+                    app:tint="@color/md_on_secondary_container" />
 
                 <TextView
                     android:id="@+id/reviewed_label"
@@ -129,6 +129,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                    android:textColor="@color/md_on_secondary_container"
                     tools:text="You rated 5.0" />
             </LinearLayout>
 

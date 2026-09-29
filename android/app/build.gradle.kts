@@ -32,6 +32,11 @@ android {
         }
     }
     compileOptions {
+        // minSdk is 26 but parts of the code use library methods that only
+        // reached Android in API 33, such as Optional#isEmpty. Desugaring
+        // backports them rather than leaving a NoSuchMethodError waiting on
+        // every phone older than Android 13.
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -45,6 +50,7 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.3")
     implementation(libs.jackson.databind)
     implementation (libs.glide)
     annotationProcessor (libs.compiler)

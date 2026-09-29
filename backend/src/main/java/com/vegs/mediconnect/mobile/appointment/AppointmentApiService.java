@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import java.util.Comparator;
 import java.util.List;
@@ -40,6 +41,7 @@ public class AppointmentApiService {
     @Transactional
     public AppointmentResponse create(AppointmentRequest appointmentRequest) {
         var appointment = createAppointment(appointmentRequest.getScheduleTimeId(), appointmentRequest.getPatientEmail());
+        applyBookedFor(appointment, appointmentRequest);
         var scheduleTime = appointment.getScheduleTime();
         // Make Schedule Time unavailable
         scheduleTime.setAvailable(false);
@@ -63,6 +65,45 @@ public class AppointmentApiService {
                 .filter(this::notRemoved)
                 .map(this::mapToAppointmentResponse)
                 .toList();
+    }
+
+    /**
+     * Records who the visit is for when it is not the account holder.
+     *
+     * A blank name means the patient booked it for themselves, so nothing is
+     * stored and the row stays as it was.
+     */
+    private void applyBookedFor(Appointment appointment, AppointmentRequest request) {
+        var name = request.getBookedForName();
+        if (name == null || name.isBlank()) {
+            return;
+        }
+        appointment.setBookedForName(name.trim());
+        appointment.setBookedForPhone(trimToNull(request.getBookedForPhone()));
+        appointment.setBookedForNotes(trimToNull(request.getBookedForNotes()));
+        appointment.setBookedForDateOfBirth(parseDateOfBirth(request.getBookedForDateOfBirth()));
+    }
+
+    /**
+     * A date of birth the app could not format is not worth rejecting the
+     * booking over — the appointment still has a name and a phone number.
+     */
+    private LocalDate parseDateOfBirth(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(value.trim());
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    private String trimToNull(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value.trim();
     }
 
     private boolean notRemoved(Appointment appointment) {
@@ -126,6 +167,7 @@ public class AppointmentApiService {
                 .startsAt(LocalDateTime.of(schedule.getDate(), scheduleTime.getTime())
                         .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .isReviewed(isReviewed)
+                .bookedForName(appointment.getBookedForName())
                 .reviewScore(reviewScore)
                 .status(status)
                 .doctor(doctorApiService.mapToDoctorSimpleResponse(doctor))

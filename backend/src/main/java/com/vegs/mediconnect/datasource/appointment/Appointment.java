@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -37,6 +38,27 @@ public class Appointment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
+
+    /**
+     * The person the visit is for, when that is not the account holder —
+     * a child or a parent booked by someone else.
+     *
+     * Held on the appointment rather than as its own patient record: the
+     * clinic needs to know who is coming, but these people do not have
+     * accounts and nothing else in the app belongs to them. Null means the
+     * appointment is for the patient who booked it.
+     */
+    @Column
+    private String bookedForName;
+
+    @Column
+    private LocalDate bookedForDateOfBirth;
+
+    @Column
+    private String bookedForPhone;
+
+    @Column(columnDefinition = "text")
+    private String bookedForNotes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)

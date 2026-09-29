@@ -78,9 +78,9 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
             }
         });
 
-        // Opens a picker rather than the keyboard, and cannot produce a
-        // future date or an impossible one.
-        DateFields.asDateOfBirth(requireContext(), binding.etDobOther);
+        // Numeric entry with the dashes filled in, a calendar on the end
+        // icon, and a check as soon as the field is left.
+        DateFields.asDateOfBirth(requireContext(), binding.tilDobOther, binding.etDobOther);
 
         binding.btnConfirmSelf.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,13 +91,17 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
                 String noteForDoctor = binding.etSelfNote.getText().toString();
 
                 if (isInfoPatientValid()) {
-                    DialogUtils.showMessageDialog(getContext(), "Please fill in all the required fields");
+                    if (!binding.rbForSelf.isChecked() && !binding.rbForAnother.isChecked()) {
+                        DialogUtils.showMessageDialog(getContext(),
+                                "Please choose who this appointment is for");
+                    }
+                    // Otherwise the offending field is already showing why.
                     return;
                 }
 
                 // Use the newInstance method to pass data
                 ConfirmAppointmentFragment confirmFragment = ConfirmAppointmentFragment.newInstance(
-                        name, dob, phoneNumber, noteForDoctor,
+                        name, dob, phoneNumber, noteForDoctor, false,
                         requireArguments().getString("doctorName"),
                         requireArguments().getString("doctorSpecialty"),
                         requireArguments().getString("selectedTimeSlotTime"),
@@ -113,7 +117,11 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (isInfoPatientValid()) {
-                    DialogUtils.showMessageDialog(getContext(), "Please fill in all the required fields");
+                    if (!binding.rbForSelf.isChecked() && !binding.rbForAnother.isChecked()) {
+                        DialogUtils.showMessageDialog(getContext(),
+                                "Please choose who this appointment is for");
+                    }
+                    // Otherwise the offending field is already showing why.
                     return;
                 }
                 String firstName = binding.etFirstName.getText().toString();
@@ -125,7 +133,7 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
 
                 // Use the newInstance method to pass data
                 ConfirmAppointmentFragment confirmFragment = ConfirmAppointmentFragment.newInstance(
-                        fullName, dob, phoneNumber, additionalNotes,
+                        fullName, dob, phoneNumber, additionalNotes, true,
                         requireArguments().getString("doctorName"),
                         requireArguments().getString("doctorSpecialty"),
                         requireArguments().getString("selectedTimeSlotTime"),
@@ -159,9 +167,11 @@ public class BookAppointmentPatientDetailsFragment extends Fragment {
             }
             String dobProblem = DateFields.validateDateOfBirth(dob);
             if (dobProblem != null) {
-                binding.etDobOther.setError(dobProblem);
+                binding.tilDobOther.setError(dobProblem);
+                binding.etDobOther.requestFocus();
                 return true;
             }
+            binding.tilDobOther.setError(null);
             if (phoneNumber.isEmpty()) {
                 binding.tvPhoneNumber.setError("Phone number is required");
                 return true;

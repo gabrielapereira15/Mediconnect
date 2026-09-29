@@ -3,6 +3,7 @@ package com.example.mediconnect_android.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,13 +20,19 @@ import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.Background;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class ConfirmAppointmentFragment extends Fragment {
+
+    private static final String TAG = "ConfirmAppointment";
 
     private static final String ARG_NAME = "name";
     private static final String ARG_DOB = "dob";
     private static final String ARG_PHONE = "phone";
     private static final String ARG_NOTE = "note";
+    private static final String ARG_FOR_SOMEONE_ELSE = "forSomeoneElse";
     private static final String ARG_DOCTOR_NAME = "doctorName";
     private static final String ARG_DOCTOR_SPECIALTY = "doctorSpecialty";
     private static final String ARG_SELECTED_TIME_SLOT = "selectedTimeSlotTime";
@@ -39,13 +46,14 @@ public class ConfirmAppointmentFragment extends Fragment {
         appointmentClient = new AppointmentClientImpl();
     }
 
-    public static ConfirmAppointmentFragment newInstance(String name, String dob, String phone, String note, String doctorName, String doctorSpecialty, String selectedTimeSlot, String selectedTimeSlotId, String selectedDate) {
+    public static ConfirmAppointmentFragment newInstance(String name, String dob, String phone, String note, boolean forSomeoneElse, String doctorName, String doctorSpecialty, String selectedTimeSlot, String selectedTimeSlotId, String selectedDate) {
         ConfirmAppointmentFragment fragment = new ConfirmAppointmentFragment();
         Bundle args = new Bundle();
         args.putString(ARG_NAME, name);
         args.putString(ARG_DOB, dob);
         args.putString(ARG_PHONE, phone);
         args.putString(ARG_NOTE, note);
+        args.putBoolean(ARG_FOR_SOMEONE_ELSE, forSomeoneElse);
         args.putString(ARG_DOCTOR_NAME, doctorName);
         args.putString(ARG_DOCTOR_SPECIALTY, doctorSpecialty);
         args.putString(ARG_SELECTED_TIME_SLOT, selectedTimeSlot);
@@ -130,13 +138,27 @@ public class ConfirmAppointmentFragment extends Fragment {
     private boolean isAppointmentCreated(String selectedTimeSlotId) {
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
         String email = sharedPreferences.getString("email", "");
-        String jsonString = String.format(
-                "{ \"patientEmail\": \"%s\", \"scheduleTimeId\": \"%s\" }",
-                email,
-                selectedTimeSlotId
-        );
 
-        return appointmentClient.createAppointment(jsonString);
+        JSONObject payload = new JSONObject();
+        try {
+            payload.put("patientEmail", email);
+            payload.put("scheduleTimeId", selectedTimeSlotId);
+
+            // Built rather than formatted: a name with a quote or a backslash
+            // in it used to produce a body the server could not read.
+            Bundle args = getArguments();
+            if (args != null && args.getBoolean(ARG_FOR_SOMEONE_ELSE, false)) {
+                payload.put("bookedForName", args.getString(ARG_NAME));
+                payload.put("bookedForDateOfBirth", args.getString(ARG_DOB));
+                payload.put("bookedForPhone", args.getString(ARG_PHONE));
+                payload.put("bookedForNotes", args.getString(ARG_NOTE));
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Could not build the booking payload", e);
+            return false;
+        }
+
+        return appointmentClient.createAppointment(payload.toString());
     }
 
     private void showConfirmationMessage() {

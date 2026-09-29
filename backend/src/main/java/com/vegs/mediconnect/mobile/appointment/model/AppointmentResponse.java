@@ -34,6 +34,12 @@ public class AppointmentResponse {
      */
     private Float reviewScore;
 
+    /**
+     * Who the visit is for, when that is not the account holder. Null means
+     * the patient booked it for themselves.
+     */
+    private String bookedForName;
+
     private DoctorSimpleResponse doctor;
 
 }

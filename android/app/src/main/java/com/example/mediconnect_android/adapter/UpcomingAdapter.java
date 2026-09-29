@@ -2,9 +2,11 @@ package com.example.mediconnect_android.adapter;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -104,6 +106,15 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
             recyclerItemBinding.doctorName.setText(doctor.getName());
             recyclerItemBinding.doctorSpeacialty.setText(doctor.getSpecialty());
 
+            String bookedFor = appointment.getBookedForName();
+            if (bookedFor == null || bookedFor.trim().isEmpty()) {
+                recyclerItemBinding.bookedFor.setVisibility(View.GONE);
+            } else {
+                recyclerItemBinding.bookedFor.setVisibility(View.VISIBLE);
+                recyclerItemBinding.bookedFor.setText(
+                        context.getString(R.string.booked_for, bookedFor));
+            }
+
             Glide.with(context)
                     .load(doctor.getPhoto())
                     .placeholder(R.drawable.doctorimage)
@@ -146,6 +157,15 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
                     return;
                 }
 
+                if (!canScheduleExactAlarms()) {
+                    // Android 12 onwards withholds this by default, so the
+                    // first reminder on a modern phone always stops here.
+                    buttonView.setChecked(false);
+                    saveReminderState(appointment.getId(), false);
+                    requestExactAlarmPermission(context);
+                    return;
+                }
+
                 Calendar now = Calendar.getInstance();
                 scheduleIfFuture(start.get(), -30, Calendar.MINUTE, now,
                         context.getString(R.string.reminder_soon_title),
@@ -155,6 +175,21 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
                         context.getString(R.string.reminder_tomorrow_body,
                                 doctor.getName(), appointment.getTime()));
             });
+        }
+
+        /** Whether the system will let this app set an alarm to the minute. */
+        private boolean canScheduleExactAlarms() {
+            AlarmManager alarmManager =
+                    (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            return alarmManager != null && exactAlarmsAllowed(alarmManager);
+        }
+
+        private boolean exactAlarmsAllowed(AlarmManager alarmManager) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                // Granted at install time before Android 12.
+                return true;
+            }
+            return alarmManager.canScheduleExactAlarms();
         }
 
         /** Schedules a reminder at an offset from the appointment, if not already past. */
@@ -219,13 +254,16 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
             return Optional.empty();
         }
 
-        @RequiresApi(api = Build.VERSION_CODES.S)
-        public void scheduleExactAlarm(Context context, String title, String message, Calendar calendar) {
+        /**
+         * Sets one alarm. Callable on every supported version: the permission
+         * check it used to make unconditionally only exists from Android 12,
+         * so on anything older it threw NoSuchMethodError instead.
+         */
+        private void scheduleExactAlarm(Context context, String title, String message, Calendar calendar) {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
             if (alarmManager != null) {
-                // Check if exact alarms are allowed
-                if (alarmManager.canScheduleExactAlarms()) {
+                if (exactAlarmsAllowed(alarmManager)) {
                     Intent intent = new Intent(context, Notification.class);
                     intent.putExtra(Notification.titleExtra, title);
                     intent.putExtra(Notification.messageExtra, message);
@@ -245,20 +283,47 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
                                 pendingIntent
                         );
                     } catch (SecurityException e) {
-                        // Handle the exception and prompt the user
-                        e.printStackTrace();
-                        requestExactAlarmPermission(context);
+                        // Revoked between the check above and here.
+                        Log.w(TAG, "Exact alarm refused while scheduling", e);
                     }
                 } else {
-                    // Prompt the user to enable exact alarm permission
-                    requestExactAlarmPermission(context);
+                    Log.w(TAG, "Exact alarms unavailable at scheduling time");
                 }
             }
         }
 
-        public void requestExactAlarmPermission(Context context) {
+        /**
+         * Sends the patient to the system screen that grants exact alarms.
+         *
+         * From Android 12 this permission is off by default, so the first
+         * "Remind me" on a modern device always lands here. It used to launch
+         * straight from the adapter's context and crash — startActivity needs
+         * NEW_TASK when it is not called from an Activity — and it did so
+         * without ever saying why the screen had appeared.
+         */
+        private void requestExactAlarmPermission(Context context) {
+            new AlertDialog.Builder(context)
+                    .setTitle(R.string.reminder_permission_title)
+                    .setMessage(R.string.reminder_permission_body)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(R.string.reminder_permission_open,
+                            (dialog, which) -> openExactAlarmSettings(context))
+                    .show();
+        }
+
+        private void openExactAlarmSettings(Context context) {
             Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-            context.startActivity(intent);
+            // Straight to this app's entry rather than the whole list.
+            intent.setData(Uri.fromParts("package", context.getPackageName(), null));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            try {
+                context.startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                // Some builds do not ship the screen at all.
+                Log.w(TAG, "No exact-alarm settings screen on this device", e);
+                DialogUtils.showMessageDialog(context,
+                        context.getString(R.string.reminder_permission_unavailable));
+            }
         }
 
         private void saveReminderState(String appointmentId, boolean isReminderEnabled) {

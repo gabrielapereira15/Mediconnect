@@ -14,6 +14,8 @@ public class Appointment {
     /** The score this patient gave, or null if they have not reviewed it. */
     private Float reviewScore;
     private boolean isVirtual;
+    /** Who the visit is for, or null when it is for the account holder. */
+    private String bookedForName;
 
 
     public Boolean getReviewed() {
@@ -22,6 +24,14 @@ public class Appointment {
 
     public void setReviewed(Boolean reviewed) {
         this.reviewed = reviewed;
+    }
+
+    public String getBookedForName() {
+        return bookedForName;
+    }
+
+    public void setBookedForName(String bookedForName) {
+        this.bookedForName = bookedForName;
     }
 
     public Float getReviewScore() {

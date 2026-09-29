@@ -53,6 +53,11 @@ public final class DemoData {
 
         appointments.add(appointment("demo-a1", "UPCOMING", businessDays(2), "10 a.m.", doctors.get(0)));
         appointments.add(appointment("demo-a2", "UPCOMING", businessDays(5), "2 p.m.", doctors.get(2)));
+
+        // Booked for a family member, so the Upcoming tab shows both kinds of row.
+        var forDaughter = appointment("demo-a5", "UPCOMING", businessDays(4), "9 a.m.", doctors.get(3));
+        forDaughter.setBookedForName("Sofia Almeida");
+        appointments.add(forDaughter);
         appointments.add(appointment("demo-a3", "COMPLETED", businessDays(-6), "9:30 a.m.", doctors.get(1)));
         var reviewed = appointment("demo-a4", "COMPLETED", businessDays(-13), "11 a.m.", doctors.get(0));
         reviewed.setReviewed(true);

@@ -74,6 +74,25 @@
                     android:textColor="@color/gray"
                     android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
 
+                <!--
+                    Only shown when the visit is for someone else. Booking for
+                    a child or a parent otherwise produced a row identical to
+                    your own, with no way to tell them apart.
+                -->
+                <TextView
+                    android:id="@+id/booked_for"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:drawablePadding="4dp"
+                    android:drawableStart="@drawable/baseline_person_24"
+                    android:drawableTint="@color/md_primary"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                    android:textColor="@color/md_primary"
+                    android:visibility="gone"
+                    tools:text="For Sofia Almeida"
+                    tools:visibility="visible" />
+
             </LinearLayout>
 
             <!-- Remind Me Switch -->

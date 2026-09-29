@@ -209,6 +209,16 @@ public class DemoDataSeeder implements ApplicationRunner {
                 findSlot(slots, doctors.get(2), businessDaysFromToday(5), LocalTime.of(14, 0)),
                 AppointmentStatus.UPCOMING));
 
+        // One booked for a family member, so the Upcoming tab shows both an
+        // appointment for yourself and one that names someone else.
+        var forDaughter = appointment(demoPatient, doctors.get(3),
+                findSlot(slots, doctors.get(3), businessDaysFromToday(4), LocalTime.of(9, 0)),
+                AppointmentStatus.UPCOMING);
+        forDaughter.setBookedForName("Sofia Almeida");
+        forDaughter.setBookedForDateOfBirth(LocalDate.of(2016, 3, 14));
+        forDaughter.setBookedForPhone("6475550142");
+        appointments.add(forDaughter);
+
         // Three in the past, each of which can carry a review.
         appointments.add(appointment(demoPatient, doctors.get(1),
                 findSlot(slots, doctors.get(1), businessDaysFromToday(-6), LocalTime.of(9, 30)),

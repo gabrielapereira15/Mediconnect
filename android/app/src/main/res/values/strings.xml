@@ -192,4 +192,17 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <!-- Shown on a completed visit the patient has already reviewed. -->
     <string name="review_left">Review sent</string>
     <string name="review_left_score">You rated %1$.1f</string>
+
+    <!-- Date of birth entry: typed, with a picker as an alternative. -->
+    <string name="dob_format_hint">YYYY-MM-DD</string>
+    <string name="dob_pick">Pick a date</string>
+
+    <!-- Names the person a visit was booked for, when it is not the booker. -->
+    <string name="booked_for">For %1$s</string>
+
+    <!-- Exact-alarm permission, which Android 12 onwards withholds by default. -->
+    <string name="reminder_permission_title">Allow reminders?</string>
+    <string name="reminder_permission_body">To remind you at the right moment, Mediconnect needs permission to set exact alarms. Android keeps this off until you allow it.</string>
+    <string name="reminder_permission_open">Open settings</string>
+    <string name="reminder_permission_unavailable">This device has no setting for exact alarms, so reminders cannot be scheduled.</string>
 </resources>
