@@ -256,50 +256,75 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     v -> rescheduleAppointmentDialog(appointment, doctor));
         }
 
+        /**
+         * The switch, and the alarms behind it.
+         *
+         * A visit with no stored state inherits the patient's default from
+         * Profile — and if that default is on, the alarms are set here and
+         * now. Showing the switch on without scheduling anything would be
+         * the worst of both: the patient trusts it and misses the visit.
+         */
         private void bindReminder(Appointment appointment, Doctor doctor) {
             // Set without the listener attached: recycling a card would
             // otherwise fire it with the previous visit's state and
             // schedule an alarm nobody asked for.
             recyclerItemBinding.switchRemindMe.setOnCheckedChangeListener(null);
-            recyclerItemBinding.switchRemindMe.setChecked(getReminderState(appointment.getId()));
+
+            boolean on = getReminderState(appointment.getId());
+            if (on && !hasStoredReminderState(appointment.getId())) {
+                // Inherited rather than chosen: make it true before showing
+                // it, and fall back to off if the alarms cannot be set.
+                on = setReminders(appointment, doctor, true);
+                saveReminderState(appointment.getId(), on);
+            }
+            recyclerItemBinding.switchRemindMe.setChecked(on);
 
             recyclerItemBinding.switchRemindMe.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                saveReminderState(appointment.getId(), isChecked);
-
-                if (!isChecked) {
-                    return;
-                }
-
-                Optional<Calendar> start = appointmentStart(appointment);
-                if (start.isEmpty()) {
-                    // Cannot work out when it is, so there is nothing to
-                    // schedule. Previously this dereferenced null and
-                    // crashed the app, which looked like being logged out.
+                boolean applied = setReminders(appointment, doctor, isChecked);
+                if (isChecked && !applied) {
                     buttonView.setChecked(false);
-                    saveReminderState(appointment.getId(), false);
-                    DialogUtils.showMessageDialog(context,
-                            context.getString(R.string.reminder_unavailable));
-                    return;
                 }
-
-                if (!canScheduleExactAlarms()) {
-                    // Android 12 onwards withholds this by default, so the
-                    // first reminder on a modern phone always stops here.
-                    buttonView.setChecked(false);
-                    saveReminderState(appointment.getId(), false);
-                    requestExactAlarmPermission(context);
-                    return;
-                }
-
-                Calendar now = Calendar.getInstance();
-                scheduleIfFuture(start.get(), -30, Calendar.MINUTE, now,
-                        context.getString(R.string.reminder_soon_title),
-                        context.getString(R.string.reminder_soon_body, doctor.getName()));
-                scheduleIfFuture(start.get(), -24, Calendar.HOUR_OF_DAY, now,
-                        context.getString(R.string.reminder_tomorrow_title),
-                        context.getString(R.string.reminder_tomorrow_body,
-                                doctor.getName(), appointment.getTime()));
+                saveReminderState(appointment.getId(), applied);
             });
+        }
+
+        /**
+         * Sets or clears this visit's reminders.
+         *
+         * Returns whether reminders are actually in place afterwards, which
+         * is what the switch should show — asking for them is not the same
+         * as getting them, because Android 12 onwards withholds exact
+         * alarms until the patient grants them.
+         */
+        private boolean setReminders(Appointment appointment, Doctor doctor, boolean wanted) {
+            if (!wanted) {
+                return false;
+            }
+
+            Optional<Calendar> start = appointmentStart(appointment);
+            if (start.isEmpty()) {
+                // Cannot work out when it is, so there is nothing to
+                // schedule. Previously this dereferenced null and crashed
+                // the app, which looked like being logged out.
+                DialogUtils.showMessageDialog(context,
+                        context.getString(R.string.reminder_unavailable));
+                return false;
+            }
+
+            if (!canScheduleExactAlarms()) {
+                requestExactAlarmPermission(context);
+                return false;
+            }
+
+            Calendar now = Calendar.getInstance();
+            scheduleIfFuture(start.get(), -30, Calendar.MINUTE, now,
+                    context.getString(R.string.reminder_soon_title),
+                    context.getString(R.string.reminder_soon_body, doctor.getName()));
+            scheduleIfFuture(start.get(), -24, Calendar.HOUR_OF_DAY, now,
+                    context.getString(R.string.reminder_tomorrow_title),
+                    context.getString(R.string.reminder_tomorrow_body,
+                            doctor.getName(), appointment.getTime()));
+            return true;
         }
 
         private void openVisit(Appointment appointment) {
@@ -510,6 +535,11 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
          * not touched it — so someone who asked for reminders in Profile
          * does not have to say so again on every card.
          */
+        private boolean hasStoredReminderState(String appointmentId) {
+            return context.getSharedPreferences("ReminderPrefs", Context.MODE_PRIVATE)
+                    .contains(appointmentId);
+        }
+
         private boolean getReminderState(String appointmentId) {
             SharedPreferences sharedPreferences =
                     context.getSharedPreferences("ReminderPrefs", Context.MODE_PRIVATE);

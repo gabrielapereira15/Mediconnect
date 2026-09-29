@@ -147,7 +147,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             bindKind(notification);
 
-            binding.messageCard.setContentDescription(context.getString(R.string.cd_message,
+            // Read and unread sounded identical, because the dot is the
+            // only thing that differs and a dot says nothing aloud.
+            binding.messageCard.setContentDescription(context.getString(
+                    notification.isRead() ? R.string.cd_message : R.string.cd_message_unread,
                     notification.getTitle(), notification.getMessage()));
             binding.messageCard.setOnClickListener(v -> onOpen.accept(notification));
         }
@@ -182,7 +185,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 binding.messageIcon.setImageTintList(ContextCompat.getColorStateList(
                         context, R.color.md_on_secondary_container));
                 binding.messageAction.setVisibility(View.VISIBLE);
-                binding.messageAction.setText(R.string.messages_fill_form);
+                binding.messageAction.setText(R.string.messages_see_visits);
                 binding.messageAction.setOnClickListener(v -> onAction.accept(notification));
                 return;
             }

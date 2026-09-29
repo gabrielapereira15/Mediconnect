@@ -1,6 +1,8 @@
 package com.vegs.mediconnect.mobile.notification;
 
+import com.vegs.mediconnect.auth.AuthInterceptor;
 import com.vegs.mediconnect.mobile.notification.model.NotificationResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -37,10 +39,19 @@ public class NotificationApiController {
         return ResponseEntity.accepted().build();
     }
 
+    /**
+     * Marks one message read.
+     *
+     * The route carries an id and no email, so the interceptor cannot check
+     * ownership from the path; the caller's own email comes from their
+     * token and is checked against the message instead.
+     */
     @PostMapping("/ack/{notificationId}")
     public ResponseEntity<Void> acknowledgeNotification(
-            @PathVariable(name = "notificationId") final UUID notificationId) {
-        notificationApiService.ackNotification(notificationId);
+            @PathVariable(name = "notificationId") final UUID notificationId,
+            final HttpServletRequest request) {
+        Object email = request.getAttribute(AuthInterceptor.AUTHENTICATED_EMAIL);
+        notificationApiService.ackNotification(notificationId, String.valueOf(email));
         return ResponseEntity.accepted().build();
     }
 

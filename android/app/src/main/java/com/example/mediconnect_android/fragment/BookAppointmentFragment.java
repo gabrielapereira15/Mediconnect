@@ -198,10 +198,23 @@ public class BookAppointmentFragment extends Fragment {
             binding.doctorInitials.setText(WhenLabel.initials(doctorName));
         }
 
+        // The specialty can arrive empty — a waitlist offer knows the
+        // doctor but not what they do — so the line is built from whatever
+        // is actually there rather than rendering " · 18 yrs".
         String years = details.getExperienceYears();
-        binding.doctorSpecialty.setText(years == null || years.isEmpty()
-                ? doctorSpecialty
-                : getString(R.string.doctors_years, doctorSpecialty, years));
+        boolean hasSpecialty = doctorSpecialty != null && !doctorSpecialty.trim().isEmpty();
+        boolean hasYears = years != null && !years.trim().isEmpty();
+
+        if (hasSpecialty && hasYears) {
+            binding.doctorSpecialty.setText(
+                    getString(R.string.doctors_years, doctorSpecialty, years));
+        } else if (hasSpecialty) {
+            binding.doctorSpecialty.setText(doctorSpecialty);
+        } else if (hasYears) {
+            binding.doctorSpecialty.setText(getString(R.string.doctors_years_only, years));
+        } else {
+            binding.doctorSpecialty.setVisibility(View.GONE);
+        }
 
         String description = details.getDescription();
         boolean hasDescription = description != null && !description.trim().isEmpty();

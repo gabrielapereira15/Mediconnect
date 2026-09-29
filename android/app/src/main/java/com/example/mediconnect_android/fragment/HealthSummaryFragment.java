@@ -75,6 +75,21 @@ public class HealthSummaryFragment extends Fragment {
     /** Held so Share does not have to rebuild it. */
     private String summaryText = "";
 
+    /**
+     * The one-off action is read here, not with the view.
+     *
+     * Reading it in onCreateView meant a rotation or a switch to dark mode
+     * exported the document again, or reopened the share sheet.
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        pendingAction = savedInstanceState != null
+                ? null
+                : (args == null ? null : args.getString(ARG_ACTION));
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -84,9 +99,6 @@ public class HealthSummaryFragment extends Fragment {
     }
 
     private void init() {
-        Bundle args = getArguments();
-        pendingAction = args == null ? null : args.getString(ARG_ACTION);
-
         binding.tvGenerated.setText(getString(R.string.summary_generated,
                 DateFormat.getDateInstance(DateFormat.LONG).format(new Date())));
 

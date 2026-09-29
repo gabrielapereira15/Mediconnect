@@ -18,7 +18,6 @@ import com.example.mediconnect_android.client.NotificationClientImpl;
 import com.example.mediconnect_android.databinding.FragmentNotificationsBinding;
 import com.example.mediconnect_android.model.Notification;
 import com.example.mediconnect_android.util.Background;
-import com.example.mediconnect_android.util.FragmentUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -139,14 +138,11 @@ public class NotificationsFragment extends Fragment {
     private void act(Notification notification) {
         open(notification);
 
-        if (KIND_WAITLIST_OFFER.equals(notification.getKind())) {
-            // The offer is against a doctor's freed slot, so the place to
-            // act on it is the visit list it will appear in.
-            goToTab(R.id.visits_fragment);
-            return;
-        }
-        FragmentUtils.loadFragment(getParentFragmentManager(), R.id.flFragment,
-                new MedicalHistoryFragment());
+        // Both kinds lead to the visit list, and both go through the tab
+        // rather than loading its fragment behind a lit-up Profile. A
+        // message carries no appointment id, so it cannot open one visit's
+        // form — the label says where it actually goes.
+        goToTab(R.id.visits_fragment);
     }
 
     private void markAllRead() {

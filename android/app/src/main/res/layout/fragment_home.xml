@@ -125,7 +125,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/search_bar"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/control_lg"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/control_lg"
                     android:background="@null"
                     android:hint="@string/home_search_hint"
                     android:imeOptions="actionSearch"
@@ -322,42 +323,45 @@
 
             <!-- ==== Quick actions ======================================== -->
 
-            <LinearLayout
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_2xl"
+                android:clipToPadding="false"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:baselineAligned="false"
-                android:orientation="horizontal"
-                android:paddingHorizontal="@dimen/space_lg">
+                android:orientation="horizontal">
 
                 <include
                     android:id="@+id/action_book"
                     layout="@layout/view_quick_action"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
                 <include
                     android:id="@+id/action_forms"
                     layout="@layout/view_quick_action"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
                 <include
                     android:id="@+id/action_record"
                     layout="@layout/view_quick_action"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
                 <include
                     android:id="@+id/action_messages"
                     layout="@layout/view_quick_action"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
+            </HorizontalScrollView>
 
             <!-- ==== Specialties ========================================== -->
 

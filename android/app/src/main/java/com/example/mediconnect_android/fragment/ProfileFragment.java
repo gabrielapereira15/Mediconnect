@@ -200,12 +200,14 @@ public class ProfileFragment extends Fragment {
         binding.switchReminders.switchIcon.setImageResource(R.drawable.ic_bell);
         binding.switchReminders.switchTitle.setText(R.string.profile_reminders);
         binding.switchReminders.switchSub.setText(R.string.profile_reminders_body);
-        binding.switchReminders.switchToggle.setChecked(
-                ReminderPreference.defaultOn(requireContext()));
+        boolean remindersOn = ReminderPreference.defaultOn(requireContext());
+        binding.switchReminders.switchToggle.setChecked(remindersOn);
+        describeSwitch(binding.switchReminders, R.string.profile_reminders, remindersOn);
 
         binding.switchReminders.switchRow.setOnClickListener(v -> {
             boolean on = !binding.switchReminders.switchToggle.isChecked();
             binding.switchReminders.switchToggle.setChecked(on);
+            describeSwitch(binding.switchReminders, R.string.profile_reminders, on);
             ReminderPreference.setDefaultOn(requireContext(), on);
         });
     }
@@ -250,6 +252,7 @@ public class ProfileFragment extends Fragment {
         binding.switchOffers.switchTitle.setText(R.string.profile_offers);
         binding.switchOffers.switchToggle.setChecked(on);
         binding.switchOffers.switchToggle.setEnabled(on);
+        describeSwitch(binding.switchOffers, R.string.profile_offers, on);
 
         if (count == 1) {
             binding.switchOffers.switchSub.setText(
@@ -265,6 +268,20 @@ public class ProfileFragment extends Fragment {
         // is done from a visit — which is where the doctor is named.
         binding.switchOffers.switchRow.setOnClickListener(on ? v -> confirmLeaveAll() : null);
         binding.switchOffers.switchRow.setClickable(on);
+    }
+
+    /**
+     * Says the state aloud.
+     *
+     * The switch itself is not focusable — the whole row is the target —
+     * so without this a screen reader read the title and never said
+     * whether it was on.
+     */
+    private void describeSwitch(
+            com.example.mediconnect_android.databinding.ViewSwitchRowBinding row,
+            int titleRes, boolean on) {
+        row.switchRow.setContentDescription(getString(R.string.cd_switch,
+                getString(titleRes), getString(on ? R.string.cd_on : R.string.cd_off)));
     }
 
     private void confirmLeaveAll() {

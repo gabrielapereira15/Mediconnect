@@ -49,8 +49,9 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/search_bar"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/control_lg"
+                    android:layout_height="wrap_content"
                     android:background="@null"
+                    android:minHeight="@dimen/control_lg"
                     android:hint="@string/doctors_search_hint"
                     android:imeOptions="actionSearch"
                     android:inputType="text"

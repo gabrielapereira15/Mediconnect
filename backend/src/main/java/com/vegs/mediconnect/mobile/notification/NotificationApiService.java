@@ -69,9 +69,23 @@ public class NotificationApiService {
         notificationPatientRepository.saveAll(unread);
     }
 
-    public void ackNotification(UUID notificationPatientId) {
+    /**
+     * Marks one message read, if it is the caller's to mark.
+     *
+     * The id alone used to be enough, so any signed-in patient could
+     * acknowledge a stranger's message by guessing one — the same hole that
+     * cancelling an appointment had. Somebody else's is reported as missing
+     * rather than forbidden, because "forbidden" confirms the id exists.
+     */
+    @Transactional
+    public void ackNotification(UUID notificationPatientId, String requestingEmail) {
         var notification = notificationPatientRepository.findById(notificationPatientId)
                 .orElseThrow(NotificationNotFoundException::new);
+
+        String owner = notification.getPatientId().getEmail();
+        if (requestingEmail == null || !requestingEmail.equalsIgnoreCase(owner)) {
+            throw new NotificationNotFoundException();
+        }
 
         notification.setAcknowledged(true);
         notificationPatientRepository.save(notification);
