@@ -253,6 +253,12 @@ public class FhirMapper {
         if (start.toLocalDate().isBefore(LocalDate.now())) {
             return org.hl7.fhir.r4.model.Appointment.AppointmentStatus.FULFILLED;
         }
+        // A patient who has checked in is in the waiting room, which FHIR
+        // has a word for. Reporting them as merely booked would have the
+        // exported record disagree with the screen the front desk is on.
+        if (appointment.getCheckedInAt() != null) {
+            return org.hl7.fhir.r4.model.Appointment.AppointmentStatus.ARRIVED;
+        }
         return org.hl7.fhir.r4.model.Appointment.AppointmentStatus.BOOKED;
     }
 

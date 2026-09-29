@@ -236,6 +236,12 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        requireActivity().setTitle(R.string.nav_profile);
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;

@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.client.DoctorClient;
@@ -52,6 +53,9 @@ public class BookAppointmentFragment extends Fragment {
     public static final String ARG_DOCTOR_ID = "doctorId";
     public static final String ARG_DOCTOR_NAME = "doctorName";
     public static final String ARG_DOCTOR_SPECIALTY = "doctorSpecialty";
+
+    /** Names the booking flow's first step, so the flow can pop itself. */
+    public static final String BACK_STACK = "booking";
 
     private static final String STATE_DAY = "selectedDay";
     private static final String STATE_SLOT = "selectedSlotId";
@@ -99,6 +103,25 @@ public class BookAppointmentFragment extends Fragment {
         boolean hasFreeSlot() {
             return slots.stream().anyMatch(DoctorDetails.Schedule.TimeSlot::isAvailable);
         }
+    }
+
+    /**
+     * Opens booking for one doctor.
+     *
+     * Every way in goes through here so the back-stack entry is named the
+     * same each time; the confirmation screen relies on that name to remove
+     * the steps behind it.
+     */
+    public static void open(FragmentManager fragmentManager, String doctorId,
+                            String doctorName, String doctorSpecialty) {
+        BookAppointmentFragment fragment = new BookAppointmentFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_DOCTOR_ID, doctorId);
+        args.putString(ARG_DOCTOR_NAME, doctorName);
+        args.putString(ARG_DOCTOR_SPECIALTY, doctorSpecialty);
+        fragment.setArguments(args);
+
+        FragmentUtils.loadFragment(fragmentManager, R.id.flFragment, fragment, BACK_STACK);
     }
 
     @Override
@@ -307,6 +330,15 @@ public class BookAppointmentFragment extends Fragment {
         Day day = findDay(selectedDay);
         if (day == null) {
             return;
+        }
+
+        // A slot taken while the patient was on the review screen must not
+        // stay selected: selected draws over disabled, so the footer would
+        // still offer Continue on a time that is gone.
+        if (selectedSlotId != null && day.slots.stream().noneMatch(
+                s -> selectedSlotId.equals(s.getId()) && s.isAvailable())) {
+            selectedSlotId = null;
+            selectedTime = null;
         }
 
         binding.dayTitle.setText(day.date.format(DAY_TITLE));

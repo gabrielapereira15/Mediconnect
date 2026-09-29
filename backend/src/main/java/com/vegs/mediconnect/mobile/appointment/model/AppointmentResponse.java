@@ -40,6 +40,12 @@ public class AppointmentResponse {
      */
     private String bookedForName;
 
+    /** ISO local date-time the patient checked in, or null. */
+    private String checkedInAt;
+
+    /** ISO local date-time the pre-appointment form arrived, or null. */
+    private String formSubmittedAt;
+
     private DoctorSimpleResponse doctor;
 
 }

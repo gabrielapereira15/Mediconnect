@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.client.AppointmentClient;
@@ -248,7 +249,14 @@ public class BookingReviewFragment extends Fragment {
 
     private void onBookingResult(BookingResult result) {
         if (result.isBooked()) {
-            FragmentUtils.loadFragment(getParentFragmentManager(), R.id.flFragment,
+            // The steps behind this are spent. Left on the stack, the back
+            // gesture walks the patient into a review screen for an
+            // appointment they already hold, and Confirm there books it a
+            // second time.
+            FragmentManager fragmentManager = getParentFragmentManager();
+            fragmentManager.popBackStack(BookAppointmentFragment.BACK_STACK,
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            FragmentUtils.loadFragment(fragmentManager, R.id.flFragment,
                     BookingConfirmedFragment.of(doctorName, date, time));
             return;
         }

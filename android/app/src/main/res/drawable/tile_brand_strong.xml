@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A panel inside the deep hero card, one step brighter than it. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="@dimen/radius_medium" />
+    <solid android:color="@color/md_brand_strong" />
+</shape>

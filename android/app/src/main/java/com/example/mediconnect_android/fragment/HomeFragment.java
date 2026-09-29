@@ -223,14 +223,26 @@ public class HomeFragment extends Fragment {
         binding.nextVisitDoctorInitials.setText(
                 WhenLabel.initials(appointment.getDoctor().getName()));
 
-        // One next step, not a row of equal options. Until the backend
-        // tracks whether the form is done, the form is always the step
-        // before the visit — see the note in the handoff's open questions.
+        // One next step, not a row of equal options — and the step is
+        // whatever the visit is actually waiting on. The card used to say
+        // "Form pending" whether or not a form had been sent, because
+        // nothing recorded it; the appointment carries the answer now.
+        boolean formNeeded = !appointment.isFormSubmitted();
         binding.nextVisitBadge.setVisibility(View.VISIBLE);
-        binding.nextVisitBadge.setText(R.string.home_form_pending);
-        binding.nextVisitPrimary.setText(R.string.visit_fill_in_form);
-        binding.nextVisitPrimary.setOnClickListener(v -> show(new PreAppointmentFormFragment()));
-        binding.nextVisitDetails.setOnClickListener(v -> show(new MedicalHistoryFragment()));
+        binding.nextVisitBadge.setText(formNeeded
+                ? R.string.visit_form_pending
+                : R.string.visit_confirmed);
+        binding.nextVisitBadge.setBackgroundResource(formNeeded
+                ? R.drawable.badge_sun
+                : R.drawable.badge_success);
+        binding.nextVisitPrimary.setText(formNeeded
+                ? R.string.visit_fill_in_form
+                : R.string.visit_details);
+        binding.nextVisitPrimary.setOnClickListener(v -> show(formNeeded
+                ? new PreAppointmentFormFragment()
+                : VisitDetailFragment.of(appointment)));
+        binding.nextVisitDetails.setOnClickListener(
+                v -> show(VisitDetailFragment.of(appointment)));
     }
 
     private void bindNoVisit() {

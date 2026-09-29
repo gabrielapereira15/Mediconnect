@@ -59,6 +59,20 @@ public class AppointmentClientImpl implements AppointmentClient {
     }
 
     @Override
+    public Appointment checkIn(String appointmentId) {
+        String url = ApiConfig.url("/api/mobile/appointments/") + appointmentId + "/checkin";
+        ApiGenericResponse response = OkHttpClientHelper.put(url);
+        if (response.isSuccess()) {
+            return new Gson().fromJson(response.getResponseBody(), Appointment.class);
+        }
+        // A 409 means the clinic will not take the check-in — the wrong day,
+        // or a visit that was cancelled. Either way the screen has to reload
+        // rather than pretend it worked.
+        Log.e("AppointmentClientImpl", "Error checking in: " + response.getResponseBody());
+        return null;
+    }
+
+    @Override
     public Boolean cancelAppointment(String appointmentId) {
         String url = ApiConfig.url("/api/mobile/appointments/cancel/") + appointmentId;
         ApiGenericResponse response = OkHttpClientHelper.put(url);

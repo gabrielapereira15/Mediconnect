@@ -36,6 +36,21 @@ public class AppointmentApiController {
     }
 
     /**
+     * Tells the clinic the patient has arrived.
+     *
+     * Same ownership rule as cancelling below: the email comes from the
+     * caller's token rather than the path, because the route carries no
+     * email for the interceptor to check.
+     */
+    @PutMapping("/{id}/checkin")
+    public ResponseEntity<AppointmentResponse> checkIn(
+            @PathVariable(name = "id") final UUID id,
+            final HttpServletRequest request) {
+        Object email = request.getAttribute(AuthInterceptor.AUTHENTICATED_EMAIL);
+        return ResponseEntity.ok(appointmentApiService.checkIn(id, String.valueOf(email)));
+    }
+
+    /**
      * Cancels an appointment.
      *
      * The route carries no email, so the interceptor cannot check ownership

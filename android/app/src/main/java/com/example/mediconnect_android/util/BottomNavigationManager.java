@@ -1,6 +1,5 @@
 package com.example.mediconnect_android.util;
 
-import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -57,13 +56,13 @@ public class BottomNavigationManager {
 
             int id = item.getItemId();
             if (id == R.id.home_fragment) {
-                show(new HomeFragment(), R.string.app_name);
+                show(new HomeFragment());
             } else if (id == R.id.visits_fragment) {
-                show(new MedicalHistoryFragment(), R.string.nav_visits);
+                show(new MedicalHistoryFragment());
             } else if (id == R.id.health_fragment) {
-                show(new HealthRecordFragment(), R.string.health_record_title);
+                show(new HealthRecordFragment());
             } else if (id == R.id.profile_fragment) {
-                show(new ProfileFragment(), R.string.nav_profile);
+                show(new ProfileFragment());
             } else {
                 return false;
             }
@@ -71,8 +70,12 @@ public class BottomNavigationManager {
         });
     }
 
-    private void show(Fragment fragment, @StringRes int titleRes) {
-        toolbar.setTitle(titleRes);
+    /**
+     * Every screen names itself in onResume, which runs after this, so a
+     * title set here is overwritten before anyone sees it. The tab only
+     * decides which screen appears.
+     */
+    private void show(Fragment fragment) {
         loadFragment(fragment);
     }
 

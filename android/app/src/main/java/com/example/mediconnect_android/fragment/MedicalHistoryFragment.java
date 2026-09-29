@@ -17,13 +17,11 @@ import com.example.mediconnect_android.databinding.FragmentMedicalHistoryBinding
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.Background;
-import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
 
 public class MedicalHistoryFragment extends Fragment {
 
-    public TabLayout tabLayout;
     public FragmentManager fragmentManager;
     FragmentMedicalHistoryBinding binding;
     AppointmentClient appointmentClient;
@@ -99,8 +97,10 @@ public class MedicalHistoryFragment extends Fragment {
                     finishRefresh();
                     appointmentsList = appointments;
                     binding.stateView.showContent();
-                    FragmentUtils.loadFragment(fragmentManager, R.id.fragment_container,
-                            new UpcomingFragment(appointmentsList));
+                    // Re-show whichever segment the patient is on, not
+                    // always Upcoming: a refresh from Cancelled used to
+                    // throw them back to the top of the list.
+                    showFilter(binding.visitFilter.getCheckedButtonId());
                 },
                 error -> {
                     finishRefresh();
@@ -117,39 +117,43 @@ public class MedicalHistoryFragment extends Fragment {
     }
 
     private void init() {
-        setTabLayout();
+        setFilterListener();
     }
 
-    private void setTabLayout() {
-        tabLayout = binding.tabLayout;
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                Fragment selectedFragment;
-                switch (tab.getPosition()) {
-                    case 1:
-                        selectedFragment = new CompletedFragment(appointmentsList);
-                        break;
-                    case 2:
-                        selectedFragment = new CancelledFragment(appointmentsList);
-                        break;
-                    case 0:
-                    default:
-                        selectedFragment = new UpcomingFragment(appointmentsList);
-                        break;
-                }
-
-                FragmentUtils.loadFragment(fragmentManager, R.id.fragment_container, selectedFragment);
+    /**
+     * Three views of one list.
+     *
+     * The segmented control replaces a TabLayout, which read as the app's
+     * own navigation sitting under the app's own navigation. Selecting a
+     * segment loads its fragment; the group keeps exactly one selected, so
+     * there is no state where none is.
+     */
+    private void setFilterListener() {
+        binding.visitFilter.check(R.id.filter_upcoming);
+        binding.visitFilter.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked) {
+                return;
             }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
+            showFilter(checkedId);
         });
+    }
+
+    private void showFilter(int checkedId) {
+        Fragment selected;
+        if (checkedId == R.id.filter_past) {
+            selected = new CompletedFragment(appointmentsList);
+        } else if (checkedId == R.id.filter_cancelled) {
+            selected = new CancelledFragment(appointmentsList);
+        } else {
+            selected = new UpcomingFragment(appointmentsList);
+        }
+        FragmentUtils.loadFragment(fragmentManager, R.id.fragment_container, selected);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        requireActivity().setTitle(R.string.nav_visits);
     }
 
     @Override

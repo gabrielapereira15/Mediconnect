@@ -88,4 +88,5 @@
 
     <!-- One day in the booking screen's date strip. -->
     <dimen name="date_chip_width">60dp</dimen>
+    <dimen name="icon_size_small">20dp</dimen>
 </resources>

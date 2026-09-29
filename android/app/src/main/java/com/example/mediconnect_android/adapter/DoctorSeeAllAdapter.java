@@ -1,7 +1,6 @@
 package com.example.mediconnect_android.adapter;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.databinding.DoctorListItemBinding;
 import com.example.mediconnect_android.fragment.BookAppointmentFragment;
 import com.example.mediconnect_android.model.Doctor;
-import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.WhenLabel;
 
 import java.util.List;
@@ -135,17 +133,9 @@ public class DoctorSeeAllAdapter extends RecyclerView.Adapter<DoctorSeeAllAdapte
         }
 
         private void openBooking(Doctor doctor) {
-            BookAppointmentFragment fragment = new BookAppointmentFragment();
-            Bundle args = new Bundle();
-            args.putString("doctorId", doctor.getId());
-            args.putString("doctorName", doctor.getName());
-            args.putString("doctorPhoto", doctor.getPhoto());
-            args.putString("doctorSpecialty", doctor.getSpecialty());
-            fragment.setArguments(args);
-
-            FragmentUtils.loadFragment(
+            BookAppointmentFragment.open(
                     ((AppCompatActivity) context).getSupportFragmentManager(),
-                    R.id.flFragment, fragment);
+                    doctor.getId(), doctor.getName(), doctor.getSpecialty());
         }
     }
 }

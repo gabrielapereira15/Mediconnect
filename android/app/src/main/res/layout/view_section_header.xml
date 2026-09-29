@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- "This week" / "Later" over a run of visit cards (board P08). -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/section_title"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/space_lg"
+    android:paddingTop="@dimen/space_md"
+    android:paddingBottom="@dimen/space_sm"
+    android:textAppearance="@style/TextAppearance.Mediconnect.Overline"
+    android:textColor="@color/md_on_surface_variant"
+    tools:text="This week" />

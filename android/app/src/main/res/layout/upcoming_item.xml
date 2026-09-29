@@ -1,164 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    An upcoming visit (board P08).
+
+    The card used to open with a stock photograph of a doctor and a line of
+    formatted text, and carried five buttons of equal weight. It leads with
+    when the visit is, because that is what a patient scanning the list is
+    looking for, and offers one primary action — whatever the visit is
+    actually waiting on. Cancelling moved to the visit itself, where the
+    consequences can be spelled out.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:strokeColor="@color/md_outline_variant"
-    app:strokeWidth="1dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/space_sm"
-    android:background="@color/white"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+    android:layout_marginHorizontal="@dimen/space_lg"
+    android:layout_marginBottom="@dimen/space_md"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="@dimen/radius_large"
+    app:cardElevation="@dimen/elevation_card"
+    app:strokeColor="@color/md_outline_variant"
+    app:strokeWidth="@dimen/stroke_hairline">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="vertical"
-        android:padding="@dimen/space_md">
+        android:padding="@dimen/space_lg">
 
-        <!-- Date and Time -->
-        <TextView
-            android:id="@+id/appointment_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/mock_date"
-            android:textColor="@color/gray"
-            android:textStyle="bold" 
-            android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
-
-        <!-- Doctor Information -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_sm"
             android:orientation="horizontal">
 
-            <!-- Doctor's Image -->
-            <ImageView
-                android:id="@+id/doctor_image"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/round_image_background"
-                android:clipToOutline="true"
-                android:contentDescription="@string/doctor_name"
-                android:scaleType="centerCrop"
-                android:src="@drawable/doctorimage"
-                android:visibility="visible"
-                tools:ignore="UnusedAttribute" />
+            <!-- The date badge: what the eye lands on first. -->
+            <LinearLayout
+                android:id="@+id/date_badge"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/date_badge_brand"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <!-- Doctor's Details -->
+                <TextView
+                    android:id="@+id/badge_weekday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                    android:textColor="@color/md_on_primary"
+                    tools:text="Wed" />
+
+                <TextView
+                    android:id="@+id/badge_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium"
+                    android:textColor="@color/md_on_primary"
+                    tools:text="30" />
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_md"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingStart="@dimen/space_sm"
-                tools:ignore="RtlSymmetry">
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/appointment_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+                    tools:text="10:00 AM" />
 
                 <TextView
                     android:id="@+id/doctor_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/doctor_name"
-                    android:textColor="@color/dark_gray"
-                    android:textStyle="bold" 
-                    android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                    tools:text="Dr. Robert Chase · Surgeon" />
 
-                <TextView
-                    android:id="@+id/doctor_speacialty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/speacialty_text"
-                    android:textColor="@color/gray"
-                    android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium" />
-
-                <!--
-                    Only shown when the visit is for someone else. Booking for
-                    a child or a parent otherwise produced a row identical to
-                    your own, with no way to tell them apart.
-                -->
                 <TextView
                     android:id="@+id/booked_for"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_xs"
-                    android:drawablePadding="4dp"
-                    android:drawableStart="@drawable/ic_user"
-                    android:drawableTint="@color/md_primary"
-                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
-                    android:textColor="@color/md_primary"
+                    android:background="@drawable/badge_blue"
+                    android:paddingHorizontal="@dimen/space_sm"
+                    android:paddingVertical="2dp"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                    android:textColor="@color/md_on_secondary_container"
                     android:visibility="gone"
                     tools:text="For Sofia Almeida"
                     tools:visibility="visible" />
-
             </LinearLayout>
 
-            <!-- Remind Me Switch -->
-            <Switch
-                android:id="@+id/switchRemindMe"
+            <TextView
+                android:id="@+id/status_badge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/remind_me"
-                android:textColor="@color/gray"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
-
+                android:background="@drawable/badge_sun"
+                android:paddingHorizontal="@dimen/space_sm"
+                android:paddingVertical="@dimen/space_xs"
+                android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                tools:text="Form pending" />
         </LinearLayout>
 
-        <!-- Buttons for Canceling or Rescheduling -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/stroke_hairline"
+            android:layout_marginVertical="@dimen/space_md"
+            android:background="@color/md_outline_variant" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/touch_target"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/visit_remind_me"
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_remind_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/visit_remind_me" />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_sm"
-            android:gravity="end"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/cancel_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/light_gray"
-                android:ems="8"
-                android:text="@string/cancel"
-                android:textColor="@color/dark_gray" />
-
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/reschedule_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/space_sm"
-                android:backgroundTint="@color/green"
-                android:ems="8"
-                android:text="@string/reschedule"
-                android:textColor="@color/md_on_primary" />
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/control_md"
+                android:layout_weight="1"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="@string/visit_reschedule"
+                android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/primary_button"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/control_md"
+                android:layout_marginStart="@dimen/space_md"
+                android:layout_weight="1"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                tools:text="Fill in form" />
         </LinearLayout>
-
-        <!--
-            The waitlist. Offered on the card for the appointment it would
-            improve on, because that is the moment someone realises the date
-            they were given is further off than they wanted.
-        -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/waitlist_button"
-            style="@style/Widget.Mediconnect.Button.Text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/waitlist_join"
-            app:icon="@drawable/ic_bell" />
-
-        <!--
-            The pre-appointment form, on the visit it belongs to. It used to
-            be reachable only from the navigation drawer, as a list of forms
-            detached from any appointment — so a patient had to work out
-            which form went with which visit.
-        -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/form_button"
-            style="@style/Widget.Mediconnect.Button.Text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/visit_fill_in_form"
-            app:icon="@drawable/ic_form" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

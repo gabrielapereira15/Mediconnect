@@ -17,6 +17,12 @@ public class Appointment {
     /** Who the visit is for, or null when it is for the account holder. */
     private String bookedForName;
 
+    /** ISO local date-time the pre-appointment form arrived, or null. */
+    private String formSubmittedAt;
+
+    /** ISO local date-time the patient checked in, or null. */
+    private String checkedInAt;
+
 
     public Boolean getReviewed() {
         return reviewed;
@@ -121,5 +127,30 @@ public class Appointment {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getFormSubmittedAt() {
+        return formSubmittedAt;
+    }
+
+    public void setFormSubmittedAt(String formSubmittedAt) {
+        this.formSubmittedAt = formSubmittedAt;
+    }
+
+    /** Whether the doctor has the form the visit expects. */
+    public boolean isFormSubmitted() {
+        return formSubmittedAt != null && !formSubmittedAt.isEmpty();
+    }
+
+    public String getCheckedInAt() {
+        return checkedInAt;
+    }
+
+    public void setCheckedInAt(String checkedInAt) {
+        this.checkedInAt = checkedInAt;
+    }
+
+    public boolean isCheckedIn() {
+        return checkedInAt != null && !checkedInAt.isEmpty();
     }
 }

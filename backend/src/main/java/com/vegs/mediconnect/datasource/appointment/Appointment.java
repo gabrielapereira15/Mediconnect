@@ -76,6 +76,29 @@ public class Appointment {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+    /**
+     * When the patient sent their pre-appointment form, or null if they
+     * have not.
+     *
+     * Both the app and the back office ask "is the form in?" about every
+     * upcoming visit, and until this existed each screen answered by
+     * assuming. One nullable timestamp is the whole answer, and it is the
+     * same answer everywhere.
+     */
+    @Column
+    private OffsetDateTime formSubmittedAt;
+
+    /**
+     * When the patient told us they had arrived, or null if they have not.
+     *
+     * The front desk's queue is built from this, so it records the moment
+     * rather than a boolean: "waiting 20 minutes" is the thing a receptionist
+     * actually needs to see.
+     */
+    @Column
+    private OffsetDateTime checkedInAt;
+
+
     public LocalDateTime getDateTime() {
         return scheduleTime.getDateTime();
     }

@@ -20,6 +20,12 @@ public class AppointmentApiControllerAdvice {
      * reasonable and someone else simply got there first, so the app can
      * say which time went rather than "please try again later".
      */
+    /** 409: the visit exists, but it is not open for checking in. */
+    @ExceptionHandler(CheckInNotOpenException.class)
+    public ResponseEntity<String> handleCheckInNotOpen(CheckInNotOpenException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
+    }
+
     @ExceptionHandler(SlotNoLongerAvailableException.class)
     public ResponseEntity<String> handleSlotTaken(SlotNoLongerAvailableException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());

@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,12 +29,15 @@ import com.example.mediconnect_android.client.ApiException;
 import com.example.mediconnect_android.client.WaitlistClient;
 import com.example.mediconnect_android.client.WaitlistClientImpl;
 import com.example.mediconnect_android.databinding.UpcomingItemBinding;
+import com.example.mediconnect_android.databinding.ViewSectionHeaderBinding;
 import com.example.mediconnect_android.fragment.BookAppointmentFragment;
 import com.example.mediconnect_android.fragment.MedicalHistoryFragment;
 import com.example.mediconnect_android.fragment.PreAppointmentFormFragment;
+import com.example.mediconnect_android.fragment.VisitDetailFragment;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.WhenLabel;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.Notification;
 import com.example.mediconnect_android.util.Background;
@@ -44,44 +48,116 @@ import android.util.Log;
 import java.util.Optional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.Locale;
 import java.util.Date;
 import java.util.List;
 
-public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHolder> {
+public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = "UpcomingAdapter";
 
+    private static final DateTimeFormatter WEEKDAY =
+            DateTimeFormatter.ofPattern("EEE", Locale.ENGLISH);
+
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_VISIT = 1;
+
+    /** A visit within this many days belongs under "This week". */
+    private static final int THIS_WEEK_DAYS = 7;
+
     private final Context context;
-    private final List<Appointment> appointmentList;
     private final WaitlistClient waitlistClient = new WaitlistClientImpl();
-    UpcomingItemBinding upcomingItemBindingbinding;
-    AppointmentClient appointmentClient;
+    private final AppointmentClient appointmentClient = new AppointmentClientImpl();
+
+    /** Either a heading or a visit; the list is built once, in order. */
+    private final List<Object> rows = new ArrayList<>();
 
     public UpcomingAdapter(List<Appointment> appointmentList, Context context) {
-        this.appointmentList = appointmentList;
         this.context = context;
+        buildRows(appointmentList);
+    }
+
+    /**
+     * Groups the visits under "This week" and "Later".
+     *
+     * A flat list of eight cards makes a patient read every date to find
+     * the one that is nearly here. The headings do that reading for them,
+     * and a heading only appears when it has something under it.
+     */
+    private void buildRows(List<Appointment> appointments) {
+        if (appointments == null) {
+            return;
+        }
+        LocalDate soon = LocalDate.now().plusDays(THIS_WEEK_DAYS);
+        List<Appointment> thisWeek = new ArrayList<>();
+        List<Appointment> later = new ArrayList<>();
+
+        for (Appointment appointment : appointments) {
+            LocalDate day = WhenLabel.parse(appointment.getStartsAt())
+                    .map(LocalDateTime::toLocalDate)
+                    .orElse(null);
+            if (day != null && day.isAfter(soon)) {
+                later.add(appointment);
+            } else {
+                thisWeek.add(appointment);
+            }
+        }
+
+        if (!thisWeek.isEmpty()) {
+            rows.add(context.getString(R.string.visit_this_week));
+            rows.addAll(thisWeek);
+        }
+        if (!later.isEmpty()) {
+            rows.add(context.getString(R.string.visit_later));
+            rows.addAll(later);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return rows.get(position) instanceof Appointment ? TYPE_VISIT : TYPE_HEADER;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        upcomingItemBindingbinding = UpcomingItemBinding.inflate(layoutInflater, parent, false);
-        appointmentClient = new AppointmentClientImpl();
-        return new ViewHolder(upcomingItemBindingbinding);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        if (viewType == TYPE_HEADER) {
+            return new HeaderViewHolder(ViewSectionHeaderBinding.inflate(inflater, parent, false));
+        }
+        return new ViewHolder(UpcomingItemBinding.inflate(inflater, parent, false));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.S)
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bindView(appointmentList.get(position));
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        Object row = rows.get(position);
+        if (holder instanceof ViewHolder) {
+            ((ViewHolder) holder).bindView((Appointment) row);
+        } else {
+            ((HeaderViewHolder) holder).binding.sectionTitle.setText((String) row);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return appointmentList.size();
+        return rows.size();
+    }
+
+    static class HeaderViewHolder extends RecyclerView.ViewHolder {
+
+        final ViewSectionHeaderBinding binding;
+
+        HeaderViewHolder(ViewSectionHeaderBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -93,62 +169,98 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
             this.recyclerItemBinding = recyclerItemBinding;
         }
 
-        private static @NonNull BookAppointmentFragment getBookAppointmentFragment(Doctor doctor) {
-            BookAppointmentFragment bookAppointmentFragment = new BookAppointmentFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("doctorId", doctor.getId());
-            bundle.putString("doctorName", doctor.getName());
-            bundle.putString("doctorPhoto", doctor.getPhoto());
-            bundle.putString("doctorSpecialty", doctor.getSpecialty());
-            bookAppointmentFragment.setArguments(bundle);
-            return bookAppointmentFragment;
-        }
-
         @RequiresApi(api = Build.VERSION_CODES.S)
         public void bindView(Appointment appointment) {
             Doctor doctor = appointment.getDoctor();
-            recyclerItemBinding.appointmentDate.setText(appointment.toString());
-            recyclerItemBinding.doctorName.setText(doctor.getName());
-            recyclerItemBinding.doctorSpeacialty.setText(doctor.getSpecialty());
+
+            WhenLabel.parse(appointment.getStartsAt()).ifPresent(at -> {
+                recyclerItemBinding.badgeWeekday.setText(at.format(WEEKDAY));
+                recyclerItemBinding.badgeDay.setText(String.valueOf(at.getDayOfMonth()));
+                recyclerItemBinding.appointmentTime.setText(WhenLabel.timeWords(at));
+                bindDateBadge(at);
+            });
+
+            recyclerItemBinding.doctorName.setText(context.getString(R.string.doctor_and_specialty,
+                    WhenLabel.doctorName(doctor.getName()), doctor.getSpecialty()));
 
             String bookedFor = appointment.getBookedForName();
-            if (bookedFor == null || bookedFor.trim().isEmpty()) {
-                recyclerItemBinding.bookedFor.setVisibility(View.GONE);
-            } else {
-                recyclerItemBinding.bookedFor.setVisibility(View.VISIBLE);
+            boolean forSomeoneElse = bookedFor != null && !bookedFor.trim().isEmpty();
+            recyclerItemBinding.bookedFor.setVisibility(forSomeoneElse ? View.VISIBLE : View.GONE);
+            if (forSomeoneElse) {
                 recyclerItemBinding.bookedFor.setText(
                         context.getString(R.string.booked_for, bookedFor));
             }
 
-            Glide.with(context)
-                    .load(doctor.getPhoto())
-                    .placeholder(R.drawable.doctorimage)
-                    .error(R.drawable.doctorimage)
-                    .into(recyclerItemBinding.doctorImage);
+            bindStatus(appointment);
+            bindActions(appointment, doctor);
+            bindReminder(appointment, doctor);
 
-            boolean isReminderEnabled = getReminderState(appointment.getId());
-            recyclerItemBinding.switchRemindMe.setChecked(isReminderEnabled);
+            recyclerItemBinding.getRoot().setOnClickListener(v -> openVisit(appointment));
+        }
 
-            recyclerItemBinding.waitlistButton.setOnClickListener(v -> joinWaitlist(appointment, doctor));
+        /**
+         * The next visit's date block is filled; the ones behind it are not.
+         * Eight identical brand-coloured blocks would say nothing about
+         * which one is nearly here.
+         */
+        private void bindDateBadge(LocalDateTime at) {
+            boolean soon = !at.toLocalDate().isAfter(LocalDate.now().plusDays(1));
+            recyclerItemBinding.dateBadge.setBackgroundResource(
+                    soon ? R.drawable.date_badge_brand : R.drawable.date_badge_quiet);
+            int colour = soon ? R.color.md_on_primary : R.color.md_on_surface;
+            recyclerItemBinding.badgeWeekday.setTextColor(ContextCompat.getColor(context, colour));
+            recyclerItemBinding.badgeDay.setTextColor(ContextCompat.getColor(context, colour));
+        }
 
-            // The form belongs to this visit, so it opens from this card.
-            recyclerItemBinding.formButton.setOnClickListener(v -> FragmentUtils.loadFragment(
-                    ((AppCompatActivity) context).getSupportFragmentManager(),
-                    R.id.flFragment, new PreAppointmentFormFragment()));
+        /**
+         * What the visit is waiting on, in a word.
+         *
+         * Nothing recorded whether the form had been sent until the
+         * appointment started carrying the answer, so this used to be the
+         * same sentence on every card whether it was true or not.
+         */
+        private void bindStatus(Appointment appointment) {
+            boolean formIn = appointment.isFormSubmitted();
+            recyclerItemBinding.statusBadge.setText(formIn
+                    ? R.string.visit_confirmed
+                    : R.string.visit_form_pending);
+            recyclerItemBinding.statusBadge.setBackgroundResource(formIn
+                    ? R.drawable.badge_success
+                    : R.drawable.badge_sun);
+            recyclerItemBinding.statusBadge.setTextColor(ContextCompat.getColor(context,
+                    formIn ? R.color.md_success : R.color.md_on_rating_container));
+        }
 
-            recyclerItemBinding.rescheduleButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    rescheduleAppointmentDialog(appointment, doctor);
+        /**
+         * One primary action, and it is whatever the visit still needs. The
+         * card used to carry five buttons of equal weight, which left a
+         * patient working out which of them was the point.
+         */
+        private void bindActions(Appointment appointment, Doctor doctor) {
+            boolean formIn = appointment.isFormSubmitted();
+            recyclerItemBinding.primaryButton.setText(formIn
+                    ? R.string.visit_details
+                    : R.string.visit_fill_in_form);
+            recyclerItemBinding.primaryButton.setOnClickListener(v -> {
+                if (formIn) {
+                    openVisit(appointment);
+                } else {
+                    FragmentUtils.loadFragment(
+                            ((AppCompatActivity) context).getSupportFragmentManager(),
+                            R.id.flFragment, new PreAppointmentFormFragment());
                 }
             });
 
-            recyclerItemBinding.cancelButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    showCancelConfirmationDialog(appointment);
-                }
-            });
+            recyclerItemBinding.rescheduleButton.setOnClickListener(
+                    v -> rescheduleAppointmentDialog(appointment, doctor));
+        }
+
+        private void bindReminder(Appointment appointment, Doctor doctor) {
+            // Set without the listener attached: recycling a card would
+            // otherwise fire it with the previous visit's state and
+            // schedule an alarm nobody asked for.
+            recyclerItemBinding.switchRemindMe.setOnCheckedChangeListener(null);
+            recyclerItemBinding.switchRemindMe.setChecked(getReminderState(appointment.getId()));
 
             recyclerItemBinding.switchRemindMe.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 saveReminderState(appointment.getId(), isChecked);
@@ -160,8 +272,8 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
                 Optional<Calendar> start = appointmentStart(appointment);
                 if (start.isEmpty()) {
                     // Cannot work out when it is, so there is nothing to
-                    // schedule. Previously this dereferenced null and crashed
-                    // the app, which looked like being logged out.
+                    // schedule. Previously this dereferenced null and
+                    // crashed the app, which looked like being logged out.
                     buttonView.setChecked(false);
                     saveReminderState(appointment.getId(), false);
                     DialogUtils.showMessageDialog(context,
@@ -187,6 +299,12 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
                         context.getString(R.string.reminder_tomorrow_body,
                                 doctor.getName(), appointment.getTime()));
             });
+        }
+
+        private void openVisit(Appointment appointment) {
+            FragmentUtils.loadFragment(
+                    ((AppCompatActivity) context).getSupportFragmentManager(),
+                    R.id.flFragment, VisitDetailFragment.of(appointment));
         }
 
         /**
@@ -399,9 +517,10 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
                             () -> isAppointmentCancelled(appointment),
                             cancelled -> {
                                 if (cancelled) {
-                                    FragmentUtils.loadFragment(
+                                    BookAppointmentFragment.open(
                                             ((AppCompatActivity) context).getSupportFragmentManager(),
-                                            R.id.flFragment, getBookAppointmentFragment(doctor));
+                                            doctor.getId(), doctor.getName(),
+                                            doctor.getSpecialty());
                                 } else {
                                     DialogUtils.showMessageDialog(context,
                                             "Appointment not cancelled, please try again later");

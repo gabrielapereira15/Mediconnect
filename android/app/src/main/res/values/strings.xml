@@ -79,6 +79,8 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="add_review">Add Review</string>
     <string name="upcoming">Upcoming</string>
     <string name="completed">Completed</string>
+    <!-- "Past" rather than "Completed": a visit that was missed was not completed. -->
+    <string name="visits_past">Past</string>
     <string name="cancelled">Cancelled</string>
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
@@ -294,7 +296,6 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="home_action_forms">Forms</string>
     <string name="home_action_record">Health record</string>
     <string name="home_action_messages">Messages</string>
-    <string name="home_form_pending">Form pending</string>
     <string name="home_checked_in">Checked in</string>
     <string name="home_confirmed">Confirmed</string>
     <string name="home_check_in">Check in</string>
@@ -380,6 +381,52 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
 
     <string name="confirmed_title">You are booked</string>
     <string name="confirmed_before">Before your visit</string>
+
+    <!-- ==== Visits and visit day (P08, P09) ==== -->
+    <string name="visit_form_pending">Form pending</string>
+    <string name="visit_confirmed">Confirmed</string>
+    <string name="visit_form_sent">Form sent</string>
+    <string name="visit_details">Details</string>
+    <string name="visit_reschedule">Reschedule</string>
+    <string name="visit_this_week">This week</string>
+    <string name="visit_later">Later</string>
+    <string name="visit_remind_me">Remind me</string>
+    <string name="doctor_and_specialty">%1$s · %2$s</string>
+    <string name="visit_title">Your visit</string>
+    <string name="visit_starts_in">Starts in %1$s · %2$s, %3$s</string>
+    <string name="visit_started">Started %1$s ago · %2$s, %3$s</string>
+    <plurals name="visit_in_days_plural">
+        <item quantity="one">In %1$d day · %2$s, %3$s</item>
+        <item quantity="other">In %1$d days · %2$s, %3$s</item>
+    </plurals>
+    <string name="visit_checked_in">You are checked in. The front desk knows you are here.</string>
+    <string name="visit_check_in_prompt">At the clinic? Check in to let the front desk know.</string>
+    <string name="visit_check_in">Check in</string>
+    <string name="visit_checked_in_at">Checked in at %1$s</string>
+    <string name="visit_check_in_day_only">You can check in on the day of your visit.</string>
+    <string name="visit_before_you_go">Before you go in</string>
+    <string name="visit_form_row">Pre-appointment form</string>
+    <string name="visit_form_row_sent">Sent %1$s</string>
+    <string name="visit_form_row_todo">The doctor reads it before you arrive</string>
+    <string name="visit_form_view">View</string>
+    <string name="visit_form_fill">Fill in</string>
+    <string name="visit_health_card">Bring your health card</string>
+    <string name="visit_health_card_sub">%1$s · ending %2$s</string>
+    <string name="visit_health_card_missing">Add it to your profile so the desk can find you faster</string>
+    <string name="visit_details_heading">Details</string>
+    <string name="visit_directions">Directions</string>
+    <string name="visit_no_maps">No maps app to open directions in.</string>
+    <string name="visit_cancel">Cancel visit</string>
+    <string name="visit_waitlist">Tell me if something earlier opens up</string>
+    <string name="visit_hours_minutes">%1$d h %2$d min</string>
+    <string name="visit_minutes">%1$d min</string>
+    <string name="visit_reschedule_body">This cancels the visit you have now and takes you back to the times. The slot you hold is released as soon as you confirm.</string>
+    <string name="visit_reschedule_confirm">Find another time</string>
+    <string name="visit_cancel_body">The slot goes back to the clinic. Someone on the waitlist may take it straight away.</string>
+    <string name="visit_cancel_keep">Keep it</string>
+    <string name="visit_cancel_confirm">Cancel visit</string>
+    <string name="visit_cancel_failed">We could not cancel that. Please try again.</string>
+    <string name="cd_more_options">More options</string>
     <string name="cd_close">Close</string>
     <string name="step_one">1</string>
     <string name="step_two">2</string>
@@ -387,8 +434,8 @@ Etiam interdum neque sit amet ante gravida, sit amet viverra lectus tincidunt. E
     <string name="confirmed_step_form">Fill in your pre-appointment form</string>
     <string name="confirmed_step_form_sub">Takes about 3 minutes. %1$s reads it before you arrive.</string>
     <string name="confirmed_step_form_action">Start form</string>
-    <string name="confirmed_step_remind">We will remind you</string>
-    <string name="confirmed_step_remind_sub">The day before, and 30 minutes before.</string>
+    <string name="confirmed_step_remind">We can remind you</string>
+    <string name="confirmed_step_remind_sub">The day before, and 30 minutes before — switch reminders on for this visit.</string>
     <string name="confirmed_step_checkin">Check in from the app</string>
     <string name="confirmed_step_checkin_sub">When you arrive, tap Check in — no queue at the desk.</string>
     <string name="confirmed_add_calendar">Add to calendar</string>

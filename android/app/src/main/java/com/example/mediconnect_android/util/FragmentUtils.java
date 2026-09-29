@@ -23,6 +23,18 @@ public class FragmentUtils {
      */
     public static void loadFragment(FragmentManager fragmentManager, int containerViewId,
                                     Fragment fragment) {
+        loadFragment(fragmentManager, containerViewId, fragment, null);
+    }
+
+    /**
+     * The same, with a name on the back-stack entry.
+     *
+     * A flow that ends somewhere else — booking ends on a confirmation —
+     * has to be able to remove its own steps, or the back gesture walks the
+     * patient into a review screen for an appointment they already hold.
+     */
+    public static void loadFragment(FragmentManager fragmentManager, int containerViewId,
+                                    Fragment fragment, String backStackName) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(
                 R.anim.fragment_enter,
@@ -30,7 +42,7 @@ public class FragmentUtils {
                 R.anim.fragment_pop_enter,
                 R.anim.fragment_pop_exit);
         transaction.replace(containerViewId, fragment);
-        transaction.addToBackStack(null);
+        transaction.addToBackStack(backStackName);
         transaction.commit();
     }
 }

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
@@ -82,17 +83,20 @@ public class AppointmentApiService {
     /**
      * Records who the visit is for when it is not the account holder.
      *
-     * A blank name means the patient booked it for themselves, so nothing is
-     * stored and the row stays as it was.
+     * A blank name means the patient booked it for themselves, in which case
+     * only the note is theirs to keep. The note used to be dropped with the
+     * rest, so a patient who wrote what they wanted to talk about and was
+     * booking for themselves — which is nearly everyone — sent it nowhere.
      */
     private void applyBookedFor(Appointment appointment, AppointmentRequest request) {
+        appointment.setBookedForNotes(trimToNull(request.getBookedForNotes()));
+
         var name = request.getBookedForName();
         if (name == null || name.isBlank()) {
             return;
         }
         appointment.setBookedForName(name.trim());
         appointment.setBookedForPhone(trimToNull(request.getBookedForPhone()));
-        appointment.setBookedForNotes(trimToNull(request.getBookedForNotes()));
         appointment.setBookedForDateOfBirth(parseDateOfBirth(request.getBookedForDateOfBirth()));
     }
 
@@ -120,6 +124,43 @@ public class AppointmentApiService {
 
     private boolean notRemoved(Appointment appointment) {
         return !AppointmentStatus.REMOVED.getStatus().equals(appointment.getStatus());
+    }
+
+    /**
+     * Records that the patient has arrived for today's visit.
+     *
+     * Ownership is checked the same way cancelling is, and for the same
+     * reason: an appointment belonging to somebody else is reported as
+     * missing rather than forbidden, because "forbidden" confirms the id
+     * exists.
+     *
+     * Checking in twice is not an error. A patient who taps it again after
+     * the screen has reloaded should see the same answer, not a failure,
+     * and the desk should keep the time they actually arrived.
+     */
+    @Transactional
+    public AppointmentResponse checkIn(UUID appointmentId, String requestingEmail) {
+        var appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(AppointmentNotFoundException::new);
+
+        if (requestingEmail == null
+                || !requestingEmail.equalsIgnoreCase(appointment.getPatient().getEmail())) {
+            throw new AppointmentNotFoundException();
+        }
+        if (Boolean.TRUE.equals(appointment.getCanceled())) {
+            throw new CheckInNotOpenException("That visit was cancelled.");
+        }
+        if (!appointment.getScheduleTime().getSchedule().getDate().isEqual(LocalDate.now())) {
+            // Checking in the day before tells the front desk nothing and
+            // puts the patient in a queue they are not standing in.
+            throw new CheckInNotOpenException("You can check in on the day of your visit.");
+        }
+
+        if (appointment.getCheckedInAt() == null) {
+            appointment.setCheckedInAt(OffsetDateTime.now());
+            appointmentRepository.save(appointment);
+        }
+        return mapToAppointmentResponse(appointment);
     }
 
     /**
@@ -215,10 +256,18 @@ public class AppointmentApiService {
                         .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .isReviewed(isReviewed)
                 .bookedForName(appointment.getBookedForName())
+                .checkedInAt(isoOrNull(appointment.getCheckedInAt()))
+                .formSubmittedAt(isoOrNull(appointment.getFormSubmittedAt()))
                 .reviewScore(reviewScore)
                 .status(status)
                 .doctor(doctorApiService.mapToDoctorSimpleResponse(doctor))
                 .build();
+    }
+
+    private String isoOrNull(OffsetDateTime at) {
+        return at == null
+                ? null
+                : at.toLocalDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     private String getStatus(Appointment appointment) {

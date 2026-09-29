@@ -17,6 +17,7 @@ import com.example.mediconnect_android.databinding.FragmentBookingConfirmedBindi
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.WhenLabel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -79,8 +80,11 @@ public class BookingConfirmedFragment extends Fragment {
 
         binding.btnStartForm.setOnClickListener(v -> show(new PreAppointmentFormFragment()));
         binding.btnAddCalendar.setOnClickListener(v -> addToCalendar());
-        binding.btnDone.setOnClickListener(v -> show(new MedicalHistoryFragment()));
-        binding.btnClose.setOnClickListener(v -> show(new HomeFragment()));
+        // Both ways out go through the bottom navigation rather than
+        // loading a tab's fragment directly, which left Home lit up over
+        // the visit list.
+        binding.btnDone.setOnClickListener(v -> goToTab(R.id.visits_fragment));
+        binding.btnClose.setOnClickListener(v -> goToTab(R.id.home_fragment));
 
         return binding.getRoot();
     }
@@ -136,6 +140,13 @@ public class BookingConfirmedFragment extends Fragment {
 
     private void show(Fragment fragment) {
         FragmentUtils.loadFragment(getParentFragmentManager(), R.id.flFragment, fragment);
+    }
+
+    private void goToTab(int itemId) {
+        BottomNavigationView nav = requireActivity().findViewById(R.id.bottomNavigationView);
+        if (nav != null) {
+            nav.setSelectedItemId(itemId);
+        }
     }
 
     @Override

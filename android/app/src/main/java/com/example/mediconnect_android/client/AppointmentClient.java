@@ -14,4 +14,11 @@ public interface AppointmentClient {
     BookingResult createAppointment(String appointmentJson);
 
     Boolean cancelAppointment(String appointmentId);
+
+    /**
+     * Tells the clinic the patient has arrived, and returns the appointment
+     * as it now stands — null when the clinic would not take it, which is
+     * any day but the day of the visit.
+     */
+    Appointment checkIn(String appointmentId);
 }
