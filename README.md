@@ -334,12 +334,11 @@ backend/src/main/java/com/vegs/mediconnect/
 
 ## Credits
 
-Originally built as a team project for the Mobile Solutions postgraduate
-program at Conestoga College, Kitchener. The backend keeps its original
-`com.vegs` package namespace from that work.
+Originally built for the Mobile Solutions postgraduate
+program at Conestoga College, then rebuilt as a portfolio piece.
 
 Fonts from [Google Fonts](https://fonts.google.com/specimen/Montserrat).
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE).
+[MIT](LICENSE) © Gabriela Nascimento Oliveira Pereira
