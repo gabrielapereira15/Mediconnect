@@ -438,7 +438,7 @@ backend says so at startup.
 ## Tests
 
 ```bash
-cd backend && ./gradlew test                # 196 tests, *IT integration tests included
+cd backend && ./gradlew test                # 198 tests, *IT integration tests included
 cd android && ./gradlew testDebugUnitTest   # 57 tests
 ```
 

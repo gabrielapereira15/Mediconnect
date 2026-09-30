@@ -45,7 +45,10 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         Optional<String> email = tokenFrom(request).flatMap(tokenService::verify);
 
-        if (email.isEmpty()) {
+        // Sign-in only issues tokens for plain ASCII addresses. One for
+        // anything else predates that rule or was not issued here, and its
+        // email could compare equal, ignoring case, to another patient's.
+        if (email.isEmpty() || !isPlainAscii(email.get())) {
             return reject(response, HttpStatus.UNAUTHORIZED,
                     "Sign in to continue.");
         }
@@ -59,6 +62,10 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         request.setAttribute(AUTHENTICATED_EMAIL, email.get());
         return true;
+    }
+
+    private static boolean isPlainAscii(String email) {
+        return email.chars().allMatch(c -> c > 0x20 && c < 0x7F);
     }
 
     private Optional<String> tokenFrom(HttpServletRequest request) {

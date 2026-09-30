@@ -65,7 +65,8 @@ public class AuthController {
                     .body(Map.of("message", "That passcode is not valid or has expired."));
         }
 
-        String email = request.getEmail().trim().toLowerCase();
+        // The same form OtpService keys the passcode by, in any locale.
+        String email = request.getEmail().trim().toLowerCase(java.util.Locale.ROOT);
         boolean newPatient = patientRepository.findByEmailIgnoreCase(email).isEmpty();
 
         if (newPatient) {
