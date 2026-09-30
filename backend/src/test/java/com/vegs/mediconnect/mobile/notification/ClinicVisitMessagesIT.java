@@ -77,6 +77,19 @@ class ClinicVisitMessagesIT {
                 .toList();
     }
 
+    /**
+     * The messages about a visit that were not there before. The demo seed
+     * sends its own reminder about the patient's next visit, and which visit
+     * that is depends on the time of day, so counting every message about
+     * the visit made these tests pass or fail with the clock.
+     */
+    private List<NotificationPatient> newMessagesAbout(UUID appointmentId, List<NotificationPatient> before) {
+        var seen = before.stream().map(NotificationPatient::getId).toList();
+        return messagesAbout(appointmentId).stream()
+                .filter(delivery -> !seen.contains(delivery.getId()))
+                .toList();
+    }
+
     @Test
     @DisplayName("moving a visit tells the patient the old time and the new")
     void moved() {
@@ -99,10 +112,11 @@ class ClinicVisitMessagesIT {
     @DisplayName("cancelling a visit tells the patient, without the desk's reason")
     void cancelled() {
         Appointment visit = upcoming();
+        List<NotificationPatient> before = messagesAbout(visit.getId());
 
         appointments.cancelAppointmentAsClinic(visit.getId(), "Doctor double-booked, internal");
 
-        List<NotificationPatient> messages = messagesAbout(visit.getId());
+        List<NotificationPatient> messages = newMessagesAbout(visit.getId(), before);
         assertEquals(1, messages.size());
         assertEquals("Your visit was cancelled", messages.get(0).getNotificationId().getTitle());
         String body = messages.get(0).getNotificationId().getMessage();

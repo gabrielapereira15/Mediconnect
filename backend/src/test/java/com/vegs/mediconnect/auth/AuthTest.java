@@ -96,6 +96,69 @@ class AuthTest {
         assertTrue(otpService.verify("patient@example.com", second));
     }
 
+    @Test
+    @DisplayName("asking for new passcodes does not reset the limit on guessing")
+    void newCodesDoNotResetTheLimit() {
+        String email = "victim@example.com";
+        int tried = 0;
+        // Guess wrong four times per code, asking for a new one each time,
+        // which kept every code alive and used to reset the count.
+        while (tried < OtpService.MAX_TRIES_PER_WINDOW) {
+            otpService.issue(email);
+            for (int i = 0; i < 4 && tried < OtpService.MAX_TRIES_PER_WINDOW; i++, tried++) {
+                assertFalse(otpService.verify(email, "not-it"));
+            }
+        }
+
+        String code = otpService.issue(email);
+        assertFalse(otpService.verify(email, code), "locked: even the right code is refused for now");
+        assertTrue(otpService.verify("someone.else@example.com", otpService.issue("someone.else@example.com")),
+                "the lock is on that email only");
+    }
+
+    @Test
+    @DisplayName("a correct passcode clears the count of tries")
+    void successClearsTheCount() {
+        String email = "patient@example.com";
+        for (int i = 0; i < OtpService.MAX_TRIES_PER_WINDOW - 1; i++) {
+            otpService.issue(email);
+            assertFalse(otpService.verify(email, "not-it"));
+        }
+        assertTrue(otpService.verify(email, otpService.issue(email)));
+        for (int i = 0; i < OtpService.MAX_TRIES_PER_WINDOW - 1; i++) {
+            assertFalse(otpService.verify(email, "not-it"));
+        }
+        assertTrue(otpService.verify(email, otpService.issue(email)), "a fresh count after signing in");
+    }
+
+    @Test
+    @DisplayName("a burst of parallel guesses cannot get past five on one code")
+    void parallelGuessesAreCounted() throws Exception {
+        String email = "patient@example.com";
+        String code = otpService.issue(email);
+        String wrong = code.equals("000000") ? "000001" : "000000";
+
+        var pool = java.util.concurrent.Executors.newFixedThreadPool(8);
+        try {
+            var start = new java.util.concurrent.CountDownLatch(1);
+            var guesses = new java.util.ArrayList<java.util.concurrent.Future<Boolean>>();
+            for (int i = 0; i < 40; i++) {
+                guesses.add(pool.submit(() -> {
+                    start.await();
+                    return otpService.verify(email, wrong);
+                }));
+            }
+            start.countDown();
+            for (var guess : guesses) {
+                assertFalse(guess.get());
+            }
+        } finally {
+            pool.shutdownNow();
+        }
+
+        assertFalse(otpService.verify(email, code), "the code was spent, and the email is locked");
+    }
+
     // ---- tokens ---------------------------------------------------------
 
     @Test

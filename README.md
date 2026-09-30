@@ -412,7 +412,10 @@ In the back office at http://localhost:8080:
 | `CLINIC_NAME` | `Mediconnect Clinic` | The clinic's name as a FHIR Organization |
 
 The `production` profile turns off demo data, the demo logins, `EXPOSE_OTP`
-and the H2 console.
+and the H2 console. Every other profile is for development: the passcode is
+in the reply and the log, and tokens are signed with a key published in this
+repository, so anyone who can reach the server can sign in as any patient. The
+backend says so at startup.
 
 ### Troubleshooting
 
@@ -435,7 +438,7 @@ and the H2 console.
 ## Tests
 
 ```bash
-cd backend && ./gradlew test                # 193 tests, *IT integration tests included
+cd backend && ./gradlew test                # 196 tests, *IT integration tests included
 cd android && ./gradlew testDebugUnitTest   # 57 tests
 ```
 
@@ -484,7 +487,10 @@ curl -X POST http://localhost:8080/auth/get-otp \
 
 `get-otp` answers `{message, otp, expiresInMinutes}`, with `otp` only while
 `EXPOSE_OTP` is on. A new request replaces any pending code, and a code is
-thrown away after 5 wrong tries. `verify-otp` takes `{email, otp}` and returns
+thrown away after 5 wrong tries. An email gets 10 tries a day in all, however
+many codes are asked for; after that sign-in for it is refused until the day
+since the first try is up, and a correct code clears the count.
+`verify-otp` takes `{email, otp}` and returns
 `{token, email, expiresInSeconds, newPatient}`; a first sign-in creates an
 empty patient record. The token is an HMAC-SHA256 `payload.signature`, not a
 JWT, and lasts 72 hours. A wrong, expired or used-up code is a 401 with one
