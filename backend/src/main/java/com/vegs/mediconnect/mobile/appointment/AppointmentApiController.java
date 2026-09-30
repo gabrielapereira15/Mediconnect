@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import com.vegs.mediconnect.auth.AuthInterceptor;
+import com.vegs.mediconnect.auth.SignedIn;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,15 @@ public class AppointmentApiController {
 
     private final AppointmentApiService appointmentApiService;
 
+    /**
+     * Books for the signed-in patient. The body's patientEmail used to decide
+     * whose appointment it was, so any patient could book in somebody
+     * else's name; it may still be sent, but only as the token's own.
+     */
     @PostMapping
-    public ResponseEntity<AppointmentResponse> createAppointment(@RequestBody AppointmentRequest appointmentRequest) {
+    public ResponseEntity<AppointmentResponse> createAppointment(@RequestBody AppointmentRequest appointmentRequest,
+                                                                 final HttpServletRequest request) {
+        appointmentRequest.setPatientEmail(SignedIn.sameAs(request, appointmentRequest.getPatientEmail()));
         var appointment = appointmentApiService.create(appointmentRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

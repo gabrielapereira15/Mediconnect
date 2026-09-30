@@ -1,7 +1,10 @@
 package com.vegs.mediconnect.mobile.review;
 
 import com.vegs.mediconnect.mobile.appointment.model.AppointmentResponse;
+import com.vegs.mediconnect.auth.SignedIn;
 import com.vegs.mediconnect.mobile.review.model.ReviewRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,8 +23,9 @@ public class ReviewApiController {
     private final ReviewApiService reviewApiService;
 
     @PostMapping
-    public ResponseEntity<Void> createReview(@RequestBody ReviewRequest reviewRequest) {
-        reviewApiService.createReview(reviewRequest);
+    public ResponseEntity<Void> createReview(@RequestBody @Valid ReviewRequest reviewRequest,
+                                             final HttpServletRequest request) {
+        reviewApiService.createReview(reviewRequest, SignedIn.email(request));
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .build();

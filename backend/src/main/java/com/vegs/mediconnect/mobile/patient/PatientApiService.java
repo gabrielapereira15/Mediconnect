@@ -51,13 +51,20 @@ public class PatientApiService {
         return patientRepository.save(patient).getId();
     }
 
-    /** The same rule as {@link #create}: what the request leaves out is kept. */
+    /**
+     * The same rule as {@link #create}: what the request leaves out is kept.
+     *
+     * Only the signed-in patient's own record. Somebody else's is reported
+     * as missing rather than forbidden, so ids cannot be probed. The email is
+     * not changed here: it is what the patient signs in with, and changing it
+     * would hand the account to an address nobody has verified.
+     */
     @Transactional
-    public void update(UUID id, PatientDetailResponse patientDTO) {
+    public void update(UUID id, PatientDetailResponse patientDTO, String requestingEmail) {
         var patient = patientRepository.findById(id)
+                .filter(found -> requestingEmail != null && requestingEmail.equalsIgnoreCase(found.getEmail()))
                 .orElseThrow(PatientNotFoundException::new);
         applyHealthCard(patientDTO.getHealthCardNumber(), patientDTO.getHealthCardProvince(), patient);
-        setIfPresent(patientDTO.getEmail(), patient::setEmail);
         setIfPresent(patientDTO.getClinicCode(), patient::setClinicCode);
         setIfPresent(patientDTO.getFirstName(), patient::setFirstName);
         setIfPresent(patientDTO.getLastName(), patient::setLastName);
