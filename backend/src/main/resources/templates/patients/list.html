@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!--
+    Patients (the list behind board B04). A clinician's page: search by
+    name, email, date of birth or phone, and open a chart.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{nav.patients}]]</title>
+</head>
+<body>
+<div layout:fragment="content" style="display: flex; flex-direction: column; gap: 20px">
+    <div class="mc-page-head">
+        <div>
+            <h1 class="mc-page-title">[[#{nav.patients}]]</h1>
+            <p class="mc-page-sub" th:text="#{patients.sub(${#lists.size(patients)})}">2 patients</p>
+        </div>
+    </div>
+
+    <form class="mc-toolbar" th:action="@{/patients}" method="get" role="search">
+        <label class="mc-search mc-search-md" style="width: 360px; background: var(--surface); border-color: var(--line-strong)">
+            <i class="mc-i mc-i-search mc-i-20" aria-hidden="true"></i>
+            <input name="q" th:value="${query}" th:placeholder="#{patients.search}" th:aria-label="#{patients.search}" />
+        </label>
+        <button type="submit" class="mc-btn mc-btn-outline mc-btn-sm mc-btn-square">[[#{patients.find}]]</button>
+    </form>
+
+    <div class="mc-panel">
+        <table class="mc-table">
+            <thead>
+            <tr>
+                <th>[[#{patients.col.patient}]]</th>
+                <th>[[#{patients.col.contact}]]</th>
+                <th>[[#{patients.col.allergies}]]</th>
+                <th>[[#{patients.col.next}]]</th>
+                <th><span class="mc-sr">[[#{appointments.col.open}]]</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${patients}">
+                <td>
+                    <a class="mc-cell-person" th:href="@{/patients/{id}(id=${p.id})}" style="text-decoration: none; color: var(--ink)">
+                        <span class="mc-avatar mc-avatar-sm" th:classappend="${p.avatarClass}" th:text="${p.initials}" aria-hidden="true">GP</span>
+                        <div><b th:text="${p.name}">Gabriela Pereira</b><small th:text="${p.birthdate}">1995-04-12</small></div>
+                    </a>
+                </td>
+                <td><div th:text="${p.phone}">226-899-0000</div><small class="mc-muted" th:text="${p.email}">demo@mediconnect.ca</small></td>
+                <td>
+                    <span th:if="${p.allergyCount > 0}" class="mc-badge mc-badge-danger"
+                          th:text="#{today.allergies(${p.allergyCount})}">2 allergies</span>
+                    <span th:unless="${p.allergyCount > 0}" class="caption mc-muted">[[#{patients.noneRecorded}]]</span>
+                </td>
+                <td th:text="${p.nextVisit != null} ? ${p.nextVisit} : '—'">Thu 1 Oct, 10:00 AM · Dr. Chase</td>
+                <td style="text-align: right">
+                    <a th:href="@{/patients/{id}(id=${p.id})}" class="mc-btn mc-btn-outline mc-btn-sm mc-btn-square">[[#{patients.openChart}]]</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(patients)}">
+                <td colspan="5" class="mc-table-empty">[[#{patients.empty}]]</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

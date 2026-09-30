@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<!--
+    Patient chart (board B04). For a clinician.
+
+    Who they are, their allergies in a banner nobody can miss, then what
+    they have told the clinic: the health record they keep in the app (with
+    whether each entry is coded or free text), their visits, and the
+    answers they sent before each one. Export hands over the same PS-CA
+    document the patient can share themselves.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${chart.name}">Patient</title>
+</head>
+<body>
+<div layout:fragment="content" style="display: flex; flex-direction: column; gap: 20px">
+
+    <a class="mc-btn mc-btn-ghost mc-btn-sm" th:href="@{/patients}" style="align-self: flex-start; padding-left: 0">
+        <i class="mc-i mc-i-arrow-left" aria-hidden="true"></i>[[#{nav.patients}]]</a>
+
+    <section class="mc-panel" style="flex-direction: row; align-items: center; gap: 20px; padding: 20px 24px; flex-wrap: wrap">
+        <span class="mc-avatar mc-avatar-xl" th:classappend="${chart.avatarClass}" th:text="${chart.initials}" aria-hidden="true">GP</span>
+        <div style="flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 6px">
+            <div style="display: flex; align-items: center; gap: 10px">
+                <h1 class="mc-page-title" th:text="${chart.name}">Gabriela Pereira</h1>
+                <span class="mc-badge mc-badge-brand">[[#{patients.usesApp}]]</span>
+            </div>
+            <div style="display: flex; gap: 8px 20px; flex-wrap: wrap" class="body-sm mc-muted">
+                <span th:text="${chart.demographics}">Female · 31 · 1995-04-12</span>
+                <span th:if="${chart.phone != null}" th:text="${chart.phone}">226-899-0000</span>
+                <span th:if="${chart.email != null}" th:text="${chart.email}">demo@mediconnect.ca</span>
+                <span th:if="${chart.address != null}" th:text="${chart.address}">15 Wellington Street</span>
+                <span th:if="${chart.healthCard != null}" th:text="${chart.healthCard}">Health card ••• 7890 · ON</span>
+            </div>
+        </div>
+        <a class="mc-btn mc-btn-outline mc-btn-md mc-btn-square" hx-boost="false"
+           th:href="@{/patients/{id}/summary.json(id=${chart.id})}">
+            <i class="mc-i mc-i-fhir" aria-hidden="true"></i>[[#{patients.export}]]</a>
+    </section>
+
+    <div th:if="${!#lists.isEmpty(chart.allergies)}" class="mc-banner mc-banner-danger" role="note"
+         style="padding: 14px 20px; font-size: 15px">
+        <i class="mc-i mc-i-alert" aria-hidden="true"></i>
+        <div><b>[[#{patients.allergies}]]</b>
+            <th:block th:each="a, it : ${chart.allergies}"><b th:text="${a.description}">Penicillin</b><span
+                    th:if="${a.note != null}" th:text="' (' + ${a.note} + ')'"> (rash)</span><span
+                    th:unless="${it.last}"> · </span></th:block></div>
+    </div>
+    <div th:if="${#lists.isEmpty(chart.allergies)}" class="mc-banner" role="note">
+        <i class="mc-i mc-i-info" aria-hidden="true"></i>
+        <div>[[#{patients.noAllergies}]]</div>
+    </div>
+
+    <nav class="mc-tabs" th:aria-label="${chart.name}">
+        <a class="mc-tab" th:classappend="${tab == 'overview'} ? 'is-active'" th:attr="aria-current=${tab == 'overview'} ? 'page' : null"
+           th:href="@{/patients/{id}(id=${chart.id},tab=overview)}">[[#{patients.tab.overview}]]</a>
+        <a class="mc-tab" th:classappend="${tab == 'appointments'} ? 'is-active'" th:attr="aria-current=${tab == 'appointments'} ? 'page' : null"
+           th:href="@{/patients/{id}(id=${chart.id},tab=appointments)}">[[#{nav.appointments}]]
+            <span class="mc-count" th:text="${chart.appointmentCount}">6</span></a>
+        <a class="mc-tab" th:classappend="${tab == 'forms'} ? 'is-active'" th:attr="aria-current=${tab == 'forms'} ? 'page' : null"
+           th:href="@{/patients/{id}(id=${chart.id},tab=forms)}">[[#{patients.tab.forms}]]
+            <span class="mc-count" th:text="${#lists.size(chart.forms)}">3</span></a>
+        <a class="mc-tab" th:classappend="${tab == 'record'} ? 'is-active'" th:attr="aria-current=${tab == 'record'} ? 'page' : null"
+           th:href="@{/patients/{id}(id=${chart.id},tab=record)}">[[#{patients.tab.record}]]
+            <span class="mc-count" th:text="${chart.activeEntryCount()}">6</span></a>
+    </nav>
+
+    <!-- ==== Overview ===================================================== -->
+    <section th:if="${tab == 'overview'}"
+             style="display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start">
+        <div class="mc-panel">
+            <div class="mc-panel-head">
+                <h2 class="mc-panel-title">[[#{patients.tab.record}]]</h2>
+                <span class="caption mc-muted">[[#{patients.record.kept}]]</span>
+            </div>
+            <table th:replace="~{patients/fragments :: recordTable(${chart.entries})}"></table>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px">
+            <div class="mc-panel">
+                <div class="mc-panel-head">
+                    <h2 class="mc-panel-title">[[#{patients.upcoming}]]</h2>
+                    <a class="mc-link body-sm" th:href="@{/patients/{id}(id=${chart.id},tab=appointments)}">[[#{patients.allAppointments}]]</a>
+                </div>
+                <a th:each="v : ${chart.upcoming}" class="mc-row" th:href="@{${v.link}}">
+                    <div class="mc-datebadge" style="width: 48px; height: 52px"><small th:text="${v.weekday}">Wed</small><b style="font-size: 18px" th:text="${v.dayOfMonth}">30</b></div>
+                    <span class="mc-row-body"><span class="label" th:text="${v.title}">10:00 AM · Dr. Chase</span>
+                        <span class="caption mc-muted" th:text="${v.sub}">Surgeon</span></span>
+                    <span class="mc-badge" th:classappend="${v.statusClass}" th:text="${v.status}">Form pending</span>
+                </a>
+                <p th:if="${#lists.isEmpty(chart.upcoming)}" class="body-sm mc-muted" style="margin: 0; padding: 16px 20px">[[#{patients.noUpcoming}]]</p>
+            </div>
+
+            <div class="mc-panel">
+                <div class="mc-panel-head">
+                    <h2 class="mc-panel-title">[[#{patients.latestForm}]]</h2>
+                    <span class="caption mc-muted" th:if="${chart.latestForm() != null}" th:text="${chart.latestForm().heading}">Dr. Chase · 9 Sep</span>
+                </div>
+                <div class="mc-panel-body" th:if="${chart.latestForm() != null}">
+                    <dl class="mc-kv" style="grid-template-columns: 170px minmax(0, 1fr)">
+                        <th:block th:each="a : ${chart.latestForm().answers}">
+                            <dt th:text="${a.question}">Reason</dt><dd th:text="${a.answer}">Follow-up</dd>
+                        </th:block>
+                    </dl>
+                </div>
+                <p th:if="${chart.latestForm() == null}" class="body-sm mc-muted" style="margin: 0; padding: 16px 20px">[[#{patients.noForms}]]</p>
+            </div>
+
+            <div class="mc-panel">
+                <div class="mc-panel-head">
+                    <h2 class="mc-panel-title">[[#{patients.past}]]</h2>
+                    <span class="caption mc-muted" th:text="${#lists.size(chart.past)}">3</span>
+                </div>
+                <a th:each="v, it : ${chart.past}" th:if="${it.index < 5}" class="mc-row" style="min-height: 52px" th:href="@{${v.link}}">
+                    <span class="mc-row-body"><span class="label" th:text="${v.weekday} + ' ' + ${v.dayOfMonth} + ' · ' + ${v.title}">Fri 18 · 9:00 AM · Dr. Cuddy</span>
+                        <span class="caption mc-muted" th:text="${v.sub}">Optometrist · reviewed 4 ★</span></span>
+                    <span class="mc-badge" th:classappend="${v.statusClass}" th:text="${v.status}">Completed</span>
+                </a>
+                <p th:if="${#lists.isEmpty(chart.past)}" class="body-sm mc-muted" style="margin: 0; padding: 16px 20px">[[#{patients.noPast}]]</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==== Appointments ================================================== -->
+    <div th:if="${tab == 'appointments'}" class="mc-panel">
+        <a th:each="v : ${chart.upcoming}" class="mc-row" th:href="@{${v.link}}">
+            <div class="mc-datebadge" style="width: 48px; height: 52px"><small th:text="${v.weekday}">Wed</small><b style="font-size: 18px" th:text="${v.dayOfMonth}">30</b></div>
+            <span class="mc-row-body"><span class="label" th:text="${v.title}">10:00 AM · Dr. Chase</span>
+                <span class="caption mc-muted" th:text="${v.sub}">Surgeon</span></span>
+            <span class="mc-badge" th:classappend="${v.statusClass}" th:text="${v.status}">Form pending</span>
+        </a>
+        <a th:each="v : ${chart.past}" class="mc-row" th:href="@{${v.link}}">
+            <div class="mc-datebadge" style="width: 48px; height: 52px; background: var(--surface-sunken); color: var(--ink)"><small th:text="${v.weekday}">Fri</small><b style="font-size: 18px" th:text="${v.dayOfMonth}">18</b></div>
+            <span class="mc-row-body"><span class="label" th:text="${v.title}">9:00 AM · Dr. Cuddy</span>
+                <span class="caption mc-muted" th:text="${v.sub}">Optometrist</span></span>
+            <span class="mc-badge" th:classappend="${v.statusClass}" th:text="${v.status}">Completed</span>
+        </a>
+        <p th:if="${chart.appointmentCount == 0}" class="body-sm mc-muted" style="margin: 0; padding: 16px 20px">[[#{patients.noVisits}]]</p>
+    </div>
+
+    <!-- ==== Forms ========================================================= -->
+    <div th:if="${tab == 'forms'}" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; align-items: start">
+        <div th:each="f : ${chart.forms}" class="mc-panel">
+            <div class="mc-panel-head"><h2 class="mc-panel-title" th:text="${f.heading}">Dr. Chase · 9 Sep</h2></div>
+            <div class="mc-panel-body">
+                <dl class="mc-kv" style="grid-template-columns: 170px minmax(0, 1fr)">
+                    <th:block th:each="a : ${f.answers}"><dt th:text="${a.question}">Reason</dt><dd th:text="${a.answer}">Follow-up</dd></th:block>
+                </dl>
+            </div>
+        </div>
+        <p th:if="${#lists.isEmpty(chart.forms)}" class="body-sm mc-muted" style="margin: 0">[[#{patients.noForms}]]</p>
+    </div>
+
+    <!-- ==== Health record ================================================= -->
+    <div th:if="${tab == 'record'}" class="mc-panel">
+        <div class="mc-panel-head">
+            <h2 class="mc-panel-title">[[#{patients.tab.record}]]</h2>
+            <span class="caption mc-muted">[[#{patients.record.kept}]]</span>
+        </div>
+        <table th:replace="~{patients/fragments :: recordTable(${chart.entries})}"></table>
+    </div>
+
+</div>
+</body>
+</html>

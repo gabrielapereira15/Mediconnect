@@ -378,6 +378,37 @@ class BackOfficeAccessIT {
     }
 
     @Test
+    @DisplayName("a patient's chart is a clinician's: the desk is refused on the server")
+    void chartIsForClinicians() throws Exception {
+        var patient = patientRepository.findAll().getFirst();
+
+        mockMvc.perform(get("/patients").session(desk())).andExpect(status().isForbidden());
+        mockMvc.perform(get("/patients/" + patient.getId()).session(desk())).andExpect(status().isForbidden());
+        mockMvc.perform(get("/patients/" + patient.getId() + "/summary.json").session(desk()))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(get("/patients").session(clinician()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Gabriela Pereira")));
+        for (String tab : new String[]{"overview", "appointments", "forms", "record"}) {
+            mockMvc.perform(get("/patients/" + patient.getId()).param("tab", tab).session(clinician()))
+                    .andExpect(status().isOk())
+                    .andExpect(content().string(containsString("Penicillin")));
+        }
+    }
+
+    @Test
+    @DisplayName("the chart exports the patient's PS-CA document")
+    void chartExportsSummary() throws Exception {
+        var patient = patientRepository.findAll().getFirst();
+
+        mockMvc.perform(get("/patients/" + patient.getId() + "/summary.json").session(clinician()))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Cache-Control", "no-store"))
+                .andExpect(content().string(containsString("\"resourceType\": \"Bundle\"")));
+    }
+
+    @Test
     @DisplayName("the CSV export quotes every cell")
     void csvExport() throws Exception {
         mockMvc.perform(get("/appointments/export.csv").param("tab", "past").session(desk()))

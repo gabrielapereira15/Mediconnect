@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<!--
+    Pieces of the patient chart used in more than one place (board B04).
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- The health record, with whether each entry is coded or free text. -->
+<table th:fragment="recordTable(entries)" class="mc-table">
+        <thead>
+        <tr><th>[[#{patients.col.type}]]</th><th>[[#{patients.col.entry}]]</th><th>[[#{patients.col.since}]]</th><th>[[#{patients.col.coding}]]</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="e : ${entries}" th:style="${!e.active} ? 'opacity: .72' : null">
+            <td><span class="mc-badge no-dot" th:classappend="${e.badgeClass}" th:text="${e.typeLabel}">Allergy</span></td>
+            <td class="is-wrap"><b th:text="${e.description}">Penicillin</b>
+                <span th:unless="${e.active}" class="caption mc-muted"> · [[#{patients.record.stopped}]]</span>
+                <div class="caption mc-muted" th:if="${e.note != null}" th:text="${e.note}">Rash.</div></td>
+            <td class="mc-num" th:text="${e.since}">—</td>
+            <td><span class="mc-badge" th:classappend="${e.coded} ? 'mc-badge-success'" th:text="${e.coding}">SNOMED CT</span></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(entries)}"><td colspan="4" class="mc-table-empty">[[#{patients.record.empty}]]</td></tr>
+        </tbody>
+    </table>
+</body>
+</html>
