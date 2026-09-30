@@ -20,6 +20,7 @@ import com.example.mediconnect_android.client.WaitlistClient;
 import com.example.mediconnect_android.client.WaitlistClientImpl;
 import com.example.mediconnect_android.model.WaitlistEntry;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.VisitReminders;
 import com.example.mediconnect_android.util.WhenLabel;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.Background;
@@ -107,6 +108,11 @@ public class MedicalHistoryFragment extends Fragment {
                     }
                     finishRefresh();
                     appointmentsList = appointments;
+                    // This is where the app hears that the clinic cancelled
+                    // or moved a visit, so the reminders follow the list.
+                    if (appointments != null) {
+                        VisitReminders.sync(requireContext(), appointments);
+                    }
                     binding.stateView.showContent();
                     // Re-show whichever segment the patient is on, not
                     // always Upcoming: a refresh from Cancelled used to

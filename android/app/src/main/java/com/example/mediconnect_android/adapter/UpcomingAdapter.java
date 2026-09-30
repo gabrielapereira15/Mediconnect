@@ -1,15 +1,9 @@
 package com.example.mediconnect_android.adapter;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,31 +31,22 @@ import com.example.mediconnect_android.fragment.VisitDetailFragment;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.ReminderPermissions;
 import com.example.mediconnect_android.util.ReminderPreference;
+import com.example.mediconnect_android.util.VisitReminders;
 import com.example.mediconnect_android.util.WhenLabel;
 import com.example.mediconnect_android.util.FragmentUtils;
-import com.example.mediconnect_android.util.Notification;
 import com.example.mediconnect_android.util.Background;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import android.util.Log;
 import java.util.Optional;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Locale;
-import java.util.Locale;
-import java.util.Date;
 import java.util.List;
 
 public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    private static final String TAG = "UpcomingAdapter";
 
     private static final DateTimeFormatter WEEKDAY =
             DateTimeFormatter.ofPattern("EEE", Locale.ENGLISH);
@@ -76,11 +61,16 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final WaitlistClient waitlistClient = new WaitlistClientImpl();
     private final AppointmentClient appointmentClient = new AppointmentClientImpl();
 
+    /** Asks for what a reminder needs; registered by the fragment showing the list. */
+    private final ReminderPermissions reminderPermissions;
+
     /** Either a heading or a visit; the list is built once, in order. */
     private final List<Object> rows = new ArrayList<>();
 
-    public UpcomingAdapter(List<Appointment> appointmentList, Context context) {
+    public UpcomingAdapter(List<Appointment> appointmentList, Context context,
+                           ReminderPermissions reminderPermissions) {
         this.context = context;
+        this.reminderPermissions = reminderPermissions;
         buildRows(appointmentList);
     }
 
@@ -165,6 +155,9 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         UpcomingItemBinding recyclerItemBinding;
 
+        /** The visit this card shows now; it changes when the card is recycled. */
+        private Appointment bound;
+
         public ViewHolder(UpcomingItemBinding recyclerItemBinding) {
             super(recyclerItemBinding.getRoot());
             this.recyclerItemBinding = recyclerItemBinding;
@@ -172,6 +165,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @RequiresApi(api = Build.VERSION_CODES.S)
         public void bindView(Appointment appointment) {
+            bound = appointment;
             Doctor doctor = appointment.getDoctor();
 
             WhenLabel.parse(appointment.getStartsAt()).ifPresent(at -> {
@@ -194,7 +188,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             bindStatus(appointment);
             bindActions(appointment, doctor);
-            bindReminder(appointment, doctor);
+            bindReminder(appointment);
 
             recyclerItemBinding.getRoot().setOnClickListener(v -> openVisit(appointment));
         }
@@ -259,72 +253,90 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         /**
          * The switch, and the alarms behind it.
          *
-         * A visit with no stored state inherits the patient's default from
-         * Profile — and if that default is on, the alarms are set here and
-         * now. Showing the switch on without scheduling anything would be
-         * the worst of both: the patient trusts it and misses the visit.
+         * It shows on only when the alarms are set and Android will let
+         * them through. A visit with no stored state inherits the patient's
+         * default from Profile, and if that default is on, the alarms are
+         * set here and now. Showing the switch on without scheduling
+         * anything would be the worst of both: the patient trusts it and
+         * misses the visit.
          */
-        private void bindReminder(Appointment appointment, Doctor doctor) {
+        private void bindReminder(Appointment appointment) {
             // Set without the listener attached: recycling a card would
             // otherwise fire it with the previous visit's state and
             // schedule an alarm nobody asked for.
             recyclerItemBinding.switchRemindMe.setOnCheckedChangeListener(null);
 
-            boolean on = getReminderState(appointment.getId());
-            if (on && !hasStoredReminderState(appointment.getId())) {
-                // Inherited rather than chosen: make it true before showing
-                // it, and fall back to off if the alarms cannot be set.
-                on = setReminders(appointment, doctor, true);
-                saveReminderState(appointment.getId(), on);
-            }
-            recyclerItemBinding.switchRemindMe.setChecked(on);
-
-            recyclerItemBinding.switchRemindMe.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                boolean applied = setReminders(appointment, doctor, isChecked);
-                if (isChecked && !applied) {
-                    buttonView.setChecked(false);
+            String id = appointment.getId();
+            boolean on = false;
+            // No prompts from here: binding happens card by card as the
+            // list scrolls, and a dialog per card would stack up. A visit
+            // that cannot be reminded just shows off until the patient
+            // turns it on, which is where the asking happens.
+            if (getReminderState(id) && VisitReminders.canRemind(context)) {
+                // Set again rather than trusted, which also puts back
+                // alarms that were lost and follows a visit that moved.
+                on = VisitReminders.schedule(context, appointment);
+                if (on && !hasStoredReminderState(id)) {
+                    // Inherited rather than chosen, and now real, so kept.
+                    saveReminderState(id, true);
                 }
-                saveReminderState(appointment.getId(), applied);
-            });
+            }
+            showReminder(appointment, on);
         }
 
         /**
-         * Sets or clears this visit's reminders.
+         * The patient flipped the switch.
          *
-         * Returns whether reminders are actually in place afterwards, which
-         * is what the switch should show — asking for them is not the same
-         * as getting them, because Android 12 onwards withholds exact
-         * alarms until the patient grants them.
+         * Off takes the alarms back. It used to leave them set, so a
+         * reminder switched off still arrived. On has to be earned: the
+         * switch drops back to off unless notifications and exact alarms
+         * are both allowed and the alarms are actually set.
          */
-        private boolean setReminders(Appointment appointment, Doctor doctor, boolean wanted) {
+        private void onReminderSwitched(Appointment appointment, boolean wanted) {
+            String id = appointment.getId();
             if (!wanted) {
-                return false;
+                VisitReminders.cancel(context, id);
+                saveReminderState(id, false);
+                return;
             }
 
-            Optional<Calendar> start = appointmentStart(appointment);
-            if (start.isEmpty()) {
+            if (VisitReminders.startOf(appointment).isEmpty()) {
                 // Cannot work out when it is, so there is nothing to
                 // schedule. Previously this dereferenced null and crashed
                 // the app, which looked like being logged out.
                 DialogUtils.showMessageDialog(context,
                         context.getString(R.string.reminder_unavailable));
-                return false;
+                saveReminderState(id, false);
+                showReminder(appointment, false);
+                return;
             }
 
-            if (!canScheduleExactAlarms()) {
-                requestExactAlarmPermission(context);
-                return false;
-            }
+            reminderPermissions.ensure(
+                    () -> {
+                        boolean applied = VisitReminders.schedule(context, appointment);
+                        saveReminderState(id, applied);
+                        showReminder(appointment, applied);
+                    },
+                    () -> {
+                        saveReminderState(id, false);
+                        showReminder(appointment, false);
+                    });
+        }
 
-            Calendar now = Calendar.getInstance();
-            scheduleIfFuture(start.get(), -30, Calendar.MINUTE, now,
-                    context.getString(R.string.reminder_soon_title),
-                    context.getString(R.string.reminder_soon_body, doctor.getName()));
-            scheduleIfFuture(start.get(), -24, Calendar.HOUR_OF_DAY, now,
-                    context.getString(R.string.reminder_tomorrow_title),
-                    context.getString(R.string.reminder_tomorrow_body,
-                            doctor.getName(), appointment.getTime()));
-            return true;
+        /**
+         * Puts the switch where the visit's reminders really are, if this
+         * card still shows that visit. The permission prompt can outlast a
+         * scroll, and a card that has moved on to another visit reads the
+         * saved state when it is bound anyway.
+         */
+        private void showReminder(Appointment appointment, boolean on) {
+            if (bound != appointment) {
+                return;
+            }
+            recyclerItemBinding.switchRemindMe.setOnCheckedChangeListener(null);
+            recyclerItemBinding.switchRemindMe.setChecked(on);
+            recyclerItemBinding.switchRemindMe.setOnCheckedChangeListener(
+                    (buttonView, isChecked) -> onReminderSwitched(appointment, isChecked));
         }
 
         private void openVisit(Appointment appointment) {
@@ -342,17 +354,14 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
          * with useless offers or silently exclude them.
          */
         private void joinWaitlist(Appointment appointment, Doctor doctor) {
-            Optional<Calendar> start = appointmentStart(appointment);
+            Optional<LocalDateTime> start = VisitReminders.startOf(appointment);
             if (start.isEmpty()) {
                 DialogUtils.showMessageDialog(context,
                         context.getString(R.string.reminder_unavailable));
                 return;
             }
 
-            String isoDate = String.format(Locale.ENGLISH, "%04d-%02d-%02d",
-                    start.get().get(Calendar.YEAR),
-                    start.get().get(Calendar.MONTH) + 1,
-                    start.get().get(Calendar.DAY_OF_MONTH));
+            String isoDate = start.get().toLocalDate().toString();
 
             new AlertDialog.Builder(context)
                     .setTitle(R.string.waitlist_join)
@@ -372,155 +381,6 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private String email() {
             return context.getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
                     .getString("email", "");
-        }
-
-        /** Whether the system will let this app set an alarm to the minute. */
-        private boolean canScheduleExactAlarms() {
-            AlarmManager alarmManager =
-                    (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            return alarmManager != null && exactAlarmsAllowed(alarmManager);
-        }
-
-        private boolean exactAlarmsAllowed(AlarmManager alarmManager) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-                // Granted at install time before Android 12.
-                return true;
-            }
-            return alarmManager.canScheduleExactAlarms();
-        }
-
-        /** Schedules a reminder at an offset from the appointment, if not already past. */
-        private void scheduleIfFuture(Calendar start, int amount, int unit,
-                                      Calendar now, String title, String body) {
-            Calendar when = (Calendar) start.clone();
-            when.add(unit, amount);
-            if (when.after(now)) {
-                scheduleExactAlarm(context.getApplicationContext(), title, body, when);
-            }
-        }
-
-        /**
-         * The moment an appointment starts.
-         *
-         * Prefers the API's ISO timestamp. The fallback parses the display
-         * string, which is fragile — it broke the moment the server started
-         * including minutes in the time — so it is only a last resort, and it
-         * returns empty rather than null so a failure cannot crash the caller.
-         */
-        private Optional<Calendar> appointmentStart(Appointment appointment) {
-            String iso = appointment.getStartsAt();
-            if (iso != null && !iso.isEmpty()) {
-                try {
-                    LocalDateTime parsed = LocalDateTime.parse(iso);
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(parsed.getYear(), parsed.getMonthValue() - 1, parsed.getDayOfMonth(),
-                            parsed.getHour(), parsed.getMinute(), 0);
-                    calendar.set(Calendar.MILLISECOND, 0);
-                    return Optional.of(calendar);
-                } catch (DateTimeParseException e) {
-                    Log.w(TAG, "Unreadable startsAt: " + iso, e);
-                }
-            }
-            return parseDisplayString(appointment.getDate() + " | " + appointment.getTime());
-        }
-
-        /** Last resort: read back a string that was formatted for humans. */
-        private Optional<Calendar> parseDisplayString(String appointmentDateTime) {
-            // Both are tried because the server's time format has changed once
-            // already, and a reminder is not worth a crash.
-            for (String pattern : new String[]{"EEE, d MMM | h:mm a", "EEE, d MMM | h a"}) {
-                try {
-                    Date date = new SimpleDateFormat(pattern, Locale.ENGLISH).parse(appointmentDateTime);
-                    if (date == null) {
-                        continue;
-                    }
-                    Calendar now = Calendar.getInstance();
-                    Calendar event = Calendar.getInstance();
-                    event.setTime(date);
-                    // The pattern carries no year, so it defaults to 1970.
-                    event.set(Calendar.YEAR, now.get(Calendar.YEAR));
-                    if (event.before(now)) {
-                        event.add(Calendar.YEAR, 1);
-                    }
-                    return Optional.of(event);
-                } catch (ParseException ignored) {
-                    // try the next pattern
-                }
-            }
-            Log.w(TAG, "Could not read an appointment time from: " + appointmentDateTime);
-            return Optional.empty();
-        }
-
-        /**
-         * Sets one alarm. Callable on every supported version: the permission
-         * check it used to make unconditionally only exists from Android 12,
-         * so on anything older it threw NoSuchMethodError instead.
-         */
-        private void scheduleExactAlarm(Context context, String title, String message, Calendar calendar) {
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-            if (alarmManager != null) {
-                if (exactAlarmsAllowed(alarmManager)) {
-                    Intent intent = new Intent(context, Notification.class);
-                    intent.putExtra(Notification.titleExtra, title);
-                    intent.putExtra(Notification.messageExtra, message);
-
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                            context,
-                            (int) System.currentTimeMillis(),
-                            intent,
-                            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-                    );
-
-                    try {
-                        // Schedule the exact alarm
-                        alarmManager.setExact(
-                                AlarmManager.RTC_WAKEUP,
-                                calendar.getTimeInMillis(),
-                                pendingIntent
-                        );
-                    } catch (SecurityException e) {
-                        // Revoked between the check above and here.
-                        Log.w(TAG, "Exact alarm refused while scheduling", e);
-                    }
-                } else {
-                    Log.w(TAG, "Exact alarms unavailable at scheduling time");
-                }
-            }
-        }
-
-        /**
-         * Sends the patient to the system screen that grants exact alarms.
-         *
-         * From Android 12 this permission is off by default, so the first
-         * "Remind me" on a modern device always lands here. It used to launch
-         * straight from the adapter's context and crash — startActivity needs
-         * NEW_TASK when it is not called from an Activity — and it did so
-         * without ever saying why the screen had appeared.
-         */
-        private void requestExactAlarmPermission(Context context) {
-            new AlertDialog.Builder(context)
-                    .setTitle(R.string.reminder_permission_title)
-                    .setMessage(R.string.reminder_permission_body)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(R.string.reminder_permission_open,
-                            (dialog, which) -> openExactAlarmSettings(context))
-                    .show();
-        }
-
-        private void openExactAlarmSettings(Context context) {
-            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-            // Straight to this app's entry rather than the whole list.
-            intent.setData(Uri.fromParts("package", context.getPackageName(), null));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            try {
-                context.startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-                // Some builds do not ship the screen at all.
-                Log.w(TAG, "No exact-alarm settings screen on this device", e);
-                DialogUtils.showMessageDialog(context,
-                        context.getString(R.string.reminder_permission_unavailable));
-            }
         }
 
         private void saveReminderState(String appointmentId, boolean isReminderEnabled) {
@@ -555,6 +415,9 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             () -> isAppointmentCancelled(appointment),
                             cancelled -> {
                                 if (cancelled) {
+                                    // Rescheduling books a new visit; the
+                                    // old one's reminders go with it.
+                                    VisitReminders.cancel(context, appointment.getId());
                                     BookAppointmentFragment.open(
                                             ((AppCompatActivity) context).getSupportFragmentManager(),
                                             doctor.getId(), doctor.getName(),
@@ -580,6 +443,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             () -> isAppointmentCancelled(appointment),
                             cancelled -> {
                                 if (cancelled) {
+                                    VisitReminders.cancel(context, appointment.getId());
                                     showCancellationMessage();
                                 } else {
                                     DialogUtils.showMessageDialog(context,

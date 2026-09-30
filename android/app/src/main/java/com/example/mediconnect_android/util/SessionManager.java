@@ -29,6 +29,7 @@ public class SessionManager {
             PREF_NAME,
             "UserProfile",
             "ReminderPrefs",
+            VisitReminders.PREFS,
             "PreVisitFormDrafts",
     };
 
@@ -93,6 +94,11 @@ public class SessionManager {
 
     /** Clears the session locally; there is no server-side session to end. */
     public void logoutUser() {
+        // The alarms are not preferences, so emptying the stores would leave
+        // them set, and the next person to sign in on this phone would be
+        // reminded of this patient's visits. They go first, because the
+        // store cleared below is what says which ones there are.
+        VisitReminders.cancelAll(context);
         for (String store : PATIENT_STORES) {
             context.getSharedPreferences(store, Context.MODE_PRIVATE).edit().clear().apply();
         }

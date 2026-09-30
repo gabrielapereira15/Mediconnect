@@ -20,8 +20,10 @@ public class MyApp extends Application {
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String channelID = "channel1";
-            String channelName = "Default Channel";
-            String channelDescription = "Notifications for reminders";
+            // From resources, since the phone's settings list the channel by
+            // this name; "Default Channel" told the patient nothing.
+            String channelName = getString(R.string.reminder_channel_name);
+            String channelDescription = getString(R.string.reminder_channel_body);
             int importance = NotificationManager.IMPORTANCE_HIGH;
 
             NotificationChannel channel = new NotificationChannel(channelID, channelName, importance);

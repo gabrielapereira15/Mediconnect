@@ -12,6 +12,7 @@ import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.adapter.UpcomingAdapter;
 import com.example.mediconnect_android.databinding.FragmentUpcomingBinding;
 import com.example.mediconnect_android.model.Appointment;
+import com.example.mediconnect_android.util.ReminderPermissions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
@@ -22,6 +23,9 @@ public class UpcomingFragment extends Fragment {
     FragmentUpcomingBinding binding;
     UpcomingAdapter adapter;
     List<Appointment> appointments;
+
+    /** Registered here, as a field, because the Activity Result API needs it before onCreate. */
+    private final ReminderPermissions reminderPermissions = new ReminderPermissions(this);
 
     public UpcomingFragment(List<Appointment> appointments) {
         this.appointments = appointments;
@@ -82,7 +86,7 @@ public class UpcomingFragment extends Fragment {
         }
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new UpcomingAdapter(filteredAppointments, getContext());
+        adapter = new UpcomingAdapter(filteredAppointments, getContext(), reminderPermissions);
         binding.recyclerView.setAdapter(adapter);
     }
 
