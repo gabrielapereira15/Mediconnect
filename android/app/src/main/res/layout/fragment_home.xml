@@ -77,12 +77,19 @@
                         tools:text="Gabriela" />
                 </LinearLayout>
 
+                <!--
+                    Home's own bell, since the app bar's is hidden here. The
+                    label and the dot both follow the unread count, set from
+                    HomeFragment; the label here is what it says before the
+                    count has arrived.
+                -->
                 <FrameLayout
                     android:id="@+id/notification_button"
                     android:layout_width="@dimen/touch_target"
                     android:layout_height="@dimen/touch_target"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
+                    android:contentDescription="@string/cd_notifications"
                     android:focusable="true">
 
                     <ImageView

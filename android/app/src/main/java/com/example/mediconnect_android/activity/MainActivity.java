@@ -21,9 +21,9 @@ import com.example.mediconnect_android.databinding.ActivityMainBinding;
 import com.example.mediconnect_android.fragment.EditProfileFragment;
 import com.example.mediconnect_android.fragment.HomeFragment;
 import com.example.mediconnect_android.fragment.NotificationsFragment;
-import com.example.mediconnect_android.util.Background;
 import com.example.mediconnect_android.util.BottomNavigationManager;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.UnreadMessages;
 
 /**
  * The shell the four top-level screens live in.
@@ -34,13 +34,15 @@ import com.example.mediconnect_android.util.DialogUtils;
  * the visit it is for, and signing out is a row on Profile — so there was
  * nothing left for a drawer to hold.
  */
-public class MainActivity extends AppCompatActivity
-        implements NotificationsFragment.NotificationBadgeHandler {
+public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding mainBinding;
     private NotificationClient notificationClient;
     private SharedPreferences sharedPreferences;
     private BottomNavigationManager bottomNavigationManager;
+
+    /** Held so the same instance can be let go of in onDestroy. */
+    private final UnreadMessages.Listener bell = this::bindBell;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +61,32 @@ public class MainActivity extends AppCompatActivity
         resetTitleBetweenScreens();
         watchDemoMode();
         setNavigationBottom();
-        setNotificationIcon();
+        UnreadMessages.observe(bell);
         listeners();
+    }
+
+    /**
+     * Counts the unread messages again each time the app comes to the front.
+     *
+     * The count used to be fetched once, in onCreate, so a message that
+     * arrived while the app sat in the background never reached the bell.
+     * onResume also runs straight after onCreate, which covers the first
+     * launch.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UnreadMessages.refresh(notificationClient, sharedPreferences.getString("email", ""));
+    }
+
+    /**
+     * The count outlives the activity, and a theme change recreates it, so
+     * a listener left behind would keep the old views alive.
+     */
+    @Override
+    protected void onDestroy() {
+        UnreadMessages.stopObserving(bell);
+        super.onDestroy();
     }
 
     /**
@@ -129,31 +155,15 @@ public class MainActivity extends AppCompatActivity
                 v -> getOnBackPressedDispatcher().onBackPressed());
     }
 
-    @Override
-    public void updateNotificationBadgeVisibility(boolean visible) {
+    /**
+     * The app bar's bell. Its label follows the count as well as its dot:
+     * only the dot used to change, so after "Mark all read" TalkBack still
+     * announced the old number.
+     */
+    private void bindBell(int unread) {
         if (mainBinding != null) {
-            mainBinding.notificationBadge.setVisibility(visible ? View.VISIBLE : View.GONE);
+            UnreadMessages.bindBell(mainBinding.notificationIcon, mainBinding.notificationBadge, unread);
         }
-    }
-
-    private void setNotificationIcon() {
-        String email = sharedPreferences.getString("email", "");
-
-        // The badge is decoration; fetch it in the background so the activity
-        // is interactive straight away.
-        Background.run(() -> notificationClient.getNotifications(email), notifications -> {
-            // Unread, not "any". Read messages stay on the list now, so
-            // counting them all would leave the bell dotted for ever.
-            int count = notifications == null
-                    ? 0
-                    : (int) notifications.stream().filter(n -> !n.isRead()).count();
-            mainBinding.notificationBadge.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
-            // A dot says nothing to a screen reader, so the count goes on the
-            // button's own label.
-            mainBinding.notificationIcon.setContentDescription(count > 0
-                    ? getString(R.string.cd_notifications_unread, count)
-                    : getString(R.string.cd_notifications));
-        });
     }
 
     private void listeners() {

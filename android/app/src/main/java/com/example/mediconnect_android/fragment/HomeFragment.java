@@ -31,6 +31,7 @@ import com.example.mediconnect_android.util.Background;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.KeyboardUtils;
+import com.example.mediconnect_android.util.UnreadMessages;
 import com.example.mediconnect_android.util.WhenLabel;
 import com.google.android.material.chip.Chip;
 
@@ -71,6 +72,9 @@ public class HomeFragment extends Fragment {
 
     private final List<Doctor> doctorList = new ArrayList<>();
 
+    /** Held so the same instance can be let go of in onDestroyView. */
+    private final UnreadMessages.Listener bell = this::bindBell;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -109,6 +113,7 @@ public class HomeFragment extends Fragment {
 
         binding.notificationButton.setOnClickListener(v ->
                 show(new NotificationsFragment()));
+        UnreadMessages.observe(bell);
         binding.seeAllDoctors.setOnClickListener(v -> show(new DoctorsFragment()));
         binding.seeAllCategories.setOnClickListener(v -> show(new DoctorsFragment()));
         binding.healthSummaryCard.setOnClickListener(v -> show(new HealthRecordFragment()));
@@ -140,6 +145,18 @@ public class HomeFragment extends Fragment {
             return R.string.home_greeting_morning;
         }
         return hour < 18 ? R.string.home_greeting_afternoon : R.string.home_greeting_evening;
+    }
+
+    /**
+     * Home's own bell, in the header, since the app bar that carries the
+     * other one is hidden here. It had a dot that nothing ever showed and no
+     * label, so TalkBack read it as an unlabelled button; it follows the
+     * same count as the app bar's now.
+     */
+    private void bindBell(int unread) {
+        if (binding != null) {
+            UnreadMessages.bindBell(binding.notificationButton, binding.notificationDot, unread);
+        }
     }
 
     // ---- quick actions --------------------------------------------------
@@ -428,6 +445,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        UnreadMessages.stopObserving(bell);
         binding = null;
     }
 }
