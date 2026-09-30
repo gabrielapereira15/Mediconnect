@@ -43,8 +43,6 @@ public class MessagesController {
         model.addAttribute("canSend", deskMayAct(request));
         model.addAttribute("titleMax", ClinicMessages.TITLE_MAX);
         model.addAttribute("messageMax", ClinicMessages.MESSAGE_MAX);
-        model.addAttribute("earliestSend", LocalDateTime.now().plus(ClinicMessages.SOONEST)
-                .withSecond(0).withNano(0).toString());
 
         if (selected != null && !messages.isDraft(selected)) {
             model.addAttribute("sent", messages.sent(selected));
@@ -91,9 +89,9 @@ public class MessagesController {
         }
         try {
             if ("schedule".equals(action)) {
-                int reach = messages.schedule(draft, sendAt);
+                var scheduled = messages.schedule(draft, sendAt);
                 redirect.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("messages.scheduled",
-                        Display.dayAndTime(sendAt), reach));
+                        Display.dayAndTime(Display.local(scheduled.at())), scheduled.reach()));
                 return "redirect:/messages";
             }
             int reached = messages.send(draft);
@@ -114,19 +112,24 @@ public class MessagesController {
     @PostMapping("/{id}/unschedule")
     @RequiresRole(StaffRole.FRONT_DESK)
     public String unschedule(@PathVariable UUID id, RedirectAttributes redirect) {
-        UUID draft = messages.unschedule(id);
-        redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("messages.unscheduled"));
-        return "redirect:/messages?selected=" + draft;
+        try {
+            messages.unschedule(id);
+            redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("messages.unscheduled"));
+        } catch (IllegalStateException e) {
+            redirect.addFlashAttribute(WebUtils.MSG_ERROR, e.getMessage());
+        }
+        return "redirect:/messages?selected=" + id;
     }
 
     @PostMapping("/{id}/withdraw")
     @RequiresRole(StaffRole.FRONT_DESK)
     public String withdraw(@PathVariable UUID id, RedirectAttributes redirect) {
-        boolean draft = messages.isDraft(id);
-        boolean scheduled = !draft && messages.sent(id).scheduled();
-        messages.withdraw(id);
-        redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage(
-                draft ? "messages.draftDiscarded" : scheduled ? "messages.scheduleCancelled" : "messages.withdrawn"));
+        String key = switch (messages.withdraw(id)) {
+            case DRAFT_DISCARDED -> "messages.draftDiscarded";
+            case SCHEDULE_CANCELLED -> "messages.scheduleCancelled";
+            case REMOVED_FROM_INBOXES -> "messages.withdrawn";
+        };
+        redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage(key));
         return "redirect:/messages";
     }
 

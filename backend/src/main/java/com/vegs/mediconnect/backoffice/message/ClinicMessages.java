@@ -68,6 +68,7 @@ public class ClinicMessages {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final AppointmentRepository appointmentRepository;
+    private final org.springframework.transaction.support.TransactionTemplate transactions;
 
     public enum Audience {
         ALL, DOCTOR, DAY;
@@ -236,8 +237,14 @@ public class ClinicMessages {
         return null;
     }
 
-    /** What stops it being scheduled for that time; null when it can be. */
-    public static String timingProblem(LocalDateTime sendAt, LocalDateTime now) {
+    /**
+     * What stops it being scheduled for that moment; null when it can be.
+     *
+     * Checked as an instant, not as a wall-clock time: on the night the
+     * clocks go back, 1:30 happens twice, and a check on the local time
+     * alone could pass a moment that has already gone.
+     */
+    public static String timingProblem(OffsetDateTime sendAt, OffsetDateTime now) {
         if (sendAt == null) {
             return "Choose when it should go out.";
         }
@@ -249,6 +256,21 @@ public class ClinicMessages {
         }
         return null;
     }
+
+    /** The desk's local time as an instant, the later one when the clocks go back. */
+    static OffsetDateTime instant(LocalDateTime local) {
+        if (local == null) {
+            return null;
+        }
+        return local.atZone(ZoneId.systemDefault()).withLaterOffsetAtOverlap().toOffsetDateTime();
+    }
+
+    /** When a scheduled message will go, and how many it would reach now. */
+    public record Planned(OffsetDateTime at, int reach) {
+    }
+
+    /** What withdrawing a message turned out to do. */
+    public enum Withdrawn { DRAFT_DISCARDED, SCHEDULE_CANCELLED, REMOVED_FROM_INBOXES }
 
     /** Saves it without sending. Returns its id. */
     @Transactional
@@ -262,6 +284,10 @@ public class ClinicMessages {
         notification.setSendAllPatients(false);
         notification.setIsDeleted(false);
         rememberAudience(notification, draft);
+        // The list says who a draft is for as soon as that has been chosen.
+        boolean chosen = !(draft.audience() == Audience.DOCTOR && draft.doctorId() == null)
+                && !(draft.audience() == Audience.DAY && draft.day() == null);
+        notification.setAudience(chosen ? audienceLabel(draft) : null);
         return notificationRepository.save(notification).getId();
     }
 
@@ -297,10 +323,11 @@ public class ClinicMessages {
      * the time, so a patient who books that day in the meantime gets it.
      */
     @Transactional
-    public int schedule(Draft draft, LocalDateTime sendAt) {
+    public Planned schedule(Draft draft, LocalDateTime sendAt) {
+        OffsetDateTime at = instant(sendAt);
         String problem = problem(draft);
         if (problem == null) {
-            problem = timingProblem(sendAt, LocalDateTime.now());
+            problem = timingProblem(at, OffsetDateTime.now());
         }
         if (problem != null) {
             throw new IllegalArgumentException(problem);
@@ -310,21 +337,19 @@ public class ClinicMessages {
         fill(notification, draft);
         notification.setDraft(false);
         notification.setSentAt(null);
-        notification.setScheduledFor(sendAt.atZone(ZoneId.systemDefault()).toOffsetDateTime());
+        notification.setScheduledFor(at);
         notificationRepository.save(notification);
-        return recipients(draft).size();
+        return new Planned(at, recipients(draft).size());
     }
 
     /** A scheduled message back to a draft, to be changed or sent another time. */
     @Transactional
     public UUID unschedule(UUID id) {
-        Notification notification = notificationRepository.findById(id)
-                .filter(ClinicMessages::isScheduled)
-                .filter(Notification::notDeleted)
-                .orElseThrow(NotFoundException::new);
-        notification.setDraft(true);
-        notification.setScheduledFor(null);
-        return notificationRepository.save(notification).getId();
+        if (notificationRepository.moveBackToDraft(id) == 0) {
+            // Gone out, cancelled, or never scheduled: nothing to move back.
+            throw new IllegalStateException("It has already gone out, or it was cancelled, so it cannot be edited.");
+        }
+        return id;
     }
 
     /** How many people it would reach, for the line under the buttons. */
@@ -343,10 +368,17 @@ public class ClinicMessages {
      * clinic said, or meant to say, stays on record.
      */
     @Transactional
-    public void withdraw(UUID id) {
+    public Withdrawn withdraw(UUID id) {
+        if (notificationRepository.markWithdrawn(id) == 0) {
+            throw new NotFoundException();
+        }
+        // Read after the update, so a message the dispatcher sent a moment
+        // ago is reported as removed from inboxes, not as "nobody got it".
         Notification notification = notificationRepository.findById(id).orElseThrow(NotFoundException::new);
-        notification.setIsDeleted(true);
-        notificationRepository.save(notification);
+        if (Boolean.TRUE.equals(notification.getDraft())) {
+            return Withdrawn.DRAFT_DISCARDED;
+        }
+        return notification.getSentAt() == null ? Withdrawn.SCHEDULE_CANCELLED : Withdrawn.REMOVED_FROM_INBOXES;
     }
 
     // ---- going out on time ---------------------------------------------------------------
@@ -358,42 +390,60 @@ public class ClinicMessages {
      * 9:01 at the latest. Each goes to the group as it stands now.
      */
     @Scheduled(fixedDelay = 60_000)
-    @Transactional
     public int dispatchDue() {
         return dispatchDue(OffsetDateTime.now());
     }
 
-    @Transactional
+    /**
+     * Each message is claimed with one guarded update and delivered in its
+     * own transaction: a Cancel or Edit that lands first wins, the
+     * dispatcher never writes back an old copy of the row, and one message
+     * that fails does not hold back the others.
+     */
     public int dispatchDue(OffsetDateTime now) {
         int sent = 0;
-        for (Notification notification : notificationRepository.findAllBySentAtIsNullAndScheduledForLessThanEqual(now)) {
-            if (!isScheduled(notification) || !notification.notDeleted()) {
+        for (Notification due : notificationRepository.findAllBySentAtIsNullAndScheduledForLessThanEqual(now)) {
+            if (!isScheduled(due) || !due.notDeleted()) {
                 continue;
             }
-            Draft draft = new Draft(notification.getId(), Audience.of(notification.getAudienceKind()),
-                    notification.getAudienceDoctorId(), notification.getAudienceDay(),
-                    notification.getTitle(), notification.getMessage());
-            List<Patient> recipients = recipients(draft);
-            notification.setSentAt(now);
-            notificationRepository.save(notification);
-            deliver(notification, recipients);
-            sent++;
-            log.info("Sent scheduled message {} to {} patient(s)", notification.getId(), recipients.size());
+            try {
+                Boolean delivered = transactions.execute(status -> {
+                    if (notificationRepository.claimForSending(due.getId(), now) != 1) {
+                        return false;
+                    }
+                    Draft draft = new Draft(due.getId(), Audience.of(due.getAudienceKind()),
+                            due.getAudienceDoctorId(), due.getAudienceDay(), due.getTitle(), due.getMessage());
+                    List<Patient> recipients = recipients(draft);
+                    deliver(notificationRepository.getReferenceById(due.getId()), recipients);
+                    log.info("Sent scheduled message {} to {} patient(s)", due.getId(), recipients.size());
+                    return true;
+                });
+                if (Boolean.TRUE.equals(delivered)) {
+                    sent++;
+                }
+            } catch (RuntimeException e) {
+                log.error("Could not send scheduled message {}; it will be tried again", due.getId(), e);
+            }
         }
         return sent;
     }
 
     // ---- pieces --------------------------------------------------------------------------
 
-    /** A new message, or a draft or scheduled one that has not gone out yet. */
+    /**
+     * A new message, or a draft claimed for this change. A scheduled message
+     * is changed by moving it back to drafts first, so the dispatcher and
+     * the desk never both hold it.
+     */
     private Notification editable(UUID id) {
         if (id == null) {
             return new Notification();
         }
-        return notificationRepository.findById(id)
-                .filter(existing -> Boolean.TRUE.equals(existing.getDraft()) || isScheduled(existing))
-                .filter(Notification::notDeleted)
-                .orElseThrow(NotFoundException::new);
+        if (notificationRepository.claimDraft(id) != 1) {
+            throw new IllegalArgumentException("That message is no longer a draft: it has been sent, "
+                    + "scheduled or discarded in the meantime.");
+        }
+        return notificationRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     private void fill(Notification notification, Draft draft) {

@@ -163,8 +163,10 @@ public final class ScheduleBoard {
                     bookedDay, total, note));
         }
 
-        // One doctor: the step is their appointment length, not a guess.
-        Duration step = Duration.ofMinutes(doctor.slotLength());
+        // The spacing of the slots actually in the diary, as on the day board:
+        // slots made before a change of appointment length keep their own.
+        // With too few times to tell, the doctor's own length decides.
+        Duration step = times.size() >= 3 ? usualStep(times) : Duration.ofMinutes(doctor.slotLength());
         List<Row> rows = new ArrayList<>();
         LocalTime previous = null;
         for (LocalTime time : times) {

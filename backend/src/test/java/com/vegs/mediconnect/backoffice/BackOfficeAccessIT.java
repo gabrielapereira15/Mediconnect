@@ -647,6 +647,49 @@ class BackOfficeAccessIT {
     }
 
     @Test
+    @Transactional
+    @DisplayName("once a scheduled message has gone out, Edit says so and Cancel removes it from inboxes")
+    void afterItHasGoneOut() throws Exception {
+        var at = java.time.LocalDateTime.now().plusDays(1).withHour(8).withMinute(30).withSecond(0).withNano(0);
+        var planned = clinicMessages.schedule(new com.vegs.mediconnect.backoffice.message.ClinicMessages.Draft(null,
+                com.vegs.mediconnect.backoffice.message.ClinicMessages.Audience.ALL, null, null,
+                "Parking closed", "The car park is closed tomorrow morning."), at);
+        var id = notificationRepository.findAll().stream()
+                .filter(notification -> "Parking closed".equals(notification.getTitle()))
+                .findFirst().orElseThrow().getId();
+        org.junit.jupiter.api.Assertions.assertEquals(1, clinicMessages.dispatchDue(planned.at().plusMinutes(1)));
+
+        mockMvc.perform(post("/messages/" + id + "/unschedule").session(desk()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers
+                        .flash().attributeExists("MSG_ERROR"));
+        org.junit.jupiter.api.Assertions.assertEquals(
+                com.vegs.mediconnect.backoffice.message.ClinicMessages.Withdrawn.REMOVED_FROM_INBOXES,
+                clinicMessages.withdraw(id));
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("a draft is sent once however many times Send is pressed, and lists its audience")
+    void draftSentOnce() throws Exception {
+        var chase = doctorRepository.findAll().stream()
+                .filter(doctor -> doctor.getLastName().equals("Chase")).findFirst().orElseThrow();
+        var draft = new com.vegs.mediconnect.backoffice.message.ClinicMessages.Draft(null,
+                com.vegs.mediconnect.backoffice.message.ClinicMessages.Audience.DOCTOR, chase.getId(), null,
+                "Running late", "Dr. Chase is running about 20 minutes late this afternoon.");
+        var id = clinicMessages.saveDraft(draft);
+        org.junit.jupiter.api.Assertions.assertTrue(clinicMessages.sentList().stream()
+                .anyMatch(line -> line.id().equals(id) && line.audience().equals("Patients of Dr. Chase")));
+
+        var saved = new com.vegs.mediconnect.backoffice.message.ClinicMessages.Draft(id, draft.audience(),
+                draft.doctorId(), null, draft.title(), draft.message());
+        int reached = clinicMessages.send(saved);
+        org.junit.jupiter.api.Assertions.assertTrue(reached > 0);
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> clinicMessages.send(saved),
+                "a second Send on the same draft must not deliver it again");
+    }
+
+    @Test
     @DisplayName("the CSV export quotes every cell")
     void csvExport() throws Exception {
         mockMvc.perform(get("/appointments/export.csv").param("tab", "past").session(desk()))
