@@ -34,4 +34,10 @@ public class StaffBootstrapProperties {
 
     /** Only ever hashed on the way into the database, never stored or logged. */
     private String password = "";
+    /**
+     * For a clinician: the id of the doctor whose agenda this login may
+     * change. Blank leaves the account unlinked, which fails closed — it can
+     * read charts but change nobody's availability.
+     */
+    private String doctorId = "";
 }

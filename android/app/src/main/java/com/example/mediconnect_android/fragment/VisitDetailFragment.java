@@ -130,6 +130,7 @@ public class VisitDetailFragment extends Fragment {
                     }
                     formSubmittedAt = result.getString(
                             PreAppointmentFormFragment.RESULT_SUBMITTED_AT);
+                    remember(ARG_FORM_SUBMITTED_AT, formSubmittedAt);
                     bindChecklist();
                 });
 
@@ -236,6 +237,8 @@ public class VisitDetailFragment extends Fragment {
                     if (appointment.getAttendanceConfirmedAt() != null) {
                         attendanceConfirmedAt = appointment.getAttendanceConfirmedAt();
                     }
+                    remember(ARG_CHECKED_IN_AT, checkedInAt);
+                    remember(ARG_ATTENDANCE, attendanceConfirmedAt);
                     bindCheckInState();
                     bindAttendance();
                 },
@@ -302,6 +305,7 @@ public class VisitDetailFragment extends Fragment {
                     : R.string.visit_attendance_done_sub);
             binding.rowAttendance.rowAction.setVisibility(View.GONE);
             binding.rowAttendance.visitRow.setOnClickListener(null);
+            binding.rowAttendance.visitRow.setClickable(false);
             return;
         }
         todo(binding.rowAttendance.rowIcon, R.drawable.ic_calendar_check);
@@ -310,6 +314,7 @@ public class VisitDetailFragment extends Fragment {
             binding.rowAttendance.rowSub.setText(R.string.visit_attendance_today_sub);
             binding.rowAttendance.rowAction.setVisibility(View.GONE);
             binding.rowAttendance.visitRow.setOnClickListener(null);
+            binding.rowAttendance.visitRow.setClickable(false);
             return;
         }
         binding.rowAttendance.rowTitle.setText(R.string.visit_attendance);
@@ -335,6 +340,7 @@ public class VisitDetailFragment extends Fragment {
                         return;
                     }
                     attendanceConfirmedAt = appointment.getAttendanceConfirmedAt();
+                    remember(ARG_ATTENDANCE, attendanceConfirmedAt);
                     bindAttendance();
                 },
                 error -> {
@@ -368,6 +374,20 @@ public class VisitDetailFragment extends Fragment {
                 getString(R.string.visit_health_card_sub, province, last4));
         binding.rowHealthCard.rowAction.setVisibility(View.GONE);
         binding.rowHealthCard.visitRow.setOnClickListener(null);
+        binding.rowHealthCard.visitRow.setClickable(false);
+    }
+
+    /**
+     * Keeps what the server just said in the arguments. They are what this
+     * screen is rebuilt from after a rotation, a theme or font change or
+     * the process being killed, and without this a check-in or a sent form
+     * showed as not done again until the patient tapped a second time.
+     */
+    private void remember(String key, String value) {
+        Bundle args = getArguments();
+        if (args != null) {
+            args.putString(key, value);
+        }
     }
 
     private void done(android.widget.ImageView icon) {

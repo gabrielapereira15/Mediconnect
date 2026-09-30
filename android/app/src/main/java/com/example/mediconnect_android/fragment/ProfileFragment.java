@@ -58,6 +58,9 @@ public class ProfileFragment extends Fragment {
     /** The offers switch as the clinic has it; null until it has answered. */
     private Boolean offersOn;
 
+    /** The clinic could not be asked, so the switch offers to try again. */
+    private boolean offersUnreachable;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -255,6 +258,7 @@ public class ProfileFragment extends Fragment {
      * already on one.
      */
     private void loadWaitlists() {
+        offersUnreachable = false;
         bindOffersSwitch();
 
         Background.run(
@@ -270,7 +274,12 @@ public class ProfileFragment extends Fragment {
                     binding.swipeRefresh.setRefreshing(false);
                     @SuppressWarnings("unchecked")
                     List<WaitlistEntry> entries = (List<WaitlistEntry>) result[1];
-                    offersOn = (Boolean) result[0];
+                    // A refresh that fails keeps the last answer rather
+                    // than forgetting where the switch stands.
+                    if (result[0] != null) {
+                        offersOn = (Boolean) result[0];
+                    }
+                    offersUnreachable = offersOn == null;
                     waitlists.clear();
                     if (entries != null) {
                         waitlists.addAll(entries.stream()
@@ -282,6 +291,8 @@ public class ProfileFragment extends Fragment {
                 error -> {
                     if (binding != null) {
                         binding.swipeRefresh.setRefreshing(false);
+                        offersUnreachable = offersOn == null;
+                        bindOffersSwitch();
                     }
                 });
     }
@@ -298,7 +309,9 @@ public class ProfileFragment extends Fragment {
         describeSwitch(binding.switchOffers, R.string.profile_offers, on);
 
         if (!known) {
-            binding.switchOffers.switchSub.setText(R.string.profile_offers_body_unknown);
+            binding.switchOffers.switchSub.setText(offersUnreachable
+                    ? R.string.profile_offers_body_unreachable
+                    : R.string.profile_offers_body_unknown);
         } else if (on && count > 0) {
             binding.switchOffers.switchSub.setText(getResources().getQuantityString(
                     R.plurals.profile_offers_body_on, count, count));
@@ -312,9 +325,16 @@ public class ProfileFragment extends Fragment {
         }
 
         // Until the clinic has said where the switch stands, a tap could
-        // only guess which way to flip it.
-        binding.switchOffers.switchRow.setOnClickListener(known ? v -> setOffers(!offersOn) : null);
-        binding.switchOffers.switchRow.setClickable(known);
+        // only guess which way to flip it; if it could not be reached, a
+        // tap asks again.
+        if (known) {
+            binding.switchOffers.switchRow.setOnClickListener(v -> setOffers(!offersOn));
+        } else if (offersUnreachable) {
+            binding.switchOffers.switchRow.setOnClickListener(v -> loadWaitlists());
+        } else {
+            binding.switchOffers.switchRow.setOnClickListener(null);
+        }
+        binding.switchOffers.switchRow.setClickable(known || offersUnreachable);
     }
 
     /**

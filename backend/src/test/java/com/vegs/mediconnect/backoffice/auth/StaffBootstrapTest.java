@@ -47,6 +47,8 @@ class StaffBootstrapTest {
     private final List<StaffUser> table = new ArrayList<>();
 
     private final StaffUserRepository repository = mock(StaffUserRepository.class);
+    private final com.vegs.mediconnect.datasource.doctor.DoctorRepository doctors =
+            mock(com.vegs.mediconnect.datasource.doctor.DoctorRepository.class);
     // The lowest cost BCrypt allows: these tests check what is stored, not how slowly.
     private final PasswordEncoder encoder = new BCryptPasswordEncoder(4);
     private final StaffBootstrapProperties properties = new StaffBootstrapProperties();
@@ -69,7 +71,7 @@ class StaffBootstrapTest {
     }
 
     private void start() {
-        new StaffBootstrap(properties, demoData, repository, encoder)
+        new StaffBootstrap(properties, demoData, repository, encoder, doctors)
                 .run(new DefaultApplicationArguments());
     }
 
@@ -122,6 +124,43 @@ class StaffBootstrapTest {
         start();
 
         assertEquals(StaffRole.CLINICIAN, table.get(0).getRole());
+    }
+
+    @Test
+    @DisplayName("a clinician can be linked to their own doctor, so they can change that agenda")
+    void linksAClinicianToTheirDoctor() {
+        java.util.UUID doctor = java.util.UUID.randomUUID();
+        when(doctors.existsById(doctor)).thenReturn(true);
+        configure(EMAIL, PASSWORD);
+        properties.setRole(StaffRole.CLINICIAN);
+        properties.setDoctorId(doctor.toString());
+
+        start();
+
+        assertEquals(doctor, table.get(0).getDoctorId());
+    }
+
+    @Test
+    @DisplayName("a doctor id that names nobody, or is given for the front desk, links nothing")
+    void linksNothingItCannotCheck() {
+        configure(EMAIL, PASSWORD);
+        properties.setRole(StaffRole.CLINICIAN);
+        properties.setDoctorId(java.util.UUID.randomUUID().toString());
+        start();
+        assertEquals(null, table.get(0).getDoctorId(), "no such doctor");
+
+        table.clear();
+        properties.setDoctorId("not-an-id");
+        start();
+        assertEquals(null, table.get(0).getDoctorId(), "not an id at all");
+
+        table.clear();
+        java.util.UUID doctor = java.util.UUID.randomUUID();
+        when(doctors.existsById(doctor)).thenReturn(true);
+        properties.setRole(StaffRole.FRONT_DESK);
+        properties.setDoctorId(doctor.toString());
+        start();
+        assertEquals(null, table.get(0).getDoctorId(), "only a clinician has an agenda of their own");
     }
 
     @Test

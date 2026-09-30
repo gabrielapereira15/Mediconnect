@@ -1,5 +1,6 @@
 package com.vegs.mediconnect.backoffice.auth;
 
+import com.vegs.mediconnect.datasource.doctor.DoctorRepository;
 import com.vegs.mediconnect.datasource.staff.StaffRole;
 import com.vegs.mediconnect.datasource.staff.StaffUser;
 import com.vegs.mediconnect.datasource.staff.StaffUserRepository;
@@ -48,6 +49,7 @@ public class StaffBootstrap implements ApplicationRunner {
     private final DemoDataProperties demoData;
     private final StaffUserRepository staffUserRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DoctorRepository doctorRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -93,6 +95,7 @@ public class StaffBootstrap implements ApplicationRunner {
         user.setRole(role);
         user.setActive(true);
         user.setPasswordHash(passwordEncoder.encode(password));
+        user.setDoctorId(linkedDoctor(role));
         staffUserRepository.save(user);
 
         log.info("Staff bootstrap: created a {} account for {}.", role, email);
@@ -112,6 +115,37 @@ public class StaffBootstrap implements ApplicationRunner {
                 + "back office. Set STAFF_BOOTSTRAP_EMAIL, STAFF_BOOTSTRAP_PASSWORD (at least {} "
                 + "characters) and optionally STAFF_BOOTSTRAP_NAME and STAFF_BOOTSTRAP_ROLE "
                 + "(FRONT_DESK or CLINICIAN), then restart.", MIN_PASSWORD_LENGTH);
+    }
+
+    /**
+     * The doctor a clinician login may change the agenda of, from
+     * STAFF_BOOTSTRAP_DOCTOR_ID. Anything that does not name an existing
+     * doctor links nothing and says so, rather than stopping the start.
+     */
+    private java.util.UUID linkedDoctor(StaffRole role) {
+        String raw = trimmed(properties.getDoctorId());
+        if (raw.isEmpty()) {
+            return null;
+        }
+        if (role != StaffRole.CLINICIAN) {
+            log.warn("Staff bootstrap: STAFF_BOOTSTRAP_DOCTOR_ID is only used for a CLINICIAN, "
+                    + "so the {} account is not linked to a doctor.", role);
+            return null;
+        }
+        java.util.UUID id;
+        try {
+            id = java.util.UUID.fromString(raw);
+        } catch (IllegalArgumentException e) {
+            log.warn("Staff bootstrap: STAFF_BOOTSTRAP_DOCTOR_ID is not a doctor id, "
+                    + "so the account can change nobody's agenda.");
+            return null;
+        }
+        if (!doctorRepository.existsById(id)) {
+            log.warn("Staff bootstrap: no doctor has the id in STAFF_BOOTSTRAP_DOCTOR_ID, "
+                    + "so the account can change nobody's agenda.");
+            return null;
+        }
+        return id;
     }
 
     private static String trimmed(String value) {

@@ -100,6 +100,8 @@ mediconnect:
       # FRONT_DESK or CLINICIAN. Only a clinician can open patient charts.
       role: ${STAFF_BOOTSTRAP_ROLE:FRONT_DESK}
       password: ${STAFF_BOOTSTRAP_PASSWORD:}
+      # A clinician's own doctor (their id), so they can change their agenda.
+      doctor-id: ${STAFF_BOOTSTRAP_DOCTOR_ID:}
   auth:
     # Lifetime of a one-time passcode, and of the token issued after verifying.
     otp-ttl-minutes: ${OTP_TTL_MINUTES:10}

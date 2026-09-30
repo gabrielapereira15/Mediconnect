@@ -277,6 +277,7 @@
         <item quantity="other">Paused. You keep your place on %1$d waitlists, but get no offers until you turn this on.</item>
     </plurals>
     <string name="profile_offers_body_off">Off. The clinic will not offer you earlier times.</string>
+    <string name="profile_offers_body_unreachable">Could not reach the clinic. Tap to try again.</string>
     <string name="profile_offers_body_unknown">Checking with the clinic…</string>
     <string name="profile_offers_failed">The clinic did not take that change. Please try again.</string>
     <string name="profile_row_record">Your health record</string>
@@ -393,7 +394,10 @@
     <string name="messages_clear_read">Clear read</string>
     <string name="messages_archived_one">Message archived</string>
     <string name="messages_restored_one">Moved to your inbox</string>
-    <string name="messages_cleared">%1$d read messages archived</string>
+    <plurals name="messages_cleared">
+        <item quantity="one">%1$d read message archived</item>
+        <item quantity="other">%1$d read messages archived</item>
+    </plurals>
     <string name="messages_nothing_to_clear">Nothing read to clear</string>
     <string name="messages_undo">Undo</string>
     <string name="messages_action_archive">Archive</string>

@@ -147,6 +147,8 @@ public class WaitlistBoard {
             long fit = waitlistRepository.findAllByDoctorAndStatusOrderByDateCreatedAsc(doctor, WaitlistStatus.WAITING)
                     .stream()
                     .filter(entry -> entry.wants(slot.getSchedule().getDate()))
+                    // The rows below say "Offers paused" for these; the card agrees.
+                    .filter(entry -> WaitlistService.offersOn(entry.getPatient()))
                     .count();
             cards.add(new Card(slot.getId(), Display.dayAndTime(slot.getDateTime()), "Dr. " + doctor.getLastName(),
                     fit == 0 ? "Freed · nobody on Dr. " + doctor.getLastName() + "'s waitlist fits"

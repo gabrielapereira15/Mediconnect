@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,6 +101,8 @@ public class NotificationsFragment extends Fragment {
             }
             showingArchived = checkedId == R.id.filter_archived;
             bind();
+            // Another tab is another list: start it at the top.
+            binding.recyclerView.scrollToPosition(0);
         });
 
         new ItemTouchHelper(new SwipeToArchive()).attachToRecyclerView(binding.recyclerView);
@@ -144,10 +147,22 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void bind() {
+        // Callbacks and Undo can arrive after the screen has gone.
+        if (binding == null || !isAdded()) {
+            return;
+        }
         List<Notification> shown = shown();
         adapter = new NotificationAdapter(shown, requireContext(), this::open, this::act)
                 .withArchiveAction(showingArchived, this::toggleArchive);
+        // A new adapter starts at the top. Archiving one message halfway
+        // down should not throw the patient back there, so the scroll
+        // position is carried across.
+        RecyclerView.LayoutManager layout = binding.recyclerView.getLayoutManager();
+        Parcelable scroll = layout == null ? null : layout.onSaveInstanceState();
         binding.recyclerView.setAdapter(adapter);
+        if (layout != null && scroll != null) {
+            layout.onRestoreInstanceState(scroll);
+        }
 
         long unread = notifications.stream().filter(n -> !n.isRead()).count();
         long archived = notifications.stream().filter(Notification::isArchived).count();
@@ -230,69 +245,100 @@ public class NotificationsFragment extends Fragment {
 
     // ---- archiving ---------------------------------------------------------------
 
+    /** The Undo bar on screen, dismissed with the view so its Undo cannot outlive it. */
+    private Snackbar undoBar;
+
     /**
-     * Archives a message from the inbox, or moves one back from Archived.
-     * The list changes at once and Undo reverses it; if the server refuses,
-     * the change is put back and the patient is told.
+     * The message with this id as the list holds it now. A refresh replaces
+     * every object in the list, so a callback that arrives afterwards must
+     * not change the one it started with: that one is no longer on screen.
      */
+    @Nullable
+    private Notification current(String id) {
+        for (Notification notification : notifications) {
+            if (id.equals(notification.getId())) {
+                return notification;
+            }
+        }
+        return null;
+    }
+
+    /** Archives a message from the inbox, or moves one back from Archived. */
     private void toggleArchive(Notification notification) {
-        boolean toArchive = !notification.isArchived();
-        boolean wasRead = notification.isRead();
-        notification.setArchived(toArchive);
-        if (toArchive) {
+        setArchived(notification.getId(), !notification.isArchived(), true);
+    }
+
+    /**
+     * The list changes at once, and the server is told. If it refuses, the
+     * change is put back and the patient is told. Undo is offered for the
+     * first move only: undoing an Undo is just doing it again.
+     */
+    private void setArchived(String id, boolean archive, boolean offerUndo) {
+        Notification shown = current(id);
+        if (binding == null || !isAdded() || shown == null) {
+            return;
+        }
+        boolean wasArchived = shown.isArchived();
+        boolean wasRead = shown.isRead();
+        shown.setArchived(archive);
+        if (archive) {
             // Archiving counts as having dealt with it, as on the server.
-            notification.setRead(true);
+            shown.setRead(true);
         }
         bind();
 
         Background.run(
-                () -> toArchive
-                        ? notificationClient.archive(notification.getId())
-                        : notificationClient.unarchive(notification.getId()),
+                () -> archive
+                        ? notificationClient.archive(id)
+                        : notificationClient.unarchive(id),
                 done -> {
                     if (binding == null) {
                         return;
                     }
                     if (!Boolean.TRUE.equals(done)) {
-                        notification.setArchived(!toArchive);
-                        notification.setRead(wasRead || !toArchive);
-                        bind();
-                        Snackbar.make(binding.getRoot(), R.string.messages_action_failed,
-                                Snackbar.LENGTH_LONG).show();
+                        putBack(id, wasArchived, wasRead);
                         return;
                     }
-                    Snackbar.make(binding.getRoot(), toArchive
-                                    ? R.string.messages_archived_one
-                                    : R.string.messages_restored_one, Snackbar.LENGTH_LONG)
-                            .setAction(R.string.messages_undo, v -> toggleArchive(notification))
-                            .show();
+                    if (offerUndo) {
+                        showUndo(getString(archive
+                                        ? R.string.messages_archived_one
+                                        : R.string.messages_restored_one),
+                                v -> setArchived(id, wasArchived, false));
+                    }
                 },
                 error -> {
-                    if (binding == null) {
-                        return;
+                    if (binding != null) {
+                        putBack(id, wasArchived, wasRead);
                     }
-                    notification.setArchived(!toArchive);
-                    notification.setRead(wasRead || !toArchive);
-                    bind();
-                    Snackbar.make(binding.getRoot(), R.string.messages_action_failed,
-                            Snackbar.LENGTH_LONG).show();
                 });
+    }
+
+    private void putBack(String id, boolean archived, boolean read) {
+        Notification shown = current(id);
+        if (shown != null) {
+            shown.setArchived(archived);
+            shown.setRead(read);
+        }
+        bind();
+        say(R.string.messages_action_failed);
     }
 
     /**
      * "Clear read": everything already read goes to Archived in one go,
-     * leaving the inbox with what still needs the patient. Undo brings back
-     * exactly the ones this archived.
+     * leaving the inbox with what still needs the patient. The list moves
+     * at once; when the server answers, it is set to what the server
+     * actually archived, and Undo brings back exactly those.
      */
     private void clearRead() {
-        List<Notification> read = notifications.stream()
+        List<String> readIds = notifications.stream()
                 .filter(notification -> !notification.isArchived() && notification.isRead())
+                .map(Notification::getId)
                 .collect(Collectors.toList());
-        if (read.isEmpty()) {
-            Snackbar.make(binding.getRoot(), R.string.messages_nothing_to_clear, Snackbar.LENGTH_SHORT).show();
+        if (readIds.isEmpty()) {
+            say(R.string.messages_nothing_to_clear);
             return;
         }
-        read.forEach(notification -> notification.setArchived(true));
+        readIds.forEach(id -> current(id).setArchived(true));
         bind();
 
         Background.run(
@@ -302,31 +348,95 @@ public class NotificationsFragment extends Fragment {
                         return;
                     }
                     if (ids == null) {
-                        read.forEach(notification -> notification.setArchived(false));
+                        readIds.forEach(id -> {
+                            Notification shown = current(id);
+                            if (shown != null) {
+                                shown.setArchived(false);
+                            }
+                        });
                         bind();
-                        Snackbar.make(binding.getRoot(), R.string.messages_action_failed,
-                                Snackbar.LENGTH_LONG).show();
+                        say(R.string.messages_action_failed);
                         return;
                     }
-                    Snackbar.make(binding.getRoot(),
-                                    getString(R.string.messages_cleared, ids.size()), Snackbar.LENGTH_LONG)
-                            .setAction(R.string.messages_undo, v -> restore(ids))
-                            .show();
+                    for (Notification notification : notifications) {
+                        if (ids.contains(notification.getId())) {
+                            notification.setArchived(true);
+                            notification.setRead(true);
+                        } else if (readIds.contains(notification.getId())) {
+                            notification.setArchived(false);
+                        }
+                    }
+                    bind();
+                    if (ids.isEmpty()) {
+                        say(R.string.messages_nothing_to_clear);
+                        return;
+                    }
+                    showUndo(getResources().getQuantityString(
+                                    R.plurals.messages_cleared, ids.size(), ids.size()),
+                            v -> restore(ids));
                 },
-                error -> load(true));
+                error -> {
+                    if (binding != null) {
+                        load(true);
+                    }
+                });
     }
 
-    /** Undo for "Clear read": exactly the messages it archived go back. */
+    /**
+     * Undo for "Clear read": exactly the messages it archived go back. Any
+     * the server would not move back are archived again on screen, so the
+     * list never claims more than the server holds.
+     */
     private void restore(List<String> ids) {
-        notifications.stream()
-                .filter(notification -> ids.contains(notification.getId()))
-                .forEach(notification -> notification.setArchived(false));
-        bind();
-        Background.run(() -> {
-            for (String id : ids) {
-                notificationClient.unarchive(id);
+        if (binding == null || !isAdded()) {
+            return;
+        }
+        ids.forEach(id -> {
+            Notification shown = current(id);
+            if (shown != null) {
+                shown.setArchived(false);
             }
         });
+        bind();
+
+        Background.run(
+                () -> {
+                    List<String> refused = new ArrayList<>();
+                    for (String id : ids) {
+                        if (!Boolean.TRUE.equals(notificationClient.unarchive(id))) {
+                            refused.add(id);
+                        }
+                    }
+                    return refused;
+                },
+                refused -> {
+                    if (binding == null || refused.isEmpty()) {
+                        return;
+                    }
+                    refused.forEach(id -> {
+                        Notification shown = current(id);
+                        if (shown != null) {
+                            shown.setArchived(true);
+                        }
+                    });
+                    bind();
+                    say(R.string.messages_action_failed);
+                },
+                error -> {
+                    if (binding != null) {
+                        load(true);
+                    }
+                });
+    }
+
+    private void showUndo(CharSequence text, View.OnClickListener undo) {
+        undoBar = Snackbar.make(binding.getRoot(), text, Snackbar.LENGTH_LONG)
+                .setAction(R.string.messages_undo, undo);
+        undoBar.show();
+    }
+
+    private void say(int text) {
+        Snackbar.make(binding.getRoot(), text, Snackbar.LENGTH_LONG).show();
     }
 
     /**
@@ -471,6 +581,12 @@ public class NotificationsFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // The bar sits on the activity, not on this view, and outlives it.
+        // Its Undo would then act on a screen that is no longer there.
+        if (undoBar != null) {
+            undoBar.dismiss();
+            undoBar = null;
+        }
         binding = null;
     }
 }

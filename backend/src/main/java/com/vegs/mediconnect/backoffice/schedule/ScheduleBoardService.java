@@ -295,6 +295,8 @@ public class ScheduleBoardService {
                 .stream()
                 .filter(entry -> entry.wants(date))
                 .filter(entry -> !slotId.equals(entry.getPassedSlotId()))
+                // Counted as offerSlot will choose: not someone who paused offers.
+                .filter(entry -> WaitlistService.offersOn(entry.getPatient()))
                 .count();
 
         String appointmentLink = booked == null ? null
