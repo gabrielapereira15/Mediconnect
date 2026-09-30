@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One fact the clinic holds about the patient (board P14).
+
+    The label sits above the value rather than beside it, so a long address
+    is not squeezed into half a row.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="56dp"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/space_lg"
+    android:paddingVertical="@dimen/space_md">
+
+    <TextView
+        android:id="@+id/detail_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+        android:textColor="@color/md_on_surface_variant"
+        tools:text="Phone" />
+
+    <TextView
+        android:id="@+id/detail_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+        tools:text="226-899-0000" />
+</LinearLayout>

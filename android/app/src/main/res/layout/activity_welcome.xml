@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Welcome (board P01).
+
+    The first screen said "Welcome" over an email field, a terms checkbox
+    and a link to a page of Lorem ipsum, and used to ask whether you were a
+    patient or a clinic — a question a patient cannot get wrong because the
+    back office is a website. It says what the app is for instead, and asks
+    for nothing until the next screen.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_deep"
+    tools:context=".activity.WelcomeActivity">
+
+    <!--
+        The top half scrolls. The sheet is anchored to the bottom, so at a
+        large font size the tiles grow straight underneath it; scrolling is
+        what keeps all three readable instead of half-covered.
+    -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/sheet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/space_xl">
+
+            <ImageView
+                android:id="@+id/wordmark"
+                android:layout_width="wrap_content"
+                android:layout_height="52dp"
+                android:layout_marginStart="@dimen/space_2xl"
+                android:layout_marginTop="@dimen/space_6xl"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/mediconnect_wordmark_on_deep" />
+
+            <!--
+                Three tiles, the middle one dropped, so the group reads as a
+                set rather than a row of buttons.
+            -->
+            <LinearLayout
+                android:id="@+id/tiles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_3xl"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_2xl">
+
+                <include
+                    android:id="@+id/tile_book"
+                    layout="@layout/view_welcome_tile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/tile_forms"
+                    layout="@layout/view_welcome_tile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_md"
+                    android:layout_marginTop="@dimen/space_3xl"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/tile_record"
+                    layout="@layout/view_welcome_tile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_md"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/sheet"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/sheet_background"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/space_2xl"
+        android:paddingTop="@dimen/space_3xl"
+        android:paddingBottom="@dimen/space_4xl"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome_headline"
+            android:textAppearance="@style/TextAppearance.Mediconnect.Display" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:text="@string/welcome_body"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge"
+            android:textColor="@color/md_on_surface_variant" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_get_started"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_2xl"
+            android:minHeight="@dimen/control_lg"
+            android:text="@string/welcome_get_started"
+            app:icon="@drawable/ic_arrow_right"
+            app:iconGravity="end" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:gravity="center"
+            android:text="@string/welcome_staff"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+            android:textColor="@color/md_on_surface_variant" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

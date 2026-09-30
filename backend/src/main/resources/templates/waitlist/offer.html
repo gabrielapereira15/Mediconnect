@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!--
+    Offering one person a slot, in the Waitlist side panel (board B05).
+    Only free times with their doctor that are earlier than the visit they
+    hold and on or after the day they said they can come.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="offer" class="mc-sheetpanel">
+    <div class="mc-sheetpanel-head">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+            <span class="mc-overline">[[#{waitlist.offerSlot}]]</span>
+            <h2 class="mc-panel-title" style="margin: 0" th:text="${options.patient}">Gabriela Pereira</h2>
+            <span class="caption mc-muted" th:text="#{waitlist.offer.for(${options.doctor}, ${options.currentVisit})}">Dr. Chase · now Wed 30 Sep</span>
+        </div>
+        <a class="mc-icon-btn mc-icon-btn-sm" th:href="@{/waitlist}" th:aria-label="#{appointments.panel.close}">
+            <i class="mc-i mc-i-x" aria-hidden="true"></i></a>
+    </div>
+    <form th:action="@{/waitlist/{id}/offer(id=${options.entryId})}" method="post"
+          style="display: flex; flex-direction: column; min-height: 0; flex: 1">
+        <div class="mc-sheetpanel-body">
+            <fieldset th:each="day : ${options.slotsByDay}" style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+                <legend class="mc-overline" style="padding: 0 0 8px" th:text="${day.key}">Thu 1 Oct</legend>
+                <div class="mc-slotpick">
+                    <label th:each="slot : ${day.value}">
+                        <input type="radio" name="slotId" th:value="${slot.id}" required />
+                        <span th:text="${slot.time}">9:00 AM</span>
+                    </label>
+                </div>
+            </fieldset>
+            <p th:if="${#maps.isEmpty(options.slotsByDay)}" class="body-sm mc-muted" style="margin: 0">[[#{waitlist.offer.none}]]</p>
+        </div>
+        <div class="mc-sheetpanel-foot" th:unless="${#maps.isEmpty(options.slotsByDay)}">
+            <button type="submit" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">[[#{waitlist.offer.hold}]]</button>
+            <span class="mc-help">[[#{waitlist.offer.help}]]</span>
+        </div>
+    </form>
+</div>
+</body>
+</html>

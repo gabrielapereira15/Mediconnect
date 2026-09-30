@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The launcher icon's background: MediConnect teal, edge to edge.
+
+    A flat fill rather than the squircle the design system's SVG draws,
+    because the launcher supplies the mask itself — drawing our own corner
+    radius would show a second, smaller shape inside the system's.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#0A7A80"
+        android:pathData="M0,0h108v108h-108z" />
+</vector>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Light colour scheme — the 2026 redesign palette.
+
+    Colours are named by role, not by appearance, and every name here is
+    redefined in values-night/colors.xml. The values come from the design
+    system's tokens.json; the `md_*` names are kept because the whole app
+    already refers to them, so replacing the values re-skins every existing
+    layout without editing it.
+
+    Token -> md_* mapping, as the handoff specifies:
+
+        brand            -> md_primary
+        brand-soft       -> md_primary_container
+        blue             -> md_secondary
+        canvas           -> md_background
+        surface          -> md_surface_container
+        line             -> md_outline_variant
+        line-strong      -> md_outline
+        ink / ink-muted  -> md_on_surface / md_on_surface_variant
+        sun              -> md_rating
+        success / danger -> md_success / md_error
+
+    Tokens with no existing md_* home (brand-strong, deep, surface-sunken,
+    ink-subtle, warning, the -soft pairs, focus, scrim) are added under their
+    design-system role names so new layouts can use them directly.
+-->
+<resources>
+
+    <!-- ==== Brand ========================================================= -->
+    <!-- MediConnect teal. Action and selection only, never decoration. -->
+    <color name="md_primary">#0A7A80</color>
+    <color name="md_on_primary">#FFFFFF</color>
+    <color name="md_primary_container">#D5EFED</color>
+    <color name="md_on_primary_container">#05464A</color>
+    <!-- Pressed and hovered primary; brand text on brand-soft. -->
+    <color name="md_brand_strong">#075A5F</color>
+
+    <!--
+        Information only. In the old palette this was the link and nav
+        colour; the redesign gives both of those to brand, so blue now marks
+        information and clinic messages and nothing else.
+    -->
+    <color name="md_secondary">#1D5EC0</color>
+    <color name="md_on_secondary">#FFFFFF</color>
+    <color name="md_secondary_container">#E0EBFB</color>
+    <color name="md_on_secondary_container">#123E80</color>
+
+    <!-- The deep teal-navy: the home hero and the back office sidebar. -->
+    <color name="md_deep">#0B2F3A</color>
+    <color name="md_on_deep">#E8F4F5</color>
+    <color name="md_on_deep_muted">#9CC0C6</color>
+
+    <!-- ==== Surfaces ====================================================== -->
+    <color name="md_background">#F3F7F8</color>
+    <color name="md_on_background">#0E2431</color>
+    <color name="md_surface">#FFFFFF</color>
+    <!-- Cards, sheets, inputs, table rows, bottom navigation. -->
+    <color name="md_surface_container">#FFFFFF</color>
+    <!-- Menus, dialogs and popovers; only rises above surface in the dark theme. -->
+    <color name="md_surface_raised">#FFFFFF</color>
+    <!-- Search fields, segmented tracks, skeletons, read-only fields. -->
+    <color name="md_surface_sunken">#E8EFF1</color>
+
+    <color name="md_on_surface">#0E2431</color>
+    <color name="md_on_surface_variant">#465963</color>
+    <!-- Timestamps and placeholders. 4.5:1 on surface and canvas only. -->
+    <color name="md_on_surface_subtle">#5B6E78</color>
+
+    <!-- Borders of inputs, checkboxes, outlined buttons and slots: 3:1. -->
+    <color name="md_outline">#778D96</color>
+    <!-- Hairline dividers and card borders. -->
+    <color name="md_outline_variant">#D6E1E5</color>
+
+    <!-- ==== Status ========================================================
+         Every one of these is always paired with a word or an icon; the
+         design system forbids colour as the only signal.
+    -->
+    <color name="md_success">#18794A</color>
+    <color name="md_success_container">#DCF2E5</color>
+    <color name="md_warning">#935800</color>
+    <color name="md_warning_container">#FBEDD2</color>
+    <color name="md_error">#BC372E</color>
+    <color name="md_error_container">#FBE2DF</color>
+    <color name="md_on_error">#FFFFFF</color>
+
+    <!-- Warm accent: rating stars and waitlist offers. Never body text. -->
+    <color name="md_rating">#BF7F0A</color>
+    <color name="md_rating_container">#FCEFD3</color>
+    <color name="md_on_rating_container">#6A4300</color>
+
+    <!-- ==== Interaction =================================================== -->
+    <!-- 2dp ring, 2dp offset, on every interactive element. -->
+    <color name="md_focus">#0A7A80</color>
+    <!-- Behind dialogs and bottom sheets: 48% of #081418. -->
+    <color name="md_scrim">#7A081418</color>
+
+
+    <!--
+        The logo's teal on a `deep` ground. Deliberately the same value in
+        both themes: `deep` barely changes between them, so a cross that
+        followed the theme would be too dark on it in light mode.
+    -->
+    <color name="md_logo_on_deep">#5BCACE</color>
+
+    <!-- ==== Legacy aliases ================================================
+         Kept so the existing layouts and drawables resolve. Each points at
+         the role it is actually being used for, which is why the app
+         re-skins without those layouts changing.
+    -->
+    <color name="green">@color/md_primary</color>
+    <!--
+        Every one of this alias's uses is a link, a selected tab, or a screen
+        title — never information. The redesign moves links and navigation to
+        brand and leaves blue for information only, so it points at brand
+        rather than at md_secondary as it used to.
+    -->
+    <color name="light_blue">@color/md_primary</color>
+    <!-- Primary body text: 100 usages, all textColor. -->
+    <color name="dark_gray">@color/md_on_surface</color>
+    <!-- Secondary text and muted icons. -->
+    <color name="gray">@color/md_on_surface_variant</color>
+    <!--
+        Every use of this is a sunken fill rather than a line: the search bar
+        background, the doctor card background and three secondary button
+        tints. It was named for its old appearance and aliased to an outline;
+        repointed here because line-strong would paint those fills a heavy
+        mid-grey.
+    -->
+    <color name="light_gray">@color/md_surface_sunken</color>
+    <!-- Screen background behind cards. -->
+    <color name="gray_background">@color/md_background</color>
+    <!-- Only ever used as a card or input background, so it is a surface. -->
+    <color name="white">@color/md_surface_container</color>
+    <!-- Only ever used as textColor. -->
+    <color name="black">@color/md_on_surface</color>
+    <color name="yellow">@color/md_rating</color>
+    <color name="red">@color/md_error</color>
+
+    <color name="nav_item_selected">@color/md_primary</color>
+    <color name="nav_item_unselected">@color/md_on_surface_variant</color>
+
+    <!-- Was #FFFFFF — an opaque white named "transparent". -->
+    <color name="transparent">#00000000</color>
+
+    <!-- Referenced by one layout left over from the project template. -->
+    <color name="my_light_primary">@color/md_primary</color>
+    <!--
+        A panel inside the deep card, a step brighter than it.
+
+        Reusing the brand's strong tone put a near-white block inside a dark
+        card at night, because that token is a light tint after dark. This
+        pair is a step brighter than md_deep in both themes, and its text
+        clears 4.5:1 on it either way.
+    -->
+    <color name="md_panel_on_deep">#075A5F</color>
+    <color name="md_on_panel_on_deep">#FFFFFF</color>
+</resources>

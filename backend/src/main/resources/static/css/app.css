@@ -1,0 +1,402 @@
+/*
+ * The few things the back office needs beyond the design system.
+ *
+ * bundle.css carries the components; this is only what the server-rendered
+ * shell adds on top of them — the sign-in page, which sits outside the
+ * shell, and the table's own empty and loading states.
+ */
+
+/* ---- The shell, in a real browser window -------------------------------- */
+
+/*
+ * The boards draw the shell at a fixed 1440 x 900. In a browser it is the
+ * window: the side navigation and top bar stay put, and the page between
+ * them scrolls when it is taller than the window, rather than the whole
+ * document scrolling the navigation away.
+ */
+body.mc {
+    margin: 0;
+}
+
+body.mc > .mc-shell {
+    height: 100vh;
+    height: 100dvh;
+}
+
+.mc-shell > .mc-main {
+    min-height: 0;
+}
+
+.mc-shell .mc-page {
+    overflow-y: auto;
+    min-height: 0;
+}
+
+/* ---- Sign-in ---------------------------------------------------------- */
+
+.mc-signin {
+    min-height: 100vh;
+    margin: 0;
+    display: grid;
+    place-items: center;
+    background: var(--canvas);
+    padding: var(--space-6);
+}
+
+.mc-signin-card {
+    width: min(420px, 100%);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-2);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+/* ---- The detail panel ------------------------------------------------- */
+
+/*
+ * Loaded with hx-get so the list behind it keeps its scroll position. It
+ * is empty until something is selected, and says so rather than sitting
+ * there as a blank column.
+ */
+.mc-aside {
+    width: 380px;
+    flex: none;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.mc-aside:empty::after {
+    content: attr(data-empty);
+    display: grid;
+    place-items: center;
+    height: 100%;
+    padding: var(--space-8);
+    text-align: center;
+    color: var(--ink-subtle);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 20px;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-lg);
+}
+
+/* htmx swaps can take a moment; say so instead of looking frozen. */
+.htmx-request.mc-aside {
+    opacity: 0.6;
+    transition: opacity 120ms ease;
+}
+
+/* ---- Tables ----------------------------------------------------------- */
+
+.mc-table td.mc-table-empty {
+    text-align: center;
+    padding: var(--space-10) var(--space-4);
+    color: var(--ink-subtle);
+}
+
+/* A row that opens a panel should look like it will. */
+.mc-table tbody tr[data-clickable] {
+    cursor: pointer;
+}
+
+.mc-table tbody tr.is-selected {
+    background: var(--brand-soft);
+}
+
+.mc-table tbody tr[data-clickable]:hover {
+    background: var(--surface-sunken);
+}
+
+.mc-table tbody tr[data-clickable]:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: -2px;
+}
+
+/* ---- The detail panel's own card -------------------------------------- */
+
+/*
+ * The aside holds one of these: a head that stays put, a body that
+ * scrolls, and the actions pinned to the bottom where they always are.
+ */
+.mc-sheetpanel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+.mc-sheetpanel-head {
+    padding: var(--space-5) var(--space-6);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+    border-bottom: 1px solid var(--line);
+}
+
+.mc-sheetpanel-body {
+    padding: var(--space-5) var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.mc-sheetpanel-foot {
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.mc-sheetpanel-foot form {
+    display: contents;
+}
+
+.mc-btnrow {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.mc-btnrow > *,
+.mc-btnrow > form > button {
+    flex: 1;
+}
+
+/* ---- Native controls, dressed as the design system's ------------------ */
+
+select.mc-input {
+    appearance: none;
+    padding-right: 40px;
+    background-image: linear-gradient(45deg, transparent 50%, var(--ink-muted) 50%),
+                      linear-gradient(135deg, var(--ink-muted) 50%, transparent 50%);
+    background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+}
+
+label.mc-choice {
+    cursor: pointer;
+}
+
+.mc-choice input[type="radio"],
+.mc-choice input[type="checkbox"] {
+    accent-color: var(--brand);
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    flex: none;
+}
+
+/* Selected is the border and the tint together, and the control's own tick. */
+.mc-choice:has(input:checked) {
+    border: 2px solid var(--brand);
+    background: var(--brand-soft);
+    padding: 15px;
+}
+
+input[type="checkbox"].mc-switch {
+    appearance: none;
+    margin: 0;
+    cursor: pointer;
+}
+
+input[type="checkbox"].mc-switch:checked {
+    background: var(--brand);
+    border-color: var(--brand);
+}
+
+input[type="checkbox"].mc-switch:checked::after {
+    left: 25px;
+    top: 3px;
+    width: 23px;
+    height: 23px;
+    background: var(--on-brand);
+}
+
+.mc-switch:focus-visible,
+.mc-choice:has(input:focus-visible),
+.mc-slotpick input:focus-visible + span {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+
+/* A time to pick: a radio button that looks like the app's slot. */
+.mc-slotpick {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: var(--space-2);
+}
+
+.mc-slotpick label {
+    position: relative;
+    cursor: pointer;
+}
+
+.mc-slotpick input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+}
+
+.mc-slotpick span {
+    height: 44px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.mc-slotpick input:checked + span {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: var(--on-brand);
+}
+
+/* "Cancel…" opens its reason in place rather than in a dialog. */
+details.mc-disclosure > summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+details.mc-disclosure > summary::-webkit-details-marker {
+    display: none;
+}
+
+details.mc-disclosure[open] > summary {
+    display: none;
+}
+
+/* ---- Pager -------------------------------------------------------------- */
+
+.mc-pager {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+}
+
+.mc-icon-btn[aria-disabled="true"] {
+    opacity: .4;
+    pointer-events: none;
+}
+
+/* ---- Doctors (B06) ------------------------------------------------------ */
+
+button.mc-panel {
+    border: 1px solid var(--line);
+}
+
+button.mc-panel:hover {
+    border-color: var(--line-strong);
+}
+
+button.mc-panel.is-selected,
+button.mc-panel:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: -1px;
+}
+
+fieldset[disabled] .mc-input {
+    background: var(--surface-sunken);
+    color: var(--ink-muted);
+}
+
+/* ---- Schedule (B02) ----------------------------------------------------- */
+
+/* Every cell opens its slot, so every cell is a real button. */
+button.mc-event {
+    border: 0;
+    font: inherit;
+    text-align: left;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+button.mc-event.mc-event-free {
+    border: 1.5px dashed var(--line-strong);
+}
+
+button.mc-event:focus-visible,
+button.mc-event.is-selected {
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
+}
+
+/* Taken out of the diary: solid and sunken, unlike a dashed free slot. */
+.mc-event.mc-event-blocked,
+button.mc-event.mc-event-blocked {
+    border: 1.5px solid var(--line);
+    background: var(--surface-sunken);
+    color: var(--ink-muted);
+}
+
+/* A stretch in which nobody works, across every column. */
+.mc-sched-gap {
+    grid-column: 2 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--line);
+    background: var(--surface-sunken);
+    color: var(--ink-muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.mc-sched-empty {
+    min-height: 1px;
+}
+
+.mc-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+}
+
+.mc-legend span {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.mc-legend i {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+/* ---- Messages (B07) ------------------------------------------------------ */
+
+details.mc-schedule {
+    align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+details.mc-schedule[open] > summary {
+    display: inline-flex;
+    align-self: flex-end;
+}

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Leave a review (board P11).
+
+    A sheet rather than a screen: it belongs to the visit behind it, and a
+    patient who changes their mind should be able to swipe it away instead
+    of navigating back out of something.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/sheet_background"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/space_xl"
+    android:paddingTop="@dimen/space_md"
+    android:paddingBottom="@dimen/space_2xl">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/sheet_handle" />
+
+    <TextView
+        android:id="@+id/doctor_initials"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/space_xl"
+        android:background="@drawable/avatar_sun_soft"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.Mediconnect.TitleLarge"
+        android:textColor="@color/md_on_rating_container"
+        tools:text="LC" />
+
+    <TextView
+        android:id="@+id/review_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.Mediconnect.TitleLarge"
+        tools:text="How was your visit with Dr. Cuddy?" />
+
+    <TextView
+        android:id="@+id/review_sub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+        tools:text="Fri 18 Sep · Your review is shown without your full name." />
+
+    <LinearLayout
+        android:id="@+id/stars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/space_xl"
+        android:orientation="horizontal" />
+
+    <TextView
+        android:id="@+id/score_word"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:gravity="center"
+        android:minHeight="24dp"
+        android:textAppearance="@style/TextAppearance.Mediconnect.LabelLarge"
+        android:textColor="@color/md_on_surface_variant"
+        tools:text="Very good" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/review_tell_others"
+            android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_xs"
+            android:text="@string/review_note_optional"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall" />
+    </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        app:hintEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/review_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|start"
+            android:hint="@string/review_text_hint"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLength="500"
+            android:minHeight="88dp"
+            android:paddingVertical="@dimen/space_md" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--
+        The style is named here because a bottom sheet runs in its own
+        dialog theme, which does not carry the app's materialButtonStyle:
+        without it the primary action renders as a plain text button.
+    -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_send_review"
+        style="@style/Widget.Mediconnect.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+        android:layout_marginTop="@dimen/space_lg"
+        android:text="@string/review_send" />
+</LinearLayout>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The pill behind the "reviewed" label.
+
+    Filled with the secondary container rather than a surface tone: the card
+    it sits on is already a surface, so anything lighter than this vanished
+    into it. Tonal rather than a solid accent, so it reads as a state the row
+    is in and not as a second button beside "Re-book".
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="@color/md_secondary_container" />
+
+    <corners android:radius="16dp" />
+</shape>

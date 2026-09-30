@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<!--
+    Today (board B01).
+
+    The page the front desk leaves open all day. It replaces a home screen
+    that was a list of links to entity tables — accurate about the database
+    and no use to somebody standing at a desk with a patient in front of
+    them.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{nav.today}]]</title>
+</head>
+<body>
+<div layout:fragment="content" style="display: flex; flex-direction: column; gap: 16px; flex: 1 0 auto">
+
+    <div class="mc-page-head">
+        <div>
+            <h1 class="mc-page-title">[[#{nav.today}]]</h1>
+            <p class="mc-page-sub" th:text="${today}">Tuesday, 29 September</p>
+        </div>
+        <div class="mc-toolbar">
+            <a th:href="@{/}" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">
+                <i class="mc-i mc-i-refresh" aria-hidden="true"></i>[[#{today.refresh}]]
+            </a>
+        </div>
+    </div>
+
+    <!-- ==== The numbers ================================================= -->
+
+    <section style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+        <div class="mc-stat">
+            <span class="mc-overline">[[#{today.stat.appointments}]]</span>
+            <span class="mc-stat-value" th:text="${counts.total}">42</span>
+            <span class="mc-stat-foot"
+                  th:text="#{today.stat.stillToCome(${counts.stillToCome})}">31 still to come</span>
+        </div>
+        <div class="mc-stat">
+            <span class="mc-overline">[[#{today.stat.checkedIn}]]</span>
+            <span class="mc-stat-value" th:text="${counts.checkedIn}">6</span>
+            <span class="mc-stat-foot" th:if="${counts.longestWait != null}"
+                  th:text="#{today.stat.waiting(${counts.waitingNow}, ${counts.longestWait})}">3 waiting</span>
+            <span class="mc-stat-foot" th:unless="${counts.longestWait != null}">[[#{today.stat.nobodyWaiting}]]</span>
+        </div>
+        <div class="mc-stat">
+            <span class="mc-overline">[[#{today.stat.forms}]]</span>
+            <span class="mc-stat-value" th:text="${counts.formsPending}">7</span>
+            <span class="mc-stat-foot" th:if="${counts.formsDueSoon > 0}" style="color: var(--warning)">
+                <i class="mc-i mc-i-alert mc-i-16" aria-hidden="true"></i>
+                <span th:text="#{today.stat.formsDueSoon(${counts.formsDueSoon})}">3 due within 2 h</span>
+            </span>
+            <span class="mc-stat-foot" th:unless="${counts.formsDueSoon > 0}">[[#{today.stat.formsNoneDue}]]</span>
+        </div>
+        <div class="mc-stat">
+            <span class="mc-overline">[[#{today.stat.freed}]]</span>
+            <span class="mc-stat-value" th:text="${counts.freedSlots}">2</span>
+            <span class="mc-stat-foot">[[#{today.stat.freedFoot}]]</span>
+        </div>
+    </section>
+
+    <!-- ==== The queue and the side column ============================== -->
+
+    <section style="display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; flex: 1; min-height: 420px">
+
+        <div class="mc-panel">
+            <div class="mc-panel-head">
+                <h2 class="mc-panel-title">[[#{today.queue}]]</h2>
+            </div>
+
+            <table class="mc-table">
+                <thead>
+                <tr>
+                    <th>[[#{today.col.time}]]</th>
+                    <th>[[#{today.col.patient}]]</th>
+                    <th>[[#{today.col.doctor}]]</th>
+                    <th>[[#{today.col.form}]]</th>
+                    <th>[[#{today.col.status}]]</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${rows}">
+                    <td class="mc-num" style="text-align: left; font-weight: 700" th:text="${row.time}">9:30</td>
+
+                    <td>
+                        <div class="mc-cell-person">
+                            <span class="mc-avatar mc-avatar-sm" th:text="${row.patientInitials}">JD</span>
+                            <div>
+                                <b th:text="${row.patientName}">John Doe</b>
+                                <small>
+                                    <span th:if="${row.bookedForName != null}"
+                                          th:text="#{today.bookedFor(${row.bookedForName})}">For Sofia</span>
+                                    <span th:unless="${row.bookedForName != null}"
+                                          th:text="${row.patientBirthdate}">1988-11-03</span>
+                                    <!--
+                                        The one thing a clinician has to see
+                                        before the patient is in the room.
+                                    -->
+                                    <span th:if="${row.hasAllergies()}"
+                                          style="color: var(--danger); font-weight: 700">
+                                        &middot; <span th:text="#{today.allergies(${row.allergyCount})}">2 allergies</span>
+                                    </span>
+                                </small>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td th:text="${row.doctorName}">Dr. Cameron</td>
+
+                    <td>
+                        <span th:if="${row.formIn}" class="mc-badge mc-badge-success">[[#{today.form.in}]]</span>
+                        <span th:unless="${row.formIn}" class="mc-badge mc-badge-warning">[[#{today.form.pending}]]</span>
+                    </td>
+
+                    <td>
+                        <span class="mc-badge" th:classappend="${row.state.badgeClass}">
+                            <span th:text="${row.state.label}">Booked</span><span
+                                th:if="${row.isCheckedIn() and row.waitingFor != null}"
+                                th:text="' &middot; ' + ${row.waitingFor}"></span>
+                        </span>
+                    </td>
+
+                    <td style="text-align: right">
+                        <form th:if="${row.canCheckIn() and (staff == null or staff.canManageAppointments())}"
+                              th:action="@{'/appointments/' + ${row.id} + '/check-in'}" method="post"
+                              style="display: inline">
+                            <button type="submit" class="mc-btn mc-btn-primary mc-btn-sm mc-btn-square">
+                                [[#{today.checkIn}]]
+                            </button>
+                        </form>
+                        <a th:unless="${row.canCheckIn() and (staff == null or staff.canManageAppointments())}"
+                           th:href="@{/appointments(tab=today,selected=${row.id})}"
+                           class="mc-btn mc-btn-outline mc-btn-sm mc-btn-square">
+                            [[#{today.view}]]
+                        </a>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(rows)}">
+                    <td colspan="6" class="mc-table-empty">[[#{today.empty}]]</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px; min-height: 0">
+
+            <div class="mc-panel" th:if="${counts.formsDueSoon > 0 or counts.freedSlots > 0}">
+                <div class="mc-panel-head">
+                    <h2 class="mc-panel-title">[[#{today.attention}]]</h2>
+                </div>
+
+                <div class="mc-row" style="min-height: 60px" th:if="${counts.formsDueSoon > 0}">
+                    <span class="mc-row-lead" style="background: var(--warning-soft); color: var(--warning)">
+                        <i class="mc-i mc-i-form mc-i-20" aria-hidden="true"></i>
+                    </span>
+                    <span class="mc-row-body">
+                        <span class="label" th:text="#{today.attention.forms(${counts.formsDueSoon})}">3 forms due</span>
+                        <span class="caption mc-muted">[[#{today.attention.formsBody}]]</span>
+                    </span>
+                </div>
+
+                <div class="mc-row" style="min-height: 60px" th:if="${counts.freedSlots > 0}">
+                    <span class="mc-row-lead" style="background: var(--sun-soft); color: var(--on-sun-soft)">
+                        <i class="mc-i mc-i-hourglass mc-i-20" aria-hidden="true"></i>
+                    </span>
+                    <span class="mc-row-body">
+                        <span class="label" th:text="#{today.attention.freed(${counts.freedSlots})}">2 slots free</span>
+                        <span class="caption mc-muted">[[#{today.attention.freedBody}]]</span>
+                    </span>
+                    <a th:href="@{/waitlist}" class="mc-btn mc-btn-ghost mc-btn-sm">[[#{today.attention.offer}]]</a>
+                </div>
+            </div>
+
+            <div class="mc-panel" style="flex: 1">
+                <div class="mc-panel-head">
+                    <h2 class="mc-panel-title">[[#{today.doctors}]]</h2>
+                    <a th:href="@{/schedule}" class="mc-link body-sm">[[#{nav.schedule}]]</a>
+                </div>
+                <div style="padding: 12px 20px; display: flex; flex-direction: column; gap: 14px">
+                    <div th:each="load : ${doctorLoads}"
+                         style="display: flex; flex-direction: column; gap: 6px">
+                        <div style="display: flex; justify-content: space-between">
+                            <span class="label" th:text="${load.name}">Dr. Chase</span>
+                            <span class="caption mc-muted mc-num"
+                                  th:text="#{today.booked(${load.booked}, ${load.total})}">13 / 14 booked</span>
+                        </div>
+                        <div class="mc-progress">
+                            <span th:style="'width: ' + ${load.percent()} + '%'"></span>
+                        </div>
+                    </div>
+                    <p th:if="${#lists.isEmpty(doctorLoads)}" class="body-sm mc-muted" style="margin: 0">
+                        [[#{today.noClinic}]]
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

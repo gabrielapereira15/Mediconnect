@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    pulse — Material Symbols Rounded "vital_signs", weight 400, grade 0,
+    optical size 24. Apache 2.0.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/icon_size"
+    android:height="@dimen/icon_size"
+    android:viewportWidth="960"
+    android:viewportHeight="960"
+    android:tint="?attr/colorControlNormal">
+    <group android:translateY="960">
+        <path
+            android:fillColor="@android:color/white"
+            android:pathData="M360-160q-19 0-34-11t-22-28l-92-241H80q-17 0-28.5-11.5T40-480q0-17 11.5-28.5T80-520h160q13 0 22.5 7t14.5 19l83 218 184-485q7-17 22-28t34-11q19 0 34 11t22 28l92 241h132q17 0 28.5 11.5T920-480q0 17-11.5 28.5T880-440H720q-13 0-22.5-7T683-466l-83-218-184 485q-7 17-22 28t-34 11Z" />
+    </group>
+</vector>

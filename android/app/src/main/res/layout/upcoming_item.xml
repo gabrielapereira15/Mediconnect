@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    An upcoming visit (board P08).
+
+    The card used to open with a stock photograph of a doctor and a line of
+    formatted text, and carried five buttons of equal weight. It leads with
+    when the visit is, because that is what a patient scanning the list is
+    looking for, and offers one primary action — whatever the visit is
+    actually waiting on. Cancelling moved to the visit itself, where the
+    consequences can be spelled out.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/space_lg"
+    android:layout_marginBottom="@dimen/space_md"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="@dimen/radius_large"
+    app:cardElevation="@dimen/elevation_card"
+    app:strokeColor="@color/md_outline_variant"
+    app:strokeWidth="@dimen/stroke_hairline">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/space_lg">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- The date badge: what the eye lands on first. -->
+            <LinearLayout
+                android:id="@+id/date_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="52dp"
+                android:minHeight="52dp"
+                android:paddingHorizontal="@dimen/space_sm"
+                android:paddingVertical="@dimen/space_xs"
+                android:background="@drawable/date_badge_brand"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/badge_weekday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                    android:textColor="@color/md_on_primary"
+                    tools:text="Wed" />
+
+                <TextView
+                    android:id="@+id/badge_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium"
+                    android:textColor="@color/md_on_primary"
+                    tools:text="30" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_md"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/appointment_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+                    tools:text="10:00 AM" />
+
+                <TextView
+                    android:id="@+id/doctor_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                    tools:text="Dr. Robert Chase · Surgeon" />
+
+                <TextView
+                    android:id="@+id/booked_for"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:background="@drawable/badge_blue"
+                    android:paddingHorizontal="@dimen/space_sm"
+                    android:paddingVertical="2dp"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                    android:textColor="@color/md_on_secondary_container"
+                    android:visibility="gone"
+                    tools:text="For Sofia Almeida"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/status_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/badge_sun"
+                android:paddingHorizontal="@dimen/space_sm"
+                android:paddingVertical="@dimen/space_xs"
+                android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                tools:text="Form pending" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/stroke_hairline"
+            android:layout_marginVertical="@dimen/space_md"
+            android:background="@color/md_outline_variant" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/touch_target"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/visit_remind_me"
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_remind_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/visit_remind_me" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/reschedule_button"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="@dimen/control_md"
+                android:paddingHorizontal="@dimen/space_sm"
+                android:text="@string/visit_reschedule"
+                android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/primary_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_md"
+                android:layout_weight="1"
+                android:minHeight="@dimen/control_md"
+                android:paddingHorizontal="@dimen/space_sm"
+                android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                tools:text="Fill in form" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

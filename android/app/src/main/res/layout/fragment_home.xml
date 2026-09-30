@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Home (board Main).
+
+    The old home screen opened with a search field, a row of clip-art
+    specialties, a doctor grid and an advert carousel — nothing about the
+    patient, and nothing about the appointment they already had. This one
+    leads with who they are and what happens next; the adverts are gone.
+
+    The screen draws its own greeting header rather than using the shared app
+    bar, which HomeFragment hides. Every other tab keeps the bar.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_background"
+    tools:context=".fragment.HomeFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/home_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/space_2xl">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="beforeDescendants"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+            <!-- ==== Greeting ============================================= -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/space_lg"
+                android:paddingTop="@dimen/space_md"
+                android:paddingEnd="@dimen/space_sm"
+                android:paddingBottom="@dimen/space_md">
+
+                <TextView
+                    android:id="@+id/avatar_initials"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/avatar_brand_soft"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                    android:textColor="@color/md_on_primary_container"
+                    tools:text="GP" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_md"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/greeting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                        tools:text="Good morning" />
+
+                    <TextView
+                        android:id="@+id/greeting_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.TitleLarge"
+                        tools:text="Gabriela" />
+                </LinearLayout>
+
+                <!--
+                    Home's own bell, since the app bar's is hidden here. The
+                    label and the dot both follow the unread count, set from
+                    HomeFragment; the label here is what it says before the
+                    count has arrived.
+                -->
+                <FrameLayout
+                    android:id="@+id/notification_button"
+                    android:layout_width="@dimen/touch_target"
+                    android:layout_height="@dimen/touch_target"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="@string/cd_notifications"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_bell"
+                        app:tint="@color/md_on_surface" />
+
+                    <View
+                        android:id="@+id/notification_dot"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/circle_red"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <!-- ==== Search ============================================== -->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/search_layout"
+                style="@style/Widget.Material3.TextInputLayout.FilledBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                app:boxBackgroundColor="@color/md_surface_sunken"
+                app:boxCornerRadiusBottomEnd="@dimen/radius_pill"
+                app:boxCornerRadiusBottomStart="@dimen/radius_pill"
+                app:boxCornerRadiusTopEnd="@dimen/radius_pill"
+                app:boxCornerRadiusTopStart="@dimen/radius_pill"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:hintEnabled="false"
+                app:startIconDrawable="@drawable/ic_search">
+
+                <!--
+                    A filled box keeps room above the text for a label that
+                    is turned off here, so the hint rode high in the pill;
+                    the padding is set rather than inherited.
+                -->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/search_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/control_lg"
+                    android:background="@null"
+                    android:gravity="center_vertical"
+                    android:paddingTop="@dimen/space_sm"
+                    android:paddingBottom="@dimen/space_sm"
+                    android:hint="@string/home_search_hint"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- ==== Next visit ==========================================
+                 The thing the patient most likely opened the app for, and
+                 the one action it still needs from them.
+            -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/next_visit_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/md_deep"
+                app:cardCornerRadius="@dimen/radius_xlarge"
+                app:cardElevation="0dp"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_xl">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/home_next_visit"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.Overline"
+                            android:textColor="@color/md_on_deep_muted" />
+
+                        <TextView
+                            android:id="@+id/next_visit_badge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/badge_sun"
+                            android:paddingHorizontal="@dimen/space_sm"
+                            android:paddingVertical="@dimen/space_xs"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                            android:textColor="@color/md_on_rating_container"
+                            android:visibility="gone"
+                            tools:text="Form pending"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/next_visit_when"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.Headline"
+                        android:textColor="@color/md_on_deep"
+                        tools:text="Tomorrow, 10:00 AM" />
+
+                    <TextView
+                        android:id="@+id/next_visit_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                        android:textColor="@color/md_on_deep_muted"
+                        tools:text="Wed 30 Sep" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/next_visit_doctor_initials"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/avatar_brand_soft"
+                            android:backgroundTint="@color/md_primary"
+                            android:gravity="center"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                            android:textColor="@color/md_on_primary"
+                            tools:text="RC" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_md"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/next_visit_doctor"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+                                android:textColor="@color/md_on_deep"
+                                tools:text="Dr. Robert Chase" />
+
+                            <TextView
+                                android:id="@+id/next_visit_specialty"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                                android:textColor="@color/md_on_deep_muted"
+                                tools:text="Surgeon" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/next_visit_primary"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_md"
+                            android:layout_weight="1"
+                            android:textColor="@color/md_deep"
+                            app:backgroundTint="@color/md_on_deep"
+                            tools:text="Fill in form" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/next_visit_details"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_md"
+                            android:layout_marginStart="@dimen/space_sm"
+                            android:layout_weight="1"
+                            android:text="@string/home_visit_details"
+                            android:textColor="@color/md_on_deep"
+                            app:strokeColor="@color/md_on_deep_muted" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Shown instead of the hero when nothing is booked. -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/no_visit_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/md_deep"
+                app:cardCornerRadius="@dimen/radius_xlarge"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_xl">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_no_visit_title"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium"
+                        android:textColor="@color/md_on_deep" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:text="@string/home_no_visit_body"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                        android:textColor="@color/md_on_deep_muted" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/no_visit_book"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_md"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:text="@string/home_book_a_visit"
+                        android:textColor="@color/md_deep"
+                        app:backgroundTint="@color/md_on_deep" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ==== Quick actions ======================================== -->
+
+            <!--
+                Four equal columns. They scrolled for a while so that a
+                doubled font size would not break "Messages" across two
+                lines — but that pushed the fourth action off the screen at
+                an ordinary size, and an action nobody can see is worse than
+                a label that wraps.
+            -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_lg">
+
+                <include
+                    android:id="@+id/action_book"
+                    layout="@layout/view_quick_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/action_forms"
+                    layout="@layout/view_quick_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/action_record"
+                    layout="@layout/view_quick_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/action_messages"
+                    layout="@layout/view_quick_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <!-- ==== Specialties ========================================== -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_lg">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/home_browse_specialty"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium" />
+
+                <TextView
+                    android:id="@+id/see_all_categories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:minHeight="@dimen/touch_target"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="@dimen/space_xs"
+                    android:text="@string/see_all_link"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                    android:textColor="@color/md_primary" />
+            </LinearLayout>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:clipToPadding="false"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/specialty_chips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:chipSpacingHorizontal="@dimen/space_sm"
+                    app:singleLine="true" />
+            </HorizontalScrollView>
+
+            <!-- ==== Available today ====================================== -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_lg">
+
+                <TextView
+                    android:id="@+id/available_doctors_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/home_available_today"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium" />
+
+                <TextView
+                    android:id="@+id/see_all_doctors"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:minHeight="@dimen/touch_target"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="@dimen/space_xs"
+                    android:text="@string/see_all_link"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                    android:textColor="@color/md_primary" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewDoctors"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_lg"
+                tools:itemCount="2"
+                tools:listitem="@layout/doctor_item" />
+
+            <!-- ==== Health record ======================================== -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/health_summary_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_2xl"
+                app:cardBackgroundColor="@color/md_primary_container"
+                app:cardCornerRadius="@dimen/radius_large"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/space_lg">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_shield"
+                        app:tint="@color/md_on_primary_container" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_md"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/health_summary_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+                            android:textColor="@color/md_on_primary_container"
+                            tools:text="Your health record is up to date" />
+
+                        <TextView
+                            android:id="@+id/health_summary_counts"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                            android:textColor="@color/md_on_primary_container"
+                            tools:text="2 allergies · 2 medications · 2 conditions" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/md_on_primary_container" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</FrameLayout>

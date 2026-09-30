@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The cross alone: app bars, favicons and any size where the wordmark
+    would stop being legible (minimum 24dp).
+
+    Traced from the design system's SVG. Its viewBox starts at (14, 119)
+    and the wordmark sits in a translated group, so both offsets are carried
+    by groups here and the path data is byte-identical to the source.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="137"
+    android:viewportHeight="137">
+    <group
+        android:translateX="-14"
+        android:translateY="-119">
+        <path
+            android:fillColor="@color/md_primary"
+            android:pathData="M68.02,244.36L96.72,244.36L96.72,201.85L139.24,201.85L139.24,173.14L96.72,173.14L96.72,130.62L68.02,130.62L68.02,173.14L25.49,173.14L25.49,201.85L68.02,201.85ZM102.36,250.01L62.38,250.01L62.38,207.49L19.85,207.49L19.85,167.51L62.38,167.51L62.38,124.98L102.36,124.98L102.36,167.51L144.88,167.51L144.88,207.49L102.36,207.49L102.36,250.01" />
+    </group>
+</vector>

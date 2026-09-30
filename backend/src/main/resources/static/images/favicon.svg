@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="18 123 129 129">
+  <!--
+    The back office's tab icon: the MediConnect cross alone, as the design
+    system's mediconnect-mark.svg, cropped to the cross so it fills as much
+    of a 16px tab as it can.
+
+    Brand (#0A7A80) on a light browser; the dark-theme brand (#5BCACE) when
+    the browser's own chrome is dark, where the deeper teal would sink into
+    the tab strip. A favicon is its own document, so the switch has to live
+    in here rather than in the page's CSS.
+
+    Kept under /images/ because that path is already open before sign-in;
+    the sign-in page needs its icon as much as any other.
+  -->
+  <style>
+    path { fill: #0A7A80; }
+    @media (prefers-color-scheme: dark) {
+      path { fill: #5BCACE; }
+    }
+  </style>
+  <path d="M68.02,244.36L96.72,244.36L96.72,201.85L139.24,201.85L139.24,173.14L96.72,173.14L96.72,130.62L68.02,130.62L68.02,173.14L25.49,173.14L25.49,201.85L68.02,201.85ZM102.36,250.01L62.38,250.01L62.38,207.49L19.85,207.49L19.85,167.51L62.38,167.51L62.38,124.98L102.36,124.98L102.36,167.51L144.88,167.51L144.88,207.49L102.36,207.49L102.36,250.01" fill="#0A7A80"/>
+</svg>

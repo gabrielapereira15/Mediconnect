@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Your visit (board P09).
+
+    The day of the appointment, everything a patient needs is one question:
+    how long until it starts, and is there anything still to do. The hero
+    answers the first and the checklist the second; the sticky button is the
+    one action the day itself calls for.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_background"
+    tools:context=".fragment.VisitDetailFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/space_lg"
+        app:layout_constraintBottom_toTopOf="@id/footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/space_md">
+
+            <!-- ==== When ============================================ -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                app:cardBackgroundColor="@color/md_deep"
+                app:cardCornerRadius="@dimen/radius_xlarge"
+                app:cardElevation="@dimen/elevation_card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_xl">
+
+                    <TextView
+                        android:id="@+id/visit_day"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.Overline"
+                        android:textColor="@color/md_on_deep_muted"
+                        tools:text="Today" />
+
+                    <TextView
+                        android:id="@+id/visit_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.Display"
+                        android:textColor="@color/md_on_deep"
+                        tools:text="10:00 AM" />
+
+                    <TextView
+                        android:id="@+id/visit_countdown"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                        android:textColor="@color/md_on_deep_muted"
+                        tools:text="Starts in 25 min · Dr. Robert Chase, Surgeon" />
+
+                    <LinearLayout
+                        android:id="@+id/check_in_note"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:background="@drawable/tile_brand_strong"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/space_md"
+                        tools:visibility="visible">
+
+                        <ImageView
+                            android:id="@+id/check_in_note_icon"
+                            android:layout_width="@dimen/icon_size_small"
+                            android:layout_height="@dimen/icon_size_small"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_pin"
+                            app:tint="@color/md_on_panel_on_deep" />
+
+                        <TextView
+                            android:id="@+id/check_in_note_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_sm"
+                            android:layout_weight="1"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                            android:textColor="@color/md_on_panel_on_deep"
+                            tools:text="At the clinic? Check in to let the front desk know." />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ==== Before you go in ================================ -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:text="@string/visit_before_you_go"
+                android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_md"
+                app:cardCornerRadius="@dimen/radius_large"
+                app:cardElevation="@dimen/elevation_card"
+                app:strokeColor="@color/md_outline_variant"
+                app:strokeWidth="@dimen/stroke_hairline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <include
+                        android:id="@+id/row_form"
+                        layout="@layout/view_visit_row" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/stroke_hairline"
+                        android:background="@color/md_outline_variant" />
+
+                    <include
+                        android:id="@+id/row_attendance"
+                        layout="@layout/view_visit_row" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/stroke_hairline"
+                        android:background="@color/md_outline_variant" />
+
+                    <include
+                        android:id="@+id/row_health_card"
+                        layout="@layout/view_visit_row" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ==== Details ========================================= -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:text="@string/visit_details_heading"
+                android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_md"
+                app:cardCornerRadius="@dimen/radius_large"
+                app:cardElevation="@dimen/elevation_card"
+                app:strokeColor="@color/md_outline_variant"
+                app:strokeWidth="@dimen/stroke_hairline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/space_lg"
+                        android:paddingVertical="@dimen/space_md">
+
+                        <TextView
+                            android:id="@+id/doctor_initials"
+                            android:layout_width="@dimen/control_md"
+                            android:layout_height="@dimen/control_md"
+                            android:background="@drawable/avatar_brand_soft"
+                            android:gravity="center"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                            android:textColor="@color/md_on_primary_container"
+                            tools:text="RC" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_md"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/doctor_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+                                tools:text="Dr. Robert Chase" />
+
+                            <TextView
+                                android:id="@+id/doctor_specialty"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                                tools:text="Surgeon" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/stroke_hairline"
+                        android:background="@color/md_outline_variant" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/space_lg"
+                        android:paddingVertical="@dimen/space_md">
+
+                        <ImageView
+                            android:layout_width="@dimen/control_md"
+                            android:layout_height="@dimen/control_md"
+                            android:background="@drawable/tile_brand_soft"
+                            android:contentDescription="@null"
+                            android:padding="@dimen/space_sm"
+                            android:src="@drawable/ic_pin"
+                            app:tint="@color/md_on_primary_container" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_md"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/clinic_name"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/clinic_address"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/directions"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/selectableItemBackground"
+                            android:gravity="center"
+                            android:minHeight="@dimen/touch_target"
+                            android:minWidth="@dimen/touch_target"
+                            android:paddingHorizontal="@dimen/space_sm"
+                            android:text="@string/visit_directions"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.LabelLarge"
+                            android:textColor="@color/md_primary" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ==== Changing or leaving ============================= -->
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_waitlist"
+                style="@style/Widget.Mediconnect.Button.Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_lg"
+                android:text="@string/visit_waitlist"
+                app:icon="@drawable/ic_bell" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_lg">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_reschedule"
+                    style="@style/Widget.Mediconnect.Button.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+                    android:text="@string/visit_reschedule" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_cancel"
+                    style="@style/Widget.Mediconnect.Button.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+                    android:text="@string/visit_cancel"
+                    android:textColor="@color/md_error"
+                    app:rippleColor="@color/md_error_container" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/md_surface"
+        android:elevation="@dimen/elevation_sheet"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/space_lg"
+        android:paddingVertical="@dimen/space_md"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_check_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+            android:text="@string/visit_check_in"
+            app:icon="@drawable/ic_checkin" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

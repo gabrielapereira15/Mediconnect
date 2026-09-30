@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One of the three things the app is for (board P01).
+
+    Icon at the top, the promise at the bottom, so the three read as a set
+    down the page rather than three unrelated captions.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tile_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/welcome_tile_height"
+    android:background="@drawable/tile_welcome"
+    android:orientation="vertical"
+    android:padding="@dimen/space_lg">
+
+    <ImageView
+        android:id="@+id/tile_icon"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:contentDescription="@null"
+        tools:src="@drawable/ic_calendar_check" />
+
+    <!-- Pushes the label to the bottom while the tile has room to spare. -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/space_2xl"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/tile_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+        tools:text="Book in a minute" />
+</LinearLayout>

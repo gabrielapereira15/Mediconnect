@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One kind of health-record entry: its heading, how many there are, and a
+    way to add another (board P12).
+
+    "Add" sits with the section rather than on a single floating button, so
+    a patient adding a medication does not have to say which kind it is in a
+    dialog that has already asked them once.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/space_2xl"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/space_lg"
+        android:paddingEnd="@dimen/space_sm">
+
+        <TextView
+            android:id="@+id/section_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium"
+            tools:text="Allergies" />
+
+        <TextView
+            android:id="@+id/section_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_sm"
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium"
+            android:textColor="@color/md_on_surface_subtle"
+            tools:text="2" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/section_add"
+            style="@style/Widget.Mediconnect.Button.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/health_add"
+            app:icon="@drawable/ic_plus"
+            app:iconSize="18dp" />
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/section_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_lg"
+        android:layout_marginTop="@dimen/space_sm"
+        app:cardCornerRadius="@dimen/radius_large"
+        app:cardElevation="@dimen/elevation_card"
+        app:strokeColor="@color/md_outline_variant"
+        app:strokeWidth="@dimen/stroke_hairline">
+
+        <LinearLayout
+            android:id="@+id/section_rows"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/section_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_lg"
+        android:layout_marginTop="@dimen/space_sm"
+        android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+        android:textColor="@color/md_on_surface_variant"
+        android:visibility="gone"
+        tools:text="Nothing on file. Add anything the doctor should know."
+        tools:visibility="visible" />
+</LinearLayout>

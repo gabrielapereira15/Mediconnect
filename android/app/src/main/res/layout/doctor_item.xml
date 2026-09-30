@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    A doctor in the "Available today" strip on Home (board Main): 220dp wide,
+    scrolling sideways.
+
+    Initials rather than a photograph. The seeded doctors all share one stock
+    portrait, so a row of them read as the same person four times; initials
+    at least tell them apart, and the design system rules out stock photos of
+    doctors anyway.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="220dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/space_md"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="@dimen/radius_large"
+    app:cardElevation="@dimen/elevation_card"
+    app:strokeColor="@color/md_outline_variant"
+    app:strokeWidth="@dimen/stroke_hairline">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/space_lg">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/doctor_initials"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/avatar_brand_soft"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+                android:textColor="@color/md_on_primary_container"
+                tools:text="AV" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- Rating, or nothing at all when there are none yet: an empty
+                 star beside "4.9" would read as a score. -->
+            <LinearLayout
+                android:id="@+id/doctor_rating_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/icon_size_badge"
+                    android:layout_height="@dimen/icon_size_badge"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_star"
+                    app:tint="@color/md_rating" />
+
+                <TextView
+                    android:id="@+id/doctor_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_xs"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                    android:textColor="@color/md_on_surface"
+                    tools:text="4.9" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/doctor_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+            tools:text="Dr. Amber Volakis" />
+
+        <TextView
+            android:id="@+id/doctor_specialty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+            tools:text="General Practitioner" />
+
+        <TextView
+            android:id="@+id/doctor_next_slot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:background="@drawable/badge_success"
+            android:paddingHorizontal="@dimen/space_sm"
+            android:paddingVertical="@dimen/space_xs"
+            android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+            android:textColor="@color/md_success"
+            tools:text="Today 2:30 PM" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

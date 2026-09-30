@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    An earlier slot has come free (boards P08 and P13).
+
+    Sits above the list because it expires: everything else on this screen
+    will still be true tomorrow and this will not. Tinted rather than
+    tucked into a row, for the same reason.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/offer_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/space_lg"
+    android:layout_marginTop="@dimen/space_md"
+    android:visibility="gone"
+    app:cardBackgroundColor="@color/md_rating_container"
+    app:cardCornerRadius="@dimen/radius_large"
+    app:cardElevation="0dp"
+    tools:visibility="visible">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/space_lg">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_hourglass"
+                app:tint="@color/md_on_rating_container" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_md"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/offer_title"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+                    android:textColor="@color/md_on_rating_container" />
+
+                <TextView
+                    android:id="@+id/offer_body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                    android:textColor="@color/md_on_rating_container"
+                    tools:text="Dr. Robert Chase has something earlier than your visit on Thu 1 Oct." />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/offer_keep"
+                style="@style/Widget.Mediconnect.Button.OnTint"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="@dimen/control_md"
+                android:paddingHorizontal="@dimen/space_sm"
+                android:text="@string/offer_keep"
+                android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/offer_take"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_md"
+                android:layout_weight="1"
+                android:minHeight="@dimen/control_md"
+                android:paddingHorizontal="@dimen/space_sm"
+                android:text="@string/offer_take"
+                android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Contents of StateView: the loading skeleton and the empty/error message
+    share this file because only one is ever visible at a time.
+-->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.FrameLayout">
+
+    <!-- Loading: placeholder rows shaped like the real content. -->
+    <LinearLayout
+        android:id="@+id/state_loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <include layout="@layout/view_skeleton_row" />
+
+        <include layout="@layout/view_skeleton_row" />
+
+        <include layout="@layout/view_skeleton_row" />
+    </LinearLayout>
+
+    <!-- Empty and error share one block; only the wording and action differ. -->
+    <LinearLayout
+        android:id="@+id/state_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/space_xl"
+        android:paddingTop="@dimen/space_2xl"
+        android:paddingEnd="@dimen/space_xl"
+        android:paddingBottom="@dimen/space_2xl"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/state_icon"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:alpha="0.7"
+            android:contentDescription="@null"
+            app:tint="@color/md_on_surface_variant"
+            tools:src="@drawable/ic_calendar" />
+
+        <TextView
+            android:id="@+id/state_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium"
+            tools:text="No appointments yet" />
+
+        <TextView
+            android:id="@+id/state_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+            android:textColor="@color/md_on_surface_variant"
+            tools:text="Book one and it will show up here." />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/state_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:visibility="gone"
+            tools:text="Try again"
+            tools:visibility="visible" />
+    </LinearLayout>
+</merge>

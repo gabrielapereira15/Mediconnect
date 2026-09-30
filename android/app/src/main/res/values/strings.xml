@@ -1,0 +1,767 @@
+<resources>
+    <string name="app_name">Mediconnect</string>
+    <string name="home">Home</string>
+    <string name="notifications">Notifications</string>
+    <string name="medical_history">Medical History</string>
+    <string name="profile">Profile</string>
+    <string name="hello_user_name">Hello, [User Name] 👋</string>
+    <string name="search_text">Find local doctors who take care of your health</string>
+    <string name="top_searched_specialties">Top searched specialties</string>
+    <string name="available_doctors_text">Book an appointment with our available doctors</string>
+    <string name="doctor_name">Doctor Rezwana Afrin</string>
+    <string name="speacialty_text">MBBS, DO (Health)</string>
+    <string name="book_appointment_text">Book Appointment</string>
+    <string name="doctor_image">Doctor Image</string>
+    <string name="doctor_score">4.5</string>
+    <string name="about_text">About the doctor</string>
+    <string name="about_description">Dr. Rezwana Afrin was born in 1978 in Karachi, Pakistan. She completed her undergraduate studies at Karachi University and earned her medical degree...</string>
+    <string name="read_more_link">Read More</string>
+    <string name="choose_date__time"><![CDATA[Choose Date & Time]]></string>
+    <string name="calendar_icon_desc">Calendar Icon</string>
+    <string name="next_text">Next</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dentist">Dentist</string>
+    <string name="ophthalmologists">Optometrist</string>
+    <string name="cardiologist">Cardiologist</string>
+    <string name="gynecologist">Gynecologist</string>
+    <string name="gastroenterologist">Gastroenterologist</string>
+    <string name="appointment_check_in">Appointment Check In</string>
+    <string name="pre_appointment_form">Pre-Appointment Form</string>
+    <string name="date_slot_thu_8_jun">Thu, 8 Jun</string>
+    <string name="logo">Logo</string>
+    <string name="welcome">Welcome</string>
+    <string name="patient">Patient</string>
+    <string name="clinic">Clinic</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="get_otp">Get OTP</string>
+    <string name="i_accept_the_terms_and_conditions">I accept the terms and conditions</string>
+    <string name="i_accept_the_terms_and_conditions_booking">I accept the terms and conditions of booking</string>
+    <string name="verify_otp">Verify OTP</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="enter_the_6_digit_code_sent_to_your_email">Enter the 6-digit code sent to your email</string>
+    <string name="search_for_doctors_or_specialties">Search for doctors or specialties</string>
+    <string name="agree">Agree</string>
+    <string name="disagree">Disagree</string>
+    <string name="terms_and_conditions_title">Terms and conditions</string>
+
+    <!-- ==== Welcome and sign in (P01–P03) ==== -->
+    <string name="welcome_headline">Your clinic, in your pocket</string>
+    <string name="welcome_body">Book visits, fill in forms before you arrive and keep your health record in one place.</string>
+    <string name="welcome_get_started">Get started</string>
+    <string name="welcome_staff">Clinic staff? Sign in to the back office on your computer.</string>
+    <string name="welcome_tile_book">Book in a minute</string>
+    <string name="welcome_tile_forms">Forms before you arrive</string>
+    <string name="welcome_tile_record">Your health record</string>
+
+    <string name="signin_title">Sign in</string>
+    <string name="signin_body">Enter your email and we will send you a 6-digit passcode. No password to remember.</string>
+    <string name="signin_email">Email</string>
+    <string name="signin_email_help">New here? The same email creates your account.</string>
+    <string name="signin_email_required">Please enter your email.</string>
+    <string name="signin_email_invalid">That does not look like an email address.</string>
+    <string name="signin_terms_required">Please accept the terms to continue.</string>
+    <string name="signin_privacy">Your record is private to you and your clinic. We never share it without your permission.</string>
+    <string name="signin_send">Send passcode</string>
+    <string name="signin_terms_link">terms and conditions</string>
+    <string name="signin_privacy_link">privacy notice</string>
+    <string name="signin_terms">I accept the %1$s and %2$s.</string>
+    <string name="signin_terms_body">MediConnect is how this clinic books and prepares for your visits. Book only appointments you intend to attend, and cancel ones you cannot make so the slot can go to someone else. What you enter here is used to treat you and for nothing else.</string>
+    <string name="signin_privacy_body">MediConnect holds the details you enter and the visits you book, so the clinic can treat you. Your health record is shown to the doctor you are booked with. Nothing is sold or shared with anyone else, and signing out removes it all from this device.</string>
+
+    <string name="passcode_title">Check your email</string>
+    <string name="passcode_body">We sent a 6-digit passcode to %1$s. It is valid for 10 minutes.</string>
+    <string name="passcode_label">Passcode</string>
+    <string name="passcode_verify">Verify and continue</string>
+    <string name="passcode_auto">We will verify automatically when all 6 digits are in.</string>
+    <string name="passcode_resend_in">Resend passcode in %1$s</string>
+    <string name="passcode_resend">Resend passcode</string>
+    <string name="passcode_different_email">Use a different email</string>
+    <string name="cd_passcode">Passcode, %1$d of 6 digits entered</string>
+    <string name="back">Back</string>
+    <string name="is_this_appointment_for_you_or_another_patient">Is this appointment for you or another patient?</string>
+    <string name="for_myself">For Myself</string>
+    <string name="for_another_patient">For Another Patient</string>
+    <string name="your_details">Your Details:</string>
+    <string name="note_for_the_doctor">Note for the doctor</string>
+    <string name="confirm_appointment">Confirm Appointment</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="additional_notes">Additional Notes</string>
+    <string name="review_your_bookin">Review Your Booking</string>
+    <string name="doctor_s_details">Doctor\'s Details</string>
+    <string name="doctor_name_mock">Dr. Bidya Balan, Orthopedic Specialist</string>
+    <string name="appointment_details">Appointment Details</string>
+    <string name="mock_date">Thursday, 8th June</string>
+    <string name="mock_time">11:30 AM</string>
+    <string name="patient_details">Patient Details</string>
+    <string name="patient_name_mock">Gabriela Pereira</string>
+    <string name="phone_number_mock">1 (628) 267 - 9041</string>
+    <string name="dob_mock">02/15/1995</string>
+    <string name="age_mock">Age: 28</string>
+    <string name="add_notes_mock">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet ligula rutrum, dictum nisl a, aliquam felis. Aliquam nec nisi non urna fringilla varius. Etiam porta nulla sit amet diam fermentum pulvinar. Sed bibendum mauris in urna aliquet scelerisque et eu magna. Donec pellentesque a erat eget gravida. Phasellus id magna metus. Nunc pellentesque urna at facilisis egestas. Pellentesque volutpat eros sapien. Mauris imperdiet pellentesque tortor, vitae placerat lectus consectetur id.</string>
+    <string name="remind_me">Remind me</string>
+    <string name="cancel">Cancel</string>
+    <string name="reschedule">Reschedule</string>
+    <string name="re_book">Re-Book</string>
+    <string name="add_review">Add Review</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="completed">Completed</string>
+    <!-- "Past" rather than "Completed": a visit that was missed was not completed. -->
+    <string name="visits_past">Past</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
+    <string name="forms">Forms</string>
+    <string name="appointments">Appointments</string>
+    <string name="doctors">Doctors</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Logout</string>
+    <string name="profile_picture">profile picture</string>
+    <string name="edit_profile_picture">edit profile picture</string>
+    <string name="email_address">Email</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="clinic_code">Clinic Code</string>
+    <string name="address">Address</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="other">Other</string>
+    <string name="upload_id">Upload Government Photo ID</string>
+    <string name="submit">Submit</string>
+    <string name="gender_label">Gender</string>
+    <string name="no_file_selected">No file selected</string>
+    <string name="review_question">How was your experience with the doctor?</string>
+    <string name="add_detailed_review_text">Add detailed review</string>
+    <string name="email_mock">gabriela@gmail.com</string>
+    <string name="address_mock">123 Main St, Toronto</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="service_days">Service Days</string>
+    <string name="service_hours">Service Hours</string>
+    <string name="see_all_link">See all</string>
+    <string name="form_description_mock">Short description about the form to give the user context.</string>
+    <string name="form_status_mock">Pending</string>
+    <string name="edit">Edit</string>
+    <string name="current_symptoms">Primary reason for your visit?</string>
+    <string name="medication_taking">Are you currently taking any medications?</string>
+    <string name="recent_symptoms">Have you experienced any of the following symptoms recently? (Select all that apply)</string>
+    <string name="fever">Fever</string>
+    <string name="cough">Cough</string>
+    <string name="chest_pain">Chest pain</string>
+    <string name="fatigue">Fatigue</string>
+    <string name="shortness_of_breath">Shortness of breath</string>
+    <string name="headache">Headache</string>
+    <string name="upcoming_appointments_text">You have an upcoming appointment, please confirm your attendance:</string>
+    <string name="rsvp_no">I can\'t make it</string>
+    <string name="rsvp_yes">I\'ll be there</string>
+    <string name="pre_appointment_form_title">Pre-Appointment Form</string>
+    <string name="chronic_condition">Do you have a history of any chronic conditions? (Select all that apply)</string>
+    <string name="diabetes">Diabetes</string>
+    <string name="hypertension">Hypertension</string>
+    <string name="heart_disease">Heart disease</string>
+    <string name="asthma">Asthma</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="surgery_question">Have you undergone any surgeries or major medical procedures in the past?</string>
+    <string name="smoke_question">Do you smoke or use tobacco products?</string>
+    <string name="alcohol_question">Do you consume alcohol?</string>
+    <string name="family_history_disease">Do you have a family history of any significant medical conditions?</string>
+    <string name="cancer">Cancer</string>
+    <string name="notification_title_mock">Notification Title</string>
+    <string name="time_notification_mock">2h ago</string>
+    <string name="notification_body_mock">This is the notification body text. This is the notification body text. This is the notification body text.</string>
+    <string name="read_text">Read</string>
+    <string name="clear_text">Clear</string>
+    <string name="stroke">Stroke</string>
+    <string name="ok">OK</string>
+    <string name="read_less_link">Read Less</string>
+    <string name="no_appointments_to_display">No appointments to display</string>
+    <string name="pediatrician">Pediatrician</string>
+    <string name="no_data_available">No data available</string>
+    <string name="no_notifications_to_display">No notifications to display</string>
+
+    <!-- Networking and sign-in feedback -->
+    <string name="error_no_server">Could not reach the clinic server. Check your connection and try again.</string>
+    <string name="otp_invalid">That passcode is not valid or has expired.</string>
+    <string name="otp_resent">We have sent you a new passcode.</string>
+    <string name="demo_mode_banner">Demo mode — showing sample data because the server is not reachable.</string>
+    <!-- Loading, empty and error states -->
+    <string name="state_error_title">Something went wrong</string>
+    <string name="state_error_body">We could not load this just now. Check your connection and try again.</string>
+    <string name="state_retry">Try again</string>
+
+    <string name="state_no_upcoming_title">No upcoming appointments</string>
+    <string name="state_no_upcoming_body">When you book a visit it will appear here.</string>
+    <string name="state_book_appointment">Book an appointment</string>
+
+    <string name="state_no_completed_title">No past appointments</string>
+    <string name="state_no_completed_body">Visits you have already attended will be listed here.</string>
+
+    <string name="state_no_cancelled_title">Nothing cancelled</string>
+    <string name="state_no_cancelled_body">Appointments you cancel will be kept here for your records.</string>
+
+    <string name="state_no_notifications_title">You are all caught up</string>
+    <string name="state_no_notifications_body">Messages from the clinic will show up here.</string>
+
+    <string name="state_no_doctors_title">No doctors available</string>
+    <string name="state_no_doctors_body">The clinic has not published any availability yet.</string>
+    <!-- Appointment reminders -->
+    <string name="reminder_unavailable">We could not work out when this appointment starts, so no reminder was set.</string>
+    <string name="reminder_soon_title">Appointment soon</string>
+    <string name="reminder_soon_body">Your appointment with %1$s is in 30 minutes.</string>
+    <string name="reminder_tomorrow_title">Appointment tomorrow</string>
+    <string name="reminder_tomorrow_body">You have an appointment with %1$s tomorrow at %2$s.</string>
+    <!-- Shown when Android is not letting the app post notifications, so a reminder switch cannot come on. -->
+    <string name="reminder_notifications_refused">Reminders need notifications, which are off for Mediconnect. You can turn them on in your phone\'s settings.</string>
+    <!-- The notification channel, as listed in the phone's settings for the app. -->
+    <string name="reminder_channel_name">Visit reminders</string>
+    <string name="reminder_channel_body">The day before and 30 minutes before each visit you switch reminders on for.</string>
+
+    <!-- Accessibility -->
+    <string name="cd_app_logo">MediConnect</string>
+    <string name="cd_doctor_photo">Photo of the doctor</string>
+    <string name="cd_your_photo">Your profile photo</string>
+    <string name="cd_rating_star">Rating</string>
+
+    <!-- Shown on a completed visit the patient has already reviewed. -->
+    <string name="review_left">Review sent</string>
+    <string name="review_left_score">You rated %1$.1f</string>
+
+    <!-- Date of birth entry: typed, with a picker as an alternative. -->
+    <string name="dob_format_hint">YYYY-MM-DD</string>
+    <string name="dob_pick">Pick a date</string>
+
+    <!-- Names the person a visit was booked for, when it is not the booker. -->
+    <string name="booked_for">For %1$s</string>
+
+    <!-- Exact-alarm permission, which Android 12 onwards withholds by default. -->
+    <string name="reminder_permission_title">Allow reminders?</string>
+    <string name="reminder_permission_body">To remind you at the right moment, Mediconnect needs permission to set exact alarms. Android keeps this off until you allow it.</string>
+    <string name="reminder_permission_open">Open settings</string>
+    <string name="reminder_permission_unavailable">This device has no setting for exact alarms, so reminders cannot be scheduled.</string>
+
+    <!-- Profile screen sections. -->
+    <string name="profile_personal_details">Personal details</string>
+    <string name="profile_health_info">Health information</string>
+    <string name="profile_health_info_body">What your doctor should know before your appointment.</string>
+    <string name="profile_manage_health">Manage health information</string>
+    <string name="profile_download_summary">Download my health summary</string>
+    <string name="profile_preferences">Preferences</string>
+    <string name="profile_appearance">Appearance</string>
+    <string name="profile_appearance_body">System follows the setting on your phone.</string>
+    <string name="profile_sign_out">Sign out</string>
+    <string name="profile_edit">Edit</string>
+    <string name="profile_personal">Personal details</string>
+    <string name="profile_your_data">Your data</string>
+    <string name="profile_theme_light">Light</string>
+    <string name="profile_theme_dark">Dark</string>
+    <string name="profile_theme_system">System</string>
+    <string name="profile_phone">Phone</string>
+    <string name="profile_address">Address</string>
+    <string name="profile_dob">Date of birth</string>
+    <string name="profile_health_card">Health card</string>
+    <string name="profile_clinic">Clinic</string>
+    <string name="profile_clinic_value">%1$s · code %2$s</string>
+    <string name="profile_not_given">Not given yet</string>
+    <string name="profile_health_card_value">Ending %1$s · %2$s</string>
+    <string name="profile_reminders">Visit reminders</string>
+    <string name="profile_reminders_body">The day before and 30 minutes before, for visits you switch on.</string>
+    <string name="profile_offers">Earlier-slot offers</string>
+    <string name="profile_offers_body_on_none">On. Ask for an earlier time from a visit and the clinic will message you if one opens up.</string>
+    <plurals name="profile_offers_body_on">
+        <item quantity="one">On. You are on %1$d waitlist, and the clinic will message you if an earlier time opens up.</item>
+        <item quantity="other">On. You are on %1$d waitlists, and the clinic will message you if an earlier time opens up.</item>
+    </plurals>
+    <plurals name="profile_offers_body_paused">
+        <item quantity="one">Paused. You keep your place on %1$d waitlist, but get no offers until you turn this on.</item>
+        <item quantity="other">Paused. You keep your place on %1$d waitlists, but get no offers until you turn this on.</item>
+    </plurals>
+    <string name="profile_offers_body_off">Off. The clinic will not offer you earlier times.</string>
+    <string name="profile_offers_body_unreachable">Could not reach the clinic. Tap to try again.</string>
+    <string name="profile_offers_body_unknown">Checking with the clinic…</string>
+    <string name="profile_offers_failed">The clinic did not take that change. Please try again.</string>
+    <string name="profile_row_record">Your health record</string>
+    <string name="profile_row_record_sub">Allergies, medications and conditions</string>
+    <string name="profile_row_summary">Download my health summary</string>
+    <string name="profile_row_summary_sub">A PS-CA document another Canadian clinic can read</string>
+    <string name="profile_privacy">Privacy and terms</string>
+    <string name="profile_privacy_sub">What we hold, and what we do with it</string>
+    <string name="profile_privacy_body">MediConnect holds the details you enter and the visits you book, so the clinic can treat you. Your health record is shown to the doctor you are booked with. Nothing is sold or shared with anyone else, and signing out removes it all from this device.</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+
+    <!-- Health record. -->
+    <string name="health_allergies">Allergies</string>
+    <string name="health_medications">Medications</string>
+    <string name="health_conditions">Conditions</string>
+    <string name="health_none_recorded">None recorded</string>
+    <string name="health_line">%1$s · %2$s</string>
+    <string name="health_card_masked">Health card ••• %1$s · %2$s</string>
+
+    <!-- Edit profile: the health card. -->
+    <string name="edit_profile_card_title">Health card</string>
+    <string name="edit_profile_card_body">Optional. It lets the front desk find your provincial record. Everywhere else in the app shows only the last four characters.</string>
+    <string name="edit_profile_card_number">Card number</string>
+    <string name="edit_profile_card_number_help">As printed on the card. Spaces and dashes are fine.</string>
+    <string name="edit_profile_card_province">Province or territory</string>
+    <string name="edit_profile_card_province_pick">Which province or territory issued your card?</string>
+    <string name="cd_edit_profile_card_province">Choose the province or territory</string>
+    <string name="edit_profile_card_characters">Use only letters, numbers, spaces and dashes.</string>
+    <string name="edit_profile_card_length">A card number has %1$d to %2$d letters and numbers.</string>
+    <!-- Codes line up with the names below, one for one. -->
+    <string-array name="health_card_province_codes" translatable="false">
+        <item>AB</item>
+        <item>BC</item>
+        <item>MB</item>
+        <item>NB</item>
+        <item>NL</item>
+        <item>NT</item>
+        <item>NS</item>
+        <item>NU</item>
+        <item>ON</item>
+        <item>PE</item>
+        <item>QC</item>
+        <item>SK</item>
+        <item>YT</item>
+    </string-array>
+    <string-array name="health_card_province_names">
+        <item>Alberta</item>
+        <item>British Columbia</item>
+        <item>Manitoba</item>
+        <item>New Brunswick</item>
+        <item>Newfoundland and Labrador</item>
+        <item>Northwest Territories</item>
+        <item>Nova Scotia</item>
+        <item>Nunavut</item>
+        <item>Ontario</item>
+        <item>Prince Edward Island</item>
+        <item>Quebec</item>
+        <item>Saskatchewan</item>
+        <item>Yukon</item>
+    </string-array>
+
+    <string name="sign_out_title">Sign out?</string>
+    <string name="sign_out_body">You will need your email and a passcode to sign back in.</string>
+
+    <!-- Health record screen. -->
+    <string name="health_record_title">Health record</string>
+    <string name="health_add">Add</string>
+    <string name="health_add_title">Add to your health record</string>
+    <string name="health_add_description">What is it?</string>
+    <string name="health_add_note">Notes (optional)</string>
+    <string name="health_add_onset">Since (optional)</string>
+    <string name="health_add_save">Save</string>
+    <string name="health_add_required">Please say what it is.</string>
+    <string name="health_stop">Stop</string>
+    <string name="health_stop_title">Stop %1$s?</string>
+    <string name="health_stop_body">It stays on your record marked as no longer current, so a doctor can still see you had it.</string>
+    <string name="health_stop_confirm">Mark as stopped</string>
+    <string name="health_no_longer_current">No longer current</string>
+    <string name="health_type_allergy">Allergy</string>
+    <string name="health_type_medication">Medication</string>
+    <string name="health_type_condition">Condition</string>
+    <!-- ==== Waitlist offers ==== -->
+    <string name="offer_title">An earlier slot opened up</string>
+    <string name="offer_body_held">%1$s · %2$s · instead of %3$s. We are holding it for you for %4$s.</string>
+    <string name="offer_hold_hours">%1$d h %2$d min</string>
+    <string name="offer_hold_minutes">%1$d min</string>
+    <string name="offer_hold_moments">a few more moments</string>
+    <string name="offer_keep">Keep mine</string>
+    <string name="offer_take">Take it</string>
+    <string name="offer_kept">You keep your visit on %1$s. We will tell you if something earlier comes up again.</string>
+    <string name="offer_taken">Booked for %1$s. Your visit on %2$s has been given up, and anything you sent the clinic moved with you.</string>
+    <string name="offer_ended">That offer has ended, and the time went to the next person on the list. You are still on it.</string>
+    <!-- The same offer to a patient who joined from a full day and holds no
+         visit, so there is nothing to keep or give up: %3$s is the day they
+         asked for, and the slot is on it or sooner. -->
+    <string name="offer_body_open">%1$s · %2$s · on or before %3$s, the day you asked for. We are holding it for you for %4$s.</string>
+    <string name="offer_pass">Not this one</string>
+    <string name="offer_passed">You passed on this one and are still on the waitlist. We will tell you if another time opens up on or before %1$s.</string>
+    <string name="offer_taken_open">Booked for %1$s. It is in your upcoming visits, and you are off the waitlist.</string>
+
+    <!-- ==== Messages (P13) ==== -->
+    <string name="messages_title">Messages</string>
+    <string name="messages_mark_all_read">Mark all read</string>
+    <string name="messages_unread">%1$d unread</string>
+    <string name="messages_all_read">All caught up</string>
+    <string name="messages_unread_dot">Unread</string>
+    <string name="messages_today">Today</string>
+    <string name="messages_earlier">Earlier</string>
+    <string name="messages_see_offer">See offer</string>
+    <string name="messages_inbox">Inbox</string>
+    <string name="messages_archived">Archived</string>
+    <string name="messages_clear_read">Clear read</string>
+    <string name="messages_archived_one">Message archived</string>
+    <string name="messages_restored_one">Moved to your inbox</string>
+    <plurals name="messages_cleared">
+        <item quantity="one">%1$d read message archived</item>
+        <item quantity="other">%1$d read messages archived</item>
+    </plurals>
+    <string name="messages_nothing_to_clear">Nothing read to clear</string>
+    <string name="messages_undo">Undo</string>
+    <string name="messages_action_archive">Archive</string>
+    <string name="messages_action_unarchive">Move to inbox</string>
+    <string name="messages_swipe_hint">Swipe a message sideways to archive it. Archived messages stay under Archived.</string>
+    <string name="messages_archived_hint">Swipe a message sideways to move it back to your inbox.</string>
+    <string name="messages_archived_count">%1$d archived</string>
+    <string name="messages_caught_up_title">You\'re all caught up</string>
+    <string name="messages_caught_up_body">Nothing in your inbox. Messages you archived are under Archived.</string>
+    <string name="messages_see_archived">See archived</string>
+    <string name="messages_none_archived_title">Nothing archived</string>
+    <string name="messages_none_archived_body">Swipe a message in your inbox sideways to put it here. Nothing is deleted.</string>
+    <string name="messages_action_failed">That did not go through. Please try again.</string>
+    <string name="messages_offer_ended">Offer ended</string>
+    <string name="messages_offer_gone">This offer is no longer available. The time was taken, passed on or ran out. You are still on the waitlist unless you took an earlier time.</string>
+    <string name="messages_see_visits">See visits</string>
+    <string name="messages_fill_form">Fill in form</string>
+    <string name="messages_just_now">Just now</string>
+    <string name="messages_minutes">%1$d min</string>
+    <string name="messages_hours">%1$d h</string>
+    <string name="cd_message">%1$s, %2$s</string>
+    <string name="cd_message_unread">Unread. %1$s, %2$s</string>
+
+    <string name="health_intro">What your doctor should know before your appointment. Kept once, instead of rewritten on paper at every visit.</string>
+    <string name="health_share_title">Share your health summary</string>
+    <string name="health_share_body">A standard summary another clinic or hospital in Canada can read (PS-CA).</string>
+    <string name="health_share">Share</string>
+    <string name="health_download">Download</string>
+    <string name="health_stopped_note">Stopped items stay on your record marked as no longer current.</string>
+    <string name="health_section_empty_allergies">Nothing on file. Add anything you react to, however mild.</string>
+    <string name="health_section_empty_medications">Nothing on file. Add anything you take regularly, including vitamins.</string>
+    <string name="health_section_empty_conditions">Nothing on file. Add anything you are treated for or live with.</string>
+    <string name="health_since">Since %1$s</string>
+    <string name="health_entry_actions">%1$s</string>
+    <string name="health_add_kind">Add %1$s</string>
+    <string name="cd_health_entry">%1$s, %2$s</string>
+    <string name="health_empty_title">Nothing recorded yet</string>
+    <string name="health_empty_body">Add your allergies, medications and conditions so your doctor has them before your appointment.</string>
+
+    <!-- Health summary export. -->
+    <string name="summary_title">Health summary</string>
+    <string name="summary_intro">A standard summary of your health record that another clinic or hospital in Canada can read.</string>
+    <string name="summary_standard">Follows the pan-Canadian Patient Summary (PS-CA), built on HL7 FHIR R4.</string>
+    <string name="summary_share">Share</string>
+    <string name="summary_generated">Generated %1$s</string>
+    <string name="summary_share_subject">My health summary</string>
+    <string name="health_count">%1$d recorded</string>
+    <string name="summary_export">Export for a clinic</string>
+    <string name="summary_export_hint">Sends the summary as a FHIR document that another clinic system can read.</string>
+    <string name="summary_downloaded">Saved your health summary.</string>
+    <string name="summary_export_offline">The clinic document is built by the clinic\'s server, which can\'t be reached right now. Share still sends the summary as text.</string>
+
+    <!-- Waitlist. -->
+    <string name="waitlist_join">Tell me if something earlier opens up</string>
+    <string name="waitlist_join_body">If someone cancels with %1$s before this appointment, we will send you a notification so you can take the slot.</string>
+    <string name="waitlist_join_confirm">Add me</string>
+    <string name="waitlist_joined">You are on the waitlist. Watch your notifications.</string>
+    <string name="waitlist_already_on">You are already on the waitlist for this doctor.</string>
+
+    <!-- The four bottom-navigation destinations. -->
+    <string name="nav_home">Home</string>
+    <string name="nav_visits">Visits</string>
+    <string name="nav_health">Health</string>
+    <string name="nav_profile">Profile</string>
+    <string name="cd_notifications_unread">Notifications, %1$d unread</string>
+    <string name="cd_notifications">Notifications</string>
+    <string name="visit_fill_in_form">Fill in form</string>
+    <string name="profile_incomplete">Please finish your profile first — the clinic needs these details to book you in.</string>
+
+    <!-- ==== Home (board Main) ============================================ -->
+    <string name="home_search_hint">Search doctors or specialties</string>
+    <string name="home_greeting_morning">Good morning</string>
+    <string name="home_greeting_afternoon">Good afternoon</string>
+    <string name="home_greeting_evening">Good evening</string>
+    <string name="home_next_visit">Next visit</string>
+    <string name="home_visit_details">Details</string>
+    <string name="home_no_visit_title">No visits booked</string>
+    <string name="home_no_visit_body">Book one and it will show up here with everything you need to do before it.</string>
+    <string name="home_book_a_visit">Book a visit</string>
+    <string name="home_browse_specialty">Browse by specialty</string>
+    <string name="home_available_today">Available today</string>
+    <string name="home_available_soon">Next available</string>
+    <string name="home_action_book">Book a visit</string>
+    <string name="home_action_forms">Forms</string>
+    <string name="home_action_record">Health record</string>
+    <string name="home_action_messages">Messages</string>
+    <string name="home_checked_in">Checked in</string>
+    <string name="home_confirmed">Confirmed</string>
+    <string name="home_check_in">Check in</string>
+    <string name="home_record_up_to_date">Your health record is up to date</string>
+    <string name="home_record_empty">Add your health information</string>
+    <string name="home_record_empty_body">Allergies, medications and conditions, so your doctor has them before you arrive.</string>
+    <string name="home_record_counts">%1$d allergies · %2$d medications · %3$d conditions</string>
+
+    <!-- Relative times on a card. -->
+    <string name="when_today">Today, %1$s</string>
+    <string name="when_tomorrow">Tomorrow, %1$s</string>
+    <string name="when_other">%1$s, %2$s</string>
+    <string name="day_today">Today</string>
+    <string name="day_tomorrow">Tomorrow</string>
+    <string name="slot_today">Today %1$s</string>
+    <string name="slot_next">Next: %1$s</string>
+    <string name="slot_none">No slots open</string>
+
+    <!-- ==== Find a doctor (board P04) ==================================== -->
+    <string name="doctors_title">Find a doctor</string>
+    <string name="doctors_search_hint">Name or specialty</string>
+    <plurals name="doctors_count">
+        <item quantity="one">%1$d doctor · %2$s</item>
+        <item quantity="other">%1$d doctors · %2$s</item>
+    </plurals>
+    <string name="doctors_sorted_soonest">soonest first</string>
+    <string name="doctors_sorted_rating">highest rated first</string>
+    <string name="doctors_sorted_name">by name</string>
+    <string name="doctors_filters_title">Filters</string>
+    <string name="cd_doctors_filters_active">Filters, %1$d on</string>
+    <string name="doctors_sort_title">Sort by</string>
+    <string name="doctors_sort_soonest">Soonest available</string>
+    <string name="doctors_sort_rating">Highest rated</string>
+    <string name="doctors_sort_name">Name, A to Z</string>
+    <string name="doctors_only_free">Only doctors with free times</string>
+    <string name="doctors_only_free_sub">Hides anyone fully booked for now</string>
+    <string name="doctors_filters_reset">Reset</string>
+    <string name="doctors_clear_filters">Clear search and filters</string>
+    <string name="doctors_filters_apply">Show doctors</string>
+    <string name="doctors_filter_all">All</string>
+    <string name="doctors_filter_today">Available today</string>
+    <string name="doctors_no_reviews">No reviews yet</string>
+    <string name="doctors_years">%1$s · %2$s yrs</string>
+    <string name="doctors_years_only">%1$s yrs</string>
+    <string name="doctors_book">Book</string>
+    <string name="doctors_empty_title">No doctors match</string>
+    <string name="doctors_empty_body">Try a different specialty, or clear the filters.</string>
+    <string name="cd_rating">Rated %1$s out of 5, %2$d reviews</string>
+
+    <plurals name="doctors_rating">
+        <item quantity="one">%1$s (1 review)</item>
+        <item quantity="other">%1$s (%2$d reviews)</item>
+    </plurals>
+
+    <!-- ==== Booking: day, time, review, confirmation (P05–P07) ==== -->
+    <string name="booking_title">Book a visit</string>
+    <string name="booking_choose_day">Choose a day</string>
+    <string name="booking_morning">Morning</string>
+    <string name="booking_afternoon">Afternoon</string>
+    <string name="booking_day_full">Every time on this day is taken. Try another day, or join the waitlist below.</string>
+    <string name="booking_day_none_title">No days open</string>
+    <string name="booking_day_none">This doctor has no appointments open at the moment. Join the waitlist and we will tell you when one appears.</string>
+    <string name="booking_continue">Continue</string>
+    <string name="booking_pick_day">Pick a day</string>
+    <string name="booking_pick_time">Pick a time</string>
+    <string name="booking_date_range">%1$s – %2$s</string>
+    <string name="booking_day_full_note">Full</string>
+    <string name="cd_slot_taken">%1$s, taken</string>
+    <string name="cd_slot_available">%1$s, available</string>
+
+    <string name="waitlist_sooner_title">Need something sooner?</string>
+    <string name="waitlist_sooner_body">Join the waitlist and we will offer you any earlier slot that frees up.</string>
+    <string name="waitlist_sooner_confirm">If a slot with %1$s opens up on %2$s or sooner, we will send you a notification so you can take it.</string>
+
+    <string name="review_title">Review and confirm</string>
+    <string name="review_change">Change</string>
+    <string name="review_who_for">Who is this visit for?</string>
+    <string name="review_for_me">For me</string>
+    <string name="review_for_someone">For someone else</string>
+    <string name="review_for_someone_sub">A child or someone you care for</string>
+    <string name="review_their_name">Their full name</string>
+    <string name="review_their_dob">Their date of birth</string>
+    <string name="review_their_phone">A phone number we can reach</string>
+    <string name="review_note_label">Note for the doctor</string>
+    <string name="review_note_optional">(optional)</string>
+    <string name="review_note_hint">What would you like to talk about?</string>
+    <string name="review_record_shared">%1$s will see your health record: %2$s. Review it</string>
+    <string name="review_record_shared_unknown">%1$s will see your health record. Review it</string>
+    <string name="review_record_empty">%1$s will see your health record, which is empty at the moment. Fill it in</string>
+    <string name="review_record_loading">loading</string>
+    <string name="clinic_name">MediConnect Clinic</string>
+    <string name="clinic_address">Kitchener, ON</string>
+    <string name="review_duration_unknown">In person</string>
+    <string name="review_record_review">Review it</string>
+    <string name="review_terms">I accept the booking terms, including cancelling at least 24 hours ahead.</string>
+    <string name="review_terms_required">Please accept the booking terms to continue.</string>
+    <string name="review_name_required">Please give the name of the person this visit is for.</string>
+    <string name="review_confirm">Confirm appointment</string>
+    <string name="review_slot_taken">That time has just been taken. Please choose another.</string>
+    <string name="review_failed">We could not book that. Please try again.</string>
+
+    <string name="confirmed_title">You are booked</string>
+    <string name="confirmed_before">Before your visit</string>
+
+    <!-- ==== Visits and visit day (P08, P09) ==== -->
+    <string name="visit_form_pending">Form pending</string>
+    <string name="visit_confirmed">Confirmed</string>
+    <string name="visit_form_sent">Form sent</string>
+    <string name="visit_details">Details</string>
+    <string name="visit_reschedule">Reschedule</string>
+    <string name="visit_this_week">This week</string>
+    <string name="visit_later">Later</string>
+    <string name="visit_remind_me">Remind me</string>
+    <string name="doctor_and_specialty">%1$s · %2$s</string>
+    <string name="visit_title">Your visit</string>
+    <string name="visit_starts_in">Starts in %1$s · %2$s, %3$s</string>
+    <string name="visit_started">Started %1$s ago · %2$s, %3$s</string>
+    <plurals name="visit_in_days_plural">
+        <item quantity="one">In %1$d day · %2$s, %3$s</item>
+        <item quantity="other">In %1$d days · %2$s, %3$s</item>
+    </plurals>
+    <string name="visit_checked_in">You are checked in. The front desk knows you are here.</string>
+    <string name="visit_check_in_prompt">At the clinic? Check in to let the front desk know.</string>
+    <string name="visit_check_in">Check in</string>
+    <string name="visit_checked_in_at">Checked in at %1$s</string>
+    <string name="visit_check_in_day_only">You can check in on the day of your visit.</string>
+    <string name="visit_before_you_go">Before you go in</string>
+    <string name="visit_form_row">Pre-appointment form</string>
+    <string name="visit_attendance">Confirm you will be there</string>
+    <string name="visit_attendance_sub">So the clinic knows to expect you</string>
+    <string name="visit_attendance_confirm">Confirm</string>
+    <string name="visit_attendance_done">Attendance confirmed</string>
+    <string name="visit_attendance_done_sub">You said you will be there</string>
+    <string name="visit_attendance_checked_in_sub">You checked in, so the clinic knows you are here</string>
+    <string name="visit_attendance_today">Check in when you arrive</string>
+    <string name="visit_attendance_today_sub">Use the Check in button below once you are at the clinic</string>
+    <string name="visit_attendance_failed">The clinic could not take that. The visit may have been cancelled or already happened.</string>
+    <string name="visit_form_row_sent">Sent %1$s</string>
+    <string name="visit_form_row_todo">The doctor reads it before you arrive</string>
+    <string name="visit_form_view">View</string>
+    <string name="visit_form_fill">Fill in</string>
+    <string name="visit_health_card">Bring your health card</string>
+    <string name="visit_health_card_sub">%1$s · ending %2$s</string>
+    <string name="visit_health_card_missing">Add it to your profile so the desk can find you faster</string>
+    <string name="visit_details_heading">Details</string>
+    <string name="visit_directions">Directions</string>
+    <string name="visit_no_maps">No maps app to open directions in.</string>
+    <string name="visit_cancel">Cancel visit</string>
+    <string name="visit_waitlist">Tell me if something earlier opens up</string>
+    <string name="visit_hours_minutes">%1$d h %2$d min</string>
+    <string name="visit_minutes">%1$d min</string>
+    <string name="visit_reschedule_body">This cancels the visit you have now and takes you back to the times. The slot you hold is released as soon as you confirm.</string>
+    <string name="visit_reschedule_confirm">Find another time</string>
+    <string name="visit_cancel_body">The slot goes back to the clinic. Someone on the waitlist may take it straight away.</string>
+    <string name="visit_cancel_keep">Keep it</string>
+    <string name="visit_cancel_confirm">Cancel visit</string>
+    <string name="visit_cancel_failed">We could not cancel that. Please try again.</string>
+    <string name="cd_more_options">More options</string>
+    <string name="cd_switch">%1$s, %2$s</string>
+    <string name="cd_forms_pending">Forms, %1$d waiting to be filled in</string>
+    <string name="cd_on">on</string>
+    <string name="cd_off">off</string>
+    <string name="cd_close">Close</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_day_free">%1$s, has free times</string>
+    <string name="cd_day_full">%1$s, fully booked</string>
+    <string name="step_one">1</string>
+    <string name="step_two">2</string>
+    <string name="step_three">3</string>
+    <string name="confirmed_step_form">Fill in your pre-appointment form</string>
+    <string name="confirmed_step_form_sub">Takes about 3 minutes. %1$s reads it before you arrive.</string>
+    <string name="confirmed_step_form_action">Start form</string>
+    <string name="confirmed_step_remind">We can remind you</string>
+    <string name="confirmed_step_remind_sub">The day before, and 30 minutes before — switch reminders on for this visit.</string>
+    <string name="confirmed_step_checkin">Check in from the app</string>
+    <string name="confirmed_step_checkin_sub">When you arrive, tap Check in — no queue at the desk.</string>
+    <string name="confirmed_add_calendar">Add to calendar</string>
+    <string name="confirmed_done">Done</string>
+    <string name="confirmed_no_calendar">No calendar app to add this to.</string>
+    <string name="confirmed_calendar_title">%1$s at %2$s</string>
+
+    <!-- ==== Pre-appointment form (P10) ==== -->
+    <string name="form_title">Pre-appointment form</string>
+    <!-- The line at the top of a form naming the visit it belongs to. -->
+    <string name="form_visit_yours">For your visit with %1$s</string>
+    <string name="form_visit_theirs">For %1$s\'s visit with %2$s</string>
+    <string name="form_visit_when">%1$s · %2$s</string>
+
+    <!-- ==== Forms: every visit's form in one list ==== -->
+    <string name="forms_title">Forms</string>
+    <string name="forms_section_to_fill">To fill in · %1$d</string>
+    <string name="forms_section_sent">Sent · %1$d</string>
+    <string name="forms_day_time">%1$s · %2$s</string>
+    <string name="forms_empty_title">No forms to fill in</string>
+    <string name="forms_empty_body">Each visit you book has a short form for the doctor. It will show up here.</string>
+    <string name="forms_cd_to_fill">Form to fill in</string>
+    <string name="forms_cd_sent">Form sent %1$s</string>
+    <!-- Said by TalkBack after "Double tap to". -->
+    <string name="forms_cd_open_to_fill">fill in the form</string>
+    <string name="forms_cd_open_sent">view your answers</string>
+
+    <!-- ==== Leaving a review (P11) ==== -->
+    <string name="review_book_again">Book again</string>
+    <string name="review_leave">Leave a review</string>
+    <string name="review_sheet_question">How was your visit with %1$s?</string>
+    <string name="review_sheet_sub">%1$s · Your review is shown without your full name.</string>
+    <string name="review_tell_others">Tell others about it</string>
+    <string name="review_text_hint">What should another patient know?</string>
+    <string name="review_send">Send review</string>
+    <string name="review_pick_score">Choose a rating first, so the score means something.</string>
+    <string name="review_sent">Thank you — your review is with the clinic.</string>
+    <string name="review_send_failed">We could not send that review. Please try again.</string>
+    <string name="cd_star">%1$d out of 5</string>
+    <string-array name="review_score_words">
+        <item>Poor</item>
+        <item>Not great</item>
+        <item>Fine</item>
+        <item>Very good</item>
+        <item>Excellent</item>
+    </string-array>
+    <string name="form_step">Step %1$d of %2$d · %3$s</string>
+    <string name="form_draft_saved">Draft saved</string>
+    <string name="form_back">Back</string>
+    <string name="form_next">Next</string>
+    <string name="form_send">Send to the doctor</string>
+    <string name="form_yes">Yes</string>
+    <string name="form_no">No</string>
+    <string name="form_prefer_not">Prefer not to say</string>
+
+    <string name="form_step_reason">Reason</string>
+    <string name="form_q_reason">What brings you in?</string>
+    <string name="form_q_reason_help">A sentence or two is plenty. The doctor reads this before you arrive.</string>
+    <string name="form_q_reason_hint">For example: a cough that has not cleared in three weeks</string>
+    <string name="form_reason_required">Please say what brings you in, so the doctor can prepare.</string>
+
+    <string name="form_step_symptoms">Symptoms</string>
+    <string name="form_q_symptoms">Have you had any of these recently?</string>
+    <string name="form_q_symptoms_help">Select all that apply.</string>
+
+    <string name="form_step_history">History</string>
+    <string name="form_q_history">A few things about your health</string>
+    <string name="form_q_history_help">Answer what you are comfortable answering.</string>
+    <string name="form_q_surgery">Have you had surgery in the last year?</string>
+    <string name="form_q_smoke">Do you smoke?</string>
+    <string name="form_q_alcohol">Do you drink alcohol?</string>
+
+    <string name="form_step_notes">Anything else</string>
+    <string name="form_q_notes">Anything else the doctor should know?</string>
+    <string name="form_q_notes_help">Optional. Medication you are taking, something that worries you, anything at all.</string>
+    <string name="form_q_notes_hint">Leave blank if there is nothing</string>
+
+    <string name="form_answers_title">Your answers</string>
+    <string name="form_answers_sent_at">Sent to the doctor %1$s</string>
+    <string name="form_answers_none">Not answered</string>
+    <string name="form_answers_edit">Edit answers</string>
+    <string name="form_answers_edit_hint">Changing an answer sends the whole form again. The doctor sees the newest version.</string>
+    <string name="form_answers_missing_title">No answers on file</string>
+    <string name="form_answers_missing_body">The clinic has no answers for this visit. Filling the form in again takes about three minutes.</string>
+    <string name="form_sent">Sent to the doctor</string>
+    <string name="form_send_failed">We could not send that. Your answers are still here — please try again.</string>
+    <string name="form_no_appointment">Open the form from the visit it belongs to, so the doctor knows which one it is about.</string>
+
+    <string-array name="form_symptom_codes">
+        <item>fever</item>
+        <item>cough</item>
+        <item>chest_pain</item>
+        <item>fatigue</item>
+        <item>breathlessness</item>
+        <item>headache</item>
+        <item>none</item>
+    </string-array>
+    <string-array name="form_symptom_labels">
+        <item>Fever</item>
+        <item>Cough</item>
+        <item>Chest pain</item>
+        <item>Fatigue</item>
+        <item>Shortness of breath</item>
+        <item>Headache</item>
+        <item>None of these</item>
+    </string-array>
+</resources>

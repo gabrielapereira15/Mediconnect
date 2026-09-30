@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<!--
+    The back office shell (boards B01–B07).
+
+    Bootstrap is gone. The clinic's side uses the same design system as the
+    app now: mc-tokens.css for the palette and spacing, bundle.css for the
+    components, so a badge means the same thing to a receptionist as it does
+    to the patient who booked. htmx stays — a detail panel loaded into the
+    right-hand aside is what keeps a long list's scroll position.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">[[#{app.title}]]</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+          rel="stylesheet" />
+
+    <link th:href="@{/css/mc-tokens.css}" rel="stylesheet" />
+    <link th:href="@{/css/bundle.css}" rel="stylesheet" />
+    <link th:href="@{/css/app.css}" rel="stylesheet" />
+    <link th:href="@{/favicon.ico}" rel="icon" sizes="32x32" />
+    <link th:href="@{/images/favicon.svg}" rel="icon" type="image/svg+xml" />
+
+    <script th:src="@{/webjars/htmx.org/2.0.3/dist/htmx.min.js}" defer></script>
+    <script th:src="@{/js/app.js}" defer></script>
+</head>
+
+<body class="mc" hx-boost="true">
+<div class="mc-shell">
+
+    <nav class="mc-sidenav" aria-label="Back office">
+        <div class="mc-sidenav-brand">
+            <img th:src="@{/images/mediconnect-on-deep.svg}" th:alt="#{app.title}" height="44" />
+        </div>
+
+        <a th:href="@{/}" class="mc-sidenav-item"
+           th:classappend="${active == 'today'} ? 'is-active'"
+           th:attr="aria-current=${active == 'today'} ? 'page' : null">
+            <i class="mc-i mc-i-grid" aria-hidden="true"></i>[[#{nav.today}]]
+        </a>
+        <a th:href="@{/schedule}" class="mc-sidenav-item"
+           th:classappend="${active == 'schedule'} ? 'is-active'"
+           th:attr="aria-current=${active == 'schedule'} ? 'page' : null">
+            <i class="mc-i mc-i-calendar" aria-hidden="true"></i>[[#{nav.schedule}]]
+        </a>
+        <a th:href="@{/appointments}" class="mc-sidenav-item"
+           th:classappend="${active == 'appointments'} ? 'is-active'"
+           th:attr="aria-current=${active == 'appointments'} ? 'page' : null">
+            <i class="mc-i mc-i-list" aria-hidden="true"></i>[[#{nav.appointments}]]
+        </a>
+
+        <!-- A patient's record is a clinician's to read, not the desk's. -->
+        <a th:if="${staff == null or staff.canReadCharts()}" th:href="@{/patients}"
+           class="mc-sidenav-item"
+           th:classappend="${active == 'patients'} ? 'is-active'"
+           th:attr="aria-current=${active == 'patients'} ? 'page' : null">
+            <i class="mc-i mc-i-users" aria-hidden="true"></i>[[#{nav.patients}]]
+        </a>
+
+        <a th:href="@{/waitlist}" class="mc-sidenav-item"
+           th:classappend="${active == 'waitlist'} ? 'is-active'"
+           th:attr="aria-current=${active == 'waitlist'} ? 'page' : null">
+            <i class="mc-i mc-i-hourglass" aria-hidden="true"></i>[[#{nav.waitlist}]]
+            <span class="mc-count" th:if="${waitingCount != null and waitingCount > 0}"
+                  th:text="${waitingCount}">3</span>
+        </a>
+
+        <div class="mc-sidenav-label">[[#{nav.clinic}]]</div>
+        <a th:href="@{/doctors}" class="mc-sidenav-item"
+           th:classappend="${active == 'doctors'} ? 'is-active'"
+           th:attr="aria-current=${active == 'doctors'} ? 'page' : null">
+            <i class="mc-i mc-i-stethoscope" aria-hidden="true"></i>[[#{nav.doctors}]]
+        </a>
+        <a th:href="@{/messages}" class="mc-sidenav-item"
+           th:classappend="${active == 'messages'} ? 'is-active'"
+           th:attr="aria-current=${active == 'messages'} ? 'page' : null">
+            <i class="mc-i mc-i-megaphone" aria-hidden="true"></i>[[#{nav.messages}]]
+        </a>
+
+        <div class="mc-sidenav-foot" th:if="${staff != null}">
+            <span class="mc-avatar mc-avatar-sm" style="background: var(--brand); color: var(--on-brand)"
+                  th:text="${staff.initials}">FD</span>
+            <div style="display: flex; flex-direction: column; min-width: 0; flex: 1">
+                <span class="label" style="color: var(--on-deep)" th:text="${staff.name}">Front desk</span>
+                <span class="caption" style="color: var(--on-deep-muted)"
+                      th:text="${staff.clinicCode} != null ? ${staff.roleLabel} + ' · ' + ${staff.clinicCode} : ${staff.roleLabel}">Front desk</span>
+            </div>
+            <a th:href="@{/staff/logout}" class="mc-icon-btn mc-icon-btn-sm"
+               style="color: var(--on-deep-muted)" th:title="#{nav.signOut}"
+               th:aria-label="#{nav.signOut}">
+                <i class="mc-i mc-i-logout" aria-hidden="true"></i>
+            </a>
+        </div>
+    </nav>
+
+    <div class="mc-main">
+        <header class="mc-topbar">
+            <form th:action="@{/appointments}" method="get" style="display: contents">
+                <label class="mc-search mc-search-md" style="width: 420px">
+                    <i class="mc-i mc-i-search mc-i-20" aria-hidden="true"></i>
+                    <input name="q" th:value="${param.q}" th:placeholder="#{search.placeholder}"
+                           th:aria-label="#{search.placeholder}" />
+                </label>
+            </form>
+            <span style="flex: 1"></span>
+            <a th:href="@{/messages}" class="mc-icon-btn" th:aria-label="#{nav.messages}">
+                <i class="mc-i mc-i-bell" aria-hidden="true"></i>
+            </a>
+            <a th:if="${staff == null or staff.canManageAppointments()}"
+               th:href="@{/appointments/new}" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">
+                <i class="mc-i mc-i-plus" aria-hidden="true"></i>[[#{appointment.new}]]
+            </a>
+        </header>
+
+        <main class="mc-page">
+            <!--
+                What just happened, in the design system's own banner rather
+                than three Bootstrap alert colours.
+            -->
+            <div th:if="${MSG_SUCCESS}" class="mc-banner mc-banner-success" role="status">
+                <i class="mc-i mc-i-check-circle" aria-hidden="true"></i><div>[[${MSG_SUCCESS}]]</div>
+            </div>
+            <div th:if="${MSG_INFO}" class="mc-banner" role="status">
+                <i class="mc-i mc-i-info" aria-hidden="true"></i><div>[[${MSG_INFO}]]</div>
+            </div>
+            <div th:if="${MSG_ERROR}" class="mc-banner mc-banner-danger" role="alert">
+                <i class="mc-i mc-i-alert" aria-hidden="true"></i><div>[[${MSG_ERROR}]]</div>
+            </div>
+
+            <div layout:fragment="content"></div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

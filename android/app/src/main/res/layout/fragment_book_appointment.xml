@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Book a visit: the doctor, then a day, then a time (board P05).
+
+    The old screen listed every day the doctor worked, each with its own row
+    of chips, so choosing a time meant scrolling past a fortnight. A day is
+    picked first here and only that day's times are shown, which is also the
+    only way there is room to show the times somebody else has taken.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_background"
+    tools:context=".fragment.BookAppointmentFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/space_lg"
+        app:layout_constraintBottom_toTopOf="@id/footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/space_md">
+
+            <!-- ==== The doctor ======================================= -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                app:cardCornerRadius="@dimen/radius_large"
+                app:cardElevation="@dimen/elevation_card"
+                app:strokeColor="@color/md_outline_variant"
+                app:strokeWidth="@dimen/stroke_hairline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_xl">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/doctor_initials"
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            android:background="@drawable/avatar_brand_soft"
+                            android:gravity="center"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.Headline"
+                            android:textColor="@color/md_on_primary_container"
+                            tools:text="JW" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_lg"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/doctor_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.TitleLarge"
+                                tools:text="Dr. James Wilson" />
+
+                            <TextView
+                                android:id="@+id/doctor_specialty"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_xs"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                                tools:text="Paediatrician · 16 years" />
+
+                            <LinearLayout
+                                android:id="@+id/doctor_rating_group"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_sm"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/doctor_star"
+                                    android:layout_width="@dimen/icon_size_badge"
+                                    android:layout_height="@dimen/icon_size_badge"
+                                    android:contentDescription="@null"
+                                    android:src="@drawable/ic_star"
+                                    app:tint="@color/md_rating" />
+
+                                <TextView
+                                    android:id="@+id/doctor_rating"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/space_xs"
+                                    android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                                    tools:text="4.8 · 32 reviews" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/doctor_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:ellipsize="end"
+                        android:maxLines="3"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                        android:textColor="@color/md_on_surface_variant"
+                        tools:text="Paediatrician caring for newborns through to adolescents, including developmental assessments and immunisation." />
+
+                    <TextView
+                        android:id="@+id/read_more_link"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/touch_target"
+                        android:text="@string/read_more_link"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.LabelLarge"
+                        android:textColor="@color/md_primary" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ==== Choose a day ==================================== -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_lg">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/booking_choose_day"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium" />
+
+                <TextView
+                    android:id="@+id/date_range"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                    tools:text="September – October" />
+            </LinearLayout>
+
+            <HorizontalScrollView
+                android:id="@+id/date_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:clipToPadding="false"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/date_strip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+
+            <!-- ==== Times on that day =============================== -->
+
+            <TextView
+                android:id="@+id/day_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium"
+                tools:text="Wednesday 30 September" />
+
+            <TextView
+                android:id="@+id/morning_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:text="@string/booking_morning"
+                android:textAppearance="@style/TextAppearance.Mediconnect.Overline"
+                android:textColor="@color/md_on_surface_variant" />
+
+            <GridLayout
+                android:id="@+id/morning_slots"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:columnCount="3"
+                android:paddingHorizontal="@dimen/space_lg" />
+
+            <TextView
+                android:id="@+id/afternoon_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:text="@string/booking_afternoon"
+                android:textAppearance="@style/TextAppearance.Mediconnect.Overline"
+                android:textColor="@color/md_on_surface_variant" />
+
+            <GridLayout
+                android:id="@+id/afternoon_slots"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:columnCount="3"
+                android:paddingHorizontal="@dimen/space_lg" />
+
+            <TextView
+                android:id="@+id/day_full_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:text="@string/booking_day_full"
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                android:textColor="@color/md_on_surface_variant"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <!-- ==== Waitlist ======================================== -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/waitlist_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="@color/md_surface_container"
+                app:cardCornerRadius="@dimen/radius_large"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/md_outline_variant"
+                app:strokeWidth="@dimen/stroke_hairline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/space_lg"
+                    android:paddingVertical="@dimen/space_md">
+
+                    <ImageView
+                        android:layout_width="@dimen/control_md"
+                        android:layout_height="@dimen/control_md"
+                        android:background="@drawable/tile_sun_soft"
+                        android:contentDescription="@null"
+                        android:padding="@dimen/space_sm"
+                        android:src="@drawable/ic_hourglass"
+                        app:tint="@color/md_on_rating_container" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_md"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/waitlist_sooner_title"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/waitlist_sooner_body"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/md_on_surface_subtle" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!--
+        The footer repeats what has been chosen. Without it the choice was
+        somewhere above the fold by the time a patient reached Continue.
+    -->
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/md_surface"
+        android:elevation="@dimen/elevation_sheet"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/space_lg"
+        android:paddingVertical="@dimen/space_md"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/footer_day"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                android:textColor="@color/md_on_surface_variant"
+                tools:text="Wed 30 Sep" />
+
+            <TextView
+                android:id="@+id/footer_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+                tools:text="10:00 AM" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+            android:layout_marginStart="@dimen/space_lg"
+            android:paddingHorizontal="@dimen/space_3xl"
+            android:text="@string/booking_continue" />
+    </LinearLayout>
+
+    <com.example.mediconnect_android.view.StateView
+        android:id="@+id/state_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

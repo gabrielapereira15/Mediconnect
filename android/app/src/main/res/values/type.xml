@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Type scale — the 2026 redesign.
+
+    One family, Plus Jakarta Sans, at four weights. Montserrat shipped a
+    single weight, so the old scale could only separate a heading from a
+    label by size; here weight does most of that work and the sizes can stay
+    close together.
+
+    The design system's names are on the left, the Material 3 style names the
+    layouts already use on the right:
+
+        display 32/40 700   -> (new) Display
+        headline 26/32 700  -> (new) Headline
+        title-lg 22/28 700  -> TitleLarge
+        title-md 18/24 600  -> TitleMedium
+        title-sm 16/22 600  -> TitleSmall
+        body-lg 17/26 400   -> BodyLarge
+        body 15/22 400      -> BodyMedium
+        body-sm 14/20 400   -> (new) BodySmall
+        label-lg 16/20 600  -> (new) LabelLarge
+        label 14/18 600     -> LabelMedium
+        caption 12/16 500   -> LabelSmall
+        overline 12/16 700  -> (new) Overline
+        stat 30/36 700      -> (new) Stat
+        time 20/24 700      -> (new) Time
+
+    Every size is in sp, so the whole scale grows with the system font
+    setting.
+
+    Each style points `fontFamily` at one weight's file rather than at the
+    family plus `textFontWeight`: the attribute needs API 28 and minSdk here
+    is 26, and naming the file gets the exact weight on every version
+    anyway.
+-->
+<resources>
+
+    <!-- ==== Display and titles =========================================== -->
+
+    <!-- The home greeting and big empty-state headings. One per screen. -->
+    <style name="TextAppearance.Mediconnect.Display" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:lineSpacingExtra">8sp</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <!-- Screen titles on a large app bar. -->
+    <style name="TextAppearance.Mediconnect.Headline" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <!-- Doctor names, dialog titles, the toolbar. -->
+    <style name="TextAppearance.Mediconnect.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <!-- Section headers inside a screen; card headings. -->
+    <style name="TextAppearance.Mediconnect.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_semibold</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_semibold</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <!-- Names in list rows and cards. -->
+    <style name="TextAppearance.Mediconnect.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_semibold</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_semibold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <!-- ==== Text ========================================================== -->
+
+    <!-- Patient reading text: explanations, doctor bios, form questions. -->
+    <style name="TextAppearance.Mediconnect.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_regular</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_regular</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:lineSpacingExtra">9sp</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <!-- The default text of the app. -->
+    <style name="TextAppearance.Mediconnect.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_regular</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_regular</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:lineSpacingExtra">7sp</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <!-- Supporting text in cards and table cells. -->
+    <style name="TextAppearance.Mediconnect.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_regular</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/md_on_surface_variant</item>
+    </style>
+
+    <!-- ==== Labels ======================================================== -->
+
+    <!-- Primary and large buttons. -->
+    <style name="TextAppearance.Mediconnect.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_semibold</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_semibold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <!-- Buttons, chips, tabs and nav labels. -->
+    <style name="TextAppearance.Mediconnect.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_semibold</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_semibold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/md_on_surface_variant</item>
+    </style>
+
+    <!-- Timestamps, badge text, bottom nav labels. The floor: never smaller. -->
+    <style name="TextAppearance.Mediconnect.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_medium</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_medium</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/md_on_surface_variant</item>
+    </style>
+
+    <!-- An uppercase eyebrow above a card or section. Sparingly. -->
+    <style name="TextAppearance.Mediconnect.Overline" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textColor">@color/md_on_surface_variant</item>
+    </style>
+
+    <!-- ==== Data ==========================================================
+         Tabular figures so a column of times or counts lines up and does not
+         jitter as the digits change.
+    -->
+
+    <!-- Stat cards and the patient's date badge. -->
+    <style name="TextAppearance.Mediconnect.Stat" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+
+    <!-- Big times in appointment cards and the schedule. -->
+    <style name="TextAppearance.Mediconnect.Time" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:textColor">@color/md_on_surface</item>
+    </style>
+</resources>

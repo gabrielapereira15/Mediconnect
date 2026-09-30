@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The health summary, laid out like a document rather than an app screen:
+    this is the thing a patient hands to someone, so it should look like
+    something worth handing over.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_background"
+    tools:context=".fragment.HealthSummaryFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:padding="@dimen/space_lg">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="1dp"
+                    app:strokeColor="@color/md_outline_variant"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/space_lg">
+
+                        <TextView
+                            android:id="@+id/tvName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.TitleLarge"
+                            tools:text="Gabriela Pereira" />
+
+                        <TextView
+                            android:id="@+id/tvGenerated"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                            tools:text="Generated 29 September 2026" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="@dimen/space_md"
+                            android:background="@color/md_outline_variant" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/health_allergies"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall" />
+
+                        <TextView
+                            android:id="@+id/tvAllergies"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_xs"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                            tools:text="• Penicillin — rash within an hour" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_md"
+                            android:text="@string/health_medications"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall" />
+
+                        <TextView
+                            android:id="@+id/tvMedications"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_xs"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                            tools:text="• Metformin 500mg — twice a day" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_md"
+                            android:text="@string/health_conditions"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall" />
+
+                        <TextView
+                            android:id="@+id/tvConditions"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_xs"
+                            android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                            tools:text="• Type 2 diabetes" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!--
+                    Says which standard this follows. It matters to a clinic
+                    receiving it, and it is the difference between a printout
+                    and something another system can actually ingest.
+                -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:text="@string/summary_standard"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnShare"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:text="@string/summary_share"
+                    app:icon="@drawable/ic_share" />
+
+                <!--
+                    The document itself, for a clinic rather than a person.
+                    Separate from Share because the two go to different
+                    kinds of recipient and only one of them can read FHIR.
+                -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnExport"
+                    style="@style/Widget.Mediconnect.Button.Tonal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:text="@string/summary_export"
+                    app:icon="@drawable/ic_download" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:text="@string/summary_export_hint"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall" />
+            </LinearLayout>
+
+            <com.example.mediconnect_android.view.StateView
+                android:id="@+id/stateView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+    </ScrollView>
+</FrameLayout>

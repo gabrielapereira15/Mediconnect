@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<!--
+    Appointments (board B03).
+
+    Every booking in the clinic, a tab at a time, with the selected one open
+    in the panel on the right. The panel is loaded with hx-get so the list
+    keeps its place; nothing on this page deletes a booking.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{nav.appointments}]]</title>
+</head>
+<body>
+<div layout:fragment="content" style="display: flex; flex-direction: column; gap: 20px; flex: 1 0 auto">
+
+    <div class="mc-page-head">
+        <div>
+            <h1 class="mc-page-title">[[#{nav.appointments}]]</h1>
+            <p class="mc-page-sub">[[#{appointments.sub}]]</p>
+        </div>
+        <a class="mc-btn mc-btn-outline mc-btn-md mc-btn-square" hx-boost="false"
+           th:href="@{/appointments/export.csv(tab=${filters.tab.key},q=${filters.query},doctor=${filters.doctorId},range=${filters.range.key},formPending=${filters.formPending})}">
+            <i class="mc-i mc-i-download" aria-hidden="true"></i>[[#{appointments.export}]]
+        </a>
+    </div>
+
+    <nav class="mc-tabs" th:aria-label="#{nav.appointments}">
+        <a th:each="t : ${tabs}" class="mc-tab"
+           th:classappend="${t == filters.tab} ? 'is-active'"
+           th:attr="aria-current=${t == filters.tab} ? 'page' : null"
+           th:href="@{/appointments(tab=${t.key},q=${filters.query},doctor=${filters.doctorId},range=${filters.range.key},formPending=${filters.formPending})}">
+            <span th:text="${t.label}">Upcoming</span>
+            <span class="mc-count" th:text="${page.count(t)}">128</span>
+        </a>
+    </nav>
+
+    <!-- Filters narrow every tab's count as well as the list. -->
+    <form class="mc-toolbar" th:action="@{/appointments}" method="get" role="search">
+        <input type="hidden" name="tab" th:value="${filters.tab.key}" />
+        <label class="mc-search mc-search-md" style="width: 240px; background: var(--surface); border-color: var(--line-strong)">
+            <i class="mc-i mc-i-search mc-i-20" aria-hidden="true"></i>
+            <input name="q" th:value="${filters.query}" th:placeholder="#{appointments.filter.patient}"
+                   th:aria-label="#{appointments.filter.patient}" />
+        </label>
+        <select class="mc-input mc-input-md" name="doctor" style="width: 200px"
+                th:aria-label="#{appointments.filter.doctor}" onchange="this.form.requestSubmit()">
+            <option value="" th:text="#{appointments.filter.anyDoctor}">Doctor: Any</option>
+            <option th:each="d : ${doctors}" th:value="${d.id}" th:selected="${d.id == filters.doctorId}"
+                    th:text="'Dr. ' + ${d.firstName} + ' ' + ${d.lastName}">Dr. Chase</option>
+        </select>
+        <select class="mc-input mc-input-md" name="range" style="width: 180px"
+                th:aria-label="#{appointments.filter.range}" onchange="this.form.requestSubmit()">
+            <option th:each="r : ${ranges}" th:value="${r.key}" th:selected="${r == filters.range}"
+                    th:text="${r.label}">Any time</option>
+        </select>
+        <label class="mc-chip mc-chip-sm" th:classappend="${filters.formPending} ? 'is-selected'" style="cursor: pointer">
+            <input type="checkbox" name="formPending" value="true" th:checked="${filters.formPending}"
+                   style="accent-color: var(--brand); margin: 0" onchange="this.form.requestSubmit()" />
+            [[#{appointments.filter.formPending}]]
+        </label>
+        <button type="submit" class="mc-btn mc-btn-outline mc-btn-sm mc-btn-square">[[#{appointments.filter.apply}]]</button>
+    </form>
+
+    <!-- Fills the window, but never shrinks below a usable height: a short
+         window scrolls the page instead of squeezing the list to nothing. -->
+    <div style="display: flex; gap: 16px; flex: 1; min-height: 480px">
+        <div class="mc-panel" style="flex: 1; min-width: 0; overflow: auto">
+            <table class="mc-table">
+                <thead>
+                <tr>
+                    <th>[[#{appointments.col.when}]]</th>
+                    <th>[[#{appointments.col.patient}]]</th>
+                    <th>[[#{appointments.col.doctor}]]</th>
+                    <th>[[#{appointments.col.status}]]</th>
+                    <th><span class="mc-sr">[[#{appointments.col.open}]]</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${page.rows}" data-clickable tabindex="0"
+                    th:classappend="${panel != null and panel.id == row.id} ? 'is-selected'"
+                    th:attr="hx-get=@{/appointments/{id}/panel(id=${row.id},back=${here})},aria-label=${row.day + ' ' + row.time + ', ' + row.patientName}"
+                    hx-target="#appointment-panel" hx-swap="innerHTML"
+                    hx-trigger="click, keyup[key=='Enter']">
+                    <td><b th:text="${row.day}">Wed 30 Sep</b>
+                        <div class="caption mc-muted" th:text="${row.time}">10:00 AM</div></td>
+                    <td>
+                        <div class="mc-cell-person">
+                            <span class="mc-avatar mc-avatar-sm" th:classappend="${row.avatarClass}"
+                                  th:text="${row.initials}" aria-hidden="true">GP</span>
+                            <div>
+                                <b th:text="${row.patientName}">Gabriela Pereira</b>
+                                <small th:if="${row.bookedForName != null}"
+                                       th:text="#{today.bookedFor(${row.bookedForName})}">For Sofia</small>
+                                <small th:unless="${row.bookedForName != null}"
+                                       th:text="${row.patientBirthdate}">1995-04-12</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td th:text="${row.doctorName}">Dr. Chase</td>
+                    <td><span class="mc-badge" th:classappend="${row.status.badgeClass}"
+                              th:text="${row.status.label}">Form pending</span></td>
+                    <td style="text-align: right"><i class="mc-i mc-i-chevron-right mc-subtle" aria-hidden="true"></i></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(page.rows)}">
+                    <td colspan="5" class="mc-table-empty" th:text="#{appointments.empty}">Nothing here.</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="mc-pager" th:if="${page.total > 0}">
+                <span class="caption mc-muted"
+                      th:text="#{appointments.showing(${page.from}, ${page.to}, ${page.total})}">1–20 of 128</span>
+                <div style="display: flex; gap: 4px">
+                    <a class="mc-icon-btn mc-icon-btn-sm" th:aria-label="#{appointments.previous}"
+                       th:attr="aria-disabled=${!page.hasPrevious()}"
+                       th:href="@{/appointments(tab=${filters.tab.key},q=${filters.query},doctor=${filters.doctorId},range=${filters.range.key},formPending=${filters.formPending},page=${page.page - 1})}">
+                        <i class="mc-i mc-i-chevron-left" aria-hidden="true"></i></a>
+                    <a class="mc-icon-btn mc-icon-btn-sm" th:aria-label="#{appointments.next}"
+                       th:attr="aria-disabled=${!page.hasNext()}"
+                       th:href="@{/appointments(tab=${filters.tab.key},q=${filters.query},doctor=${filters.doctorId},range=${filters.range.key},formPending=${filters.formPending},page=${page.page + 1})}">
+                        <i class="mc-i mc-i-chevron-right" aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <aside id="appointment-panel" class="mc-aside" style="width: 420px" aria-live="polite"
+               th:attr="data-empty=#{appointments.pick}"><th:block th:if="${panel != null}"><div
+                th:replace="~{appointments/panel :: panel}"></div></th:block></aside>
+    </div>
+</div>
+</body>
+</html>

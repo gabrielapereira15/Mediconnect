@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    A bookable time.
+
+    Three states a patient has to tell apart at a glance: the one they have
+    chosen, the ones they could choose, and the ones somebody else already
+    has. The taken state is flat and unbordered so it reads as a gap in the
+    day rather than a button that is refusing to work.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/radius_small" />
+            <solid android:color="@color/md_primary" />
+        </shape>
+    </item>
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/radius_small" />
+            <solid android:color="@color/md_surface_sunken" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/radius_small" />
+            <solid android:color="@color/md_surface" />
+            <stroke
+                android:width="@dimen/stroke_hairline"
+                android:color="@color/md_outline_variant" />
+        </shape>
+    </item>
+</selector>

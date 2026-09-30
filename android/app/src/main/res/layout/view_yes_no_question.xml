@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    A question with three answers (board P10, step 3).
+
+    Three rather than two: "prefer not to say" is a real answer to a
+    question about smoking or drinking, and a form that forces yes or no
+    collects a guess instead of a blank.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/space_xl"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/question_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+        tools:text="Have you had surgery in the last year?" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/answer_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/answer_yes"
+            style="@style/Widget.Mediconnect.Button.Segmented"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+            android:layout_weight="1"
+            android:text="@string/form_yes" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/answer_no"
+            style="@style/Widget.Mediconnect.Button.Segmented"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+            android:layout_weight="1"
+            android:text="@string/form_no" />
+
+        <!-- Wider than the other two, because its answer is longer and a
+             clipped "Prefer no…" is not an answer anyone can read. -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/answer_unsure"
+            style="@style/Widget.Mediconnect.Button.Segmented"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+            android:layout_weight="1.6"
+            android:paddingHorizontal="@dimen/space_xs"
+            android:text="@string/form_prefer_not" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+</LinearLayout>

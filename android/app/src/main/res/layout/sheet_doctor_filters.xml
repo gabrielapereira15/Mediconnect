@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Filters for Find a doctor (board P04, the sliders button).
+
+    The chips already narrow by specialty and "available today"; this holds
+    what does not fit on a chip: the order of the list, and whether doctors
+    with nothing free are worth showing at all.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/sheet_background"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/space_md"
+    android:paddingBottom="@dimen/space_2xl">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/sheet_handle" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:paddingHorizontal="@dimen/space_xl"
+        android:text="@string/doctors_filters_title"
+        android:textAppearance="@style/TextAppearance.Mediconnect.TitleLarge" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:paddingHorizontal="@dimen/space_xl"
+        android:text="@string/doctors_sort_title"
+        android:textAppearance="@style/TextAppearance.Mediconnect.Overline" />
+
+    <RadioGroup
+        android:id="@+id/sort_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:paddingHorizontal="@dimen/space_lg">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/sort_soonest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/doctors_sort_soonest"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/sort_rating"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/doctors_sort_rating"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/sort_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/doctors_sort_name"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge" />
+    </RadioGroup>
+
+    <include
+        android:id="@+id/only_free"
+        layout="@layout/view_switch_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/space_xl">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_reset"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="@dimen/control_lg"
+            android:text="@string/doctors_filters_reset" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_apply"
+            style="@style/Widget.Mediconnect.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_md"
+            android:layout_weight="2"
+            android:minHeight="@dimen/control_lg"
+            android:text="@string/doctors_filters_apply" />
+    </LinearLayout>
+</LinearLayout>

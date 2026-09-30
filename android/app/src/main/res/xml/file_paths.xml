@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The one folder the app shares files out of.
+
+    Exports are written here and handed to other apps through a content://
+    URI, so nothing else in the app's storage is ever exposed by sharing.
+-->
+<paths>
+    <cache-path
+        name="exports"
+        path="exports/" />
+</paths>

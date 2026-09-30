@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Find a doctor (board P04).
+
+    Search, filter chips, then a list sorted soonest-first. This screen also
+    absorbs the old separate "specialties" screen: choosing a specialty is a
+    filter here rather than a detour through a grid of clip-art.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_background"
+    tools:context=".fragment.DoctorsFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
+
+        <!-- ==== Search ============================================== -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/space_lg"
+            android:paddingTop="@dimen/space_md">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/search_layout"
+                style="@style/Widget.Material3.TextInputLayout.FilledBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:boxBackgroundColor="@color/md_surface_sunken"
+                app:boxCornerRadiusBottomEnd="@dimen/radius_pill"
+                app:boxCornerRadiusBottomStart="@dimen/radius_pill"
+                app:boxCornerRadiusTopEnd="@dimen/radius_pill"
+                app:boxCornerRadiusTopStart="@dimen/radius_pill"
+                app:endIconMode="clear_text"
+                app:hintEnabled="false"
+                app:startIconDrawable="@drawable/ic_search">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/search_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:minHeight="@dimen/control_lg"
+                    android:hint="@string/doctors_search_hint"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Sort order and "only doctors with free times". -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_filters"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                android:layout_width="@dimen/control_lg"
+                android:layout_height="@dimen/control_lg"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/space_sm"
+                android:contentDescription="@string/doctors_filters_title"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/ic_sliders"
+                app:iconSize="22dp"
+                app:shapeAppearance="@style/ShapeAppearance.Mediconnect.Medium" />
+        </LinearLayout>
+
+        <!-- ==== Filters ============================================= -->
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/space_lg"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/filter_chips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:chipSpacingHorizontal="@dimen/space_sm"
+                app:selectionRequired="true"
+                app:singleLine="true"
+                app:singleSelection="true" />
+        </HorizontalScrollView>
+
+        <TextView
+            android:id="@+id/result_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:paddingHorizontal="@dimen/space_lg"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+            tools:text="8 doctors · soonest first" />
+
+        <!-- ==== Results ============================================= -->
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="@dimen/space_md"
+                android:paddingBottom="@dimen/space_2xl"
+                tools:itemCount="3"
+                tools:listitem="@layout/doctor_list_item" />
+
+            <com.example.mediconnect_android.view.StateView
+                android:id="@+id/state_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>

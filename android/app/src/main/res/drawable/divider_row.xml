@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A hairline between rows in a card, inset to line up with the text. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="@dimen/space_lg"
+    android:insetRight="@dimen/space_lg">
+    <shape android:shape="rectangle">
+        <size android:height="1dp" />
+        <solid android:color="@color/md_outline_variant" />
+    </shape>
+</inset>

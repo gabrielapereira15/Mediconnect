@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The dot under a day that still has free times (board P05). White on the
+    selected chip, whose background is the brand colour the dot uses
+    everywhere else.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape android:shape="oval">
+            <solid android:color="@color/md_on_primary" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/md_primary" />
+        </shape>
+    </item>
+</selector>

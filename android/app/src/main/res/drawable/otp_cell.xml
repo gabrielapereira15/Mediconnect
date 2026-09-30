@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One passcode box.
+
+    Filled, waiting, or empty — the active one is outlined in brand so the
+    patient can see where the next digit lands without a caret to follow.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_activated="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/radius_medium" />
+            <solid android:color="@color/md_surface" />
+            <stroke
+                android:width="2dp"
+                android:color="@color/md_primary" />
+        </shape>
+    </item>
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/radius_medium" />
+            <solid android:color="@color/md_surface" />
+            <stroke
+                android:width="@dimen/stroke_hairline"
+                android:color="@color/md_outline" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/radius_medium" />
+            <solid android:color="@color/md_surface_sunken" />
+            <stroke
+                android:width="@dimen/stroke_hairline"
+                android:color="@color/md_outline_variant" />
+        </shape>
+    </item>
+</selector>

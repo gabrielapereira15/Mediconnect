@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<!--
+    Messages (board B07).
+
+    Sent on the left with how many have read each; the message being
+    written, or the one selected, in the middle; and on the right how it
+    will look in the patient's inbox. Plain text only, no links.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{nav.messages}]]</title>
+</head>
+<body>
+<div layout:fragment="content" style="display: flex; flex-direction: column; gap: 20px; flex: 1 0 auto">
+
+    <div class="mc-page-head">
+        <div>
+            <h1 class="mc-page-title">[[#{nav.messages}]]</h1>
+            <p class="mc-page-sub">[[#{messages.sub}]]</p>
+        </div>
+    </div>
+
+    <section style="display: grid; grid-template-columns: 340px minmax(0, 1fr) 320px; gap: 16px; flex: 1; min-height: 520px">
+
+        <!-- ==== Sent ========================================================= -->
+        <div class="mc-panel" style="overflow: auto">
+            <div class="mc-panel-head">
+                <h2 class="mc-panel-title">[[#{messages.sentTitle}]]</h2>
+                <a th:if="${canSend}" th:href="@{/messages}" class="mc-btn mc-btn-primary mc-btn-sm mc-btn-square">
+                    <i class="mc-i mc-i-plus" aria-hidden="true"></i>[[#{messages.new}]]</a>
+            </div>
+            <a th:each="line : ${sentList}" class="mc-row" style="align-items: flex-start"
+               th:href="@{/messages(selected=${line.id})}"
+               th:style="${line.id == selectedId} ? 'align-items: flex-start; background: var(--brand-soft)' : 'align-items: flex-start'"
+               th:attr="aria-current=${line.id == selectedId} ? 'true' : null">
+                <span class="mc-row-body">
+                    <span class="label" th:text="${line.draft} ? #{messages.draftPrefix(${line.title})} : ${line.title}">Flu shots available</span>
+                    <span th:if="${line.scheduled}" class="mc-badge mc-badge-sun" style="align-self: flex-start">[[#{messages.scheduledBadge}]]</span>
+                    <span class="caption mc-muted" th:text="${line.audience} + ' · ' + ${line.stats}">All patients · read by 64%</span>
+                </span>
+                <span class="caption mc-subtle" th:text="${line.when}">Sep 28</span>
+            </a>
+            <p th:if="${#lists.isEmpty(sentList)}" class="body-sm mc-muted" style="margin: 0; padding: 16px 20px">[[#{messages.none}]]</p>
+        </div>
+
+        <!-- ==== A sent message =============================================== -->
+        <div th:if="${sent != null}" class="mc-panel">
+            <div class="mc-panel-head">
+                <h2 class="mc-panel-title" th:text="${sent.title}">Flu shots available</h2>
+                <span class="caption mc-muted" th:text="${sent.when}">Mon 28 Sep, 9:00 AM</span>
+            </div>
+            <div class="mc-panel-body" style="display: flex; flex-direction: column; gap: 18px">
+                <div th:if="${sent.withdrawn}" class="mc-banner mc-banner-warning">
+                    <i class="mc-i mc-i-info" aria-hidden="true"></i><div>[[#{messages.isWithdrawn}]]</div></div>
+                <div th:if="${sent.scheduled and !sent.withdrawn}" class="mc-banner mc-banner-sun">
+                    <i class="mc-i mc-i-clock" aria-hidden="true"></i>
+                    <div th:text="#{messages.scheduledFor(${sent.when}, ${sent.audience})}">Goes out Thu 1 Oct, 9:00 AM.</div></div>
+                <dl class="mc-kv" th:unless="${sent.scheduled}">
+                    <dt>[[#{messages.sentTo}]]</dt><dd th:text="${sent.audience}">All patients</dd>
+                    <dt>[[#{messages.delivered}]]</dt><dd th:text="${sent.delivered}">26</dd>
+                    <dt>[[#{messages.read}]]</dt><dd th:text="${sent.read} + ' (' + ${sent.percentRead} + '%)'">21 (81%)</dd>
+                </dl>
+                <div class="mc-progress" th:unless="${sent.scheduled}"><span th:style="'width: ' + ${sent.percentRead} + '%'"></span></div>
+                <p class="body-md" style="margin: 0; white-space: pre-line" th:text="${sent.message}">Walk-in flu vaccinations…</p>
+            </div>
+            <div class="mc-sheetpanel-foot" th:if="${canSend and !sent.withdrawn and !sent.scheduled}">
+                <form th:action="@{/messages/{id}/withdraw(id=${sent.id})}" method="post">
+                    <button type="submit" class="mc-btn mc-btn-danger-ghost mc-btn-md">[[#{messages.withdraw}]]</button>
+                </form>
+                <span class="mc-help">[[#{messages.withdraw.help}]]</span>
+            </div>
+            <div class="mc-sheetpanel-foot" th:if="${canSend and !sent.withdrawn and sent.scheduled}">
+                <div class="mc-btnrow">
+                    <form th:action="@{/messages/{id}/unschedule(id=${sent.id})}" method="post">
+                        <button type="submit" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">
+                            <i class="mc-i mc-i-edit" aria-hidden="true"></i>[[#{messages.editScheduled}]]</button>
+                    </form>
+                    <form th:action="@{/messages/{id}/withdraw(id=${sent.id})}" method="post">
+                        <button type="submit" class="mc-btn mc-btn-danger-ghost mc-btn-md">[[#{messages.cancelScheduled}]]</button>
+                    </form>
+                </div>
+                <span class="mc-help">[[#{messages.editScheduled.help}]]</span>
+            </div>
+        </div>
+
+        <!-- ==== Writing one ================================================== -->
+        <form th:if="${draft != null}" class="mc-panel" th:action="@{/messages}" method="post" id="compose">
+            <input type="hidden" name="id" th:value="${draft.id}" />
+            <div class="mc-panel-head">
+                <h2 class="mc-panel-title" th:text="${draft.id != null} ? #{messages.editDraft} : #{messages.newTitle}">New message</h2>
+                <span class="caption mc-muted" th:if="${draft.id != null}">[[#{messages.savedAsDraft}]]</span>
+            </div>
+            <fieldset class="mc-panel-body" th:disabled="${!canSend}"
+                      style="display: flex; flex-direction: column; gap: 18px; flex: 1; border: 0; margin: 0">
+                <div class="mc-field">
+                    <span class="mc-label" id="audience-label">[[#{messages.sendTo}]]</span>
+                    <div style="display: flex; flex-direction: column; gap: 8px" role="radiogroup" aria-labelledby="audience-label"
+                         th:attr="hx-get=@{/messages/reach}" hx-trigger="change" hx-target="#reach" hx-include="#compose">
+                        <label class="mc-choice" style="min-height: 52px; padding: 12px 16px">
+                            <input type="radio" name="audience" value="all" th:checked="${draft.audience.key == 'all'}" />
+                            <div><div class="mc-choice-title" style="font-size: 15px">[[#{messages.audience.all}]]</div>
+                                <div class="mc-choice-sub" style="font-size: 13px">[[#{messages.audience.allSub}]]</div></div>
+                        </label>
+                        <label class="mc-choice" style="min-height: 52px; padding: 12px 16px; flex-wrap: wrap">
+                            <input type="radio" name="audience" value="doctor" th:checked="${draft.audience.key == 'doctor'}" />
+                            <div class="mc-choice-title" style="font-size: 15px; flex: 1">[[#{messages.audience.doctor}]]</div>
+                            <select class="mc-input mc-input-md" name="doctorId" style="width: 220px" th:aria-label="#{messages.audience.doctor}">
+                                <option value="" th:text="#{appointments.new.chooseDoctor}">Choose a doctor</option>
+                                <option th:each="d : ${doctors}" th:value="${d.key}" th:selected="${d.key == draft.doctorId}"
+                                        th:text="${d.value}">Dr. Robert Chase</option>
+                            </select>
+                        </label>
+                        <label class="mc-choice" style="min-height: 52px; padding: 12px 16px; flex-wrap: wrap">
+                            <input type="radio" name="audience" value="day" th:checked="${draft.audience.key == 'day'}" />
+                            <div class="mc-choice-title" style="font-size: 15px; flex: 1">[[#{messages.audience.day}]]</div>
+                            <input class="mc-input mc-input-md" type="date" name="day" style="width: 180px; padding: 0 8px"
+                                   th:value="${draft.day}" th:aria-label="#{messages.audience.day}" />
+                        </label>
+                    </div>
+                </div>
+                <div class="mc-field">
+                    <label class="mc-label" for="title">[[#{messages.title}]]</label>
+                    <input class="mc-input mc-input-md" id="title" name="title" th:maxlength="${titleMax}"
+                           th:value="${draft.title}" data-preview="title" required />
+                </div>
+                <div class="mc-field" style="flex: 1">
+                    <label class="mc-label" for="message">[[#{messages.message}]]</label>
+                    <textarea class="mc-input" id="message" name="message" th:maxlength="${messageMax}"
+                              style="flex: 1; font-size: 14px; min-height: 140px" data-preview="message"
+                              aria-describedby="message-help" required th:text="${draft.message}"></textarea>
+                    <span class="mc-help" id="message-help"><span data-count>0</span> / [[${messageMax}]] [[#{messages.plainText}]]</span>
+                </div>
+            </fieldset>
+            <div class="mc-sheetpanel-foot" th:if="${canSend}">
+                <div style="display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap">
+                    <button type="submit" name="action" value="draft" formnovalidate
+                            class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">[[#{messages.saveDraft}]]</button>
+                    <button type="submit" name="action" value="send" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">
+                        <i class="mc-i mc-i-send" aria-hidden="true"></i>[[#{messages.send}]]</button>
+                </div>
+                <!-- "Schedule…" opens a time in place; the message goes out then, to the group as it stands then. -->
+                <details class="mc-disclosure mc-schedule" th:open="${sendAt != null}">
+                    <summary class="mc-btn mc-btn-ghost mc-btn-sm">
+                        <i class="mc-i mc-i-clock" aria-hidden="true"></i>[[#{messages.scheduleEllipsis}]]</summary>
+                    <div style="display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; justify-content: flex-end">
+                        <div class="mc-field">
+                            <label class="mc-label" for="sendAt">[[#{messages.sendAt}]]</label>
+                            <input class="mc-input mc-input-md" type="datetime-local" id="sendAt" name="sendAt"
+                                   th:value="${sendAt}" style="padding: 0 8px"
+                                   aria-describedby="sendAt-help" />
+                        </div>
+                        <button type="submit" name="action" value="schedule" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">
+                            [[#{messages.schedule}]]</button>
+                    </div>
+                    <span class="mc-help" id="sendAt-help" style="display: block; text-align: right; margin-top: 6px">[[#{messages.schedule.help}]]</span>
+                </details>
+                <span id="reach" class="mc-help" style="text-align: right" aria-live="polite">
+                    <span th:fragment="reach" th:if="${reach != null}"
+                          th:text="#{messages.reach(${reach})}">Reaches 26 patients.</span>
+                </span>
+            </div>
+            <div th:if="${canSend and draft.id != null}" style="padding: 0 24px 16px; text-align: right">
+                <button type="submit" class="mc-btn mc-btn-ghost mc-btn-sm" formnovalidate
+                        th:formaction="@{/messages/{id}/withdraw(id=${draft.id})}">[[#{messages.discardDraft}]]</button>
+            </div>
+        </form>
+
+        <!-- ==== Preview ====================================================== -->
+        <div class="mc-panel" style="background: var(--surface-sunken)">
+            <div class="mc-panel-head" style="background: var(--surface)">
+                <h2 class="mc-panel-title">[[#{messages.preview}]]</h2>
+                <span class="caption mc-muted">[[#{messages.previewSub}]]</span>
+            </div>
+            <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px">
+                <div class="mc" aria-hidden="true"
+                     style="border-radius: 28px; background: var(--canvas); padding: 16px 12px; box-shadow: var(--shadow-2); display: flex; flex-direction: column; gap: 10px; border: 6px solid var(--ink)">
+                    <span class="mc-overline" style="padding: 0 4px">[[#{messages.previewToday}]]</span>
+                    <div class="mc-card" style="display: flex; gap: 10px; padding: 12px">
+                        <span class="mc-row-lead" style="width: 34px; height: 34px"><i class="mc-i mc-i-megaphone mc-i-20" aria-hidden="true"></i></span>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                            <div style="display: flex; justify-content: space-between; gap: 6px">
+                                <span class="label" id="preview-title" style="overflow-wrap: anywhere"
+                                      th:text="${sent != null} ? ${sent.title} : ${draft.title}">Title</span>
+                                <span class="caption mc-subtle">[[#{messages.previewNow}]]</span></div>
+                            <span class="caption mc-muted" id="preview-message" style="font-size: 12px; line-height: 17px; white-space: pre-line; overflow-wrap: anywhere"
+                                  th:text="${sent != null} ? ${sent.message} : ${draft.message}">Message</span>
+                        </div>
+                    </div>
+                    <div class="mc-card" style="display: flex; gap: 10px; padding: 12px; opacity: .6">
+                        <span class="mc-row-lead" style="width: 34px; height: 34px"><i class="mc-i mc-i-clock mc-i-20" aria-hidden="true"></i></span>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 6px"><div class="mc-skel" style="height: 10px; width: 60%"></div><div class="mc-skel" style="height: 8px; width: 90%"></div></div>
+                    </div>
+                </div>
+                <span class="caption mc-muted">[[#{messages.previewHelp}]]</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Keeps the preview and the character count in step with typing. -->
+    <script>
+        (function () {
+            const form = document.getElementById('compose');
+            if (!form) {
+                return;
+            }
+            const title = form.querySelector('[data-preview="title"]');
+            const message = form.querySelector('[data-preview="message"]');
+            const count = form.querySelector('[data-count]');
+            const previewTitle = document.getElementById('preview-title');
+            const previewMessage = document.getElementById('preview-message');
+            function update() {
+                previewTitle.textContent = title.value || '—';
+                previewMessage.textContent = message.value || '—';
+                count.textContent = message.value.length;
+            }
+            title.addEventListener('input', update);
+            message.addEventListener('input', update);
+            update();
+        })();
+    </script>
+</div>
+</body>
+</html>

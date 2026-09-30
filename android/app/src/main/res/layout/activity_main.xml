@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The shell every top-level screen sits in: app bar, content, bottom
+    navigation.
+
+    The DrawerLayout is gone. It held Profile, Forms, Settings and Logout
+    behind a hamburger, which meant the health record was three taps deep and
+    the way out of the app was somewhere a patient had to go looking. Those
+    destinations are now either a tab or a row inside one, so the drawer had
+    nothing left to hold.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_background"
+    tools:context=".activity.MainActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/materialToolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/TextAppearance.Mediconnect.TitleLarge">
+
+        <!--
+            The bell, with its unread dot. A frame rather than a menu item so
+            the dot can sit on the icon's corner; the touch target is padded
+            out to 48dp, which the icon alone is not.
+        -->
+        <FrameLayout
+            android:id="@+id/notificationIcon"
+            android:layout_width="@dimen/touch_target"
+            android:layout_height="@dimen/touch_target"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/space_sm"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/cd_notifications"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_bell"
+                app:tint="@color/md_on_surface" />
+
+            <View
+                android:id="@+id/notificationBadge"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/circle_red"
+                android:visibility="gone" />
+        </FrameLayout>
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <!--
+        Sample data is never passed off as the clinic's. The banner belongs
+        to the shell rather than to each screen, because the server can go
+        away on any of them.
+    -->
+    <LinearLayout
+        android:id="@+id/demoBanner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/md_rating_container"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/space_lg"
+        android:paddingVertical="@dimen/space_sm"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/materialToolbar"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="@dimen/icon_size_small"
+            android:layout_height="@dimen/icon_size_small"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_info"
+            app:tint="@color/md_on_rating_container" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_sm"
+            android:layout_weight="1"
+            android:text="@string/demo_mode_banner"
+            android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+            android:textColor="@color/md_on_rating_container" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/flFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/demoBanner" />
+
+    <!--
+        labelVisibilityMode is set because Material hides the inactive
+        labels once there are four items, and an unlabelled icon is a guess.
+    -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bottom_background"
+        app:itemIconTint="@color/nav_item_color"
+        app:itemTextColor="@color/nav_item_color"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

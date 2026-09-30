@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Pre-appointment form (board P10).
+
+    Four questions, one at a time, with a progress bar that says how far
+    through it is. The form it replaces put every question on one long
+    scroll and ended in a dialog saying it had been submitted, which was not
+    true of anything: nothing was sent anywhere.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_surface"
+    tools:context=".fragment.PreAppointmentFormFragment">
+
+    <LinearLayout
+        android:id="@+id/progress_block"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/space_xl"
+        android:paddingTop="@dimen/space_sm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!--
+            Which visit this form is for. Hidden until FormVisitLine has a
+            doctor to name, so a visit it cannot find is not guessed at.
+        -->
+        <TextView
+            android:id="@+id/visit_line"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/space_sm"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+            android:textColor="@color/md_on_surface_variant"
+            android:visibility="gone"
+            tools:text="For your visit with Dr. Robert Chase · Thu 8 Oct, 10:00 AM"
+            tools:visibility="visible" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:indicatorColor="@color/md_primary"
+            app:trackColor="@color/md_surface_sunken"
+            app:trackCornerRadius="@dimen/radius_pill"
+            app:trackThickness="6dp"
+            tools:progress="50" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/step_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                android:textColor="@color/md_on_surface_variant"
+                tools:text="Step 2 of 4 · Symptoms" />
+
+            <TextView
+                android:id="@+id/draft_saved"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/form_draft_saved"
+                android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+                android:textColor="@color/md_on_surface_variant"
+                android:visibility="invisible"
+                tools:visibility="visible" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/space_xl"
+        android:paddingTop="@dimen/space_xl"
+        android:paddingBottom="@dimen/space_lg"
+        app:layout_constraintBottom_toTopOf="@id/footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progress_block">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Mediconnect.Headline"
+                tools:text="Have you had any of these recently?" />
+
+            <TextView
+                android:id="@+id/question_help"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                android:textColor="@color/md_on_surface_variant"
+                tools:text="Select all that apply." />
+
+            <!-- Step 1 and step 4: a box to write in. -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/text_answer_layout"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:visibility="gone"
+                app:counterEnabled="true"
+                app:counterMaxLength="500"
+                app:hintEnabled="false"
+                tools:visibility="visible">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/text_answer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top|start"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:maxLength="500"
+                    android:minHeight="120dp"
+                    android:paddingVertical="@dimen/space_md" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Step 2: symptoms, and step 3: three yes/no questions. -->
+            <LinearLayout
+                android:id="@+id/answers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:orientation="vertical" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/md_surface"
+        android:elevation="@dimen/elevation_sheet"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/space_xl"
+        android:paddingVertical="@dimen/space_md"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_back"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+            android:layout_weight="1"
+            android:text="@string/form_back" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_next"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+            android:layout_marginStart="@dimen/space_md"
+            android:layout_weight="2"
+            android:text="@string/form_next" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

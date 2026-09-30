@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One entry on the health record (board P12).
+
+    The leading tile carries the kind, so the row does not have to spell it
+    out in words the section heading has already said. An entry that is no
+    longer current stays on the record and says so: a reaction someone had
+    five years ago still matters to whoever treats them next.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/entry_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/touch_target"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/space_lg"
+    android:paddingVertical="@dimen/space_md">
+
+    <ImageView
+        android:id="@+id/entry_icon"
+        android:layout_width="@dimen/control_md"
+        android:layout_height="@dimen/control_md"
+        android:background="@drawable/tile_danger_soft"
+        android:contentDescription="@null"
+        android:padding="@dimen/space_sm"
+        android:src="@drawable/ic_alert"
+        app:tint="@color/md_error" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_md"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/entry_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall"
+            tools:text="Penicillin" />
+
+        <TextView
+            android:id="@+id/entry_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+            tools:text="Rash and swelling within an hour of the first dose." />
+
+        <TextView
+            android:id="@+id/entry_inactive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:background="@drawable/badge_neutral"
+            android:paddingHorizontal="@dimen/space_sm"
+            android:paddingVertical="2dp"
+            android:text="@string/health_no_longer_current"
+            android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
+            android:textColor="@color/md_on_surface_variant"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/entry_chevron"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_chevron_right"
+        app:tint="@color/md_on_surface_subtle" />
+</LinearLayout>

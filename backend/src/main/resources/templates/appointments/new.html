@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!--
+    Booking from the desk (the top bar's "New appointment", and "Book a
+    patient into this slot" from the schedule and the waitlist).
+
+    Patient, then the time. Opened from a slot, the time is already chosen;
+    otherwise picking a doctor loads that doctor's free times in place.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{appointment.new}]]</title>
+</head>
+<body>
+<div layout:fragment="content" style="display: flex; flex-direction: column; gap: 20px">
+
+    <div class="mc-page-head">
+        <div>
+            <h1 class="mc-page-title">[[#{appointment.new}]]</h1>
+            <p class="mc-page-sub">[[#{appointments.new.sub}]]</p>
+        </div>
+        <a th:href="@{/appointments}" class="mc-btn mc-btn-ghost mc-btn-md">[[#{appointments.new.back}]]</a>
+    </div>
+
+    <form th:action="@{/appointments/new}" method="post" class="mc-panel"
+          style="max-width: 720px; padding: 24px; display: flex; flex-direction: column; gap: 20px">
+
+        <div class="mc-field">
+            <label class="mc-label" for="patientId">[[#{appointments.new.patient}]]</label>
+            <select class="mc-input" id="patientId" name="patientId" required>
+                <option value="" th:text="#{appointments.new.choosePatient}">Choose a patient</option>
+                <option th:each="p : ${patients}" th:value="${p.id}" th:selected="${p.id == selectedPatient}"
+                        th:text="${p.firstName} + ' ' + ${p.lastName} + (${p.birthdate} != null ? ' · ' + ${p.birthdate} : '')">Gabriela Pereira</option>
+            </select>
+        </div>
+
+        <th:block th:if="${fixedSlot != null}">
+            <input type="hidden" name="slotId" th:value="${fixedSlot}" />
+            <div class="mc-field">
+                <span class="mc-label">[[#{appointments.new.time}]]</span>
+                <div class="mc-banner"><i class="mc-i mc-i-calendar" aria-hidden="true"></i>
+                    <div th:text="${fixedSlotLabel}">Dr. Chase · Tue 29 Sep, 10:30 AM</div></div>
+            </div>
+        </th:block>
+
+        <th:block th:unless="${fixedSlot != null}">
+            <div class="mc-field">
+                <label class="mc-label" for="doctor">[[#{appointments.new.doctor}]]</label>
+                <select class="mc-input" id="doctor" name="doctor"
+                        th:attr="hx-get=@{/appointments/new/slots}" hx-target="#slot-choices"
+                        hx-trigger="change" hx-swap="innerHTML">
+                    <option value="" th:text="#{appointments.new.chooseDoctor}">Choose a doctor</option>
+                    <option th:each="d : ${doctors}" th:value="${d.id}" th:selected="${d.id == selectedDoctor}"
+                            th:text="'Dr. ' + ${d.firstName} + ' ' + ${d.lastName} + ' · ' + ${d.specialty}">Dr. Chase</option>
+                </select>
+            </div>
+
+            <fieldset class="mc-field" style="border: 0; margin: 0; padding: 0">
+                <legend class="mc-label" style="padding: 0 0 6px">[[#{appointments.new.time}]]</legend>
+                <div id="slot-choices" aria-live="polite">
+                    <div th:fragment="slots" style="display: flex; flex-direction: column; gap: 14px">
+                        <th:block th:if="${slotsByDay != null}">
+                            <div th:each="day : ${slotsByDay}" style="display: flex; flex-direction: column; gap: 8px">
+                                <span class="mc-overline" th:text="${day.key}">Thu 1 Oct</span>
+                                <div class="mc-slotpick">
+                                    <label th:each="slot : ${day.value}">
+                                        <input type="radio" name="slotId" th:value="${slot.id}" required />
+                                        <span th:text="${slot.time}">9:00 AM</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <p th:if="${#maps.isEmpty(slotsByDay)}" class="body-sm mc-muted" style="margin: 0">
+                                [[#{appointments.reschedule.none}]]</p>
+                        </th:block>
+                        <p th:if="${slotsByDay == null}" class="body-sm mc-muted" style="margin: 0">
+                            [[#{appointments.new.pickDoctorFirst}]]</p>
+                    </div>
+                </div>
+            </fieldset>
+        </th:block>
+
+        <div class="mc-field">
+            <label class="mc-label" for="note">[[#{appointments.new.note}]] <span class="mc-label-opt">[[#{appointments.new.optional}]]</span></label>
+            <textarea class="mc-input" id="note" name="note" maxlength="500" style="min-height: 88px"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px">
+            <a th:href="@{/appointments}" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">[[#{appointments.new.cancel}]]</a>
+            <button type="submit" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">[[#{appointments.new.book}]]</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

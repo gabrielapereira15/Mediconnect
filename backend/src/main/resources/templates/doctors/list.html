@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!--
+    Doctors & availability (board B06).
+
+    A card per doctor with how full this week is; the selected one opens
+    in the panel on the right with its profile, usual week and reviews.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{nav.doctors}]]</title>
+</head>
+<body>
+<div layout:fragment="content" style="display: flex; flex-direction: column; gap: 20px; flex: 1 0 auto">
+
+    <div class="mc-page-head">
+        <div>
+            <h1 class="mc-page-title">[[#{nav.doctors}]]</h1>
+            <p class="mc-page-sub" th:text="#{doctors.sub(${#lists.size(cards)})}">8 doctors</p>
+        </div>
+        <a th:if="${staff == null or staff.canManageAppointments()}" th:href="@{/doctors/new}"
+           class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">
+            <i class="mc-i mc-i-plus" aria-hidden="true"></i>[[#{doctors.add}]]</a>
+    </div>
+
+    <div style="display: flex; gap: 16px; flex: 1; min-height: 480px">
+        <section style="flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; align-content: start">
+            <button th:each="card : ${cards}" type="button" class="mc-panel"
+                    th:classappend="${profile != null and profile.id == card.id} ? 'is-selected'"
+                    th:attr="hx-get=@{/doctors/{id}/panel(id=${card.id})},aria-label=${card.name + ', ' + card.specialty + ', ' + card.percentBooked + '% booked this week'}"
+                    hx-target="#doctor-panel" hx-swap="innerHTML"
+                    style="padding: 16px; flex-direction: row; gap: 12px; align-items: center; text-align: left; font: inherit; color: inherit; cursor: pointer">
+                <img th:if="${card.hasPhoto}" th:src="@{/api/mobile/doctors/photo/{id}(id=${card.id})}" alt=""
+                     class="mc-avatar mc-avatar-lg" style="object-fit: cover" />
+                <span th:unless="${card.hasPhoto}" class="mc-avatar mc-avatar-lg" th:classappend="${card.avatarClass}"
+                      th:text="${card.initials}" aria-hidden="true">RC</span>
+                <div style="flex: 1; min-width: 0">
+                    <div class="title-sm" th:text="${card.name}">Dr. Robert Chase</div>
+                    <div class="caption mc-muted"
+                         th:text="${card.specialty} + (${card.experience} != null ? ' · ' + ${card.experience} + ' yrs' : '')">Surgeon · 12 yrs</div>
+                    <div class="caption" style="margin-top: 6px">
+                        <b th:text="${card.percentBooked} + '%'">93%</b>
+                        <span class="mc-muted">[[#{doctors.bookedThisWeek}]]</span></div>
+                    <div class="mc-progress" style="margin-top: 6px"><span th:style="'width: ' + ${card.percentBooked} + '%'"></span></div>
+                </div>
+            </button>
+        </section>
+
+        <aside id="doctor-panel" class="mc-aside" style="width: 460px" aria-live="polite"
+               th:attr="data-empty=#{doctors.pick}"><th:block th:if="${profile != null}"><div
+                th:replace="~{doctors/panel :: panel}"></div></th:block></aside>
+    </div>
+</div>
+</body>
+</html>

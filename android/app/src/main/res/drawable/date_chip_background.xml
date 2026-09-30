@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A day in the strip: chosen, choosable, or fully booked. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/radius_medium" />
+            <solid android:color="@color/md_primary" />
+        </shape>
+    </item>
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/radius_medium" />
+            <solid android:color="@color/md_surface_sunken" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/radius_medium" />
+            <solid android:color="@color/md_surface" />
+            <stroke
+                android:width="@dimen/stroke_hairline"
+                android:color="@color/md_outline_variant" />
+        </shape>
+    </item>
+</selector>

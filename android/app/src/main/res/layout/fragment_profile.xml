@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Profile (board P14).
+
+    Who the clinic thinks you are, how the app behaves, and what you can do
+    with your own data — in that order, because that is the order a patient
+    asks them in. Settings and Sign out used to live behind a hamburger;
+    they belong here, where someone would look for them.
+-->
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_background"
+    tools:context=".fragment.ProfileFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/space_2xl">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/space_md">
+
+            <!-- ==== Who you are ================================== -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_lg">
+
+                <FrameLayout
+                    android:layout_width="64dp"
+                    android:layout_height="64dp">
+
+                    <TextView
+                        android:id="@+id/profileInitials"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/avatar_brand_soft"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.TitleLarge"
+                        android:textColor="@color/md_on_primary_container"
+                        tools:text="GP" />
+
+                    <ImageView
+                        android:id="@+id/profileImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/avatar_brand_soft"
+                        android:contentDescription="@null"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        tools:ignore="ImageContrastCheck" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_lg"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvFirstName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.TitleLarge"
+                        tools:text="Gabriela Pereira" />
+
+                    <TextView
+                        android:id="@+id/tvEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                        tools:text="demo@mediconnect.ca" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEditProfile"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/control_md"
+                    android:paddingHorizontal="@dimen/space_md"
+                    android:text="@string/profile_edit"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                    app:icon="@drawable/ic_edit"
+                    app:iconSize="18dp" />
+            </LinearLayout>
+
+            <!-- ==== Personal details ============================= -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:text="@string/profile_personal"
+                android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_sm"
+                app:cardCornerRadius="@dimen/radius_large"
+                app:cardElevation="@dimen/elevation_card"
+                app:strokeColor="@color/md_outline_variant"
+                app:strokeWidth="@dimen/stroke_hairline">
+
+                <LinearLayout
+                    android:id="@+id/detailRows"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ==== Preferences ================================== -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:text="@string/profile_preferences"
+                android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_sm"
+                app:cardCornerRadius="@dimen/radius_large"
+                app:cardElevation="@dimen/elevation_card"
+                app:strokeColor="@color/md_outline_variant"
+                app:strokeWidth="@dimen/stroke_hairline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_lg">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/control_md"
+                            android:layout_height="@dimen/control_md"
+                            android:background="@drawable/tile_brand_soft"
+                            android:contentDescription="@null"
+                            android:padding="@dimen/space_sm"
+                            android:src="@drawable/ic_moon"
+                            app:tint="@color/md_on_primary_container" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_md"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/profile_appearance"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.TitleSmall" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/profile_appearance_body"
+                                android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:scrollbars="none">
+
+                        <com.google.android.material.button.MaterialButtonToggleGroup
+                            android:id="@+id/themeToggle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:selectionRequired="true"
+                            app:singleSelection="true">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/themeLight"
+                                style="@style/Widget.Mediconnect.Button.Segmented"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:minWidth="96dp"
+                                android:minHeight="@dimen/control_lg"
+                                android:text="@string/profile_theme_light"
+                                app:icon="@drawable/ic_sun"
+                                app:iconSize="16dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/themeDark"
+                                style="@style/Widget.Mediconnect.Button.Segmented"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:minWidth="96dp"
+                                android:minHeight="@dimen/control_lg"
+                                android:text="@string/profile_theme_dark"
+                                app:icon="@drawable/ic_moon"
+                                app:iconSize="16dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/themeSystem"
+                                style="@style/Widget.Mediconnect.Button.Segmented"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:minWidth="96dp"
+                                android:minHeight="@dimen/control_lg"
+                                android:text="@string/profile_theme_system" />
+                        </com.google.android.material.button.MaterialButtonToggleGroup>
+                    </HorizontalScrollView>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_md"
+                app:cardCornerRadius="@dimen/radius_large"
+                app:cardElevation="@dimen/elevation_card"
+                app:strokeColor="@color/md_outline_variant"
+                app:strokeWidth="@dimen/stroke_hairline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <include
+                        android:id="@+id/switchReminders"
+                        layout="@layout/view_switch_row" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/stroke_hairline"
+                        android:background="@color/md_outline_variant" />
+
+                    <include
+                        android:id="@+id/switchOffers"
+                        layout="@layout/view_switch_row" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ==== Your data ==================================== -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:text="@string/profile_your_data"
+                android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_sm"
+                app:cardCornerRadius="@dimen/radius_large"
+                app:cardElevation="@dimen/elevation_card"
+                app:strokeColor="@color/md_outline_variant"
+                app:strokeWidth="@dimen/stroke_hairline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <include
+                        android:id="@+id/rowHealthRecord"
+                        layout="@layout/view_visit_row" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/stroke_hairline"
+                        android:background="@color/md_outline_variant" />
+
+                    <include
+                        android:id="@+id/rowSummary"
+                        layout="@layout/view_visit_row" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/stroke_hairline"
+                        android:background="@color/md_outline_variant" />
+
+                    <include
+                        android:id="@+id/rowPrivacy"
+                        layout="@layout/view_visit_row" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSignOut"
+                style="@style/Widget.Mediconnect.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/space_xl"
+                android:minHeight="@dimen/touch_target"
+                android:text="@string/profile_sign_out"
+                android:textColor="@color/md_error"
+                app:icon="@drawable/ic_logout"
+                app:iconTint="@color/md_error"
+                app:rippleColor="@color/md_error_container" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
