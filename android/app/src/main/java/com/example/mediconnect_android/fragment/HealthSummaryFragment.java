@@ -16,6 +16,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.client.ApiException;
 import com.example.mediconnect_android.client.HealthClient;
 import com.example.mediconnect_android.client.HealthClientImpl;
 import com.example.mediconnect_android.client.PatientClientImpl;
@@ -232,7 +233,7 @@ public class HealthSummaryFragment extends Fragment {
         Context context = requireContext().getApplicationContext();
         Background.run(
                 () -> {
-                    String document = healthClient.getSummaryDocument(patientId());
+                    String document = summaryDocument();
                     try (OutputStream out = context.getContentResolver().openOutputStream(destination)) {
                         if (out == null) {
                             throw new IOException("Could not open the chosen file");
@@ -321,7 +322,7 @@ public class HealthSummaryFragment extends Fragment {
         binding.btnExport.setEnabled(false);
         Background.run(
                 () -> {
-                    String document = healthClient.getSummaryDocument(patientId());
+                    String document = summaryDocument();
                     return writeToCache(document);
                 },
                 file -> {
@@ -338,6 +339,27 @@ public class HealthSummaryFragment extends Fragment {
                     binding.btnExport.setEnabled(true);
                     DialogUtils.showMessageDialog(getContext(), getString(R.string.error_no_server));
                 });
+    }
+
+    /**
+     * The PS-CA document, asked for by this patient's id.
+     *
+     * The stored id can be out of date — the demo server reseeds with new
+     * ids every time it restarts — and a stale one is refused as somebody
+     * else's. So a refusal forgets it and asks once more with a fresh one,
+     * rather than failing until the patient signs out and in again.
+     */
+    private String summaryDocument() {
+        try {
+            return healthClient.getSummaryDocument(patientId());
+        } catch (ApiException e) {
+            if (e.getStatus() != 403 && e.getStatus() != 404) {
+                throw e;
+            }
+            requireContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+                    .edit().remove("patient_id").commit();
+            return healthClient.getSummaryDocument(patientId());
+        }
     }
 
     /**
