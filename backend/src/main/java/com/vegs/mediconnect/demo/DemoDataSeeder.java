@@ -45,6 +45,12 @@ import java.util.List;
  * Runs only when {@code mediconnect.demo-data.enabled} is true (the default
  * outside the production profile) and only when there are no doctors yet, so
  * restarting against a real Postgres never duplicates rows.
+ *
+ * The demo back-office logins are a separate switch,
+ * {@code mediconnect.demo-data.staff-accounts}, which only the in-memory H2
+ * setup turns on. Their password is public, so they must never reach a
+ * database anyone relies on; a real clinic creates its first account with
+ * {@code STAFF_BOOTSTRAP_*} instead (see StaffBootstrap).
  */
 @Component
 @RequiredArgsConstructor
@@ -85,6 +91,7 @@ public class DemoDataSeeder implements ApplicationRunner {
     private final com.vegs.mediconnect.datasource.waitlist.WaitlistEntryRepository waitlistEntryRepository;
     private final com.vegs.mediconnect.mobile.waitlist.WaitlistService waitlistService;
     private final PasswordEncoder passwordEncoder;
+    private final DemoDataProperties properties;
 
     @Override
     @Transactional
@@ -92,7 +99,9 @@ public class DemoDataSeeder implements ApplicationRunner {
         // Staff accounts are seeded first and on their own guard: they were
         // added after the rest, and a database that already had doctors in
         // it would otherwise never get them.
-        seedStaff();
+        if (properties.isStaffAccounts()) {
+            seedStaff();
+        }
 
         if (doctorRepository.count() > 0) {
             log.info("Demo data: database already has doctors, skipping seed.");
@@ -115,8 +124,6 @@ public class DemoDataSeeder implements ApplicationRunner {
         log.info("Demo data: seeded {} doctors, {} patients, {} slots, {} appointments.",
                 doctors.size(), patients.size(), slots.size(), appointments.size());
         log.info("Demo data: sign in from the app with {}", patients.getFirst().getEmail());
-        log.info("Demo data: sign in to the back office with desk@mediconnect.ca "
-                + "or doctor@mediconnect.ca, password \"demo\"");
     }
 
     /**
@@ -125,6 +132,9 @@ public class DemoDataSeeder implements ApplicationRunner {
      *
      * The password is hashed even here. A seeded plaintext password is how
      * one ends up in production.
+     *
+     * Only into an empty staff table. StaffBootstrap runs first, so a clinic
+     * that has named its own first account does not also get these two.
      */
     private void seedStaff() {
         if (staffUserRepository.count() > 0) {
@@ -133,6 +143,10 @@ public class DemoDataSeeder implements ApplicationRunner {
         staffUserRepository.saveAll(List.of(
                 staff("desk@mediconnect.ca", "Ana Ferreira", StaffRole.FRONT_DESK),
                 staff("doctor@mediconnect.ca", "Robert Chase", StaffRole.CLINICIAN)));
+        // Said here rather than after the rest of the seed, so it is printed
+        // exactly when these accounts were created and not otherwise.
+        log.info("Demo data: sign in to the back office with desk@mediconnect.ca "
+                + "or doctor@mediconnect.ca, password \"demo\"");
     }
 
     private StaffUser staff(String email, String name, StaffRole role) {
