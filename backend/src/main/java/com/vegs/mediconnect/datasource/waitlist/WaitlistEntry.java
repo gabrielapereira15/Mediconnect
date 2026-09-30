@@ -66,6 +66,29 @@ public class WaitlistEntry {
     @Column
     private OffsetDateTime lastOfferedAt;
 
+    /**
+     * The freed slot being held for this patient while they decide.
+     *
+     * One patient at a time, for a limited time (boards P08 and P13: "We
+     * are holding it for you for 1 h 42 min"). Offering a slot to
+     * everyone at once meant the fastest thumb won and everybody else
+     * opened the app to find it gone.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "offered_slot_id")
+    private com.vegs.mediconnect.datasource.schedule.ScheduleTime offeredSlot;
+
+    /** When the hold ends and the slot passes to the next person. */
+    @Column
+    private OffsetDateTime offerExpiresAt;
+
+    /**
+     * The last slot this patient turned down or let lapse, so it is not
+     * offered straight back to them when it moves down the list.
+     */
+    @Column(columnDefinition = "UUID")
+    private UUID passedSlotId;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private OffsetDateTime dateCreated;
@@ -80,15 +103,16 @@ public class WaitlistEntry {
      * Earlier than what they hold, not before they are available, and only
      * while they are still on the list.
      *
-     * Having been told about a previous slot deliberately does not
-     * disqualify anyone. An offer is an invitation, not a reservation:
-     * whoever books first takes it, and the rest are still waiting. Treating
-     * OFFERED as "done" meant everybody who lost one race never heard about
-     * another slot again, which killed the waitlist after a single
-     * cancellation.
+     * An offer is a reservation now, held for one patient at a time, so
+     * someone who turned one down or let it lapse is back to WAITING and
+     * eligible for the next slot; only the slot they passed on is skipped,
+     * and that check belongs to whoever is choosing who is next.
      */
     public boolean wants(LocalDate slotDate) {
-        if (status == WaitlistStatus.BOOKED || status == WaitlistStatus.WITHDRAWN) {
+        // Only people still waiting. Somebody already holding an offer has
+        // one to decide on, and a slot held for them is not also held for
+        // somebody else.
+        if (status != WaitlistStatus.WAITING) {
             return false;
         }
         if (!slotDate.isBefore(currentAppointmentDate)) {

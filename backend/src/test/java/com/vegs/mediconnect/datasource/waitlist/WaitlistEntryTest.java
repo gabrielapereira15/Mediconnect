@@ -57,14 +57,14 @@ class WaitlistEntryTest {
     }
 
     @Test
-    @DisplayName("someone who missed an earlier offer is still told about the next slot")
-    void alreadyOfferedIsStillWaiting() {
+    @DisplayName("someone with a slot held for them is not offered a second one")
+    void holdingAnOfferIsNotWantingAnother() {
         var entry = waiting();
         entry.setStatus(WaitlistStatus.OFFERED);
 
-        assertTrue(entry.wants(HELD.minusDays(5)),
-                "an offer is an invitation, not a reservation: losing one race "
-                        + "must not remove someone from the list");
+        // An offer is a reservation: holding two slots for one person keeps
+        // one of them from everybody else for nothing.
+        assertFalse(entry.wants(HELD.minusDays(5)));
     }
 
     @Test

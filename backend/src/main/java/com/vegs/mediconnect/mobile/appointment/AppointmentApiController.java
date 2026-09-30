@@ -50,6 +50,15 @@ public class AppointmentApiController {
         return ResponseEntity.ok(appointmentApiService.checkIn(id, String.valueOf(email)));
     }
 
+    /** "I will be there", from the visit's checklist (board P09). */
+    @PutMapping("/{id}/attendance")
+    public ResponseEntity<AppointmentResponse> confirmAttendance(
+            @PathVariable(name = "id") final UUID id,
+            final HttpServletRequest request) {
+        Object email = request.getAttribute(AuthInterceptor.AUTHENTICATED_EMAIL);
+        return ResponseEntity.ok(appointmentApiService.confirmAttendance(id, String.valueOf(email)));
+    }
+
     /**
      * Cancels an appointment.
      *

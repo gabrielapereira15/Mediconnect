@@ -29,4 +29,13 @@ public class NotificationResponse {
      */
     private boolean read;
 
+    /** The visit a reminder is about, when it is about one. */
+    private UUID appointmentId;
+
+    /**
+     * Whether that visit's form is still to be filled in, so the message
+     * can offer "Fill in form" only while there is one to fill in.
+     */
+    private boolean formPending;
+
 }

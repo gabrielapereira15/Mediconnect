@@ -24,6 +24,10 @@ public interface WaitlistEntryRepository extends JpaRepository<WaitlistEntry, UU
 
     List<WaitlistEntry> findAllByOrderByDateCreatedDesc();
 
+    /** Holds that have run out, for the sweep that passes them on. */
+    List<WaitlistEntry> findAllByStatusAndOfferExpiresAtBefore(
+            WaitlistStatus status, java.time.OffsetDateTime cutoff);
+
     boolean existsByPatientAndDoctorAndStatus(
             Patient patient, Doctor doctor, WaitlistStatus status);
 }

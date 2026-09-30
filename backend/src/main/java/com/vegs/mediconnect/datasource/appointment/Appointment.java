@@ -108,6 +108,16 @@ public class Appointment {
     @Column
     private OffsetDateTime checkedInAt;
 
+    /**
+     * When the patient said they will be there (board P09's checklist).
+     *
+     * A yes from the patient, not a check-in: it is given days ahead, and
+     * it is what lets the front desk tell a likely no-show from somebody
+     * who simply has not arrived yet.
+     */
+    @Column
+    private OffsetDateTime attendanceConfirmedAt;
+
 
     public LocalDateTime getDateTime() {
         return scheduleTime.getDateTime();

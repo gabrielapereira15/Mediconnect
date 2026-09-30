@@ -5,7 +5,7 @@ public enum WaitlistStatus {
     /** On the list, waiting for something earlier to come up. */
     WAITING,
 
-    /** Told about a freed slot and not yet acted on it. */
+    /** A freed slot is being held for them until the offer expires. */
     OFFERED,
 
     /** Took an earlier slot, so the entry is done. */

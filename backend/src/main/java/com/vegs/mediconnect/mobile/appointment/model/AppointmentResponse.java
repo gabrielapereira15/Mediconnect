@@ -46,6 +46,9 @@ public class AppointmentResponse {
     /** ISO local date-time the pre-appointment form arrived, or null. */
     private String formSubmittedAt;
 
+    /** When the patient said they will be there; null until they do. */
+    private String attendanceConfirmedAt;
+
     private DoctorSimpleResponse doctor;
 
 }

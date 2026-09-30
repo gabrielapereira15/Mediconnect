@@ -85,7 +85,8 @@ class AppointmentApiServiceTest {
         var waitlistService = mock(com.vegs.mediconnect.mobile.waitlist.WaitlistService.class);
 
         service = new AppointmentApiService(appointmentRepository, patientRepository,
-                scheduleTimeRepository, doctorApiService, reviewRepository, waitlistService);
+                scheduleTimeRepository, doctorApiService, reviewRepository, waitlistService,
+                mock(com.vegs.mediconnect.datasource.previsit.PreVisitFormRepository.class));
     }
 
     @Test

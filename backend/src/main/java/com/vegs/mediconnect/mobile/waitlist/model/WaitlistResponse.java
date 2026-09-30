@@ -17,4 +17,11 @@ public class WaitlistResponse {
     private String status;
     private String currentAppointmentDate;
     private String availableFrom;
+
+    /** The slot held for them, while there is one (status OFFERED). */
+    private UUID offeredSlotId;
+    private String offeredStartsAt;
+
+    /** When the hold ends, as local ISO date-time. */
+    private String offerExpiresAt;
 }

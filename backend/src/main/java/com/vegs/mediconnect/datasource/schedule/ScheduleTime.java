@@ -37,6 +37,15 @@ public class ScheduleTime {
     @Column
     private Boolean available = true;
 
+    /**
+     * Taken out of the diary by the clinic (board B02's "Block") rather
+     * than booked. Unavailable either way, but the schedule has to say
+     * which: a blocked slot is not somebody's appointment, and unblocking
+     * it must not free a slot a patient holds.
+     */
+    @Column
+    private Boolean blocked = false;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private OffsetDateTime dateCreated;

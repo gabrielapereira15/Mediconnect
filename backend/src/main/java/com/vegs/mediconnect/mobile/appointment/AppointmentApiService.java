@@ -19,6 +19,7 @@ import com.vegs.mediconnect.mobile.schedule.BookingRules;
 import com.vegs.mediconnect.mobile.schedule.ScheduleTimeNotFoundException;
 import com.vegs.mediconnect.mobile.schedule.SlotNoLongerAvailableException;
 import jakarta.transaction.Transactional;
+import com.vegs.mediconnect.datasource.previsit.PreVisitFormRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,7 @@ public class AppointmentApiService {
     private final DoctorApiService doctorApiService;
     private final ReviewRepository reviewRepository;
     private final WaitlistService waitlistService;
+    private final PreVisitFormRepository preVisitFormRepository;
 
     @Transactional
     public AppointmentResponse create(AppointmentRequest appointmentRequest) {
@@ -164,6 +166,66 @@ public class AppointmentApiService {
     }
 
     /**
+     * The patient says they will be there (board P09's checklist).
+     *
+     * Their own appointment only, and only while it is still ahead of
+     * them; saying it twice is harmless.
+     */
+    @Transactional
+    public AppointmentResponse confirmAttendance(UUID appointmentId, String requestingEmail) {
+        var appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(AppointmentNotFoundException::new);
+
+        if (requestingEmail == null
+                || !requestingEmail.equalsIgnoreCase(appointment.getPatient().getEmail())) {
+            throw new AppointmentNotFoundException();
+        }
+        if (Boolean.TRUE.equals(appointment.getCanceled())) {
+            throw new CheckInNotOpenException("That visit was cancelled.");
+        }
+        if (appointment.getDateTime().isBefore(LocalDateTime.now())) {
+            throw new CheckInNotOpenException("That visit has already happened.");
+        }
+
+        if (appointment.getAttendanceConfirmedAt() == null) {
+            appointment.setAttendanceConfirmedAt(OffsetDateTime.now());
+            appointmentRepository.save(appointment);
+        }
+        return mapToAppointmentResponse(appointment);
+    }
+
+    /**
+     * Books a slot the waitlist was holding for this patient.
+     *
+     * Skips the "is it free" check on purpose: it is off sale precisely
+     * because it was being kept for them. What they told the clinic about
+     * the visit it replaces — who it is for, their note, the form — moves
+     * with them rather than having to be given again.
+     */
+    @Transactional
+    public AppointmentResponse bookHeldSlot(ScheduleTime slot, Patient patient, Appointment replacing) {
+        var appointment = createAppointment(slot, patient, slot.getSchedule().getDoctor());
+        if (replacing != null) {
+            appointment.setBookedForName(replacing.getBookedForName());
+            appointment.setBookedForDateOfBirth(replacing.getBookedForDateOfBirth());
+            appointment.setBookedForPhone(replacing.getBookedForPhone());
+            appointment.setBookedForNotes(replacing.getBookedForNotes());
+            appointment.setFormSubmittedAt(replacing.getFormSubmittedAt());
+        }
+        slot.setAvailable(false);
+        scheduleTimeRepository.save(slot);
+        var saved = appointmentRepository.save(appointment);
+
+        if (replacing != null) {
+            preVisitFormRepository.findByAppointment(replacing).ifPresent(form -> {
+                form.setAppointment(saved);
+                preVisitFormRepository.save(form);
+            });
+        }
+        return mapToAppointmentResponse(saved);
+    }
+
+    /**
      * Cancels an appointment on behalf of the patient who booked it.
      *
      * The email comes from the caller's token. An appointment belonging to
@@ -258,6 +320,7 @@ public class AppointmentApiService {
                 .bookedForName(appointment.getBookedForName())
                 .checkedInAt(isoOrNull(appointment.getCheckedInAt()))
                 .formSubmittedAt(isoOrNull(appointment.getFormSubmittedAt()))
+                .attendanceConfirmedAt(isoOrNull(appointment.getAttendanceConfirmedAt()))
                 .reviewScore(reviewScore)
                 .status(status)
                 .doctor(doctorApiService.mapToDoctorSimpleResponse(doctor))

@@ -150,6 +150,7 @@ class AppointmentCheckInTest {
                 .thenReturn(DoctorSimpleResponse.builder().build());
 
         return new AppointmentApiService(appointmentRepository, patientRepository,
-                scheduleTimeRepository, doctorApiService, reviewRepository, waitlistService);
+                scheduleTimeRepository, doctorApiService, reviewRepository, waitlistService,
+                mock(com.vegs.mediconnect.datasource.previsit.PreVisitFormRepository.class));
     }
 }

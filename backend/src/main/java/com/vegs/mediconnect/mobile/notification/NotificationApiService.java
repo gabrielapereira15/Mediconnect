@@ -1,5 +1,6 @@
 package com.vegs.mediconnect.mobile.notification;
 
+import com.vegs.mediconnect.datasource.appointment.AppointmentRepository;
 import com.vegs.mediconnect.datasource.notification.NotificationKind;
 import com.vegs.mediconnect.datasource.notification.NotificationPatient;
 import com.vegs.mediconnect.datasource.notification.NotificationPatientRepository;
@@ -19,7 +20,9 @@ public class NotificationApiService {
 
     private final NotificationPatientRepository notificationPatientRepository;
     private final PatientRepository patientRepository;
+    private final AppointmentRepository appointmentRepository;
 
+    @Transactional(readOnly = true)
     public List<NotificationResponse> getNotifications(String patientEmail) {
         var patient = patientRepository.findByEmail(patientEmail)
                 .orElseThrow(PatientNotFoundException::new);
@@ -38,9 +41,27 @@ public class NotificationApiService {
                         .message(notificationPatient.getNotificationId().getMessage())
                         .kind(kindOf(notificationPatient))
                         .read(Boolean.TRUE.equals(notificationPatient.getAcknowledged()))
+                        .appointmentId(notificationPatient.getNotificationId().getAppointmentId())
+                        .formPending(formPending(notificationPatient.getNotificationId().getAppointmentId()))
                         .creationDate(notificationPatient.getDateCreated().toLocalDateTime())
                         .build())
                 .toList();
+    }
+
+    /**
+     * True only for a visit that is still ahead, not cancelled, and has no
+     * form in. A reminder about a visit that has since been cancelled keeps
+     * its words but loses its button.
+     */
+    private boolean formPending(UUID appointmentId) {
+        if (appointmentId == null) {
+            return false;
+        }
+        return appointmentRepository.findById(appointmentId)
+                .filter(appointment -> !Boolean.TRUE.equals(appointment.getCanceled()))
+                .filter(appointment -> appointment.getFormSubmittedAt() == null)
+                .filter(appointment -> appointment.getDateTime().isAfter(java.time.LocalDateTime.now()))
+                .isPresent();
     }
 
     /** A message with no kind of its own is news from the clinic. */

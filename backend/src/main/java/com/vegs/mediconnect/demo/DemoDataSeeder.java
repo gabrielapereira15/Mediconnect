@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -79,6 +80,9 @@ public class DemoDataSeeder implements ApplicationRunner {
     private final ReviewRepository reviewRepository;
     private final com.vegs.mediconnect.datasource.health.HealthEntryRepository healthEntryRepository;
     private final StaffUserRepository staffUserRepository;
+    private final com.vegs.mediconnect.datasource.previsit.PreVisitFormRepository preVisitFormRepository;
+    private final com.vegs.mediconnect.datasource.waitlist.WaitlistEntryRepository waitlistEntryRepository;
+    private final com.vegs.mediconnect.mobile.waitlist.WaitlistService waitlistService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -100,8 +104,10 @@ public class DemoDataSeeder implements ApplicationRunner {
         List<Patient> patients = seedPatients();
         List<ScheduleTime> slots = seedSchedules(doctors);
         List<Appointment> appointments = seedAppointments(doctors, patients, slots);
+        seedForms(appointments);
         seedReviews(doctors, appointments);
-        seedNotifications(patients);
+        seedNotifications(patients, appointments);
+        seedWaitlistOffer(patients.getFirst(), doctors.get(2), appointments);
         seedHealthRecord(patients.getFirst());
 
         log.info("Demo data: seeded {} doctors, {} patients, {} slots, {} appointments.",
@@ -496,11 +502,110 @@ public class DemoDataSeeder implements ApplicationRunner {
         return entry;
     }
 
-    private void seedNotifications(List<Patient> patients) {
+    /**
+     * Answers for every visit the seed marks as "form sent".
+     *
+     * Marking a form as sent without any answers behind it showed the
+     * patient "Sent yesterday" and then an empty form when they opened it,
+     * which looked exactly like their answers had been lost.
+     */
+    private void seedForms(List<Appointment> appointments) {
+        String[][] answers = {
+                {"Follow-up on my blood pressure readings", "fatigue,headache", "NO", "NO", "YES",
+                        "Readings have been higher in the mornings."},
+                {"A cough that has not cleared in three weeks", "cough", "NO", "NO", "NO", null},
+                {"Annual check-up", "none", "NO", "NO", "UNSURE", null},
+                {"Pain in my right knee when climbing stairs", "none", "YES", "NO", "NO",
+                        "Arthroscopy on the same knee in March."},
+        };
+        var forms = new ArrayList<com.vegs.mediconnect.datasource.previsit.PreVisitForm>();
+        int next = 0;
+        for (Appointment appointment : appointments) {
+            if (appointment.getFormSubmittedAt() == null) {
+                continue;
+            }
+            String[] a = answers[next++ % answers.length];
+            var form = new com.vegs.mediconnect.datasource.previsit.PreVisitForm();
+            form.setAppointment(appointment);
+            form.setReason(a[0]);
+            form.setSymptoms(a[1]);
+            form.setHadSurgery(a[2]);
+            form.setSmokes(a[3]);
+            form.setDrinksAlcohol(a[4]);
+            form.setNotes(a[5]);
+            forms.add(form);
+        }
+        preVisitFormRepository.saveAll(forms);
+    }
+
+    /**
+     * The demo patient waiting for something earlier with a doctor they
+     * already see, with a slot being held for them right now — so Visits
+     * shows its offer banner and Messages its "See offer" straight away.
+     */
+    private void seedWaitlistOffer(Patient patient, Doctor doctor, List<Appointment> appointments) {
+        Appointment later = appointments.stream()
+                .filter(appointment -> appointment.getPatient().equals(patient))
+                .filter(appointment -> appointment.getDoctor().equals(doctor))
+                .filter(appointment -> !Boolean.TRUE.equals(appointment.getCanceled()))
+                .filter(appointment -> appointment.getDateTime().isAfter(LocalDateTime.now()))
+                .findFirst()
+                .orElse(null);
+        if (later == null) {
+            return;
+        }
+
+        var entry = new com.vegs.mediconnect.datasource.waitlist.WaitlistEntry();
+        entry.setPatient(patient);
+        entry.setDoctor(doctor);
+        entry.setCurrentAppointmentDate(later.getScheduleTime().getSchedule().getDate());
+        entry.setStatus(com.vegs.mediconnect.datasource.waitlist.WaitlistStatus.WAITING);
+        waitlistEntryRepository.save(entry);
+
+        // The first free slot with this doctor that is earlier than theirs
+        // and far enough ahead to be held.
+        scheduleTimeRepository.findAll().stream()
+                .filter(slot -> slot.getSchedule() != null)
+                .filter(slot -> doctor.equals(slot.getSchedule().getDoctor()))
+                .filter(slot -> Boolean.TRUE.equals(slot.getAvailable()))
+                .filter(slot -> slot.getDateTime().isBefore(later.getDateTime()))
+                .filter(slot -> slot.getSchedule().getDate().isBefore(entry.getCurrentAppointmentDate()))
+                .filter(slot -> com.vegs.mediconnect.mobile.waitlist.WaitlistService
+                        .holdEnds(slot, OffsetDateTime.now()) != null)
+                .min(java.util.Comparator.comparing(ScheduleTime::getDateTime))
+                .ifPresent(slot -> waitlistService.offerSlot(slot, null));
+    }
+
+    private void seedNotifications(List<Patient> patients, List<Appointment> appointments) {
+        // A reminder is about one patient's visit, so it goes to that
+        // patient alone and carries the visit, which is what lets the
+        // message offer "Fill in form" instead of saying where to find it.
+        Patient demoPatient = patients.getFirst();
+        appointments.stream()
+                .filter(appointment -> appointment.getPatient().equals(demoPatient))
+                .filter(appointment -> appointment.getBookedForName() == null)
+                .filter(appointment -> !Boolean.TRUE.equals(appointment.getCanceled()))
+                .filter(appointment -> appointment.getFormSubmittedAt() == null)
+                .filter(appointment -> appointment.getDateTime().toLocalDate().isAfter(LocalDate.now()))
+                .min(java.util.Comparator.comparing(Appointment::getDateTime))
+                .ifPresent(visit -> {
+                    var reminder = notification(NotificationKind.APPOINTMENT, "Appointment reminder",
+                            "You have an appointment with Dr. " + visit.getDoctor().getLastName()
+                                    + " on " + visit.getDateTime().format(
+                                    java.time.format.DateTimeFormatter.ofPattern(
+                                            "EEEE, d MMMM", java.util.Locale.ENGLISH))
+                                    + ". Please complete your pre-appointment form beforehand.");
+                    reminder.setSendAllPatients(false);
+                    reminder.setAppointmentId(visit.getId());
+                    var saved = notificationRepository.save(reminder);
+                    var link = new NotificationPatient();
+                    link.setNotificationId(saved);
+                    link.setPatientId(demoPatient);
+                    link.setAcknowledged(false);
+                    notificationPatientRepository.save(link);
+                });
+
         var notifications = List.of(
-                notification(NotificationKind.APPOINTMENT, "Appointment reminder",
-                        "You have an appointment with Dr. Chase in two days. "
-                                + "Please complete your pre-appointment form beforehand."),
                 notification(NotificationKind.ANNOUNCEMENT, "Flu shots available",
                         "Walk-in flu vaccinations are available at the clinic every weekday "
                                 + "between 9am and 4pm, no appointment needed."),

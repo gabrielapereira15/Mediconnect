@@ -45,6 +45,18 @@ public class Notification {
     @Column
     private String kind;
 
+    /**
+     * The visit a reminder is about, when it is about one.
+     *
+     * Lets the message carry the action that goes with it — "Fill in
+     * form" opens that visit's form — rather than telling the patient to
+     * go and find it. Kept as the id rather than a relation: the message
+     * outlives the appointment, and a cancelled visit must not take its
+     * reminder with it.
+     */
+    @Column(columnDefinition = "UUID")
+    private java.util.UUID appointmentId;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private OffsetDateTime dateCreated;
