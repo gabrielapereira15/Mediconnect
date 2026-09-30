@@ -15,6 +15,8 @@ public class Notification {
     private String appointmentId;
     /** Whether that visit's form is still to be filled in. */
     private boolean formPending;
+    /** For a waitlist offer: whether it is still being held. */
+    private boolean offerOpen;
 
     public String getId() {
         return id;
@@ -64,6 +66,10 @@ public class Notification {
     /** "Fill in form" is offered only while there is one to fill in. */
     public boolean hasFormToFill() {
         return formPending && appointmentId != null && !appointmentId.isEmpty();
+    }
+
+    public boolean isOfferOpen() {
+        return offerOpen;
     }
 
     public boolean isRead() {

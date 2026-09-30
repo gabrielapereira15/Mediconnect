@@ -40,6 +40,8 @@ public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
     private final NotificationClient notificationClient = new NotificationClientImpl();
+    private final com.example.mediconnect_android.client.WaitlistClient waitlistClient =
+            new com.example.mediconnect_android.client.WaitlistClientImpl();
     private final List<Notification> notifications = new ArrayList<>();
 
     @Override
@@ -137,6 +139,34 @@ public class NotificationsFragment extends Fragment {
     /** The button inside a message, which depends on what kind it is. */
     private void act(Notification notification) {
         open(notification);
+
+        // An offer can end between loading this list and tapping it. Ask
+        // again before sending the patient to look for a banner that is
+        // no longer there.
+        if (KIND_WAITLIST_OFFER.equals(notification.getKind())) {
+            Background.run(
+                    () -> waitlistClient.list(email()),
+                    entries -> {
+                        if (binding == null) {
+                            return;
+                        }
+                        boolean held = entries != null && entries.stream()
+                                .anyMatch(com.example.mediconnect_android.model.WaitlistEntry::isOffered);
+                        if (held) {
+                            goToTab(R.id.visits_fragment);
+                        } else {
+                            com.example.mediconnect_android.util.DialogUtils.showMessageDialog(
+                                    getContext(), getString(R.string.messages_offer_gone));
+                            load(true);
+                        }
+                    },
+                    error -> {
+                        if (binding != null) {
+                            goToTab(R.id.visits_fragment);
+                        }
+                    });
+            return;
+        }
 
         // A reminder about a visit whose form is still due opens that form.
         // Anything else leads to the visit list, through the tab rather

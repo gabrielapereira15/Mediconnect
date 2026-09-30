@@ -349,6 +349,8 @@ public class WaitlistService {
         var doctor = slot.getSchedule().getDoctor();
         var notification = new Notification();
         notification.setKind(NotificationKind.WAITLIST_OFFER);
+        notification.setWaitlistEntryId(entry.getId());
+        notification.setOfferedSlotId(slot.getId());
         notification.setTitle("An earlier slot opened up");
         notification.setMessage(String.format(
                 "Dr. %s can see you %s at %s. We are holding it for you until %s.",

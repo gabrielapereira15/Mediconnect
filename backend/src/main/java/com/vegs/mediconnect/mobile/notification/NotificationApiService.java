@@ -1,6 +1,8 @@
 package com.vegs.mediconnect.mobile.notification;
 
 import com.vegs.mediconnect.datasource.appointment.AppointmentRepository;
+import com.vegs.mediconnect.datasource.waitlist.WaitlistEntryRepository;
+import com.vegs.mediconnect.datasource.waitlist.WaitlistStatus;
 import com.vegs.mediconnect.datasource.notification.NotificationKind;
 import com.vegs.mediconnect.datasource.notification.NotificationPatient;
 import com.vegs.mediconnect.datasource.notification.NotificationPatientRepository;
@@ -21,6 +23,7 @@ public class NotificationApiService {
     private final NotificationPatientRepository notificationPatientRepository;
     private final PatientRepository patientRepository;
     private final AppointmentRepository appointmentRepository;
+    private final WaitlistEntryRepository waitlistRepository;
 
     @Transactional(readOnly = true)
     public List<NotificationResponse> getNotifications(String patientEmail) {
@@ -43,6 +46,7 @@ public class NotificationApiService {
                         .read(Boolean.TRUE.equals(notificationPatient.getAcknowledged()))
                         .appointmentId(notificationPatient.getNotificationId().getAppointmentId())
                         .formPending(formPending(notificationPatient.getNotificationId().getAppointmentId()))
+                        .offerOpen(offerOpen(notificationPatient.getNotificationId()))
                         .creationDate(notificationPatient.getDateCreated().toLocalDateTime())
                         .build())
                 .toList();
@@ -61,6 +65,27 @@ public class NotificationApiService {
                 .filter(appointment -> !Boolean.TRUE.equals(appointment.getCanceled()))
                 .filter(appointment -> appointment.getFormSubmittedAt() == null)
                 .filter(appointment -> appointment.getDateTime().isAfter(java.time.LocalDateTime.now()))
+                .isPresent();
+    }
+
+    /**
+     * Whether the hold a waitlist offer announced is still in place: the
+     * same entry, still OFFERED, still holding that slot, and not past its
+     * time. An offer message from before offers were linked to their hold
+     * is treated as ended rather than risk promising a slot that is gone.
+     */
+    private boolean offerOpen(com.vegs.mediconnect.datasource.notification.Notification notification) {
+        if (!NotificationKind.WAITLIST_OFFER.equals(notification.getKind())
+                || notification.getWaitlistEntryId() == null
+                || notification.getOfferedSlotId() == null) {
+            return false;
+        }
+        return waitlistRepository.findById(notification.getWaitlistEntryId())
+                .filter(entry -> entry.getStatus() == WaitlistStatus.OFFERED)
+                .filter(entry -> entry.getOfferedSlot() != null
+                        && notification.getOfferedSlotId().equals(entry.getOfferedSlot().getId()))
+                .filter(entry -> entry.getOfferExpiresAt() != null
+                        && entry.getOfferExpiresAt().isAfter(java.time.OffsetDateTime.now()))
                 .isPresent();
     }
 

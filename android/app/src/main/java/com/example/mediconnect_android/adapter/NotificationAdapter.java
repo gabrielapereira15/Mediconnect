@@ -162,8 +162,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
          */
         private void bindKind(Notification notification) {
             String kind = notification.getKind() == null ? "" : notification.getKind();
+            // Rows are recycled; only an ended offer shows the note.
+            binding.messageNote.setVisibility(View.GONE);
 
-            if (KIND_WAITLIST_OFFER.equals(kind)) {
+            if (KIND_WAITLIST_OFFER.equals(kind) && notification.isOfferOpen()) {
                 binding.messageCard.setCardBackgroundColor(
                         ContextCompat.getColor(context, R.color.md_rating_container));
                 binding.messageIcon.setImageResource(R.drawable.ic_hourglass);
@@ -173,6 +175,24 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 binding.messageAction.setVisibility(View.VISIBLE);
                 binding.messageAction.setText(R.string.messages_see_offer);
                 binding.messageAction.setOnClickListener(v -> onAction.accept(notification));
+                return;
+            }
+
+            if (KIND_WAITLIST_OFFER.equals(kind)) {
+                // The offer is gone — taken, turned down, passed on or run
+                // out. The message stays, as a record, but it stops asking
+                // for attention and says so in words rather than leaving a
+                // button that leads nowhere.
+                binding.messageCard.setCardBackgroundColor(
+                        ContextCompat.getColor(context, R.color.md_surface));
+                binding.messageIcon.setImageResource(R.drawable.ic_hourglass);
+                binding.messageIcon.setBackgroundResource(R.drawable.tile_surface);
+                binding.messageIcon.setImageTintList(ContextCompat.getColorStateList(
+                        context, R.color.md_on_surface_variant));
+                binding.messageAction.setVisibility(View.GONE);
+                binding.messageAction.setOnClickListener(null);
+                binding.messageNote.setVisibility(View.VISIBLE);
+                binding.messageNote.setText(R.string.messages_offer_ended);
                 return;
             }
 
