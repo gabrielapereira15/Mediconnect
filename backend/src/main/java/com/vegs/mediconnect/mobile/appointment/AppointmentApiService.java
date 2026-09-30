@@ -13,6 +13,7 @@ import com.vegs.mediconnect.mobile.appointment.model.AppointmentRequest;
 import com.vegs.mediconnect.mobile.appointment.model.AppointmentResponse;
 import com.vegs.mediconnect.mobile.appointment.model.AppointmentStatus;
 import com.vegs.mediconnect.mobile.doctor.DoctorApiService;
+import com.vegs.mediconnect.mobile.notification.PatientMessages;
 import com.vegs.mediconnect.mobile.waitlist.WaitlistService;
 import com.vegs.mediconnect.mobile.patient.PatientNotFoundException;
 import com.vegs.mediconnect.mobile.schedule.BookingRules;
@@ -44,6 +45,7 @@ public class AppointmentApiService {
     private final ReviewRepository reviewRepository;
     private final WaitlistService waitlistService;
     private final PreVisitFormRepository preVisitFormRepository;
+    private final PatientMessages patientMessages;
 
     @Transactional
     public AppointmentResponse create(AppointmentRequest appointmentRequest) {
@@ -264,6 +266,9 @@ public class AppointmentApiService {
      * The reason is kept on the appointment, not in anybody's head: the
      * next person to open it can see what happened. Nothing is deleted —
      * a cancelled visit is still part of the patient's history.
+     *
+     * The patient is sent a message: a visit that silently disappears
+     * from the app is one they turn up for anyway.
      */
     @Transactional
     public void cancelAppointmentAsClinic(UUID appointmentId, String reason) {
@@ -274,6 +279,7 @@ public class AppointmentApiService {
         }
         appointment.setCancelReason(trimToNull(reason));
         cancelAppointment(appointment);
+        patientMessages.visitCancelled(appointment);
     }
 
     /**
@@ -320,11 +326,15 @@ public class AppointmentApiService {
 
         waitlistService.onAppointmentBooked(patient, saved.getDoctor(),
                 slot.getSchedule().getDate());
+        patientMessages.visitBooked(saved);
         return saved;
     }
 
     /**
      * Moves an appointment to another free slot with the same doctor.
+     *
+     * The patient is sent a message with the old time and the new, since
+     * the time they have in mind is the old one.
      *
      * What the patient told the clinic moves with it — who it is for, the
      * note, the form — and the slot it leaves goes to the waitlist, as any
@@ -359,6 +369,7 @@ public class AppointmentApiService {
             preVisitFormRepository.save(form);
         });
         removeAppointment(current);
+        patientMessages.visitMoved(current.getDateTime(), saved);
         return saved;
     }
 
