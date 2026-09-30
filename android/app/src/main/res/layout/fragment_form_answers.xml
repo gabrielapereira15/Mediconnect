@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    A sent pre-appointment form, read back (P10, after sending).
+
+    Opening a sent form used to drop the patient into the four-step form
+    again, which looks like it wants filling in and, when the answers had
+    not loaded, looked like they had been lost. This is what they sent, as
+    the doctor will read it, with one way to change it.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_surface"
+    tools:context=".fragment.FormAnswersFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/space_xl"
+        android:paddingTop="@dimen/space_lg"
+        android:paddingBottom="@dimen/space_lg"
+        app:layout_constraintBottom_toTopOf="@id/footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/form_answers_title"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.Headline" />
+
+                <TextView
+                    android:id="@+id/sent_at"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:drawablePadding="@dimen/space_xs"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                    android:textColor="@color/md_on_surface_variant"
+                    app:drawableStartCompat="@drawable/ic_check_circle"
+                    app:drawableTint="@color/md_success"
+                    tools:text="Sent to the doctor today, 9:14 AM" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_lg"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/md_outline_variant"
+                    app:strokeWidth="1dp">
+
+                    <!-- One row per question, filled in by the fragment. -->
+                    <LinearLayout
+                        android:id="@+id/rows"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:divider="@drawable/divider_row"
+                        android:showDividers="middle" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:text="@string/form_answers_edit_hint"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+                    android:textColor="@color/md_on_surface_variant" />
+            </LinearLayout>
+
+            <com.example.mediconnect_android.view.StateView
+                android:id="@+id/stateView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/md_surface"
+        android:elevation="@dimen/elevation_sheet"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/space_xl"
+        android:paddingVertical="@dimen/space_md"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_edit"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/control_lg"
+            android:text="@string/form_answers_edit"
+            app:icon="@drawable/ic_edit" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

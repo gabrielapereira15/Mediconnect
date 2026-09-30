@@ -119,15 +119,25 @@
                 app:boxCornerRadiusBottomStart="@dimen/radius_pill"
                 app:boxCornerRadiusTopEnd="@dimen/radius_pill"
                 app:boxCornerRadiusTopStart="@dimen/radius_pill"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
                 app:hintEnabled="false"
                 app:startIconDrawable="@drawable/ic_search">
 
+                <!--
+                    A filled box keeps room above the text for a label that
+                    is turned off here, so the hint rode high in the pill;
+                    the padding is set rather than inherited.
+                -->
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/search_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/control_lg"
                     android:background="@null"
+                    android:gravity="center_vertical"
+                    android:paddingTop="@dimen/space_sm"
+                    android:paddingBottom="@dimen/space_sm"
                     android:hint="@string/home_search_hint"
                     android:imeOptions="actionSearch"
                     android:inputType="text"
@@ -323,45 +333,49 @@
 
             <!-- ==== Quick actions ======================================== -->
 
-            <HorizontalScrollView
+            <!--
+                Four equal columns. They scrolled for a while so that a
+                doubled font size would not break "Messages" across two
+                lines — but that pushed the fourth action off the screen at
+                an ordinary size, and an action nobody can see is worse than
+                a label that wraps.
+            -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_2xl"
-                android:clipToPadding="false"
-                android:paddingHorizontal="@dimen/space_lg"
-                android:scrollbars="none">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:baselineAligned="false"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_lg">
 
                 <include
                     android:id="@+id/action_book"
                     layout="@layout/view_quick_action"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
                 <include
                     android:id="@+id/action_forms"
                     layout="@layout/view_quick_action"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
                 <include
                     android:id="@+id/action_record"
                     layout="@layout/view_quick_action"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
                 <include
                     android:id="@+id/action_messages"
                     layout="@layout/view_quick_action"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
             </LinearLayout>
-            </HorizontalScrollView>
 
             <!-- ==== Specialties ========================================== -->
 

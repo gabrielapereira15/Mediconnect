@@ -249,8 +249,12 @@ public class VisitDetailFragment extends Fragment {
             binding.rowForm.rowAction.setText(R.string.visit_form_fill);
         }
         binding.rowForm.rowAction.setVisibility(View.VISIBLE);
-        binding.rowForm.rowAction.setOnClickListener(v -> show(PreAppointmentFormFragment.of(appointmentId)));
-        binding.rowForm.visitRow.setOnClickListener(v -> show(PreAppointmentFormFragment.of(appointmentId)));
+        // A sent form opens as what was sent; editing it is a step further.
+        View.OnClickListener openForm = v -> show(formIn
+                ? FormAnswersFragment.of(appointmentId)
+                : PreAppointmentFormFragment.of(appointmentId));
+        binding.rowForm.rowAction.setOnClickListener(openForm);
+        binding.rowForm.visitRow.setOnClickListener(openForm);
 
         bindHealthCard();
     }

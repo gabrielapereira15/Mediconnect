@@ -80,6 +80,14 @@
 
         <item name="materialButtonStyle">@style/Widget.Mediconnect.Button</item>
         <item name="bottomNavigationStyle">@style/Widget.Mediconnect.BottomNav</item>
+
+        <!--
+            The app draws its own dark theme. Some phones (MIUI among them)
+            otherwise repaint every app dark when the system is dark, which
+            overrode the patient's own choice of Light in Profile and
+            inverted colours the dark palette had already chosen.
+        -->
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
     </style>
 
     <style name="Theme.Mediconnectandroid" parent="Base.Theme.Mediconnectandroid" />

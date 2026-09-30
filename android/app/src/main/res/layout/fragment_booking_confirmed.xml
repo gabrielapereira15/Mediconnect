@@ -245,7 +245,7 @@
         android:id="@+id/footer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:paddingHorizontal="@dimen/space_2xl"
         android:paddingTop="@dimen/space_md"
         android:paddingBottom="@dimen/space_2xl"
@@ -254,33 +254,28 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <!--
-            Both buttons wrap rather than sit at a fixed height: half a
-            phone's width is not enough for "Add to calendar" on one line,
-            and a clipped label on the screen that confirms a booking is the
-            last thing a patient should be left looking at.
+            Stacked, each the full width. Side by side, half a phone was
+            not enough for "Add to calendar" at a larger system font and the
+            label was clipped — on the screen that confirms a booking, which
+            is the last thing a patient should be left looking at.
         -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_add_calendar"
             style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:minHeight="@dimen/control_lg"
-            android:paddingHorizontal="@dimen/space_sm"
             android:text="@string/confirmed_add_calendar"
-            android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
             app:icon="@drawable/ic_calendar_plus"
-            app:iconPadding="@dimen/space_xs"
+            app:iconGravity="textStart"
             app:iconSize="18dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_done"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/space_md"
-            android:layout_weight="1"
+            android:layout_marginTop="@dimen/space_sm"
             android:minHeight="@dimen/control_lg"
-            android:text="@string/confirmed_done"
-            android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium" />
+            android:text="@string/confirmed_done" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

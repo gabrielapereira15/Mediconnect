@@ -9,9 +9,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minWidth="86dp"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
@@ -61,11 +60,10 @@
     -->
     <TextView
         android:id="@+id/action_label"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_sm"
         android:gravity="center"
-        android:maxWidth="112dp"
         android:textAppearance="@style/TextAppearance.Mediconnect.LabelSmall"
         android:textColor="@color/md_on_surface"
         tools:text="Forms" />

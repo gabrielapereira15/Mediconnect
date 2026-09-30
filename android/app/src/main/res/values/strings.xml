@@ -354,7 +354,8 @@
     <string name="health_count">%1$d recorded</string>
     <string name="summary_export">Export for a clinic</string>
     <string name="summary_export_hint">Sends the summary as a FHIR document that another clinic system can read.</string>
-    <string name="summary_export_unavailable">Sign in again to export your summary.</string>
+    <string name="summary_downloaded">Saved your health summary.</string>
+    <string name="summary_export_offline">The clinic document is built by the clinic\'s server, which can\'t be reached right now. Share still sends the summary as text.</string>
 
     <!-- Waitlist. -->
     <string name="waitlist_join">Tell me if something earlier opens up</string>
@@ -523,6 +524,7 @@
     <string name="visit_cancel_failed">We could not cancel that. Please try again.</string>
     <string name="cd_more_options">More options</string>
     <string name="cd_switch">%1$s, %2$s</string>
+    <string name="cd_forms_pending">Forms, %1$d waiting to be filled in</string>
     <string name="cd_on">on</string>
     <string name="cd_off">off</string>
     <string name="cd_close">Close</string>
@@ -596,6 +598,13 @@
     <string name="form_q_notes_help">Optional. Medication you are taking, something that worries you, anything at all.</string>
     <string name="form_q_notes_hint">Leave blank if there is nothing</string>
 
+    <string name="form_answers_title">Your answers</string>
+    <string name="form_answers_sent_at">Sent to the doctor %1$s</string>
+    <string name="form_answers_none">Not answered</string>
+    <string name="form_answers_edit">Edit answers</string>
+    <string name="form_answers_edit_hint">Changing an answer sends the whole form again. The doctor sees the newest version.</string>
+    <string name="form_answers_missing_title">No answers on file</string>
+    <string name="form_answers_missing_body">The clinic has no answers for this visit. Filling the form in again takes about three minutes.</string>
     <string name="form_sent">Sent to the doctor</string>
     <string name="form_send_failed">We could not send that. Your answers are still here — please try again.</string>
     <string name="form_no_appointment">Open the form from the visit it belongs to, so the doctor knows which one it is about.</string>

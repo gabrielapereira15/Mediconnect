@@ -2,12 +2,15 @@ package com.example.mediconnect_android.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -15,15 +18,19 @@ import androidx.fragment.app.Fragment;
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.client.HealthClient;
 import com.example.mediconnect_android.client.HealthClientImpl;
+import com.example.mediconnect_android.client.PatientClientImpl;
 import com.example.mediconnect_android.databinding.FragmentHealthSummaryBinding;
 import com.example.mediconnect_android.model.HealthEntry;
+import com.example.mediconnect_android.model.Patient;
 import com.example.mediconnect_android.data.DemoMode;
 import com.example.mediconnect_android.util.Background;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.Date;
@@ -51,6 +58,8 @@ public class HealthSummaryFragment extends Fragment {
 
     private static final String ARG_ACTION = "action";
 
+    private static final String EXPORT_FILE_NAME = "mediconnect-patient-summary.json";
+
     /**
      * Opens the summary and carries out one action once it has loaded.
      *
@@ -74,6 +83,18 @@ public class HealthSummaryFragment extends Fragment {
 
     /** Held so Share does not have to rebuild it. */
     private String summaryText = "";
+
+    /**
+     * The system's "save as" screen, for Download.
+     *
+     * The patient picks where the file goes (Downloads by default), and the
+     * app needs no storage permission to write the one file they chose.
+     * Registered as a field so it is in place before the fragment starts,
+     * which the result API requires.
+     */
+    private final ActivityResultLauncher<String> saveDocument = registerForActivityResult(
+            new ActivityResultContracts.CreateDocument("application/json"),
+            this::downloadTo);
 
     /**
      * The one-off action is read here, not with the view.
@@ -182,8 +203,57 @@ public class HealthSummaryFragment extends Fragment {
         if (ACTION_SHARE.equals(action)) {
             share();
         } else if (ACTION_DOWNLOAD.equals(action)) {
-            exportDocument();
+            download();
         }
+    }
+
+    /**
+     * Saves the PS-CA document as a file on the phone.
+     *
+     * Download previously opened the share sheet, which is Export under
+     * another name: it asked where to send the file rather than keeping a
+     * copy. The picker comes first and the document is fetched once there
+     * is somewhere to put it, so nothing is held in memory while the
+     * patient decides.
+     */
+    private void download() {
+        if (DemoMode.isActive()) {
+            DialogUtils.showMessageDialog(getContext(), getString(R.string.summary_export_offline));
+            return;
+        }
+        saveDocument.launch(EXPORT_FILE_NAME);
+    }
+
+    private void downloadTo(Uri destination) {
+        if (destination == null || binding == null) {
+            // They backed out of the picker; nothing to say about that.
+            return;
+        }
+        Context context = requireContext().getApplicationContext();
+        Background.run(
+                () -> {
+                    String document = healthClient.getSummaryDocument(patientId());
+                    try (OutputStream out = context.getContentResolver().openOutputStream(destination)) {
+                        if (out == null) {
+                            throw new IOException("Could not open the chosen file");
+                        }
+                        out.write(document.getBytes(StandardCharsets.UTF_8));
+                    }
+                    return destination;
+                },
+                saved -> {
+                    if (binding == null) {
+                        return;
+                    }
+                    Snackbar.make(binding.getRoot(), R.string.summary_downloaded,
+                            Snackbar.LENGTH_LONG).show();
+                },
+                error -> {
+                    if (binding == null) {
+                        return;
+                    }
+                    DialogUtils.showMessageDialog(getContext(), getString(R.string.error_no_server));
+                });
     }
 
     /**
@@ -241,19 +311,17 @@ public class HealthSummaryFragment extends Fragment {
      * the device on anyone else's decision.
      */
     private void exportDocument() {
-        String patientId = requireContext()
-                .getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-                .getString("patient_id", "");
-
-        if (patientId.isEmpty()) {
-            DialogUtils.showMessageDialog(getContext(), getString(R.string.summary_export_unavailable));
+        if (DemoMode.isActive()) {
+            // The document is built by the clinic's server, and the app is
+            // showing bundled sample data because it cannot reach it.
+            DialogUtils.showMessageDialog(getContext(), getString(R.string.summary_export_offline));
             return;
         }
 
         binding.btnExport.setEnabled(false);
         Background.run(
                 () -> {
-                    String document = healthClient.getSummaryDocument(patientId);
+                    String document = healthClient.getSummaryDocument(patientId());
                     return writeToCache(document);
                 },
                 file -> {
@@ -272,6 +340,30 @@ public class HealthSummaryFragment extends Fragment {
                 });
     }
 
+    /**
+     * The id the FHIR endpoints address this patient by.
+     *
+     * Saved at sign-in, but only by builds that knew to save it: anyone
+     * signed in before that had no id stored, and Export told them to sign
+     * in again. Asking the server by email costs one request and spares
+     * them that. Runs off the main thread.
+     */
+    private String patientId() {
+        SharedPreferences profile = requireContext()
+                .getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
+        String stored = profile.getString("patient_id", "");
+        if (!stored.isEmpty()) {
+            return stored;
+        }
+
+        Patient patient = new PatientClientImpl().getPatient(profile.getString("email", ""));
+        if (patient == null || patient.getid() == null || patient.getid().isEmpty()) {
+            throw new IllegalStateException("No patient id for this account");
+        }
+        profile.edit().putString("patient_id", patient.getid()).apply();
+        return patient.getid();
+    }
+
     private File writeToCache(String document) throws IOException {
         File directory = new File(requireContext().getCacheDir(), "exports");
         if (!directory.exists() && !directory.mkdirs()) {
@@ -280,7 +372,7 @@ public class HealthSummaryFragment extends Fragment {
         // One fixed name, overwritten each time: a folder quietly filling up
         // with old copies of somebody's health record is not something to
         // leave behind.
-        File file = new File(directory, "mediconnect-patient-summary.json");
+        File file = new File(directory, EXPORT_FILE_NAME);
         try (FileOutputStream out = new FileOutputStream(file)) {
             out.write(document.getBytes(StandardCharsets.UTF_8));
         }

@@ -66,6 +66,9 @@ public class HomeFragment extends Fragment {
     /** The soonest visit ahead of us, or null if there is none. */
     private Appointment nextVisit;
 
+    /** The soonest visit whose form is still to be filled in, if any. */
+    private Appointment nextPendingForm;
+
     private final List<Doctor> doctorList = new ArrayList<>();
 
     @Override
@@ -142,17 +145,24 @@ public class HomeFragment extends Fragment {
     // ---- quick actions --------------------------------------------------
 
     /**
-     * The form for the next visit, since a form belongs to one.
+     * The form that most needs doing, since a form belongs to one visit.
      *
-     * With nothing booked there is nothing to fill in, and saying so beats
+     * The soonest visit still waiting for its form comes first — the tile's
+     * count promised there was one. With every form in, it shows the next
+     * visit's answers rather than a blank form to fill in again. With
+     * nothing booked there is nothing to fill in, and saying so beats
      * opening four questions that cannot be sent anywhere.
      */
     private void openNextVisitForm() {
+        if (nextPendingForm != null) {
+            show(PreAppointmentFormFragment.of(nextPendingForm));
+            return;
+        }
         if (nextVisit == null) {
             DialogUtils.showMessageDialog(getContext(), getString(R.string.home_form_no_visit));
             return;
         }
-        show(PreAppointmentFormFragment.of(nextVisit));
+        show(FormAnswersFragment.forVisit(nextVisit));
     }
 
     private void bindQuickActions() {
@@ -204,6 +214,7 @@ public class HomeFragment extends Fragment {
                         return;
                     }
                     nextUpcoming(appointments).ifPresentOrElse(this::bindNextVisit, this::bindNoVisit);
+                    bindFormCount(appointments);
                 },
                 error -> {
                     if (binding != null) {
@@ -257,12 +268,18 @@ public class HomeFragment extends Fragment {
         binding.nextVisitBadge.setBackgroundResource(formNeeded
                 ? R.drawable.badge_sun
                 : R.drawable.badge_success);
+
+        // With the form in there is no step left, so the pair collapses to
+        // one button. It used to say "Details" twice: the primary fell back
+        // to Details and the secondary already was.
         binding.nextVisitPrimary.setText(formNeeded
                 ? R.string.visit_fill_in_form
                 : R.string.visit_details);
         binding.nextVisitPrimary.setOnClickListener(v -> show(formNeeded
                 ? PreAppointmentFormFragment.of(appointment)
                 : VisitDetailFragment.of(appointment)));
+
+        binding.nextVisitDetails.setVisibility(formNeeded ? View.VISIBLE : View.GONE);
         binding.nextVisitDetails.setOnClickListener(
                 v -> show(VisitDetailFragment.of(appointment)));
     }
@@ -346,6 +363,35 @@ public class HomeFragment extends Fragment {
                     bindHealthSummary(entries);
                 },
                 error -> { /* the card keeps its placeholder text */ });
+    }
+
+    /**
+     * How many visits are still waiting on a form.
+     *
+     * The tile has always had a corner for a count and nothing ever put a
+     * number in it, so a patient with two forms outstanding saw the same
+     * Forms tile as one with none.
+     */
+    private void bindFormCount(List<Appointment> appointments) {
+        if (appointments == null) {
+            return;
+        }
+        LocalDateTime now = LocalDateTime.now();
+        List<Appointment> waiting = appointments.stream()
+                .filter(a -> "UPCOMING".equals(a.getStatus()))
+                .filter(a -> WhenLabel.parse(a.getStartsAt())
+                        .map(at -> at.isAfter(now)).orElse(false))
+                .filter(a -> !a.isFormSubmitted())
+                .sorted(java.util.Comparator.comparing(Appointment::getStartsAt))
+                .collect(java.util.stream.Collectors.toList());
+        long pending = waiting.size();
+        nextPendingForm = waiting.isEmpty() ? null : waiting.get(0);
+
+        binding.actionForms.actionCount.setVisibility(pending > 0 ? View.VISIBLE : View.GONE);
+        binding.actionForms.actionCount.setText(String.valueOf(pending));
+        binding.actionForms.getRoot().setContentDescription(pending > 0
+                ? getString(R.string.cd_forms_pending, (int) pending)
+                : getString(R.string.home_action_forms));
     }
 
     private void bindHealthSummary(List<HealthEntry> entries) {
