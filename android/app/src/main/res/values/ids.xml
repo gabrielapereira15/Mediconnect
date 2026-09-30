@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The screen-reader action on a message that archives it or moves it back. -->
+    <item name="action_toggle_archive" type="id" />
+</resources>

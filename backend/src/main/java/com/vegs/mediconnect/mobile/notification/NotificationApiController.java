@@ -46,6 +46,34 @@ public class NotificationApiController {
      * ownership from the path; the caller's own email comes from their
      * token and is checked against the message instead.
      */
+    /** Puts one message away (P13's swipe to archive). Owner checked from the token. */
+    @PostMapping("/archive/{notificationId}")
+    public ResponseEntity<Void> archive(@PathVariable(name = "notificationId") final UUID notificationId,
+                                        final HttpServletRequest request) {
+        Object email = request.getAttribute(AuthInterceptor.AUTHENTICATED_EMAIL);
+        notificationApiService.archive(notificationId, String.valueOf(email));
+        return ResponseEntity.accepted().build();
+    }
+
+    /** Moves an archived message back to the inbox. Owner checked from the token. */
+    @PostMapping("/unarchive/{notificationId}")
+    public ResponseEntity<Void> unarchive(@PathVariable(name = "notificationId") final UUID notificationId,
+                                          final HttpServletRequest request) {
+        Object email = request.getAttribute(AuthInterceptor.AUTHENTICATED_EMAIL);
+        notificationApiService.unarchive(notificationId, String.valueOf(email));
+        return ResponseEntity.accepted().build();
+    }
+
+    /**
+     * "Clear read": archives everything already read. The email is in the
+     * path so the interceptor checks ownership; the ids archived come back
+     * so the app can undo exactly those.
+     */
+    @PostMapping("/archive-read/{email}")
+    public ResponseEntity<List<UUID>> archiveRead(@PathVariable(name = "email") final String email) {
+        return ResponseEntity.ok(notificationApiService.archiveRead(email));
+    }
+
     @PostMapping("/ack/{notificationId}")
     public ResponseEntity<Void> acknowledgeNotification(
             @PathVariable(name = "notificationId") final UUID notificationId,

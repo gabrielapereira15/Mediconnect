@@ -29,6 +29,9 @@ public class NotificationResponse {
      */
     private boolean read;
 
+    /** Put away by the patient: shown under Archived, not in the inbox. */
+    private boolean archived;
+
     /** The visit a reminder is about, when it is about one. */
     private UUID appointmentId;
 
@@ -37,5 +40,12 @@ public class NotificationResponse {
      * can offer "Fill in form" only while there is one to fill in.
      */
     private boolean formPending;
+
+    /**
+     * For a waitlist offer: whether it is still being held for this
+     * patient. False once it was taken, turned down, passed on or ran out,
+     * so the app stops offering "See offer" for something that is gone.
+     */
+    private boolean offerOpen;
 
 }

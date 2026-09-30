@@ -20,6 +20,41 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <!--
+            Inbox and Archived. Archiving takes a message out of the way
+            without losing it, the way a mail app does: nothing here is
+            ever deleted, because what the clinic said is worth finding
+            again.
+        -->
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/message_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/space_lg"
+            android:layout_marginTop="@dimen/space_md"
+            app:checkedButton="@id/filter_inbox"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/filter_inbox"
+                style="@style/Widget.Mediconnect.Button.Segmented"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="@dimen/control_lg"
+                android:text="@string/messages_inbox" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/filter_archived"
+                style="@style/Widget.Mediconnect.Button.Segmented"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="@dimen/control_lg"
+                android:text="@string/messages_archived" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
         <LinearLayout
             android:id="@+id/messages_header"
             android:layout_width="match_parent"
@@ -39,6 +74,14 @@
                 tools:text="2 unread" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_clear_read"
+                style="@style/Widget.Mediconnect.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/touch_target"
+                android:text="@string/messages_clear_read" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_mark_all_read"
                 style="@style/Widget.Mediconnect.Button.Text"
                 android:layout_width="wrap_content"
@@ -46,6 +89,15 @@
                 android:minHeight="@dimen/touch_target"
                 android:text="@string/messages_mark_all_read" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/messages_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/space_lg"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
+            android:textColor="@color/md_on_surface_variant"
+            tools:text="Swipe a message sideways to archive it." />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"

@@ -58,6 +58,18 @@ public class Notification {
     private java.util.UUID appointmentId;
 
     /**
+     * For a waitlist offer: the entry it was made to and the slot it
+     * held. An offer ends — taken, turned down, lapsed, passed on — while
+     * the message stays in the inbox, so the message has to be able to
+     * say whether the offer it describes is still there.
+     */
+    @Column(columnDefinition = "UUID")
+    private java.util.UUID waitlistEntryId;
+
+    @Column(columnDefinition = "UUID")
+    private java.util.UUID offeredSlotId;
+
+    /**
      * Who it went to, in words (board B07): "All patients", "Patients of
      * Dr. Chase", "Patients booked on Thu 1 Oct". Kept as sent, because the
      * people it reached are fixed at that moment even if the group changes.

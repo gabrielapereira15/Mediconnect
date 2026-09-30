@@ -51,6 +51,30 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final Consumer<Notification> onOpen;
     private final Consumer<Notification> onAction;
 
+    /** Archive or move back, from the row's screen-reader action. */
+    private Consumer<Notification> onToggleArchive = notification -> { };
+    private boolean archivedView;
+
+    /**
+     * What the row's screen-reader action does, and which way round: a
+     * swipe cannot be performed by everyone, so the same thing is offered
+     * as a named action on each message.
+     */
+    public NotificationAdapter withArchiveAction(boolean archivedView, Consumer<Notification> onToggleArchive) {
+        this.archivedView = archivedView;
+        this.onToggleArchive = onToggleArchive;
+        return this;
+    }
+
+    /** The message at a list position, or null for a section heading. */
+    public Notification messageAt(int position) {
+        if (position < 0 || position >= rows.size()) {
+            return null;
+        }
+        Object row = rows.get(position);
+        return row instanceof Notification ? (Notification) row : null;
+    }
+
     public NotificationAdapter(List<Notification> notifications, Context context,
                                Consumer<Notification> onOpen,
                                Consumer<Notification> onAction) {
@@ -145,6 +169,20 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             binding.messageUnread.setVisibility(
                     notification.isRead() ? View.INVISIBLE : View.VISIBLE);
 
+            // Unread reads as unread at a glance, the way a mail inbox does:
+            // a bold title in full ink next to the dot; once read, a plain
+            // title and quieter text.
+            boolean unread = !notification.isRead();
+            androidx.core.widget.TextViewCompat.setTextAppearance(binding.messageTitle, unread
+                    ? R.style.TextAppearance_Mediconnect_TitleSmall
+                    : R.style.TextAppearance_Mediconnect_BodyMedium);
+            binding.messageTitle.setTextColor(ContextCompat.getColor(context, unread
+                    ? R.color.md_on_surface
+                    : R.color.md_on_surface_variant));
+            binding.messageBody.setTextColor(ContextCompat.getColor(context, unread
+                    ? R.color.md_on_surface
+                    : R.color.md_on_surface_variant));
+
             bindKind(notification);
 
             // Read and unread sounded identical, because the dot is the
@@ -153,6 +191,18 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     notification.isRead() ? R.string.cd_message : R.string.cd_message_unread,
                     notification.getTitle(), notification.getMessage()));
             binding.messageCard.setOnClickListener(v -> onOpen.accept(notification));
+
+            String action = context.getString(archivedView
+                    ? R.string.messages_action_unarchive
+                    : R.string.messages_action_archive);
+            androidx.core.view.ViewCompat.replaceAccessibilityAction(binding.messageCard,
+                    new androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat(
+                            R.id.action_toggle_archive, action),
+                    action,
+                    (view, arguments) -> {
+                        onToggleArchive.accept(notification);
+                        return true;
+                    });
         }
 
         /**
@@ -162,8 +212,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
          */
         private void bindKind(Notification notification) {
             String kind = notification.getKind() == null ? "" : notification.getKind();
+            // Rows are recycled; only an ended offer shows the note.
+            binding.messageNote.setVisibility(View.GONE);
 
-            if (KIND_WAITLIST_OFFER.equals(kind)) {
+            if (KIND_WAITLIST_OFFER.equals(kind) && notification.isOfferOpen()) {
                 binding.messageCard.setCardBackgroundColor(
                         ContextCompat.getColor(context, R.color.md_rating_container));
                 binding.messageIcon.setImageResource(R.drawable.ic_hourglass);
@@ -173,6 +225,24 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 binding.messageAction.setVisibility(View.VISIBLE);
                 binding.messageAction.setText(R.string.messages_see_offer);
                 binding.messageAction.setOnClickListener(v -> onAction.accept(notification));
+                return;
+            }
+
+            if (KIND_WAITLIST_OFFER.equals(kind)) {
+                // The offer is gone — taken, turned down, passed on or run
+                // out. The message stays, as a record, but it stops asking
+                // for attention and says so in words rather than leaving a
+                // button that leads nowhere.
+                binding.messageCard.setCardBackgroundColor(
+                        ContextCompat.getColor(context, R.color.md_surface));
+                binding.messageIcon.setImageResource(R.drawable.ic_hourglass);
+                binding.messageIcon.setBackgroundResource(R.drawable.tile_surface);
+                binding.messageIcon.setImageTintList(ContextCompat.getColorStateList(
+                        context, R.color.md_on_surface_variant));
+                binding.messageAction.setVisibility(View.GONE);
+                binding.messageAction.setOnClickListener(null);
+                binding.messageNote.setVisibility(View.VISIBLE);
+                binding.messageNote.setText(R.string.messages_offer_ended);
                 return;
             }
 

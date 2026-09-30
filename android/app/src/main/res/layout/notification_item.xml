@@ -86,6 +86,20 @@
                 android:textAppearance="@style/TextAppearance.Mediconnect.BodySmall"
                 tools:text="Dr. Chase can see you Tue 29 Sep at 2:00 PM." />
 
+            <!-- What became of an offer, in words: "Offer ended". -->
+            <TextView
+                android:id="@+id/message_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:drawablePadding="@dimen/space_xs"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.Mediconnect.LabelMedium"
+                android:textColor="@color/md_on_surface_variant"
+                android:visibility="gone"
+                tools:text="Offer ended"
+                tools:visibility="visible" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/message_action"
                 android:layout_width="wrap_content"

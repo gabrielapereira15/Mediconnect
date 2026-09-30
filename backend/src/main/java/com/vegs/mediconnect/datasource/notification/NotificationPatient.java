@@ -35,6 +35,17 @@ public class NotificationPatient {
     @Column
     private Boolean acknowledged;
 
+    /**
+     * Put away by the patient (P13's Archive). Out of their inbox, not
+     * gone: it is still listed under Archived, and the clinic's record of
+     * having sent it is untouched.
+     */
+    @Column
+    private Boolean archived;
+
+    @Column
+    private OffsetDateTime archivedAt;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private OffsetDateTime dateCreated;

@@ -15,6 +15,10 @@ public class Notification {
     private String appointmentId;
     /** Whether that visit's form is still to be filled in. */
     private boolean formPending;
+    /** For a waitlist offer: whether it is still being held. */
+    private boolean offerOpen;
+    /** Put away by the patient: under Archived rather than in the inbox. */
+    private boolean archived;
 
     public String getId() {
         return id;
@@ -64,6 +68,18 @@ public class Notification {
     /** "Fill in form" is offered only while there is one to fill in. */
     public boolean hasFormToFill() {
         return formPending && appointmentId != null && !appointmentId.isEmpty();
+    }
+
+    public boolean isOfferOpen() {
+        return offerOpen;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 
     public boolean isRead() {

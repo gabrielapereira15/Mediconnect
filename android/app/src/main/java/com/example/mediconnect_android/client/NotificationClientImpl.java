@@ -48,6 +48,39 @@ public class NotificationClientImpl implements NotificationClient {
     }
 
     @Override
+    public Boolean archive(String notificationId) {
+        return post(ApiConfig.url("/api/mobile/notifications/archive/") + notificationId, "archiving");
+    }
+
+    @Override
+    public Boolean unarchive(String notificationId) {
+        return post(ApiConfig.url("/api/mobile/notifications/unarchive/") + notificationId, "unarchiving");
+    }
+
+    @Override
+    public java.util.List<String> archiveRead(String email) {
+        String url = ApiConfig.url("/api/mobile/notifications/archive-read/") + email;
+        ApiGenericResponse response = OkHttpClientHelper.post(url, "");
+        if (!response.isSuccess()) {
+            Log.e("NotificationClientImpl", "Error clearing read messages: " + response.getResponseBody());
+            return null;
+        }
+        java.lang.reflect.Type type = new com.google.gson.reflect.TypeToken<java.util.List<String>>() {
+        }.getType();
+        java.util.List<String> ids = new com.google.gson.Gson().fromJson(response.getResponseBody(), type);
+        return ids == null ? new java.util.ArrayList<>() : ids;
+    }
+
+    private Boolean post(String url, String what) {
+        ApiGenericResponse response = OkHttpClientHelper.post(url, "");
+        if (response.isSuccess()) {
+            return true;
+        }
+        Log.e("NotificationClientImpl", "Error " + what + " a message: " + response.getResponseBody());
+        return false;
+    }
+
+    @Override
     public Boolean markAsRead(String notificationId) {
         String url = ApiConfig.url("/api/mobile/notifications/ack/") + notificationId;
         ApiGenericResponse response = OkHttpClientHelper.post(url, "");
