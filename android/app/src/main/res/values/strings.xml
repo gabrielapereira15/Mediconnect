@@ -411,8 +411,24 @@
     <!-- ==== Find a doctor (board P04) ==================================== -->
     <string name="doctors_title">Find a doctor</string>
     <string name="doctors_search_hint">Name or specialty</string>
-    <string name="doctors_count">%1$d doctors · soonest first</string>
-    <string name="doctors_count_one">1 doctor</string>
+    <plurals name="doctors_count">
+        <item quantity="one">%1$d doctor · %2$s</item>
+        <item quantity="other">%1$d doctors · %2$s</item>
+    </plurals>
+    <string name="doctors_sorted_soonest">soonest first</string>
+    <string name="doctors_sorted_rating">highest rated first</string>
+    <string name="doctors_sorted_name">by name</string>
+    <string name="doctors_filters_title">Filters</string>
+    <string name="cd_doctors_filters_active">Filters, %1$d on</string>
+    <string name="doctors_sort_title">Sort by</string>
+    <string name="doctors_sort_soonest">Soonest available</string>
+    <string name="doctors_sort_rating">Highest rated</string>
+    <string name="doctors_sort_name">Name, A to Z</string>
+    <string name="doctors_only_free">Only doctors with free times</string>
+    <string name="doctors_only_free_sub">Hides anyone fully booked for now</string>
+    <string name="doctors_filters_reset">Reset</string>
+    <string name="doctors_clear_filters">Clear search and filters</string>
+    <string name="doctors_filters_apply">Show doctors</string>
     <string name="doctors_filter_all">All</string>
     <string name="doctors_filter_today">Available today</string>
     <string name="doctors_no_reviews">No reviews yet</string>
@@ -529,6 +545,8 @@
     <string name="cd_off">off</string>
     <string name="cd_close">Close</string>
     <string name="cd_back">Back</string>
+    <string name="cd_day_free">%1$s, has free times</string>
+    <string name="cd_day_full">%1$s, fully booked</string>
     <string name="step_one">1</string>
     <string name="step_two">2</string>
     <string name="step_three">3</string>

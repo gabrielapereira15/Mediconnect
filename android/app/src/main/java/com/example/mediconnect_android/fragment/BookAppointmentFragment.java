@@ -2,6 +2,7 @@ package com.example.mediconnect_android.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -306,14 +307,23 @@ public class BookAppointmentFragment extends Fragment {
                     getLayoutInflater(), binding.dateStrip, false);
             chip.dateWeekday.setText(day.date.format(WEEKDAY));
             chip.dateDay.setText(String.valueOf(day.date.getDayOfMonth()));
+            // A dot for a day with times left, "Full" and a greyed number
+            // for one without — shape and word as well as colour.
+            show(chip.dateDot, day.hasFreeSlot());
             show(chip.dateNote, !day.hasFreeSlot());
+            if (!day.hasFreeSlot()) {
+                chip.dateDay.setTextColor(ContextCompat.getColorStateList(
+                        requireContext(), R.color.date_chip_label));
+            }
 
             // A full day stays in the strip and stays tappable. Dropping it
             // makes the week skip a day for no visible reason, and a patient
             // scanning for the soonest opening needs to see that Friday was
             // considered and is gone.
             chip.getRoot().setSelected(day.date.equals(selectedDay));
-            chip.getRoot().setContentDescription(day.date.format(DAY_TITLE));
+            chip.getRoot().setContentDescription(getString(day.hasFreeSlot()
+                    ? R.string.cd_day_free
+                    : R.string.cd_day_full, day.date.format(DAY_TITLE)));
             chip.getRoot().setOnClickListener(v -> selectDay(day.date));
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -396,6 +406,14 @@ public class BookAppointmentFragment extends Fragment {
         view.slot.setText(label);
         view.slot.setEnabled(slot.isAvailable());
         view.slot.setSelected(slot.getId() != null && slot.getId().equals(selectedSlotId));
+        if (!slot.isAvailable()) {
+            // Struck through as well as greyed, so "taken" does not rest on
+            // a colour difference; and skipped by keyboard focus, since
+            // there is nothing to do with it.
+            view.slot.setPaintFlags(view.slot.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            view.slot.setFocusable(false);
+            view.slot.setClickable(false);
+        }
         // Announced with its state: a screen reader hearing eight times in
         // a row has no other way to tell which of them can be booked.
         view.slot.setContentDescription(getString(slot.isAvailable()

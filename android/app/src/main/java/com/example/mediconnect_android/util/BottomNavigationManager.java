@@ -83,10 +83,25 @@ public class BottomNavigationManager {
      * Replaces the current screen without adding to the back stack: a tab is
      * a place, not a step, so Back leaves the app rather than walking back
      * through every tab that was visited.
+     *
+     * Whatever steps were open in the tab being left are dropped first.
+     * They used to stay on the stack under the new tab, so Back from
+     * Profile could land on a visit opened from Home minutes earlier.
      */
     public void loadFragment(Fragment fragment) {
+        if (fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(fragmentContainerId, fragment);
         transaction.commit();
+    }
+
+    /** Whether a screen is one of the four tabs rather than a step inside one. */
+    public static boolean isTab(Fragment screen) {
+        return screen instanceof HomeFragment
+                || screen instanceof MedicalHistoryFragment
+                || screen instanceof HealthRecordFragment
+                || screen instanceof ProfileFragment;
     }
 }

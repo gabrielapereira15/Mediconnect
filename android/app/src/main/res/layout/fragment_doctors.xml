@@ -57,6 +57,21 @@
                     android:inputType="text"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Sort order and "only doctors with free times". -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_filters"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                android:layout_width="@dimen/control_lg"
+                android:layout_height="@dimen/control_lg"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/space_sm"
+                android:contentDescription="@string/doctors_filters_title"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/ic_sliders"
+                app:iconSize="22dp"
+                app:shapeAppearance="@style/ShapeAppearance.Mediconnect.Medium" />
         </LinearLayout>
 
         <!-- ==== Filters ============================================= -->

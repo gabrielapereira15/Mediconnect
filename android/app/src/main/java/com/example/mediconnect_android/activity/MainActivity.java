@@ -98,9 +98,35 @@ public class MainActivity extends AppCompatActivity
                                                       @NonNull Fragment f,
                                                       @NonNull View v,
                                                       Bundle savedInstanceState) {
+                        // Screens only. A bottom sheet is shown through the
+                        // same manager, and resetting the title under it
+                        // left the screen behind renamed once it closed.
+                        if (f.getId() != R.id.flFragment) {
+                            return;
+                        }
                         setTitle(R.string.app_name);
+                        bindUpArrow(f);
                     }
                 }, false);
+    }
+
+    /**
+     * A back arrow on every screen that is a step inside a tab.
+     *
+     * Decided by what the screen is rather than by the back stack's depth:
+     * a tab is a place, so it never gets one, whatever the stack holds.
+     * Before this, a visit or a booking step had no way back on screen and
+     * relied on the system gesture, which not everyone knows is there.
+     */
+    private void bindUpArrow(Fragment screen) {
+        if (BottomNavigationManager.isTab(screen)) {
+            mainBinding.materialToolbar.setNavigationIcon(null);
+            return;
+        }
+        mainBinding.materialToolbar.setNavigationIcon(R.drawable.ic_arrow_left);
+        mainBinding.materialToolbar.setNavigationContentDescription(R.string.cd_back);
+        mainBinding.materialToolbar.setNavigationOnClickListener(
+                v -> getOnBackPressedDispatcher().onBackPressed());
     }
 
     @Override

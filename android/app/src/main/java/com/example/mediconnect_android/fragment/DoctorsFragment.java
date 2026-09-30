@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -25,6 +26,7 @@ import com.example.mediconnect_android.util.WhenLabel;
 import com.google.android.material.chip.Chip;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -58,6 +60,8 @@ public class DoctorsFragment extends Fragment {
     private final List<Doctor> allDoctors = new ArrayList<>();
     private String activeFilter = FILTER_ALL;
     private String query = "";
+    private String sort = DoctorFiltersSheet.SORT_SOONEST;
+    private boolean onlyFree;
 
     public DoctorsFragment() {
     }
@@ -100,6 +104,8 @@ public class DoctorsFragment extends Fragment {
         // over what the screen was opened with.
         if (savedInstanceState != null) {
             activeFilter = savedInstanceState.getString(STATE_FILTER, activeFilter);
+            sort = savedInstanceState.getString(DoctorFiltersSheet.KEY_SORT, sort);
+            onlyFree = savedInstanceState.getBoolean(DoctorFiltersSheet.KEY_ONLY_FREE);
         }
     }
 
@@ -146,6 +152,16 @@ public class DoctorsFragment extends Fragment {
             }
             return false;
         });
+
+        binding.btnFilters.setOnClickListener(v -> DoctorFiltersSheet.of(sort, onlyFree)
+                .show(getChildFragmentManager(), DoctorFiltersSheet.TAG));
+        getChildFragmentManager().setFragmentResultListener(DoctorFiltersSheet.RESULT,
+                getViewLifecycleOwner(), (key, result) -> {
+                    sort = result.getString(DoctorFiltersSheet.KEY_SORT, sort);
+                    onlyFree = result.getBoolean(DoctorFiltersSheet.KEY_ONLY_FREE);
+                    applyFilters();
+                });
+        bindFiltersButton();
 
         load();
     }
@@ -214,21 +230,86 @@ public class DoctorsFragment extends Fragment {
 
         List<Doctor> shown = allDoctors.stream()
                 .filter(this::matchesFilter)
+                .filter(doctor -> !onlyFree || doctor.getNextAvailableAt() != null)
                 .filter(doctor -> needle.isEmpty()
                         || contains(doctor.getName(), needle)
                         || contains(doctor.getSpecialty(), needle))
+                .sorted(order())
                 .collect(Collectors.toList());
 
         binding.recyclerView.setAdapter(new DoctorSeeAllAdapter(shown, getContext()));
-        binding.resultCount.setText(shown.size() == 1
-                ? getString(R.string.doctors_count_one)
-                : getString(R.string.doctors_count, shown.size()));
+        // The order is said in words next to the count, so a list sorted by
+        // rating is not mistaken for the soonest-first one.
+        binding.resultCount.setText(getResources().getQuantityString(
+                R.plurals.doctors_count, shown.size(), shown.size(), getString(sortLabel())));
+        bindFiltersButton();
         binding.resultCount.setVisibility(shown.isEmpty() ? View.GONE : View.VISIBLE);
 
-        binding.stateView.showContentOrEmpty(shown.isEmpty(),
-                R.drawable.ic_search,
-                R.string.doctors_empty_title,
-                R.string.doctors_empty_body);
+        if (shown.isEmpty()) {
+            // The way out of "no results" is the filters that caused it.
+            binding.stateView.showEmpty(R.drawable.ic_search,
+                    R.string.doctors_empty_title,
+                    R.string.doctors_empty_body,
+                    R.string.doctors_clear_filters,
+                    this::clearFilters);
+        } else {
+            binding.stateView.showContent();
+        }
+    }
+
+    private void clearFilters() {
+        activeFilter = FILTER_ALL;
+        sort = DoctorFiltersSheet.SORT_SOONEST;
+        onlyFree = false;
+        query = "";
+        // Clearing the box runs applyFilters through its watcher.
+        binding.searchBar.setText("");
+        buildChips();
+        applyFilters();
+    }
+
+    /**
+     * The server sends the list soonest-first, which is kept as it came;
+     * the other two orders are applied here.
+     */
+    private Comparator<Doctor> order() {
+        if (DoctorFiltersSheet.SORT_RATING.equals(sort)) {
+            return Comparator.comparing(
+                    (Doctor doctor) -> doctor.getScore() == null ? 0d : doctor.getScore())
+                    .reversed();
+        }
+        if (DoctorFiltersSheet.SORT_NAME.equals(sort)) {
+            return Comparator.comparing(
+                    (Doctor doctor) -> doctor.getLastName() == null ? "" : doctor.getLastName(),
+                    String.CASE_INSENSITIVE_ORDER);
+        }
+        return (a, b) -> 0;
+    }
+
+    private int sortLabel() {
+        if (DoctorFiltersSheet.SORT_RATING.equals(sort)) {
+            return R.string.doctors_sorted_rating;
+        }
+        if (DoctorFiltersSheet.SORT_NAME.equals(sort)) {
+            return R.string.doctors_sorted_name;
+        }
+        return R.string.doctors_sorted_soonest;
+    }
+
+    /**
+     * Filled while anything in the sheet differs from its defaults, and said
+     * in the button's label, so the state is not carried by colour alone.
+     */
+    private void bindFiltersButton() {
+        int active = (onlyFree ? 1 : 0)
+                + (DoctorFiltersSheet.SORT_SOONEST.equals(sort) ? 0 : 1);
+        binding.btnFilters.setContentDescription(active == 0
+                ? getString(R.string.doctors_filters_title)
+                : getString(R.string.cd_doctors_filters_active, active));
+        binding.btnFilters.setBackgroundTintList(ContextCompat.getColorStateList(requireContext(),
+                active == 0 ? R.color.md_surface_sunken : R.color.md_primary));
+        binding.btnFilters.setIconTint(ContextCompat.getColorStateList(requireContext(),
+                active == 0 ? R.color.md_on_surface : R.color.md_on_primary));
     }
 
     private boolean matchesFilter(Doctor doctor) {
@@ -252,6 +333,8 @@ public class DoctorsFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_FILTER, activeFilter);
+        outState.putString(DoctorFiltersSheet.KEY_SORT, sort);
+        outState.putBoolean(DoctorFiltersSheet.KEY_ONLY_FREE, onlyFree);
     }
 
     @Override

@@ -60,17 +60,26 @@
                 android:textAppearance="@style/TextAppearance.Mediconnect.BodyLarge"
                 android:textColor="@color/md_on_surface_variant" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:labelFor="@id/email"
+                android:text="@string/signin_email"
+                android:textAppearance="@style/TextAppearance.Mediconnect.LabelLarge"
+                android:textColor="@color/md_on_surface" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/email_layout"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_2xl"
-                android:hint="@string/signin_email"
+                android:layout_marginTop="@dimen/space_xs"
                 app:errorEnabled="true"
                 app:helperText="@string/signin_email_help"
                 app:helperTextEnabled="true"
-                app:startIconDrawable="@drawable/ic_mail">
+                app:startIconDrawable="@drawable/ic_mail"
+                app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/email"

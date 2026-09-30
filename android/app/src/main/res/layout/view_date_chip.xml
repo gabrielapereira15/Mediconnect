@@ -37,6 +37,15 @@
         android:textColor="@color/date_chip_text"
         tools:text="30" />
 
+    <!-- Free times on this day. The full days say "Full" instead. -->
+    <View
+        android:id="@+id/date_dot"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="@dimen/space_xs"
+        android:background="@drawable/date_chip_dot"
+        android:duplicateParentState="true" />
+
     <TextView
         android:id="@+id/date_note"
         android:layout_width="wrap_content"
