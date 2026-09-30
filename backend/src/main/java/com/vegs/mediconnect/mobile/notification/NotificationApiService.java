@@ -44,6 +44,7 @@ public class NotificationApiService {
                         .message(notificationPatient.getNotificationId().getMessage())
                         .kind(kindOf(notificationPatient))
                         .read(Boolean.TRUE.equals(notificationPatient.getAcknowledged()))
+                        .archived(Boolean.TRUE.equals(notificationPatient.getArchived()))
                         .appointmentId(notificationPatient.getNotificationId().getAppointmentId())
                         .formPending(formPending(notificationPatient.getNotificationId().getAppointmentId()))
                         .offerOpen(offerOpen(notificationPatient.getNotificationId()))
@@ -125,16 +126,73 @@ public class NotificationApiService {
      */
     @Transactional
     public void ackNotification(UUID notificationPatientId, String requestingEmail) {
+        var notification = owned(notificationPatientId, requestingEmail);
+        notification.setAcknowledged(true);
+        notificationPatientRepository.save(notification);
+    }
+
+    /**
+     * Puts one message away. Archiving counts as having dealt with it, so
+     * it is marked read too: an archived message should never keep the
+     * bell lit.
+     */
+    @Transactional
+    public void archive(UUID notificationPatientId, String requestingEmail) {
+        var notification = owned(notificationPatientId, requestingEmail);
+        notification.setArchived(true);
+        notification.setArchivedAt(java.time.OffsetDateTime.now());
+        notification.setAcknowledged(true);
+        notificationPatientRepository.save(notification);
+    }
+
+    /** Back to the inbox, still read. */
+    @Transactional
+    public void unarchive(UUID notificationPatientId, String requestingEmail) {
+        var notification = owned(notificationPatientId, requestingEmail);
+        notification.setArchived(false);
+        notification.setArchivedAt(null);
+        notificationPatientRepository.save(notification);
+    }
+
+    /**
+     * "Clear read": archives every message the patient has already read,
+     * leaving the inbox with only what still needs them. Returns the ids
+     * archived, so the app can offer to undo exactly those.
+     */
+    @Transactional
+    public List<UUID> archiveRead(String patientEmail) {
+        var patient = patientRepository.findByEmail(patientEmail)
+                .orElseThrow(PatientNotFoundException::new);
+        var read = notificationPatientRepository.findAllByPatientId(patient).stream()
+                .filter(NotificationPatient::notDeleted)
+                .filter(delivery -> Boolean.TRUE.equals(delivery.getAcknowledged()))
+                .filter(delivery -> !Boolean.TRUE.equals(delivery.getArchived()))
+                .toList();
+        var now = java.time.OffsetDateTime.now();
+        read.forEach(delivery -> {
+            delivery.setArchived(true);
+            delivery.setArchivedAt(now);
+        });
+        notificationPatientRepository.saveAll(read);
+        return read.stream().map(NotificationPatient::getId).toList();
+    }
+
+    /**
+     * The message, if it is the caller's.
+     *
+     * The id alone used to be enough, so any signed-in patient could act on
+     * a stranger's message by guessing one. Somebody else's is reported as
+     * missing rather than forbidden, because "forbidden" confirms the id
+     * exists.
+     */
+    private NotificationPatient owned(UUID notificationPatientId, String requestingEmail) {
         var notification = notificationPatientRepository.findById(notificationPatientId)
                 .orElseThrow(NotificationNotFoundException::new);
-
         String owner = notification.getPatientId().getEmail();
         if (requestingEmail == null || !requestingEmail.equalsIgnoreCase(owner)) {
             throw new NotificationNotFoundException();
         }
-
-        notification.setAcknowledged(true);
-        notificationPatientRepository.save(notification);
+        return notification;
     }
 
 }

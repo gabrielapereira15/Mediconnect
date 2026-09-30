@@ -29,6 +29,9 @@ public class NotificationResponse {
      */
     private boolean read;
 
+    /** Put away by the patient: shown under Archived, not in the inbox. */
+    private boolean archived;
+
     /** The visit a reminder is about, when it is about one. */
     private UUID appointmentId;
 

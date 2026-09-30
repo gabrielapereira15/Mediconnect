@@ -17,6 +17,8 @@ public class Notification {
     private boolean formPending;
     /** For a waitlist offer: whether it is still being held. */
     private boolean offerOpen;
+    /** Put away by the patient: under Archived rather than in the inbox. */
+    private boolean archived;
 
     public String getId() {
         return id;
@@ -70,6 +72,14 @@ public class Notification {
 
     public boolean isOfferOpen() {
         return offerOpen;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 
     public boolean isRead() {
