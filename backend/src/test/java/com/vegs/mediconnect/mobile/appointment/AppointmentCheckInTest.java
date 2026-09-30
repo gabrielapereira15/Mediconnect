@@ -58,6 +58,32 @@ class AppointmentCheckInTest {
     }
 
     @Test
+    @DisplayName("checking in also confirms attendance, so the app stops asking")
+    void checkInConfirmsAttendance() {
+        var appointment = appointmentOn(LocalDate.now());
+        var service = serviceFor(appointment);
+
+        var response = service.checkIn(appointment.getId(), EMAIL);
+
+        assertNotNull(appointment.getAttendanceConfirmedAt(),
+                "a patient in the waiting room has answered whether they are coming");
+        assertNotNull(response.getAttendanceConfirmedAt(), "and the app hears it in the same reply");
+    }
+
+    @Test
+    @DisplayName("checking in keeps an earlier confirmation as it was")
+    void checkInKeepsEarlierConfirmation() {
+        var appointment = appointmentOn(LocalDate.now());
+        OffsetDateTime confirmed = OffsetDateTime.now().minusDays(2);
+        appointment.setAttendanceConfirmedAt(confirmed);
+        var service = serviceFor(appointment);
+
+        service.checkIn(appointment.getId(), EMAIL);
+
+        assertEquals(confirmed, appointment.getAttendanceConfirmedAt());
+    }
+
+    @Test
     @DisplayName("checking in twice keeps the first arrival time")
     void checkInIsIdempotent() {
         var appointment = appointmentOn(LocalDate.now());

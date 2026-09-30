@@ -160,10 +160,7 @@ public class AppointmentApiService {
             throw new CheckInNotOpenException("You can check in on the day of your visit.");
         }
 
-        if (appointment.getCheckedInAt() == null) {
-            appointment.setCheckedInAt(OffsetDateTime.now());
-            appointmentRepository.save(appointment);
-        }
+        markArrived(appointment);
         return mapToAppointmentResponse(appointment);
     }
 
@@ -297,10 +294,25 @@ public class AppointmentApiService {
         if (!appointment.getScheduleTime().getSchedule().getDate().isEqual(LocalDate.now())) {
             throw new CheckInNotOpenException("Check-in is only open on the day of the visit.");
         }
-        if (appointment.getCheckedInAt() == null) {
-            appointment.setCheckedInAt(OffsetDateTime.now());
-            appointmentRepository.save(appointment);
+        markArrived(appointment);
+    }
+
+    /**
+     * Checked in, once. Arriving is the surest way of saying you will be
+     * there, so it confirms attendance too if nobody had: otherwise the
+     * app went on offering "Confirm" to a patient already in the waiting
+     * room, and the desk saw "Booked" beside someone who had checked in.
+     */
+    private void markArrived(Appointment appointment) {
+        if (appointment.getCheckedInAt() != null) {
+            return;
         }
+        var now = OffsetDateTime.now();
+        appointment.setCheckedInAt(now);
+        if (appointment.getAttendanceConfirmedAt() == null) {
+            appointment.setAttendanceConfirmedAt(now);
+        }
+        appointmentRepository.save(appointment);
     }
 
     /**
