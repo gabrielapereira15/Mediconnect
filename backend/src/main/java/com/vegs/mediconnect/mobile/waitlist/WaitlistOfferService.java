@@ -42,6 +42,10 @@ public class WaitlistOfferService {
     @Transactional
     public AppointmentResponse accept(String email, UUID entryId) {
         WaitlistEntry entry = waitlistService.owned(email, entryId);
+        if (entry.getStatus() == WaitlistStatus.BOOKED) {
+            // A second tap, or a retry after a slow response.
+            throw new OfferEndedException("You already took that offer.");
+        }
         if (entry.getStatus() != WaitlistStatus.OFFERED
                 || entry.getOfferedSlot() == null
                 || entry.getOfferExpiresAt() == null
