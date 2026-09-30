@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,6 +72,22 @@ public class AppointmentService {
                 .orElseThrow(NotFoundException::new);
         mapToEntity(appointmentDTO, appointment);
         appointmentRepository.save(appointment);
+    }
+
+    /**
+     * Marks the patient as arrived, once.
+     *
+     * Checking in twice keeps the first time: the desk's queue is ordered
+     * by how long people have been waiting, and re-recording it would send
+     * somebody to the back of a queue they have been in for twenty minutes.
+     */
+    public void checkIn(final UUID id) {
+        appointmentRepository.findById(id).ifPresent(appointment -> {
+            if (appointment.getCheckedInAt() == null) {
+                appointment.setCheckedInAt(OffsetDateTime.now());
+                appointmentRepository.save(appointment);
+            }
+        });
     }
 
     public void delete(final UUID id) {

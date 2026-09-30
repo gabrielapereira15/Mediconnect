@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!--
+    Staff sign-in.
+
+    Stands outside the shell deliberately: there is no side navigation to
+    show somebody who is not signed in, and the page should not hint at what
+    is behind it.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>[[#{staff.login.title}]] | [[#{app.title}]]</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+          rel="stylesheet" />
+    <link th:href="@{/css/mc-tokens.css}" rel="stylesheet" />
+    <link th:href="@{/css/bundle.css}" rel="stylesheet" />
+    <link th:href="@{/css/app.css}" rel="stylesheet" />
+</head>
+<body class="mc mc-signin">
+<main class="mc-signin-card">
+    <img th:src="@{/images/mediconnect.svg}" th:alt="#{app.title}" height="44"
+         style="align-self: flex-start" />
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+        <h1 class="headline" style="margin: 0">[[#{staff.login.headline}]]</h1>
+        <p class="body mc-muted" style="margin: 0">[[#{staff.login.body}]]</p>
+    </div>
+
+    <div th:if="${error}" class="mc-banner mc-banner-danger" role="alert">
+        <i class="mc-i mc-i-alert" aria-hidden="true"></i>
+        <div>[[#{staff.login.failed}]]</div>
+    </div>
+
+    <form th:action="@{/staff/login}" method="post"
+          style="display: flex; flex-direction: column; gap: 16px">
+        <input type="hidden" name="next" th:value="${next}" />
+
+        <div class="mc-field">
+            <label class="mc-label" for="email">[[#{staff.login.email}]]</label>
+            <div class="mc-input mc-input-md">
+                <i class="mc-i mc-i-mail mc-i-20 mc-muted" aria-hidden="true"></i>
+                <input id="email" name="email" type="email" required autofocus
+                       autocomplete="username" th:value="${email}"
+                       style="border: 0; outline: none; background: transparent; flex: 1; font: inherit; color: var(--ink)" />
+            </div>
+        </div>
+
+        <div class="mc-field">
+            <label class="mc-label" for="password">[[#{staff.login.password}]]</label>
+            <div class="mc-input mc-input-md">
+                <i class="mc-i mc-i-lock mc-i-20 mc-muted" aria-hidden="true"></i>
+                <input id="password" name="password" type="password" required
+                       autocomplete="current-password"
+                       style="border: 0; outline: none; background: transparent; flex: 1; font: inherit; color: var(--ink)" />
+            </div>
+        </div>
+
+        <button type="submit" class="mc-btn mc-btn-primary mc-btn-block">[[#{staff.login.submit}]]</button>
+    </form>
+
+    <p class="caption mc-subtle" style="margin: 0">[[#{staff.login.patients}]]</p>
+</main>
+</body>
+</html>

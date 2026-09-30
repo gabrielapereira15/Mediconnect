@@ -77,6 +77,16 @@ public class Appointment {
     private OffsetDateTime lastUpdated;
 
     /**
+     * Why it was cancelled, when the clinic cancelled it.
+     *
+     * A cancelled row with no reason tells whoever looks at it later
+     * nothing about whether the slot went back to the waitlist because the
+     * patient could not come or because the doctor was away.
+     */
+    @Column(columnDefinition = "text")
+    private String cancelReason;
+
+    /**
      * When the patient sent their pre-appointment form, or null if they
      * have not.
      *

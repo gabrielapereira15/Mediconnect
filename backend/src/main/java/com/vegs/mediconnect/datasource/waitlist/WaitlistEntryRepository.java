@@ -20,6 +20,10 @@ public interface WaitlistEntryRepository extends JpaRepository<WaitlistEntry, UU
 
     List<WaitlistEntry> findAllByPatientOrderByDateCreatedDesc(Patient patient);
 
+    List<WaitlistEntry> findAllByStatusOrderByDateCreatedAsc(WaitlistStatus status);
+
+    List<WaitlistEntry> findAllByOrderByDateCreatedDesc();
+
     boolean existsByPatientAndDoctorAndStatus(
             Patient patient, Doctor doctor, WaitlistStatus status);
 }

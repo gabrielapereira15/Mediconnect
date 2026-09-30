@@ -1,0 +1,84 @@
+/*
+ * The few things the back office needs beyond the design system.
+ *
+ * bundle.css carries the components; this is only what the server-rendered
+ * shell adds on top of them — the sign-in page, which sits outside the
+ * shell, and the table's own empty and loading states.
+ */
+
+/* ---- Sign-in ---------------------------------------------------------- */
+
+.mc-signin {
+    min-height: 100vh;
+    margin: 0;
+    display: grid;
+    place-items: center;
+    background: var(--canvas);
+    padding: var(--space-6);
+}
+
+.mc-signin-card {
+    width: min(420px, 100%);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-2);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+/* ---- The detail panel ------------------------------------------------- */
+
+/*
+ * Loaded with hx-get so the list behind it keeps its scroll position. It
+ * is empty until something is selected, and says so rather than sitting
+ * there as a blank column.
+ */
+.mc-aside {
+    width: 380px;
+    flex: none;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.mc-aside:empty::after {
+    content: attr(data-empty);
+    display: grid;
+    place-items: center;
+    height: 100%;
+    padding: var(--space-8);
+    text-align: center;
+    color: var(--ink-subtle);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 20px;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-lg);
+}
+
+/* htmx swaps can take a moment; say so instead of looking frozen. */
+.htmx-request.mc-aside {
+    opacity: 0.6;
+    transition: opacity 120ms ease;
+}
+
+/* ---- Tables ----------------------------------------------------------- */
+
+.mc-table td.mc-table-empty {
+    text-align: center;
+    padding: var(--space-10) var(--space-4);
+    color: var(--ink-subtle);
+}
+
+/* A row that opens a panel should look like it will. */
+.mc-table tbody tr[data-clickable] {
+    cursor: pointer;
+}
+
+.mc-table tbody tr.is-selected {
+    background: var(--brand-soft);
+}

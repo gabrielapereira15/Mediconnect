@@ -1,3 +1,10 @@
+server:
+  servlet:
+    session:
+      # Cookie only. URL rewriting puts the session id in every link, where
+      # it leaks through Referer headers and anything that logs URLs.
+      tracking-modes: cookie
+
 spring:
   application:
     name: mediconnect

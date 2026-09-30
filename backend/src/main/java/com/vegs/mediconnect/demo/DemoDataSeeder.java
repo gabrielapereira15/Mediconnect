@@ -7,6 +7,10 @@ import com.vegs.mediconnect.datasource.doctor.Doctor;
 import com.vegs.mediconnect.datasource.doctor.DoctorRepository;
 import com.vegs.mediconnect.datasource.notification.Notification;
 import com.vegs.mediconnect.datasource.notification.NotificationKind;
+import com.vegs.mediconnect.datasource.staff.StaffRole;
+import com.vegs.mediconnect.datasource.staff.StaffUser;
+import com.vegs.mediconnect.datasource.staff.StaffUserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.vegs.mediconnect.datasource.notification.NotificationPatient;
 import com.vegs.mediconnect.datasource.notification.NotificationPatientRepository;
 import com.vegs.mediconnect.datasource.notification.NotificationRepository;
@@ -74,10 +78,17 @@ public class DemoDataSeeder implements ApplicationRunner {
     private final NotificationPatientRepository notificationPatientRepository;
     private final ReviewRepository reviewRepository;
     private final com.vegs.mediconnect.datasource.health.HealthEntryRepository healthEntryRepository;
+    private final StaffUserRepository staffUserRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
+        // Staff accounts are seeded first and on their own guard: they were
+        // added after the rest, and a database that already had doctors in
+        // it would otherwise never get them.
+        seedStaff();
+
         if (doctorRepository.count() > 0) {
             log.info("Demo data: database already has doctors, skipping seed.");
             return;
@@ -96,6 +107,35 @@ public class DemoDataSeeder implements ApplicationRunner {
         log.info("Demo data: seeded {} doctors, {} patients, {} slots, {} appointments.",
                 doctors.size(), patients.size(), slots.size(), appointments.size());
         log.info("Demo data: sign in from the app with {}", patients.getFirst().getEmail());
+        log.info("Demo data: sign in to the back office with desk@mediconnect.ca "
+                + "or doctor@mediconnect.ca, password \"demo\"");
+    }
+
+    /**
+     * Two accounts, one per role, so the difference between them can be
+     * seen rather than described.
+     *
+     * The password is hashed even here. A seeded plaintext password is how
+     * one ends up in production.
+     */
+    private void seedStaff() {
+        if (staffUserRepository.count() > 0) {
+            return;
+        }
+        staffUserRepository.saveAll(List.of(
+                staff("desk@mediconnect.ca", "Ana Ferreira", StaffRole.FRONT_DESK),
+                staff("doctor@mediconnect.ca", "Robert Chase", StaffRole.CLINICIAN)));
+    }
+
+    private StaffUser staff(String email, String name, StaffRole role) {
+        var user = new StaffUser();
+        user.setEmail(email);
+        user.setName(name);
+        user.setRole(role);
+        user.setClinicCode("KIT001");
+        user.setActive(true);
+        user.setPasswordHash(passwordEncoder.encode("demo"));
+        return user;
     }
 
     private List<Doctor> seedDoctors() {
@@ -245,7 +285,76 @@ public class DemoDataSeeder implements ApplicationRunner {
                 findSlot(slots, doctors.get(5), businessDaysFromToday(3), LocalTime.of(11, 0)),
                 AppointmentStatus.CANCELED));
 
+        appointments.addAll(todaysClinic(doctors, patients));
+
         return appointmentRepository.saveAll(appointments);
+    }
+
+    /**
+     * A day in progress, for the back office's Today board.
+     *
+     * Without this the clinic's main screen opened empty on a fresh
+     * database: every seeded appointment was days out or long past, so the
+     * one page the front desk lives on had nothing to show. These sit
+     * across the working day — some already seen, one in the waiting room,
+     * the rest still to come, and a couple with the form still outstanding.
+     */
+    private List<Appointment> todaysClinic(List<Doctor> doctors, List<Patient> patients) {
+        LocalDate today = LocalDate.now();
+        var todays = new ArrayList<Appointment>();
+
+        // Nothing to show on a day the clinic does not open.
+        if (today.getDayOfWeek().getValue() > 5) {
+            return todays;
+        }
+
+        Patient first = patients.getFirst();
+        Patient second = patients.size() > 1 ? patients.get(1) : first;
+
+        record Booking(int doctor, Patient patient, LocalTime time, boolean formIn,
+                       boolean arrived) {
+        }
+
+        var bookings = List.of(
+                new Booking(1, second, LocalTime.of(9, 0), true, true),
+                new Booking(0, first, LocalTime.of(9, 30), true, true),
+                new Booking(3, second, LocalTime.of(10, 0), false, false),
+                new Booking(0, first, LocalTime.of(11, 0), true, false),
+                new Booking(2, second, LocalTime.of(13, 30), false, false),
+                new Booking(1, first, LocalTime.of(14, 30), true, false),
+                new Booking(4, second, LocalTime.of(15, 30), false, false));
+
+        for (Booking booking : bookings) {
+            Doctor doctor = doctors.get(booking.doctor());
+            ScheduleTime slot = findSlotOn(doctor, today, booking.time());
+            if (slot == null) {
+                continue;
+            }
+
+            var appointment = appointment(booking.patient(), doctor, slot,
+                    AppointmentStatus.UPCOMING);
+            if (booking.formIn()) {
+                appointment.setFormSubmittedAt(OffsetDateTime.now().minusDays(1));
+            }
+            if (booking.arrived()) {
+                // Long enough ago that the queue shows a real wait.
+                appointment.setCheckedInAt(OffsetDateTime.now().minusMinutes(
+                        12L + todays.size() * 7L));
+            }
+            todays.add(appointment);
+        }
+        return todays;
+    }
+
+    /** The slot at one time on one day, whether or not it is still free. */
+    private ScheduleTime findSlotOn(Doctor doctor, LocalDate date, LocalTime time) {
+        return scheduleTimeRepository.findAll().stream()
+                .filter(slot -> slot.getSchedule() != null)
+                .filter(slot -> date.equals(slot.getSchedule().getDate()))
+                .filter(slot -> doctor.getId().equals(slot.getSchedule().getDoctor().getId()))
+                .filter(slot -> time.equals(slot.getTime()))
+                .findFirst()
+                .orElse(null);
     }
 
     private Appointment appointment(Patient patient, Doctor doctor, ScheduleTime slot,

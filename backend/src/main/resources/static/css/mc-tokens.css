@@ -1,0 +1,114 @@
+/* MediConnect tokens, compiled from the design system's tokens.json (light first, dark by [data-theme="dark"]). */
+:root, [data-theme="light"] {
+  --canvas: #F3F7F8;
+  --surface: #FFFFFF;
+  --surface-raised: #FFFFFF;
+  --surface-sunken: #E8EFF1;
+  --line: #D6E1E5;
+  --line-strong: #778D96;
+  --ink: #0E2431;
+  --ink-muted: #465963;
+  --ink-subtle: #5B6E78;
+  --brand: #0A7A80;
+  --brand-strong: #075A5F;
+  --brand-soft: #D5EFED;
+  --on-brand: #FFFFFF;
+  --on-brand-soft: #05464A;
+  --blue: #1D5EC0;
+  --blue-soft: #E0EBFB;
+  --on-blue-soft: #123E80;
+  --deep: #0B2F3A;
+  --on-deep: #E8F4F5;
+  --on-deep-muted: #9CC0C6;
+  --sun: #BF7F0A;
+  --sun-soft: #FCEFD3;
+  --on-sun-soft: #6A4300;
+  --success: #18794A;
+  --success-soft: #DCF2E5;
+  --warning: #935800;
+  --warning-soft: #FBEDD2;
+  --danger: #BC372E;
+  --danger-soft: #FBE2DF;
+  --on-danger: #FFFFFF;
+  --focus: var(--brand);
+  --scrim: rgba(8, 20, 24, 0.48);
+  --shadow-1: 0 1px 2px rgba(14, 36, 49, 0.06), 0 1px 3px rgba(14, 36, 49, 0.06);
+  --shadow-2: 0 6px 16px rgba(14, 36, 49, 0.08);
+  --shadow-3: 0 16px 40px rgba(14, 36, 49, 0.16);
+}
+[data-theme="dark"] {
+  --canvas: #0A1519;
+  --surface: #101E23;
+  --surface-raised: #172A30;
+  --surface-sunken: #1A2E35;
+  --line: #22363D;
+  --line-strong: #5E767F;
+  --ink: #E6EFF1;
+  --ink-muted: #A8BBC1;
+  --ink-subtle: #8DA2A9;
+  --brand: #5BCACE;
+  --brand-strong: #8ADDE0;
+  --brand-soft: #0E3A3E;
+  --on-brand: #02282B;
+  --on-brand-soft: #B8EDEE;
+  --blue: #8FB8F6;
+  --blue-soft: #15305A;
+  --on-blue-soft: #D0E1FC;
+  --deep: #0F3440;
+  --on-deep: #E8F4F5;
+  --on-deep-muted: #9CC0C6;
+  --sun: #F2C160;
+  --sun-soft: #3A2C0E;
+  --on-sun-soft: #F7DCA0;
+  --success: #6DD19C;
+  --success-soft: #0F3323;
+  --warning: #EFB45A;
+  --warning-soft: #3A290C;
+  --danger: #FF9C91;
+  --danger-soft: #461A1A;
+  --on-danger: #3A0906;
+  --focus: var(--brand);
+  --scrim: rgba(0, 0, 0, 0.6);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 6px 16px rgba(0, 0, 0, 0.45);
+  --shadow-3: 0 16px 40px rgba(0, 0, 0, 0.6);
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 999px;
+  --touch-target: 48px;
+  --control-lg: 52px;
+  --control-md: 40px;
+  --control-sm: 32px;
+  --sidenav-width: 248px;
+  --content-max: 1280px;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.display { font-family: var(--font-sans); font-size: 32px; line-height: 40px; font-weight: 700; letter-spacing: -0.02em; }
+.headline { font-family: var(--font-sans); font-size: 26px; line-height: 32px; font-weight: 700; letter-spacing: -0.01em; }
+.title-lg { font-family: var(--font-sans); font-size: 22px; line-height: 28px; font-weight: 700; }
+.title-md { font-family: var(--font-sans); font-size: 18px; line-height: 24px; font-weight: 600; }
+.title-sm { font-family: var(--font-sans); font-size: 16px; line-height: 22px; font-weight: 600; }
+.body-lg { font-family: var(--font-sans); font-size: 17px; line-height: 26px; font-weight: 400; }
+.body { font-family: var(--font-sans); font-size: 15px; line-height: 22px; font-weight: 400; }
+.body-sm { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 400; }
+.label-lg { font-family: var(--font-sans); font-size: 16px; line-height: 20px; font-weight: 600; }
+.label { font-family: var(--font-sans); font-size: 14px; line-height: 18px; font-weight: 600; }
+.caption { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 500; }
+.overline { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.stat { font-family: var(--font-sans); font-size: 30px; line-height: 36px; font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.time { font-family: var(--font-sans); font-size: 20px; line-height: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }

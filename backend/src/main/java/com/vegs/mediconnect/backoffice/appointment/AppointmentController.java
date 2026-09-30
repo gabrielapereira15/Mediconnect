@@ -53,6 +53,22 @@ public class AppointmentController {
         return "appointment/list";
     }
 
+    /**
+     * Records that the patient has arrived, from the front desk rather than
+     * their phone.
+     *
+     * Most people walk up to the desk; the check-in on the phone is for the
+     * ones who would rather not queue. Both write the same timestamp.
+     */
+    @PostMapping("/{id}/check-in")
+    public String checkIn(@PathVariable(name = "id") final UUID id,
+                          final RedirectAttributes redirectAttributes) {
+        appointmentService.checkIn(id);
+        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
+                WebUtils.getMessage("appointment.checkedIn"));
+        return "redirect:/";
+    }
+
     @GetMapping("/add")
     public String add(@ModelAttribute("appointment") final AppointmentDTO appointmentDTO) {
         return "appointment/add";
