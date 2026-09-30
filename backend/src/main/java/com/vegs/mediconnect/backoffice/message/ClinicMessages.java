@@ -13,12 +13,18 @@ import com.vegs.mediconnect.datasource.notification.NotificationPatientRepositor
 import com.vegs.mediconnect.datasource.notification.NotificationRepository;
 import com.vegs.mediconnect.datasource.patient.Patient;
 import com.vegs.mediconnect.datasource.patient.PatientRepository;
+import com.vegs.mediconnect.mobile.appointment.model.AppointmentStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -31,16 +37,28 @@ import java.util.regex.Pattern;
  * Messages the clinic sends to patients' app inbox (board B07).
  *
  * News and reminders written by the desk, to everyone, to one doctor's
- * patients, or to everyone booked on a day. What the waitlist sends by
- * itself is not listed here; it is a conversation with one patient, not
- * something anyone at the desk wrote.
+ * patients, or to everyone booked on a day — now, or at a time the desk
+ * chooses. What the waitlist sends by itself is not listed here; it is a
+ * conversation with one patient, not something anyone at the desk wrote.
+ *
+ * A message is in one of four states, read off its fields: a draft
+ * (draft = true), scheduled (a time set, not gone yet), sent (sentAt set),
+ * or withdrawn (isDeleted). Only a sent message has delivery rows, so only
+ * a sent message can be in anybody's inbox.
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClinicMessages {
 
     public static final int TITLE_MAX = 80;
     public static final int MESSAGE_MAX = 500;
+
+    /** The soonest a message can be scheduled: sooner than this, send it now. */
+    static final Duration SOONEST = Duration.ofMinutes(5);
+
+    /** The furthest ahead one can be scheduled. */
+    static final Duration FURTHEST = Duration.ofDays(90);
 
     /** A link in a message from a clinic is how phishing starts; the app shows plain text. */
     private static final Pattern LINK = Pattern.compile("(?i)(https?://|www\\.|\\b[a-z0-9-]+\\.(com|ca|net|org|io|ly)\\b)");
@@ -68,16 +86,17 @@ public class ClinicMessages {
         }
     }
 
-    /** What the desk has written, before it is sent or saved. */
+    /** What the desk has written, before it is sent, scheduled or saved. */
     public record Draft(UUID id, Audience audience, UUID doctorId, LocalDate day, String title, String message)
             implements java.io.Serializable {
     }
 
-    public record Line(UUID id, String title, String audience, String stats, String when, boolean draft) {
+    public record Line(UUID id, String title, String audience, String stats, String when,
+                       boolean draft, boolean scheduled) {
     }
 
     public record Sent(UUID id, String title, String message, String audience, String when,
-                       int delivered, int read, boolean withdrawn) {
+                       int delivered, int read, boolean withdrawn, boolean scheduled) {
 
         public int getPercentRead() {
             return delivered == 0 ? 0 : Math.round(read * 100f / delivered);
@@ -91,9 +110,19 @@ public class ClinicMessages {
         return notificationRepository.findAll().stream()
                 .filter(Notification::notDeleted)
                 .filter(notification -> !NotificationKind.WAITLIST_OFFER.equals(notification.getKind()))
-                .sorted(Comparator.comparing(ClinicMessages::sortKey).reversed())
+                // Waiting to go first, soonest first; then everything else, newest first.
+                .sorted(Comparator.comparing((Notification notification) -> !isScheduled(notification))
+                        .thenComparing(notification -> isScheduled(notification)
+                                ? notification.getScheduledFor().toEpochSecond()
+                                : -sortKey(notification).toEpochSecond()))
                 .map(this::line)
                 .toList();
+    }
+
+    static boolean isScheduled(Notification notification) {
+        return !Boolean.TRUE.equals(notification.getDraft())
+                && notification.getSentAt() == null
+                && notification.getScheduledFor() != null;
     }
 
     private static OffsetDateTime sortKey(Notification notification) {
@@ -104,10 +133,14 @@ public class ClinicMessages {
     }
 
     private Line line(Notification notification) {
-        boolean draft = Boolean.TRUE.equals(notification.getDraft());
-        if (draft) {
+        if (Boolean.TRUE.equals(notification.getDraft())) {
             return new Line(notification.getId(), notification.getTitle(), audienceOf(notification, List.of()),
-                    "Not sent", "Draft", true);
+                    "Not sent", "Draft", true, false);
+        }
+        if (isScheduled(notification)) {
+            LocalDateTime at = Display.local(notification.getScheduledFor());
+            return new Line(notification.getId(), notification.getTitle(), audienceOf(notification, List.of()),
+                    "Goes out " + Display.dayAndTime(at), Display.day(at.toLocalDate()), false, true);
         }
         List<NotificationPatient> deliveries = deliveryRepository.findAllByNotificationId(notification);
         long read = deliveries.stream().filter(delivery -> Boolean.TRUE.equals(delivery.getAcknowledged())).count();
@@ -115,7 +148,7 @@ public class ClinicMessages {
                 ? "read by " + Math.round(read * 100f / deliveries.size()) + "%"
                 : "read by " + read + " of " + deliveries.size();
         return new Line(notification.getId(), notification.getTitle(), audienceOf(notification, deliveries),
-                stats, Display.day(Display.local(sortKey(notification)).toLocalDate()), false);
+                stats, Display.day(Display.local(sortKey(notification)).toLocalDate()), false, false);
     }
 
     /** The audience in words, for messages sent before it was recorded too. */
@@ -125,6 +158,9 @@ public class ClinicMessages {
         }
         if (Boolean.TRUE.equals(notification.getSendAllPatients())) {
             return "All patients";
+        }
+        if (Boolean.TRUE.equals(notification.getDraft())) {
+            return "Not chosen yet";
         }
         if (deliveries.size() == 1) {
             Patient patient = deliveries.getFirst().getPatientId();
@@ -138,10 +174,11 @@ public class ClinicMessages {
         Notification notification = notificationRepository.findById(id).orElseThrow(NotFoundException::new);
         List<NotificationPatient> deliveries = deliveryRepository.findAllByNotificationId(notification);
         int read = (int) deliveries.stream().filter(delivery -> Boolean.TRUE.equals(delivery.getAcknowledged())).count();
+        boolean scheduled = isScheduled(notification);
         return new Sent(notification.getId(), notification.getTitle(), notification.getMessage(),
                 audienceOf(notification, deliveries),
-                Display.dayAndTime(Display.local(sortKey(notification))),
-                deliveries.size(), read, !notification.notDeleted());
+                Display.dayAndTime(Display.local(scheduled ? notification.getScheduledFor() : sortKey(notification))),
+                deliveries.size(), read, !notification.notDeleted(), scheduled);
     }
 
     @Transactional(readOnly = true)
@@ -151,10 +188,13 @@ public class ClinicMessages {
                 .orElseThrow(NotFoundException::new);
     }
 
+    /** A draft, reopened as it was left, audience included. */
     @Transactional(readOnly = true)
     public Draft draft(UUID id) {
         Notification notification = notificationRepository.findById(id).orElseThrow(NotFoundException::new);
-        return new Draft(notification.getId(), Audience.ALL, null, null,
+        return new Draft(notification.getId(),
+                notification.getAudienceKind() == null ? Audience.ALL : Audience.of(notification.getAudienceKind()),
+                notification.getAudienceDoctorId(), notification.getAudienceDay(),
                 notification.getTitle(), notification.getMessage());
     }
 
@@ -196,20 +236,32 @@ public class ClinicMessages {
         return null;
     }
 
+    /** What stops it being scheduled for that time; null when it can be. */
+    public static String timingProblem(LocalDateTime sendAt, LocalDateTime now) {
+        if (sendAt == null) {
+            return "Choose when it should go out.";
+        }
+        if (sendAt.isBefore(now.plus(SOONEST))) {
+            return "Choose a time at least five minutes from now, or send it straight away.";
+        }
+        if (sendAt.isAfter(now.plus(FURTHEST))) {
+            return "Messages can be scheduled up to 90 days ahead.";
+        }
+        return null;
+    }
+
     /** Saves it without sending. Returns its id. */
     @Transactional
     public UUID saveDraft(Draft draft) {
-        Notification notification = draft.id() == null
-                ? new Notification()
-                : notificationRepository.findById(draft.id())
-                .filter(existing -> Boolean.TRUE.equals(existing.getDraft()))
-                .orElseThrow(NotFoundException::new);
+        Notification notification = editable(draft.id());
         notification.setTitle(blankToDash(draft.title()));
         notification.setMessage(blankToDash(draft.message()));
         notification.setKind(NotificationKind.ANNOUNCEMENT);
         notification.setDraft(true);
+        notification.setScheduledFor(null);
         notification.setSendAllPatients(false);
         notification.setIsDeleted(false);
+        rememberAudience(notification, draft);
         return notificationRepository.save(notification).getId();
     }
 
@@ -228,32 +280,54 @@ public class ClinicMessages {
             throw new IllegalArgumentException("Nobody is in that group, so there is no one to send it to.");
         }
 
-        Notification notification = draft.id() == null
-                ? new Notification()
-                : notificationRepository.findById(draft.id())
-                .filter(existing -> Boolean.TRUE.equals(existing.getDraft()))
-                .orElseThrow(NotFoundException::new);
-        notification.setTitle(draft.title().trim());
-        notification.setMessage(draft.message().trim());
-        notification.setKind(NotificationKind.ANNOUNCEMENT);
-        notification.setSendAllPatients(draft.audience() == Audience.ALL);
-        notification.setAudience(audienceLabel(draft));
+        Notification notification = editable(draft.id());
+        fill(notification, draft);
         notification.setDraft(false);
+        notification.setScheduledFor(null);
         notification.setSentAt(OffsetDateTime.now());
-        notification.setIsDeleted(false);
         Notification saved = notificationRepository.save(notification);
-
-        for (Patient patient : recipients) {
-            var delivery = new NotificationPatient();
-            delivery.setNotificationId(saved);
-            delivery.setPatientId(patient);
-            delivery.setAcknowledged(false);
-            deliveryRepository.save(delivery);
-        }
+        deliver(saved, recipients);
         return recipients.size();
     }
 
-    /** How many people it would reach, for the send button's label. */
+    /**
+     * Sets it to go out at a time the desk chooses. Nobody sees it before
+     * then: it gets its delivery rows only when it goes. Returns how many
+     * it would reach if it went now; who it reaches is worked out again at
+     * the time, so a patient who books that day in the meantime gets it.
+     */
+    @Transactional
+    public int schedule(Draft draft, LocalDateTime sendAt) {
+        String problem = problem(draft);
+        if (problem == null) {
+            problem = timingProblem(sendAt, LocalDateTime.now());
+        }
+        if (problem != null) {
+            throw new IllegalArgumentException(problem);
+        }
+
+        Notification notification = editable(draft.id());
+        fill(notification, draft);
+        notification.setDraft(false);
+        notification.setSentAt(null);
+        notification.setScheduledFor(sendAt.atZone(ZoneId.systemDefault()).toOffsetDateTime());
+        notificationRepository.save(notification);
+        return recipients(draft).size();
+    }
+
+    /** A scheduled message back to a draft, to be changed or sent another time. */
+    @Transactional
+    public UUID unschedule(UUID id) {
+        Notification notification = notificationRepository.findById(id)
+                .filter(ClinicMessages::isScheduled)
+                .filter(Notification::notDeleted)
+                .orElseThrow(NotFoundException::new);
+        notification.setDraft(true);
+        notification.setScheduledFor(null);
+        return notificationRepository.save(notification).getId();
+    }
+
+    /** How many people it would reach, for the line under the buttons. */
     @Transactional(readOnly = true)
     public int reach(Draft draft) {
         if (draft.audience() == Audience.DOCTOR && draft.doctorId() == null
@@ -264,14 +338,88 @@ public class ClinicMessages {
     }
 
     /**
-     * Takes a sent message out of patients' inboxes, or throws a draft
-     * away. Marked, never deleted: what the clinic said stays on record.
+     * Takes a sent message out of patients' inboxes, stops a scheduled one
+     * going out, or throws a draft away. Marked, never deleted: what the
+     * clinic said, or meant to say, stays on record.
      */
     @Transactional
     public void withdraw(UUID id) {
         Notification notification = notificationRepository.findById(id).orElseThrow(NotFoundException::new);
         notification.setIsDeleted(true);
         notificationRepository.save(notification);
+    }
+
+    // ---- going out on time ---------------------------------------------------------------
+
+    /**
+     * Sends every scheduled message whose time has come.
+     *
+     * Checked once a minute, so a message set for 9:00 is in inboxes by
+     * 9:01 at the latest. Each goes to the group as it stands now.
+     */
+    @Scheduled(fixedDelay = 60_000)
+    @Transactional
+    public int dispatchDue() {
+        return dispatchDue(OffsetDateTime.now());
+    }
+
+    @Transactional
+    public int dispatchDue(OffsetDateTime now) {
+        int sent = 0;
+        for (Notification notification : notificationRepository.findAllBySentAtIsNullAndScheduledForLessThanEqual(now)) {
+            if (!isScheduled(notification) || !notification.notDeleted()) {
+                continue;
+            }
+            Draft draft = new Draft(notification.getId(), Audience.of(notification.getAudienceKind()),
+                    notification.getAudienceDoctorId(), notification.getAudienceDay(),
+                    notification.getTitle(), notification.getMessage());
+            List<Patient> recipients = recipients(draft);
+            notification.setSentAt(now);
+            notificationRepository.save(notification);
+            deliver(notification, recipients);
+            sent++;
+            log.info("Sent scheduled message {} to {} patient(s)", notification.getId(), recipients.size());
+        }
+        return sent;
+    }
+
+    // ---- pieces --------------------------------------------------------------------------
+
+    /** A new message, or a draft or scheduled one that has not gone out yet. */
+    private Notification editable(UUID id) {
+        if (id == null) {
+            return new Notification();
+        }
+        return notificationRepository.findById(id)
+                .filter(existing -> Boolean.TRUE.equals(existing.getDraft()) || isScheduled(existing))
+                .filter(Notification::notDeleted)
+                .orElseThrow(NotFoundException::new);
+    }
+
+    private void fill(Notification notification, Draft draft) {
+        notification.setTitle(draft.title().trim());
+        notification.setMessage(draft.message().trim());
+        notification.setKind(NotificationKind.ANNOUNCEMENT);
+        notification.setSendAllPatients(draft.audience() == Audience.ALL);
+        notification.setAudience(audienceLabel(draft));
+        notification.setIsDeleted(false);
+        rememberAudience(notification, draft);
+    }
+
+    private static void rememberAudience(Notification notification, Draft draft) {
+        notification.setAudienceKind(draft.audience().name());
+        notification.setAudienceDoctorId(draft.audience() == Audience.DOCTOR ? draft.doctorId() : null);
+        notification.setAudienceDay(draft.audience() == Audience.DAY ? draft.day() : null);
+    }
+
+    private void deliver(Notification notification, List<Patient> recipients) {
+        for (Patient patient : recipients) {
+            var delivery = new NotificationPatient();
+            delivery.setNotificationId(notification);
+            delivery.setPatientId(patient);
+            delivery.setAcknowledged(false);
+            deliveryRepository.save(delivery);
+        }
     }
 
     List<Patient> recipients(Draft draft) {
@@ -292,8 +440,7 @@ public class ClinicMessages {
     }
 
     private static boolean countsAsPatientOf(Appointment appointment) {
-        return !com.vegs.mediconnect.mobile.appointment.model.AppointmentStatus.REMOVED.getStatus()
-                .equals(appointment.getStatus());
+        return !AppointmentStatus.REMOVED.getStatus().equals(appointment.getStatus());
     }
 
     private String audienceLabel(Draft draft) {

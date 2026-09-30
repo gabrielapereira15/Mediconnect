@@ -64,6 +64,12 @@ class BackOfficeAccessIT {
     private com.vegs.mediconnect.datasource.notification.NotificationPatientRepository notificationPatientRepository;
 
     @Autowired
+    private com.vegs.mediconnect.datasource.notification.NotificationRepository notificationRepository;
+
+    @Autowired
+    private com.vegs.mediconnect.backoffice.message.ClinicMessages clinicMessages;
+
+    @Autowired
     private com.vegs.mediconnect.datasource.doctor.DoctorDayOffRepository dayOffRepository;
 
     @Autowired
@@ -552,6 +558,92 @@ class BackOfficeAccessIT {
                 .andExpect(status().is3xxRedirection());
         org.junit.jupiter.api.Assertions.assertEquals(afterSend, notificationPatientRepository.count(),
                 "neither a refused message nor a draft reaches anyone");
+    }
+
+    @Test
+    @DisplayName("the week view shows every doctor with free and held counts, and one doctor's week as a grid")
+    void weekViews() throws Exception {
+        mockMvc.perform(get("/schedule").param("view", "week").session(desk()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Clinic")))
+                .andExpect(content().string(containsString("free")));
+        var cameron = doctorRepository.findAll().stream()
+                .filter(doctor -> doctor.getLastName().equals("Cameron")).findFirst().orElseThrow();
+        mockMvc.perform(get("/schedule").param("view", "week").param("doctor", cameron.getId().toString())
+                        .param("date", java.time.LocalDate.now().plusDays(1).toString()).session(clinician()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("hx-get=\"/schedule/slots/")))
+                .andExpect(content().string(containsString("Dr. Allison Cameron")));
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("a scheduled message reaches nobody until its time, then everyone in the group, once")
+    void scheduledMessage() throws Exception {
+        var at = java.time.LocalDateTime.now().plusDays(1).withHour(9).withMinute(0).withSecond(0).withNano(0);
+        long before = notificationPatientRepository.count();
+
+        mockMvc.perform(post("/messages").session(clinician()).param("action", "schedule")
+                        .param("title", "Flu clinic").param("message", "Walk-ins every weekday.")
+                        .param("sendAt", at.toString()))
+                .andExpect(status().isForbidden());
+
+        // Too soon to schedule: that is what Send is for.
+        mockMvc.perform(post("/messages").session(desk()).param("action", "schedule")
+                        .param("title", "Flu clinic").param("message", "Walk-ins every weekday.")
+                        .param("sendAt", java.time.LocalDateTime.now().plusMinutes(1).withSecond(0).withNano(0).toString()))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers
+                        .flash().attributeExists("MSG_ERROR"));
+
+        mockMvc.perform(post("/messages").session(desk()).param("action", "schedule")
+                        .param("audience", "all")
+                        .param("title", "Flu clinic").param("message", "Walk-ins every weekday.")
+                        .param("sendAt", at.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(header().string("Location", "/messages"));
+        org.junit.jupiter.api.Assertions.assertEquals(before, notificationPatientRepository.count(),
+                "nobody sees a scheduled message before its time");
+        mockMvc.perform(get("/messages").session(desk()))
+                .andExpect(content().string(containsString("Scheduled")));
+
+        org.junit.jupiter.api.Assertions.assertEquals(0,
+                clinicMessages.dispatchDue(java.time.OffsetDateTime.now()));
+        org.junit.jupiter.api.Assertions.assertEquals(1, clinicMessages.dispatchDue(
+                at.plusMinutes(1).atZone(java.time.ZoneId.systemDefault()).toOffsetDateTime()));
+        org.junit.jupiter.api.Assertions.assertEquals(before + patientRepository.count(),
+                notificationPatientRepository.count(), "everyone in the group");
+        org.junit.jupiter.api.Assertions.assertEquals(0, clinicMessages.dispatchDue(
+                at.plusMinutes(2).atZone(java.time.ZoneId.systemDefault()).toOffsetDateTime()), "and only once");
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("a scheduled message can go back to a draft, keeping its audience, or be cancelled")
+    void unscheduleAndCancel() throws Exception {
+        var chase = doctorRepository.findAll().stream()
+                .filter(doctor -> doctor.getLastName().equals("Chase")).findFirst().orElseThrow();
+        var at = java.time.LocalDateTime.now().plusDays(2).withHour(10).withMinute(0).withSecond(0).withNano(0);
+        var draft = new com.vegs.mediconnect.backoffice.message.ClinicMessages.Draft(null,
+                com.vegs.mediconnect.backoffice.message.ClinicMessages.Audience.DOCTOR, chase.getId(), null,
+                "Dr. Chase is away", "Your visit is not affected unless we call you.");
+        clinicMessages.schedule(draft, at);
+        var scheduled = notificationRepository.findAll().stream()
+                .filter(notification -> "Dr. Chase is away".equals(notification.getTitle()))
+                .findFirst().orElseThrow();
+
+        mockMvc.perform(post("/messages/" + scheduled.getId() + "/unschedule").session(desk()))
+                .andExpect(status().is3xxRedirection());
+        var reopened = clinicMessages.draft(scheduled.getId());
+        org.junit.jupiter.api.Assertions.assertEquals(
+                com.vegs.mediconnect.backoffice.message.ClinicMessages.Audience.DOCTOR, reopened.audience());
+        org.junit.jupiter.api.Assertions.assertEquals(chase.getId(), reopened.doctorId());
+
+        clinicMessages.schedule(reopened, at);
+        mockMvc.perform(post("/messages/" + scheduled.getId() + "/withdraw").session(desk()))
+                .andExpect(status().is3xxRedirection());
+        org.junit.jupiter.api.Assertions.assertEquals(0, clinicMessages.dispatchDue(
+                at.plusHours(1).atZone(java.time.ZoneId.systemDefault()).toOffsetDateTime()),
+                "a cancelled message never goes out");
     }
 
     @Test

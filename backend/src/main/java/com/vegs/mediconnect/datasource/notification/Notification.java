@@ -72,9 +72,31 @@ public class Notification {
     @Column
     private Boolean draft;
 
-    /** When it went out; null while it is a draft. */
+    /** When it went out; null while it is a draft or waiting to go. */
     @Column
     private OffsetDateTime sentAt;
+
+    /**
+     * When the desk asked for it to go out (board B07's "Schedule…").
+     * Until then it has no delivery rows, so nobody can see it.
+     */
+    @Column
+    private OffsetDateTime scheduledFor;
+
+    /**
+     * Who it is for, as the desk chose it: ALL, DOCTOR or DAY, with the
+     * doctor or the day that goes with it. Kept so a scheduled message
+     * reaches the group as it stands when it goes out, not as it stood
+     * when it was written, and so a draft reopens as it was left.
+     */
+    @Column
+    private String audienceKind;
+
+    @Column(columnDefinition = "UUID")
+    private java.util.UUID audienceDoctorId;
+
+    @Column
+    private java.time.LocalDate audienceDay;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

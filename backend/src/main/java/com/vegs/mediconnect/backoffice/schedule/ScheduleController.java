@@ -32,32 +32,46 @@ public class ScheduleController {
 
     private final ScheduleBoardService board;
 
+    /**
+     * The day board, or the week: every doctor's week at a glance, or one
+     * doctor's week as a grid of the same slot cells as the day board.
+     */
     @GetMapping
     public String schedule(@RequestParam(required = false)
                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                            @RequestParam(defaultValue = "day") String view,
                            @RequestParam(required = false) String specialty,
+                           @RequestParam(required = false) UUID doctor,
                            @RequestParam(required = false) UUID slot,
                            HttpServletRequest request,
                            Model model) {
         LocalDate day = date == null ? LocalDate.now() : date;
         boolean week = "week".equalsIgnoreCase(view);
-        ScheduleBoardService.Week weekBoard = week ? board.week(day, specialty) : null;
+        LocalDate monday = ScheduleBoardService.weekStart(day);
 
         model.addAttribute("active", "schedule");
         model.addAttribute("date", day);
+        model.addAttribute("today", LocalDate.now());
         model.addAttribute("dateLabel", week
-                ? "Week of " + Display.day(weekBoard.monday())
+                ? "Week of " + Display.day(monday)
                 : Display.longDay(day));
         model.addAttribute("previous", day.minusDays(week ? 7 : 1));
         model.addAttribute("next", day.plusDays(week ? 7 : 1));
-        model.addAttribute("isToday", day.isEqual(LocalDate.now()));
+        model.addAttribute("isToday", week
+                ? monday.isEqual(ScheduleBoardService.weekStart(LocalDate.now()))
+                : day.isEqual(LocalDate.now()));
         model.addAttribute("view", week ? "week" : "day");
         model.addAttribute("specialty", specialty == null ? "" : specialty);
         model.addAttribute("specialties", board.specialties());
+        model.addAttribute("doctor", doctor);
         model.addAttribute("here", here(request));
         if (week) {
-            model.addAttribute("week", weekBoard);
+            model.addAttribute("doctors", board.doctors());
+            if (doctor != null) {
+                model.addAttribute("doctorWeek", board.doctorWeek(day, doctor));
+            } else {
+                model.addAttribute("week", board.week(day, specialty));
+            }
         } else {
             model.addAttribute("board", board.day(day, specialty));
         }

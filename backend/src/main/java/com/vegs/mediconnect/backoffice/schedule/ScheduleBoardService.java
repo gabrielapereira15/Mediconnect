@@ -6,6 +6,8 @@ import com.vegs.mediconnect.backoffice.util.NotFoundException;
 import com.vegs.mediconnect.datasource.appointment.Appointment;
 import com.vegs.mediconnect.datasource.appointment.AppointmentRepository;
 import com.vegs.mediconnect.datasource.doctor.Doctor;
+import com.vegs.mediconnect.datasource.doctor.DoctorDayOff;
+import com.vegs.mediconnect.datasource.doctor.DoctorDayOffRepository;
 import com.vegs.mediconnect.datasource.doctor.DoctorRepository;
 import com.vegs.mediconnect.datasource.schedule.ScheduleTime;
 import com.vegs.mediconnect.datasource.schedule.ScheduleTimeRepository;
@@ -43,6 +45,7 @@ public class ScheduleBoardService {
     private final WaitlistEntryRepository waitlistRepository;
     private final DoctorRepository doctorRepository;
     private final WaitlistService waitlistService;
+    private final DoctorDayOffRepository dayOffRepository;
 
     // ---- the boards -------------------------------------------------------------
 
@@ -56,12 +59,20 @@ public class ScheduleBoardService {
                 LocalDateTime.now());
     }
 
-    /** One line of the week view: a doctor, and how full each day is. */
-    public record WeekRow(String doctor, String specialty, String initials, String avatarClass,
-                          List<WeekCell> days) {
+    /** One line of the week view: a doctor, and how each of their days is going. */
+    public record WeekRow(UUID doctorId, String doctor, String specialty, String initials, String avatarClass,
+                          List<WeekCell> days, int booked, int total) {
+
+        public int getPercent() {
+            return total == 0 ? 0 : Math.round(booked * 100f / total);
+        }
     }
 
-    public record WeekCell(LocalDate date, int booked, int total) {
+    /**
+     * One doctor-day: booked out of bookable, what is still free ahead,
+     * what is being held for the waitlist, and whether it is a day off.
+     */
+    public record WeekCell(LocalDate date, int booked, int total, int free, int held, String note) {
 
         public boolean isWorking() {
             return total > 0;
@@ -70,28 +81,46 @@ public class ScheduleBoardService {
         public int getPercent() {
             return total == 0 ? 0 : Math.round(booked * 100f / total);
         }
+
+        /** "3 free · 1 held", or null when there is nothing left to say. */
+        public String getDetail() {
+            List<String> parts = new ArrayList<>();
+            if (free > 0) {
+                parts.add(free + " free");
+            }
+            if (held > 0) {
+                parts.add(held + " held");
+            }
+            return parts.isEmpty() ? null : String.join(" \u00b7 ", parts);
+        }
     }
 
-    public record Week(LocalDate monday, List<LocalDate> days, List<WeekRow> rows) {
+    /** The week overview: a row per doctor and the clinic's own total per day. */
+    public record Week(LocalDate monday, List<LocalDate> days, List<WeekRow> rows, List<WeekCell> totals) {
     }
 
     @Transactional(readOnly = true)
     public Week week(LocalDate date, String specialty) {
-        LocalDate monday = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate monday = weekStart(date);
         LocalDate sunday = monday.plusDays(6);
-        List<LocalDate> days = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            days.add(monday.plusDays(i));
-        }
+        List<LocalDate> days = weekOf(monday);
+        LocalDateTime now = LocalDateTime.now();
 
         var slots = scheduleTimeRepository.findAllBetween(monday, sunday);
-        Map<UUID, Integer> activeBySlot = new HashMap<>();
+        java.util.Set<UUID> active = new java.util.HashSet<>();
         for (Appointment appointment : appointmentRepository.findAllBetween(monday, sunday)) {
             if (ScheduleBoard.active(appointment)) {
-                activeBySlot.put(appointment.getScheduleTime().getId(), 1);
+                active.add(appointment.getScheduleTime().getId());
             }
         }
+        java.util.Set<UUID> held = holds().keySet();
+        Map<UUID, Map<LocalDate, String>> daysOff = new HashMap<>();
+        for (DoctorDayOff off : dayOffRepository.findAllByDateBetween(monday, sunday)) {
+            daysOff.computeIfAbsent(off.getDoctor().getId(), key -> new HashMap<>())
+                    .put(off.getDate(), off.getReason());
+        }
 
+        // [booked, total, free, held] per doctor per day
         Map<UUID, Map<LocalDate, int[]>> counts = new LinkedHashMap<>();
         Map<UUID, Doctor> doctors = new HashMap<>();
         slots.stream()
@@ -102,29 +131,95 @@ public class ScheduleBoardService {
                     Doctor doctor = slot.getSchedule().getDoctor();
                     doctors.put(doctor.getId(), doctor);
                     int[] count = counts.computeIfAbsent(doctor.getId(), key -> new HashMap<>())
-                            .computeIfAbsent(slot.getSchedule().getDate(), key -> new int[2]);
+                            .computeIfAbsent(slot.getSchedule().getDate(), key -> new int[4]);
                     if (!Boolean.TRUE.equals(slot.getBlocked())) {
                         count[1]++;
                     }
-                    if (activeBySlot.containsKey(slot.getId())) {
+                    if (active.contains(slot.getId())) {
                         count[0]++;
+                    } else if (held.contains(slot.getId())) {
+                        count[3]++;
+                    } else if (Boolean.TRUE.equals(slot.getAvailable()) && !Boolean.TRUE.equals(slot.getBlocked())
+                            && slot.getDateTime().isAfter(now)) {
+                        count[2]++;
                     }
                 });
 
+        int[][] totals = new int[7][4];
         List<WeekRow> rows = new ArrayList<>();
         counts.forEach((doctorId, byDay) -> {
             Doctor doctor = doctors.get(doctorId);
             String name = Display.name(doctor.getFirstName(), doctor.getLastName());
-            List<WeekCell> cells = days.stream()
-                    .map(day -> {
-                        int[] count = byDay.getOrDefault(day, new int[2]);
-                        return new WeekCell(day, count[0], count[1]);
-                    })
-                    .toList();
-            rows.add(new WeekRow("Dr. " + doctor.getLastName(), doctor.getSpecialty(),
-                    Display.initials(name), Display.avatarClass(name), cells));
+            Map<LocalDate, String> off = daysOff.getOrDefault(doctorId, Map.of());
+            List<WeekCell> cells = new ArrayList<>();
+            int booked = 0;
+            int total = 0;
+            for (int i = 0; i < days.size(); i++) {
+                LocalDate day = days.get(i);
+                int[] count = byDay.getOrDefault(day, new int[4]);
+                for (int k = 0; k < 4; k++) {
+                    totals[i][k] += count[k];
+                }
+                booked += count[0];
+                total += count[1];
+                cells.add(new WeekCell(day, count[0], count[1], count[2], count[3], dayOffNote(off, day)));
+            }
+            rows.add(new WeekRow(doctorId, "Dr. " + doctor.getLastName(), doctor.getSpecialty(),
+                    Display.initials(name), Display.avatarClass(name), cells, booked, total));
         });
-        return new Week(monday, days, rows);
+
+        List<WeekCell> clinic = new ArrayList<>();
+        for (int i = 0; i < days.size(); i++) {
+            clinic.add(new WeekCell(days.get(i), totals[i][0], totals[i][1], totals[i][2], totals[i][3], null));
+        }
+        return new Week(monday, days, rows, clinic);
+    }
+
+    /** One doctor's week as a grid of the same cells as the day board. */
+    @Transactional(readOnly = true)
+    public ScheduleBoard.DoctorWeek doctorWeek(LocalDate date, UUID doctorId) {
+        Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(NotFoundException::new);
+        LocalDate monday = weekStart(date);
+        LocalDate sunday = monday.plusDays(6);
+        Map<LocalDate, String> off = new HashMap<>();
+        for (DoctorDayOff day : dayOffRepository.findAllByDoctorAndDateBetween(doctor, monday, sunday)) {
+            off.put(day.getDate(), day.getReason());
+        }
+        return ScheduleBoard.buildDoctorWeek(doctor, weekOf(monday),
+                scheduleTimeRepository.findAllBetween(monday, sunday),
+                appointmentRepository.findAllBetween(monday, sunday),
+                holds(), off, LocalDateTime.now());
+    }
+
+    /** The doctors to choose between for the week grid, by name. */
+    @Transactional(readOnly = true)
+    public Map<UUID, String> doctors() {
+        Map<UUID, String> doctors = new LinkedHashMap<>();
+        doctorRepository.findAll().stream()
+                .sorted(Comparator.comparing(Doctor::getLastName))
+                .forEach(doctor -> doctors.put(doctor.getId(),
+                        "Dr. " + Display.name(doctor.getFirstName(), doctor.getLastName())));
+        return doctors;
+    }
+
+    static LocalDate weekStart(LocalDate date) {
+        return date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    }
+
+    private static List<LocalDate> weekOf(LocalDate monday) {
+        List<LocalDate> days = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            days.add(monday.plusDays(i));
+        }
+        return days;
+    }
+
+    private static String dayOffNote(Map<LocalDate, String> off, LocalDate day) {
+        if (!off.containsKey(day)) {
+            return null;
+        }
+        String reason = off.get(day);
+        return reason == null || reason.isBlank() ? "Day off" : "Day off \u00b7 " + reason;
     }
 
     @Transactional(readOnly = true)

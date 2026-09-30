@@ -2,6 +2,7 @@ package com.vegs.mediconnect.backoffice.message;
 
 import com.vegs.mediconnect.backoffice.auth.RequiresRole;
 import com.vegs.mediconnect.backoffice.auth.StaffSession;
+import com.vegs.mediconnect.backoffice.shared.Display;
 import com.vegs.mediconnect.backoffice.util.WebUtils;
 import com.vegs.mediconnect.datasource.staff.StaffRole;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -41,6 +43,8 @@ public class MessagesController {
         model.addAttribute("canSend", deskMayAct(request));
         model.addAttribute("titleMax", ClinicMessages.TITLE_MAX);
         model.addAttribute("messageMax", ClinicMessages.MESSAGE_MAX);
+        model.addAttribute("earliestSend", LocalDateTime.now().plus(ClinicMessages.SOONEST)
+                .withSecond(0).withNano(0).toString());
 
         if (selected != null && !messages.isDraft(selected)) {
             model.addAttribute("sent", messages.sent(selected));
@@ -74,6 +78,8 @@ public class MessagesController {
                        @RequestParam(required = false) String title,
                        @RequestParam(required = false) String message,
                        @RequestParam(defaultValue = "send") String action,
+                       @RequestParam(required = false)
+                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime sendAt,
                        RedirectAttributes redirect) {
         var draft = new ClinicMessages.Draft(id, ClinicMessages.Audience.of(audience), doctorId, day,
                 title == null ? "" : title, message == null ? "" : message);
@@ -84,6 +90,12 @@ public class MessagesController {
             return "redirect:/messages?selected=" + saved;
         }
         try {
+            if ("schedule".equals(action)) {
+                int reach = messages.schedule(draft, sendAt);
+                redirect.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("messages.scheduled",
+                        Display.dayAndTime(sendAt), reach));
+                return "redirect:/messages";
+            }
             int reached = messages.send(draft);
             redirect.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("messages.sent", reached));
             return "redirect:/messages";
@@ -91,17 +103,30 @@ public class MessagesController {
             // Keep what they wrote: a rejected message should not have to be typed again.
             redirect.addFlashAttribute(WebUtils.MSG_ERROR, e.getMessage());
             redirect.addFlashAttribute("draft", draft);
+            if (sendAt != null) {
+                redirect.addFlashAttribute("sendAt", sendAt);
+            }
             return "redirect:/messages" + (id == null ? "" : "?selected=" + id);
         }
+    }
+
+    /** A scheduled message back to a draft, so it can be changed before it goes. */
+    @PostMapping("/{id}/unschedule")
+    @RequiresRole(StaffRole.FRONT_DESK)
+    public String unschedule(@PathVariable UUID id, RedirectAttributes redirect) {
+        UUID draft = messages.unschedule(id);
+        redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("messages.unscheduled"));
+        return "redirect:/messages?selected=" + draft;
     }
 
     @PostMapping("/{id}/withdraw")
     @RequiresRole(StaffRole.FRONT_DESK)
     public String withdraw(@PathVariable UUID id, RedirectAttributes redirect) {
         boolean draft = messages.isDraft(id);
+        boolean scheduled = !draft && messages.sent(id).scheduled();
         messages.withdraw(id);
         redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage(
-                draft ? "messages.draftDiscarded" : "messages.withdrawn"));
+                draft ? "messages.draftDiscarded" : scheduled ? "messages.scheduleCancelled" : "messages.withdrawn"));
         return "redirect:/messages";
     }
 

@@ -145,6 +145,35 @@ class ScheduleBoardTest {
         assertEquals("Dr. Chase", day.columns().getFirst().name());
     }
 
+    @Test
+    @DisplayName("a doctor's week has a column per day, and says which days are off or not worked")
+    void doctorWeek() {
+        var monday = DAY.minusDays(DAY.getDayOfWeek().getValue() - 1);
+        var days = java.util.stream.IntStream.range(0, 7).mapToObj(monday::plusDays).toList();
+        var monSlot = slotOn(chase, monday.plusWeeks(1), 9, 0);
+        var tueSlot = slotOn(chase, monday.plusDays(1), 9, 0);
+        var tueLater = slotOn(chase, monday.plusDays(1), 13, 0);
+        var otherDoctor = slotOn(cameron, monday, 9, 0);
+        var booked = appointment(tueSlot);
+        var thisMonday = slotOn(chase, monday, 9, 0);
+
+        var week = ScheduleBoard.buildDoctorWeek(chase, days,
+                List.of(thisMonday, tueSlot, tueLater, otherDoctor, monSlot),
+                List.of(booked), Map.of(), Map.of(monday.plusDays(2), "Conference"), NOON);
+
+        assertEquals(7, week.columns().size());
+        assertEquals("Day off \u00b7 Conference", week.columns().get(2).note());
+        assertEquals("Not working", week.columns().get(3).note());
+        assertEquals(1, week.columns().get(1).booked());
+        assertEquals(3, week.total(), "only this doctor's slots, and only this week's");
+        // 9:00, a break, then 13:00: the times from every day of the week.
+        assertEquals(3, week.rows().size());
+        assertTrue(week.rows().get(1).isGap());
+        assertNull(week.rows().get(2).cells().get(0), "Monday has nothing at 13:00");
+        // Tuesday 9:00 is behind the test's noon, and nobody checked them in.
+        assertEquals("Not checked in", week.rows().get(0).cells().get(1).detail());
+    }
+
     // ---- fixtures -------------------------------------------------------------------
 
     private ScheduleBoard.Cell cell(ScheduleTime slot, Appointment appointment, boolean cancelled,
@@ -162,8 +191,12 @@ class ScheduleBoardTest {
     }
 
     private static ScheduleTime slot(Doctor doctor, int hour, int minute) {
+        return slotOn(doctor, DAY, hour, minute);
+    }
+
+    private static ScheduleTime slotOn(Doctor doctor, LocalDate date, int hour, int minute) {
         var schedule = new Schedule();
-        schedule.setDate(DAY);
+        schedule.setDate(date);
         schedule.setDoctor(doctor);
         var slot = new ScheduleTime();
         slot.setId(UUID.randomUUID());

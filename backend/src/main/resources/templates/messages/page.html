@@ -37,6 +37,7 @@
                th:attr="aria-current=${line.id == selectedId} ? 'true' : null">
                 <span class="mc-row-body">
                     <span class="label" th:text="${line.draft} ? #{messages.draftPrefix(${line.title})} : ${line.title}">Flu shots available</span>
+                    <span th:if="${line.scheduled}" class="mc-badge mc-badge-sun" style="align-self: flex-start">[[#{messages.scheduledBadge}]]</span>
                     <span class="caption mc-muted" th:text="${line.audience} + ' · ' + ${line.stats}">All patients · read by 64%</span>
                 </span>
                 <span class="caption mc-subtle" th:text="${line.when}">Sep 28</span>
@@ -53,19 +54,34 @@
             <div class="mc-panel-body" style="display: flex; flex-direction: column; gap: 18px">
                 <div th:if="${sent.withdrawn}" class="mc-banner mc-banner-warning">
                     <i class="mc-i mc-i-info" aria-hidden="true"></i><div>[[#{messages.isWithdrawn}]]</div></div>
-                <dl class="mc-kv">
+                <div th:if="${sent.scheduled and !sent.withdrawn}" class="mc-banner mc-banner-sun">
+                    <i class="mc-i mc-i-clock" aria-hidden="true"></i>
+                    <div th:text="#{messages.scheduledFor(${sent.when}, ${sent.audience})}">Goes out Thu 1 Oct, 9:00 AM.</div></div>
+                <dl class="mc-kv" th:unless="${sent.scheduled}">
                     <dt>[[#{messages.sentTo}]]</dt><dd th:text="${sent.audience}">All patients</dd>
                     <dt>[[#{messages.delivered}]]</dt><dd th:text="${sent.delivered}">26</dd>
                     <dt>[[#{messages.read}]]</dt><dd th:text="${sent.read} + ' (' + ${sent.percentRead} + '%)'">21 (81%)</dd>
                 </dl>
-                <div class="mc-progress"><span th:style="'width: ' + ${sent.percentRead} + '%'"></span></div>
+                <div class="mc-progress" th:unless="${sent.scheduled}"><span th:style="'width: ' + ${sent.percentRead} + '%'"></span></div>
                 <p class="body-md" style="margin: 0; white-space: pre-line" th:text="${sent.message}">Walk-in flu vaccinations…</p>
             </div>
-            <div class="mc-sheetpanel-foot" th:if="${canSend and !sent.withdrawn}">
+            <div class="mc-sheetpanel-foot" th:if="${canSend and !sent.withdrawn and !sent.scheduled}">
                 <form th:action="@{/messages/{id}/withdraw(id=${sent.id})}" method="post">
                     <button type="submit" class="mc-btn mc-btn-danger-ghost mc-btn-md">[[#{messages.withdraw}]]</button>
                 </form>
                 <span class="mc-help">[[#{messages.withdraw.help}]]</span>
+            </div>
+            <div class="mc-sheetpanel-foot" th:if="${canSend and !sent.withdrawn and sent.scheduled}">
+                <div class="mc-btnrow">
+                    <form th:action="@{/messages/{id}/unschedule(id=${sent.id})}" method="post">
+                        <button type="submit" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">
+                            <i class="mc-i mc-i-edit" aria-hidden="true"></i>[[#{messages.editScheduled}]]</button>
+                    </form>
+                    <form th:action="@{/messages/{id}/withdraw(id=${sent.id})}" method="post">
+                        <button type="submit" class="mc-btn mc-btn-danger-ghost mc-btn-md">[[#{messages.cancelScheduled}]]</button>
+                    </form>
+                </div>
+                <span class="mc-help">[[#{messages.editScheduled.help}]]</span>
             </div>
         </div>
 
@@ -124,6 +140,22 @@
                     <button type="submit" name="action" value="send" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">
                         <i class="mc-i mc-i-send" aria-hidden="true"></i>[[#{messages.send}]]</button>
                 </div>
+                <!-- "Schedule…" opens a time in place; the message goes out then, to the group as it stands then. -->
+                <details class="mc-disclosure mc-schedule" th:open="${sendAt != null}">
+                    <summary class="mc-btn mc-btn-ghost mc-btn-sm">
+                        <i class="mc-i mc-i-clock" aria-hidden="true"></i>[[#{messages.scheduleEllipsis}]]</summary>
+                    <div style="display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; justify-content: flex-end">
+                        <div class="mc-field">
+                            <label class="mc-label" for="sendAt">[[#{messages.sendAt}]]</label>
+                            <input class="mc-input mc-input-md" type="datetime-local" id="sendAt" name="sendAt"
+                                   th:min="${earliestSend}" th:value="${sendAt}" style="padding: 0 8px"
+                                   aria-describedby="sendAt-help" />
+                        </div>
+                        <button type="submit" name="action" value="schedule" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">
+                            [[#{messages.schedule}]]</button>
+                    </div>
+                    <span class="mc-help" id="sendAt-help" style="display: block; text-align: right; margin-top: 6px">[[#{messages.schedule.help}]]</span>
+                </details>
                 <span id="reach" class="mc-help" style="text-align: right" aria-live="polite">
                     <span th:fragment="reach" th:if="${reach != null}"
                           th:text="#{messages.reach(${reach})}">Reaches 26 patients.</span>

@@ -85,6 +85,109 @@ public final class ScheduleBoard {
         }
     }
 
+    /** One day of a doctor's week: its heading, and how full it is. */
+    public record WeekColumn(LocalDate date, String weekday, String dayOfMonth, boolean today,
+                             int booked, int total, String note) {
+
+        public boolean isWorking() {
+            return total > 0;
+        }
+    }
+
+    /** One doctor's week, day by day and time by time. */
+    public record DoctorWeek(UUID doctorId, String doctorName, String specialty, List<WeekColumn> columns,
+                             List<Row> rows, int booked, int total) {
+
+        public boolean isEmpty() {
+            return rows.isEmpty();
+        }
+    }
+
+    /**
+     * One doctor's week as a grid: a column per day, a row per time, and
+     * the same cells as the day board, so a slot reads the same whichever
+     * view it is opened from. Days off and days not worked say so in the
+     * column heading rather than leaving a blank column to be puzzled over.
+     */
+    public static DoctorWeek buildDoctorWeek(Doctor doctor,
+                                             List<LocalDate> days,
+                                             List<ScheduleTime> slots,
+                                             List<Appointment> appointments,
+                                             Map<UUID, Hold> holds,
+                                             Map<LocalDate, String> daysOff,
+                                             LocalDateTime now) {
+        Map<UUID, Appointment> booked = new HashMap<>();
+        Set<UUID> freed = new java.util.HashSet<>();
+        for (Appointment appointment : appointments) {
+            if (!appointment.getDoctor().getId().equals(doctor.getId())) {
+                continue;
+            }
+            UUID slotId = appointment.getScheduleTime().getId();
+            if (active(appointment)) {
+                booked.put(slotId, appointment);
+            } else if (Boolean.TRUE.equals(appointment.getCanceled())) {
+                freed.add(slotId);
+            }
+        }
+
+        Map<LocalDate, Map<LocalTime, ScheduleTime>> grid = new HashMap<>();
+        TreeSet<LocalTime> times = new TreeSet<>();
+        for (ScheduleTime slot : slots) {
+            if (!slot.getSchedule().getDoctor().getId().equals(doctor.getId())
+                    || !days.contains(slot.getSchedule().getDate())) {
+                continue;
+            }
+            grid.computeIfAbsent(slot.getSchedule().getDate(), key -> new HashMap<>()).put(slot.getTime(), slot);
+            times.add(slot.getTime());
+        }
+
+        List<WeekColumn> columns = new ArrayList<>();
+        int bookedWeek = 0;
+        int totalWeek = 0;
+        for (LocalDate day : days) {
+            Map<LocalTime, ScheduleTime> onDay = grid.getOrDefault(day, Map.of());
+            int total = (int) onDay.values().stream().filter(slot -> !Boolean.TRUE.equals(slot.getBlocked())).count();
+            int bookedDay = (int) onDay.values().stream().filter(slot -> booked.containsKey(slot.getId())).count();
+            bookedWeek += bookedDay;
+            totalWeek += total;
+            String note = null;
+            if (daysOff.containsKey(day)) {
+                String reason = daysOff.get(day);
+                note = reason == null || reason.isBlank() ? "Day off" : "Day off \u00b7 " + reason;
+            } else if (onDay.isEmpty()) {
+                note = "Not working";
+            }
+            columns.add(new WeekColumn(day,
+                    day.getDayOfWeek().getDisplayName(java.time.format.TextStyle.SHORT, java.util.Locale.ENGLISH),
+                    String.valueOf(day.getDayOfMonth()), day.isEqual(now.toLocalDate()),
+                    bookedDay, total, note));
+        }
+
+        // One doctor: the step is their appointment length, not a guess.
+        Duration step = Duration.ofMinutes(doctor.slotLength());
+        List<Row> rows = new ArrayList<>();
+        LocalTime previous = null;
+        for (LocalTime time : times) {
+            if (previous != null && step != null && Duration.between(previous, time).compareTo(step) > 0) {
+                rows.add(new Row(Display.shortTime(previous.plus(step)), List.of(),
+                        Display.shortTime(previous.plus(step)) + "\u2013" + Display.shortTime(time)));
+            }
+            List<Cell> cells = new ArrayList<>();
+            for (LocalDate day : days) {
+                ScheduleTime slot = grid.getOrDefault(day, Map.of()).get(time);
+                cells.add(slot == null ? null
+                        : cellFor(slot, booked.get(slot.getId()), freed.contains(slot.getId()),
+                        holds.get(slot.getId()), now));
+            }
+            rows.add(new Row(Display.shortTime(time), cells, null));
+            previous = time;
+        }
+
+        String name = Display.name(doctor.getFirstName(), doctor.getLastName());
+        return new DoctorWeek(doctor.getId(), "Dr. " + name, doctor.getSpecialty(), columns, rows,
+                bookedWeek, totalWeek);
+    }
+
     /** A visit that happened, or is still going to. */
     static boolean active(Appointment appointment) {
         return !Boolean.TRUE.equals(appointment.getCanceled())

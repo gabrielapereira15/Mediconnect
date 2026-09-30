@@ -386,3 +386,17 @@ button.mc-event.mc-event-blocked {
     border-radius: 3px;
     display: inline-block;
 }
+
+/* ---- Messages (B07) ------------------------------------------------------ */
+
+details.mc-schedule {
+    align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+details.mc-schedule[open] > summary {
+    display: inline-flex;
+    align-self: flex-end;
+}
