@@ -18,6 +18,7 @@ import com.example.mediconnect_android.client.NotificationClientImpl;
 import com.example.mediconnect_android.databinding.FragmentNotificationsBinding;
 import com.example.mediconnect_android.model.Notification;
 import com.example.mediconnect_android.util.Background;
+import com.example.mediconnect_android.util.UnreadMessages;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -106,7 +107,12 @@ public class NotificationsFragment extends Fragment {
         binding.btnMarkAllRead.setVisibility(unread == 0 ? View.GONE : View.VISIBLE);
         binding.messagesHeader.setVisibility(notifications.isEmpty() ? View.GONE : View.VISIBLE);
 
-        updateBellBadge(unread > 0);
+        // Every change to the list comes through here, so this is where the
+        // bells hear about it. Setting the count rather than asking the
+        // server again matters after "Mark all read": the request that marks
+        // them may still be on its way, and a fetch could come back first
+        // with the old number.
+        UnreadMessages.set((int) unread);
 
         binding.stateView.showContentOrEmpty(notifications.isEmpty(),
                 R.drawable.ic_bell,
@@ -164,13 +170,6 @@ public class NotificationsFragment extends Fragment {
 
     // ---- plumbing -----------------------------------------------------------
 
-    private void updateBellBadge(boolean hasUnread) {
-        if (getActivity() instanceof NotificationBadgeHandler) {
-            ((NotificationBadgeHandler) getActivity())
-                    .updateNotificationBadgeVisibility(hasUnread);
-        }
-    }
-
     private void goToTab(int itemId) {
         BottomNavigationView nav = requireActivity().findViewById(R.id.bottomNavigationView);
         if (nav != null) {
@@ -188,9 +187,5 @@ public class NotificationsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-
-    public interface NotificationBadgeHandler {
-        void updateNotificationBadgeVisibility(boolean visible);
     }
 }
