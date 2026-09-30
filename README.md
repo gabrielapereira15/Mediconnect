@@ -438,7 +438,7 @@ backend says so at startup.
 ## Tests
 
 ```bash
-cd backend && ./gradlew test                # 198 tests, *IT integration tests included
+cd backend && ./gradlew test                # 199 tests, *IT integration tests included
 cd android && ./gradlew testDebugUnitTest   # 57 tests
 ```
 
@@ -489,7 +489,8 @@ curl -X POST http://localhost:8080/auth/get-otp \
 `EXPOSE_OTP` is on. A new request replaces any pending code, and a code is
 thrown away after 5 wrong tries. An email gets 10 tries a day in all, however
 many codes are asked for; after that sign-in for it is refused until the day
-since the first try is up, and a correct code clears the count.
+since the first try is up, and a correct code clears the count. Only tries
+against a pending code count. Sign-in takes plain ASCII addresses only.
 `verify-otp` takes `{email, otp}` and returns
 `{token, email, expiresInSeconds, newPatient}`; a first sign-in creates an
 empty patient record. The token is an HMAC-SHA256 `payload.signature`, not a
@@ -627,6 +628,10 @@ backend/src/main/java/com/vegs/mediconnect/
 
 ## Known gaps
 
+- No rate limiting of its own. Passcode guessing is capped per email, but
+  someone who asks for a patient's code and guesses wrong ten times locks
+  that patient's sign-in for up to a day. Deploy behind a proxy that limits
+  `/auth/**` requests per client.
 - No email, SMS or push. Passcodes are only logged, and clinic messages and
   offers are seen when the app is opened. Visit reminders are local
   notifications set on the phone.

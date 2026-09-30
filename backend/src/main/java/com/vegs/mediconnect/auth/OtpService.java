@@ -109,16 +109,35 @@ public class OtpService {
      * checked and spent in one step, so a burst of parallel guesses cannot
      * get past either limit. A lock ends when the day since the first try
      * is up; a correct passcode clears the count.
+     *
+     * Only a try against a code that exists is counted: there is nothing to
+     * guess otherwise. So a stranger cannot lock a patient out, or fill this
+     * map, with nothing but their address; they would have to ask for a code
+     * first, which in a real deployment reaches the patient.
      */
     public boolean verify(String email, String code) {
         String key = normalise(email);
         Instant now = Instant.now();
 
-        Tries sofar = tries.compute(key, (k, t) -> t == null || !t.isCurrent(now)
-                ? new Tries(1, now)
-                : new Tries(t.count() + 1, t.since()));
+        if (!pending.containsKey(key)) {
+            return false;
+        }
+
+        // The count stops one past the limit, so it cannot wrap round and
+        // open the door again, and the lock is logged once, as it happens.
+        boolean[] lockedNow = {false};
+        Tries sofar = tries.compute(key, (k, t) -> {
+            if (t == null || !t.isCurrent(now)) {
+                return new Tries(1, now);
+            }
+            if (t.count() > MAX_TRIES_PER_WINDOW) {
+                return t;
+            }
+            lockedNow[0] = t.count() == MAX_TRIES_PER_WINDOW;
+            return new Tries(t.count() + 1, t.since());
+        });
         if (sofar.count() > MAX_TRIES_PER_WINDOW) {
-            if (sofar.count() == MAX_TRIES_PER_WINDOW + 1) {
+            if (lockedNow[0]) {
                 log.warn("Sign-in for {} refused for up to {} hours after {} passcode tries",
                         email, TRY_WINDOW.toHours(), MAX_TRIES_PER_WINDOW);
             }

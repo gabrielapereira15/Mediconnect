@@ -156,7 +156,18 @@ class AuthTest {
             pool.shutdownNow();
         }
 
-        assertFalse(otpService.verify(email, code), "the code was spent, and the email is locked");
+        assertFalse(otpService.verify(email, code), "the code was spent after five");
+    }
+
+    @Test
+    @DisplayName("guesses with no passcode pending neither count nor lock the patient out")
+    void guessesWithoutACodeDoNotLock() {
+        String email = "patient@example.com";
+        for (int i = 0; i < OtpService.MAX_TRIES_PER_WINDOW * 3; i++) {
+            assertFalse(otpService.verify(email, "000000"));
+        }
+        assertTrue(otpService.verify(email, otpService.issue(email)),
+                "a stranger who knows the address cannot lock it without asking for a code");
     }
 
     // ---- tokens ---------------------------------------------------------
