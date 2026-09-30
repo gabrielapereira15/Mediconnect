@@ -84,6 +84,22 @@ mediconnect:
     # Seeds doctors, schedules, patients and appointments when the database is
     # empty, so a fresh clone has something to show.
     enabled: ${DEMO_DATA_ENABLED:true}
+    # Also creates the back-office logins desk@mediconnect.ca and
+    # doctor@mediconnect.ca, password "demo". That password is public, so this
+    # is on only for the in-memory H2 default; the postgres and production
+    # profiles below turn it off even when DEMO_STAFF_ACCOUNTS is set.
+    staff-accounts: ${DEMO_STAFF_ACCOUNTS:true}
+  staff:
+    # The first back-office account of a real deployment, created at startup
+    # when no account has this email yet. Never updated afterwards: changing
+    # the password here later does not change it in the database. A password
+    # shorter than 12 characters is refused with a warning.
+    bootstrap:
+      email: ${STAFF_BOOTSTRAP_EMAIL:}
+      name: ${STAFF_BOOTSTRAP_NAME:}
+      # FRONT_DESK or CLINICIAN. Only a clinician can open patient charts.
+      role: ${STAFF_BOOTSTRAP_ROLE:FRONT_DESK}
+      password: ${STAFF_BOOTSTRAP_PASSWORD:}
   auth:
     # Lifetime of a one-time passcode, and of the token issued after verifying.
     otp-ttl-minutes: ${OTP_TTL_MINUTES:10}
@@ -115,6 +131,12 @@ spring:
       enabled: true
       lifecycle-management: start-only
 
+mediconnect:
+  demo-data:
+    # A real database gets no logins with a public password, even when it is
+    # otherwise seeded. Create one with STAFF_BOOTSTRAP_* instead.
+    staff-accounts: false
+
 ---
 # Production: everything comes from the environment and nothing is exposed.
 spring:
@@ -136,6 +158,7 @@ spring:
 mediconnect:
   demo-data:
     enabled: false
+    staff-accounts: false
   auth:
     expose-otp: false
     # No default: startup fails if TOKEN_SECRET is not set in production.

@@ -148,6 +148,21 @@ JDBC_DATABASE_USERNAME=me JDBC_DATABASE_PASSWORD=secret \
 ./gradlew bootRun --args='--spring.profiles.active=postgres'
 ```
 
+The demo back-office logins (`desk@mediconnect.ca` and `doctor@mediconnect.ca`,
+password `demo`) are only created on the in-memory database, because their
+password is public. On Postgres, create the first back-office account from the
+environment instead:
+
+```bash
+STAFF_BOOTSTRAP_EMAIL=you@clinic.example \
+STAFF_BOOTSTRAP_PASSWORD='<at least 12 characters>' \
+STAFF_BOOTSTRAP_ROLE=CLINICIAN \
+./gradlew bootRun --args='--spring.profiles.active=postgres'
+```
+
+It is created on the first start where no account has that email, and left
+alone after that: changing the variables later does not change its password.
+
 </details>
 
 ### 2. Run the app
@@ -236,6 +251,9 @@ Once you are signed in as `demo@mediconnect.ca`:
 | `JDBC_DATABASE_URL` | in-memory H2 | Database connection |
 | `TOKEN_SECRET` | dev value | Token signing key — **required** in production |
 | `DEMO_DATA_ENABLED` | `true` | Seed an empty database |
+| `DEMO_STAFF_ACCOUNTS` | `true` | Create the demo back-office logins. Always off with the `postgres` and `production` profiles |
+| `STAFF_BOOTSTRAP_EMAIL`, `STAFF_BOOTSTRAP_PASSWORD` | none | First back-office account, created at startup if missing. The password must be at least 12 characters |
+| `STAFF_BOOTSTRAP_NAME`, `STAFF_BOOTSTRAP_ROLE` | email, `FRONT_DESK` | Its display name and role (`FRONT_DESK` or `CLINICIAN`) |
 | `EXPOSE_OTP` | `true` | Return the passcode in the response |
 | `PHOTO_BASEURL` | `http://localhost:8080` | Where doctor photos are served from |
 
@@ -247,6 +265,7 @@ Once you are signed in as `demo@mediconnect.ca`:
 | `CLEARTEXT communication not permitted` | Only debug builds allow plain HTTP, and only to local hosts. Use a debug build, or serve over HTTPS. |
 | 401 on appointments after restarting the backend | The session token outlived the server. Sign in again. |
 | `Could not resolve placeholder 'TOKEN_SECRET'` | You started the `production` profile without setting it. That is deliberate. |
+| Nobody can sign in to the back office on Postgres or in production | Set `STAFF_BOOTSTRAP_EMAIL` and `STAFF_BOOTSTRAP_PASSWORD` and restart. The startup log warns when there are no staff accounts, and says why an account was not created. |
 | `SDK location not found` when building from the terminal | Create `android/local.properties` with `sdk.dir=...`, as above. |
 | App says the server is unreachable, but `curl` works from your machine | The emulator's own network can get stuck, usually after throttling it. Check with `adb shell ping 10.0.2.2`; if that fails, cold-boot the emulator (**Wipe Data** in Device Manager). |
 
