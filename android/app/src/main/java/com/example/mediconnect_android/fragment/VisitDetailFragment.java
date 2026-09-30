@@ -223,7 +223,11 @@ public class VisitDetailFragment extends Fragment {
                         return;
                     }
                     checkedInAt = appointment.getCheckedInAt();
+                    if (appointment.getAttendanceConfirmedAt() != null) {
+                        attendanceConfirmedAt = appointment.getAttendanceConfirmedAt();
+                    }
                     bindCheckInState();
+                    bindAttendance();
                 },
                 error -> {
                     if (binding != null) {
@@ -270,18 +274,34 @@ public class VisitDetailFragment extends Fragment {
      * Asked of the patient days ahead, so the front desk can tell somebody
      * who is running late from somebody who is not coming. Once given it
      * is shown as done rather than offered again.
+     *
+     * On the day itself the question is answered by checking in, so the
+     * row stops offering a "Confirm" of its own and points at the Check in
+     * button instead: two buttons for one thing let the patient press one
+     * and still see the other waiting. Checking in ticks this row too.
      */
     private void bindAttendance() {
-        boolean confirmed = attendanceConfirmedAt != null && !attendanceConfirmedAt.isEmpty();
+        boolean checkedIn = checkedInAt != null && !checkedInAt.isEmpty();
+        boolean confirmed = checkedIn
+                || (attendanceConfirmedAt != null && !attendanceConfirmedAt.isEmpty());
         if (confirmed) {
             done(binding.rowAttendance.rowIcon);
             binding.rowAttendance.rowTitle.setText(R.string.visit_attendance_done);
-            binding.rowAttendance.rowSub.setText(R.string.visit_attendance_done_sub);
+            binding.rowAttendance.rowSub.setText(checkedIn
+                    ? R.string.visit_attendance_checked_in_sub
+                    : R.string.visit_attendance_done_sub);
             binding.rowAttendance.rowAction.setVisibility(View.GONE);
             binding.rowAttendance.visitRow.setOnClickListener(null);
             return;
         }
         todo(binding.rowAttendance.rowIcon, R.drawable.ic_calendar_check);
+        if (startsAt != null && startsAt.toLocalDate().isEqual(LocalDate.now())) {
+            binding.rowAttendance.rowTitle.setText(R.string.visit_attendance_today);
+            binding.rowAttendance.rowSub.setText(R.string.visit_attendance_today_sub);
+            binding.rowAttendance.rowAction.setVisibility(View.GONE);
+            binding.rowAttendance.visitRow.setOnClickListener(null);
+            return;
+        }
         binding.rowAttendance.rowTitle.setText(R.string.visit_attendance);
         binding.rowAttendance.rowSub.setText(R.string.visit_attendance_sub);
         binding.rowAttendance.rowAction.setVisibility(View.VISIBLE);

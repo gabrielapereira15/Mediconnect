@@ -529,6 +529,9 @@
     <string name="visit_attendance_confirm">Confirm</string>
     <string name="visit_attendance_done">Attendance confirmed</string>
     <string name="visit_attendance_done_sub">You said you will be there</string>
+    <string name="visit_attendance_checked_in_sub">You checked in, so the clinic knows you are here</string>
+    <string name="visit_attendance_today">Check in when you arrive</string>
+    <string name="visit_attendance_today_sub">Use the Check in button below once you are at the clinic</string>
     <string name="visit_attendance_failed">The clinic could not take that. The visit may have been cancelled or already happened.</string>
     <string name="visit_form_row_sent">Sent %1$s</string>
     <string name="visit_form_row_todo">The doctor reads it before you arrive</string>
