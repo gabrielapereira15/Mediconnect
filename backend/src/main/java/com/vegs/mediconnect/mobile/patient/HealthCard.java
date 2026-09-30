@@ -30,8 +30,8 @@ final class HealthCard {
     static final int MIN_LENGTH = 8;
     static final int MAX_LENGTH = 12;
 
-    private static final Pattern PRINTED = Pattern.compile("[A-Za-z0-9 \-]+");
-    private static final Pattern SEPARATORS = Pattern.compile("[ \-]");
+    private static final Pattern PRINTED = Pattern.compile("[A-Za-z0-9 \\-]+");
+    private static final Pattern SEPARATORS = Pattern.compile("[ \\-]");
 
     private HealthCard() {
     }
