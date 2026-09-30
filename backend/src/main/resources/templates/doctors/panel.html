@@ -114,20 +114,33 @@
                 </div>
 
                 <span class="mc-overline">[[#{doctors.weeklyHours}]]</span>
-                <div style="display: flex; flex-direction: column; gap: 8px">
+                <!--
+                    Each day's two stretches on two lines. Four time inputs in
+                    one row needed about 660px, and the panel is about 460, so
+                    the afternoon ran off its edge.
+                -->
+                <div style="display: flex; flex-direction: column; gap: 12px">
                     <div th:each="d : ${days}" style="display: flex; align-items: center; gap: 10px">
                         <input type="checkbox" class="mc-switch" role="switch" value="on"
                                th:name="'on_' + ${d.key}" th:id="'on_' + ${d.key}" th:checked="${d.on}"
                                th:aria-label="${d.fullName}" />
                         <label class="label" style="width: 36px" th:for="'on_' + ${d.key}" th:text="${d.shortName}">Mon</label>
-                        <input type="time" class="mc-input mc-input-md" style="width: auto; flex: 1; padding: 0 8px"
-                               th:name="'start1_' + ${d.key}" th:value="${d.start1}" th:aria-label="#{doctors.hours.from(${d.fullName})}" />
-                        <input type="time" class="mc-input mc-input-md" style="width: auto; flex: 1; padding: 0 8px"
-                               th:name="'end1_' + ${d.key}" th:value="${d.end1}" th:aria-label="#{doctors.hours.to(${d.fullName})}" />
-                        <input type="time" class="mc-input mc-input-md" style="width: auto; flex: 1; padding: 0 8px"
-                               th:name="'start2_' + ${d.key}" th:value="${d.start2}" th:aria-label="#{doctors.hours.from2(${d.fullName})}" />
-                        <input type="time" class="mc-input mc-input-md" style="width: auto; flex: 1; padding: 0 8px"
-                               th:name="'end2_' + ${d.key}" th:value="${d.end2}" th:aria-label="#{doctors.hours.to2(${d.fullName})}" />
+                        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+                            <div style="display: flex; align-items: center; gap: 6px">
+                                <input type="time" class="mc-input mc-input-md" style="width: auto; flex: 1; min-width: 0; padding: 0 8px"
+                                       th:name="'start1_' + ${d.key}" th:value="${d.start1}" th:aria-label="#{doctors.hours.from(${d.fullName})}" />
+                                <span class="mc-muted" aria-hidden="true">&ndash;</span>
+                                <input type="time" class="mc-input mc-input-md" style="width: auto; flex: 1; min-width: 0; padding: 0 8px"
+                                       th:name="'end1_' + ${d.key}" th:value="${d.end1}" th:aria-label="#{doctors.hours.to(${d.fullName})}" />
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 6px">
+                                <input type="time" class="mc-input mc-input-md" style="width: auto; flex: 1; min-width: 0; padding: 0 8px"
+                                       th:name="'start2_' + ${d.key}" th:value="${d.start2}" th:aria-label="#{doctors.hours.from2(${d.fullName})}" />
+                                <span class="mc-muted" aria-hidden="true">&ndash;</span>
+                                <input type="time" class="mc-input mc-input-md" style="width: auto; flex: 1; min-width: 0; padding: 0 8px"
+                                       th:name="'end2_' + ${d.key}" th:value="${d.end2}" th:aria-label="#{doctors.hours.to2(${d.fullName})}" />
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="mc-banner" style="background: var(--surface-sunken); color: var(--ink-muted)">
