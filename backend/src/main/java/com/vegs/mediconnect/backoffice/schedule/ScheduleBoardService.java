@@ -247,8 +247,26 @@ public class ScheduleBoardService {
 
     // ---- one slot ------------------------------------------------------------------
 
+    /** Whose slot this is, for deciding who may block it. */
+    @Transactional(readOnly = true)
+    public UUID doctorOf(UUID slotId) {
+        return scheduleTimeRepository.findById(slotId)
+                .map(slot -> slot.getSchedule().getDoctor().getId())
+                .orElseThrow(NotFoundException::new);
+    }
+
     @Transactional(readOnly = true)
     public SlotPanel panel(UUID slotId, boolean deskMayAct) {
+        return panel(slotId, deskMayAct, null);
+    }
+
+    /**
+     * The panel for one slot. Booking and offers are the desk's; blocking
+     * is part of a doctor's agenda, so a doctor may block or unblock their
+     * own free slots too.
+     */
+    @Transactional(readOnly = true)
+    public SlotPanel panel(UUID slotId, boolean deskMayAct, UUID ownDoctorId) {
         ScheduleTime slot = scheduleTimeRepository.findById(slotId).orElseThrow(NotFoundException::new);
         LocalDate date = slot.getSchedule().getDate();
         LocalDateTime now = LocalDateTime.now();
@@ -297,9 +315,13 @@ public class ScheduleBoardService {
                 (int) whoFit,
                 deskMayAct && free && ahead,
                 deskMayAct && free && ahead && whoFit > 0,
-                deskMayAct && free && ahead,
-                deskMayAct && Boolean.TRUE.equals(slot.getBlocked()) && booked == null,
+                mayBlock(deskMayAct, ownDoctorId, doctor) && free && ahead,
+                mayBlock(deskMayAct, ownDoctorId, doctor) && Boolean.TRUE.equals(slot.getBlocked()) && booked == null,
                 deskMayAct && holding != null);
+    }
+
+    private static boolean mayBlock(boolean deskMayAct, UUID ownDoctorId, Doctor doctor) {
+        return deskMayAct || (ownDoctorId != null && ownDoctorId.equals(doctor.getId()));
     }
 
     /**

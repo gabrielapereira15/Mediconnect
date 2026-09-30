@@ -20,6 +20,7 @@ public final class StaffSession {
     private final StaffRole role;
     private final String clinicCode;
     private final String initials;
+    private final java.util.UUID doctorId;
 
     private StaffSession(StaffUser user) {
         this.name = user.getName();
@@ -27,6 +28,7 @@ public final class StaffSession {
         this.role = user.getRole();
         this.clinicCode = user.getClinicCode();
         this.initials = user.getInitials();
+        this.doctorId = user.getDoctorId();
     }
 
     /** Starts a session, replacing any id an attacker may have planted. */
@@ -88,5 +90,22 @@ public final class StaffSession {
     /** Booking, checking in and cancelling belong to the desk. */
     public boolean canManageAppointments() {
         return role == StaffRole.FRONT_DESK;
+    }
+
+    /** The doctor this login belongs to, or null. */
+    public java.util.UUID getDoctorId() {
+        return doctorId;
+    }
+
+    /**
+     * Whether this person may change a doctor's agenda: their usual week,
+     * days off, and blocking their own free slots. The desk may change
+     * anyone's; a doctor only their own.
+     */
+    public boolean canEditAgendaOf(java.util.UUID doctor) {
+        if (role == StaffRole.FRONT_DESK) {
+            return true;
+        }
+        return role == StaffRole.CLINICIAN && doctorId != null && doctorId.equals(doctor);
     }
 }

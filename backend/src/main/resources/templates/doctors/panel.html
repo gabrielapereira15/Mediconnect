@@ -91,7 +91,7 @@
     <th:block th:if="${tab == 'availability'}">
         <form th:action="@{/doctors/{id}/availability(id=${profile.id})}" method="post"
               style="display: flex; flex-direction: column; min-height: 0; flex: 1">
-            <fieldset class="mc-sheetpanel-body" th:disabled="${!canEdit}" style="border: 0; margin: 0">
+            <fieldset class="mc-sheetpanel-body" th:disabled="${!canEditAgenda}" style="border: 0; margin: 0">
                 <div th:if="${editor.inferred}" class="mc-banner">
                     <i class="mc-i mc-i-info" aria-hidden="true"></i><div>[[#{doctors.hours.inferred}]]</div>
                 </div>
@@ -134,7 +134,7 @@
                     <i class="mc-i mc-i-info" aria-hidden="true"></i><div>[[#{doctors.hours.help}]]</div>
                 </div>
             </fieldset>
-            <div class="mc-sheetpanel-foot" th:if="${canEdit}">
+            <div class="mc-sheetpanel-foot" th:if="${canEditAgenda}">
                 <div class="mc-btnrow">
                     <a class="mc-btn mc-btn-outline mc-btn-md mc-btn-square"
                        th:href="@{/doctors(selected=${profile.id},tab=availability)}">[[#{doctors.discard}]]</a>
@@ -155,13 +155,13 @@
                            th:text="#{doctors.dayOff.toRebook(${off.toRebook})}">3 patients to rebook</a>
                     </div>
                 </div>
-                <form th:if="${canEdit}" th:action="@{/doctors/{id}/days-off/{off}/remove(id=${profile.id},off=${off.id})}" method="post">
+                <form th:if="${canEditAgenda}" th:action="@{/doctors/{id}/days-off/{off}/remove(id=${profile.id},off=${off.id})}" method="post">
                     <button type="submit" class="mc-btn mc-btn-ghost mc-btn-sm">[[#{doctors.dayOff.remove}]]</button>
                 </form>
             </div>
             <p th:if="${#lists.isEmpty(editor.daysOff)}" class="body-sm mc-muted" style="margin: 0">[[#{doctors.dayOff.none}]]</p>
 
-            <form th:if="${canEdit}" th:action="@{/doctors/{id}/days-off(id=${profile.id})}" method="post"
+            <form th:if="${canEditAgenda}" th:action="@{/doctors/{id}/days-off(id=${profile.id})}" method="post"
                   style="display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap">
                 <div class="mc-field">
                     <label class="mc-label" for="offDate">[[#{doctors.dayOff.date}]]</label>
