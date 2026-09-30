@@ -435,7 +435,7 @@ and the H2 console.
 ## Tests
 
 ```bash
-cd backend && ./gradlew test                # 184 tests, *IT integration tests included
+cd backend && ./gradlew test                # 193 tests, *IT integration tests included
 cd android && ./gradlew testDebugUnitTest   # 57 tests
 ```
 
@@ -501,10 +501,10 @@ The doctor directory and photos are public. Everything else needs
 | `GET` | `/api/mobile/doctors/{id}` | public | One doctor |
 | `GET` | `/api/mobile/doctors/photo/{id}` | public | Photo bytes — `<img>` tags cannot send a header |
 | `GET` | `/api/mobile/patients/{email}` | required | Profile |
-| `POST` | `/api/mobile/patients` | required | Create or update a profile |
-| `PUT` | `/api/mobile/patients/{id}` | required | Update a profile |
+| `POST` | `/api/mobile/patients` | required | Create or update your own profile (the body's email must be the token's) |
+| `PUT` | `/api/mobile/patients/{id}` | required | Update your own profile; the sign-in email is not changed |
 | `GET` | `/api/mobile/appointments/{email}` | required | The patient's visits |
-| `POST` | `/api/mobile/appointments` | required | Book a free slot at least 6 hours ahead |
+| `POST` | `/api/mobile/appointments` | required | Book a free slot at least 6 hours ahead, for the signed-in patient |
 | `PUT` | `/api/mobile/appointments/cancel/{id}` | required | Cancel |
 | `PUT` | `/api/mobile/appointments/{id}/checkin` | required | Check in, on the day of the visit only |
 | `PUT` | `/api/mobile/appointments/{id}/attendance` | required | Confirm attendance, before the visit starts |
@@ -516,7 +516,7 @@ The doctor directory and photos are public. Everything else needs
 | `POST` | `/api/mobile/notifications/archive/{id}` | required | Archive one (and mark it read) |
 | `POST` | `/api/mobile/notifications/unarchive/{id}` | required | Move one back to the inbox |
 | `POST` | `/api/mobile/notifications/archive-read/{email}` | required | Archive every read message; returns their ids, for Undo |
-| `POST` | `/api/mobile/reviews` | required | Review a completed visit |
+| `POST` | `/api/mobile/reviews` | required | Review one of your visits once it has happened: once, 1–5 stars |
 | `GET` | `/api/mobile/health/{email}` | required | Health record |
 | `POST` | `/api/mobile/health/{email}` | required | Add an allergy, medication or condition |
 | `POST` | `/api/mobile/health/{email}/{id}/stop` | required | Mark an entry no longer current |
@@ -533,17 +533,15 @@ In `ack`, `archive` and `unarchive`, `{id}` is the delivery id from the
 #### Ownership and errors
 
 - No token, or an invalid one: **401**, "Sign in to continue."
-- An email in the path that is not the token's own: **403**.
+- An email in the path, or in the body of `POST /appointments` or
+  `POST /patients`, that is not the token's own: **403**.
 - A record addressed by id that belongs to someone else — a visit, its form, a
-  message, a waitlist entry, a health entry: **404**, so ids cannot be probed.
+  review's visit, a profile, a message, a waitlist entry, a health entry:
+  **404**, so ids cannot be probed.
 - **409** when a slot was just taken or is under 6 hours away, check-in is not
-  open, an offer has ended, or the patient is already on that waitlist.
-- **400** for a health card without a province.
-
-Four routes take the patient from the request body or an id and are **not yet
-owner-checked**: `POST /appointments` books for the body's `patientEmail`,
-`POST /patients` and `PUT /patients/{id}` can write another patient's profile,
-and `POST /reviews` accepts any appointment id.
+  open, an offer has ended, the patient is already on that waitlist, or a
+  visit cannot be reviewed (not happened yet, cancelled, or already reviewed).
+- **400** for a health card without a province, or a review score outside 1–5.
 
 ### FHIR
 
@@ -623,8 +621,6 @@ backend/src/main/java/com/vegs/mediconnect/
 
 ## Known gaps
 
-- Four mobile routes are not yet owner-checked — see
-  [Ownership and errors](#ownership-and-errors).
 - No email, SMS or push. Passcodes are only logged, and clinic messages and
   offers are seen when the app is opened. Visit reminders are local
   notifications set on the phone.
