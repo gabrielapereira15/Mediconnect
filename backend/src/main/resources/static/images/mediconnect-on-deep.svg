@@ -5,9 +5,9 @@
 
     The colours are literal on purpose. This file is shown through <img>,
     which is a separate document the page's CSS cannot reach, so neither a
-    var(--token) nor an Android @color reference can resolve here; a paint
-    value the browser does not understand falls back to black, which is
-    how this logo once went nearly invisible on the sidebar.
+    CSS custom property nor an Android @color reference can resolve here;
+    a paint value the browser does not understand falls back to black,
+    which is how this logo once went nearly invisible on the sidebar.
   -->
   <path d="M68.02,244.36L96.72,244.36L96.72,201.85L139.24,201.85L139.24,173.14L96.72,173.14L96.72,130.62L68.02,130.62L68.02,173.14L25.49,173.14L25.49,201.85L68.02,201.85ZM102.36,250.01L62.38,250.01L62.38,207.49L19.85,207.49L19.85,167.51L62.38,167.51L62.38,124.98L102.36,124.98L102.36,167.51L144.88,167.51L144.88,207.49L102.36,207.49L102.36,250.01" fill="#5BCACE" transform="translate(-14 -119)"/>
   <path d="M117.44,198.56L117.41,184.93L110.72,196.15L108.34,196.15L101.7,185.23L101.7,198.56L96.77,198.56L96.77,175.86L101.11,175.86L109.61,189.97L117.98,175.86L122.3,175.86L122.36,198.56ZM117.44,198.56" fill="#E8F4F5" transform="translate(50 -119)"/>

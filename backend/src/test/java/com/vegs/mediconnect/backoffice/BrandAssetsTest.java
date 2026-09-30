@@ -3,7 +3,8 @@ package com.vegs.mediconnect.backoffice;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
@@ -28,16 +29,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * so the only colours that work are literal ones. These pin each file to
  * the exact design-system values it should use, which also catches a
  * right-looking but wrong token pasted into the wrong file.
+ *
+ * Each file is parsed as XML first, because that is how a browser reads an
+ * SVG shown through img: one malformed comment and the whole image is
+ * dropped, which a search for fill values alone would never notice.
  */
 class BrandAssetsTest {
 
     /** fill="..." attributes, and fill: declarations inside a style block. */
-    private static final Pattern FILL = Pattern.compile("fill(?:=\"|\s*:\s*)([^\";}\s]+)");
+    private static final Pattern FILL = Pattern.compile("fill(?:=\"|\\s*:\\s*)([^\";}\\s]+)");
 
-    private static Set<String> fillsIn(String resource) throws IOException {
+    private static Set<String> fillsIn(String resource) throws Exception {
         try (InputStream in = BrandAssetsTest.class.getResourceAsStream(resource)) {
             assertNotNull(in, resource + " is missing from the classpath");
-            String svg = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+            byte[] bytes = in.readAllBytes();
+            // Throws on anything a browser's XML parser would refuse.
+            DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                    .parse(new ByteArrayInputStream(bytes));
+            String svg = new String(bytes, StandardCharsets.UTF_8);
             Set<String> fills = new TreeSet<>();
             Matcher matcher = FILL.matcher(svg);
             while (matcher.find()) {
@@ -49,21 +58,21 @@ class BrandAssetsTest {
 
     @Test
     @DisplayName("the sign-in wordmark is brand teal and ink")
-    void lightWordmark() throws IOException {
+    void lightWordmark() throws Exception {
         assertEquals(Set.of("#0A7A80", "#0E2431"),
                 fillsIn("/static/images/mediconnect.svg"));
     }
 
     @Test
     @DisplayName("the sidebar wordmark is light teal and on-deep")
-    void onDeepWordmark() throws IOException {
+    void onDeepWordmark() throws Exception {
         assertEquals(Set.of("#5BCACE", "#E8F4F5"),
                 fillsIn("/static/images/mediconnect-on-deep.svg"));
     }
 
     @Test
     @DisplayName("the tab icon is the brand cross, lighter when the browser is dark")
-    void favicon() throws IOException {
+    void favicon() throws Exception {
         assertEquals(Set.of("#0A7A80", "#5BCACE"),
                 fillsIn("/static/images/favicon.svg"));
     }
