@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -21,10 +23,14 @@ public class UpcomingFragment extends Fragment {
 
     FragmentUpcomingBinding binding;
     UpcomingAdapter adapter;
-    List<Appointment> appointments;
 
-    public UpcomingFragment(List<Appointment> appointments) {
-        this.appointments = appointments;
+    /**
+     * Takes nothing, and must stay that way. Android rebuilds this segment
+     * by reflection after a rotation, a font-size or dark-mode change, or
+     * the process being killed, and a constructor with arguments crashed
+     * the Visits tab each time. The list comes from VisitsViewModel instead.
+     */
+    public UpcomingFragment() {
     }
 
     @Override
@@ -41,10 +47,19 @@ public class UpcomingFragment extends Fragment {
         return view;
     }
 
-    private void init() {
-        bindAdapter();
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // Tied to the view, not the fragment, so a view rebuilt on the way
+        // back from a visit does not end up with two observers.
+        VisitsViewModel.forSegment(this).getAppointments()
+                .observe(getViewLifecycleOwner(), this::bindAdapter);
+    }
 
-        // The tabs are handed their data by MedicalHistoryFragment, so a pull
+    private void init() {
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // The segments get their list from MedicalHistoryFragment, so a pull
         // asks the parent to re-fetch rather than loading anything here.
         binding.swipeRefresh.setOnRefreshListener(() -> {
             Fragment parent = getParentFragment();
@@ -62,7 +77,14 @@ public class UpcomingFragment extends Fragment {
         });
     }
 
-    private void bindAdapter() {
+    private void bindAdapter(@Nullable List<Appointment> appointments) {
+        if (appointments == null) {
+            // Not loaded yet, or the load failed. MedicalHistoryFragment is
+            // showing its loading or error state over this segment, and an
+            // empty state here would claim there are no visits.
+            return;
+        }
+
         List<Appointment> filteredAppointments = appointments.stream()
                 .filter(appointment -> "UPCOMING".equals(appointment.getStatus()))
                 .collect(Collectors.toList());
@@ -81,7 +103,6 @@ public class UpcomingFragment extends Fragment {
             binding.stateView.showContent();
         }
 
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new UpcomingAdapter(filteredAppointments, getContext());
         binding.recyclerView.setAdapter(adapter);
     }

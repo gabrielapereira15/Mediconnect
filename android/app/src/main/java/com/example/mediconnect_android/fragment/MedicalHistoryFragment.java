@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.client.AppointmentClient;
@@ -24,6 +26,7 @@ import com.example.mediconnect_android.util.WhenLabel;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.Background;
 
+import java.util.Collections;
 import java.util.List;
 
 public class MedicalHistoryFragment extends Fragment {
@@ -31,7 +34,12 @@ public class MedicalHistoryFragment extends Fragment {
     public FragmentManager fragmentManager;
     FragmentMedicalHistoryBinding binding;
     AppointmentClient appointmentClient;
-    List<Appointment> appointmentsList;
+
+    /**
+     * The list the segments show. It outlives this fragment's view, and a
+     * rotation, so a segment rebuilt by the system has something to read.
+     */
+    private VisitsViewModel visits;
 
     private final WaitlistClient waitlistClient = new WaitlistClientImpl();
 
@@ -45,6 +53,7 @@ public class MedicalHistoryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        visits = new ViewModelProvider(this).get(VisitsViewModel.class);
     }
 
     @Override
@@ -98,7 +107,13 @@ public class MedicalHistoryFragment extends Fragment {
             binding.stateView.showLoading();
         }
 
-        // Fetch off the UI thread, then show the Upcoming tab once it lands.
+        // Fetch off the UI thread, then hand the list to whichever segment
+        // is showing. The segment is already in place and redraws itself,
+        // so a refresh from Cancelled leaves the patient on Cancelled.
+        //
+        // No fragment is swapped here. This can land after the activity
+        // has saved its state (the app was sent to the background mid-load),
+        // and a fragment transaction at that point throws.
         Background.run(
                 () -> appointmentClient.getAppointments(email),
                 appointments -> {
@@ -106,12 +121,12 @@ public class MedicalHistoryFragment extends Fragment {
                         return; // the view went away while the request was in flight
                     }
                     finishRefresh();
-                    appointmentsList = appointments;
+                    // An empty reply is a list with nothing in it, not
+                    // "still loading", so the segment says "no visits".
+                    visits.publish(appointments == null
+                            ? Collections.emptyList()
+                            : appointments);
                     binding.stateView.showContent();
-                    // Re-show whichever segment the patient is on, not
-                    // always Upcoming: a refresh from Cancelled used to
-                    // throw them back to the top of the list.
-                    showFilter(binding.visitFilter.getCheckedButtonId());
                 },
                 error -> {
                     finishRefresh();
@@ -122,13 +137,13 @@ public class MedicalHistoryFragment extends Fragment {
                 });
     }
 
-    /** The currently visible tab, so a refresh can stop its spinner. */
+    /** The visits as last loaded, or null until the first load lands. */
     public List<Appointment> getAppointments() {
-        return appointmentsList;
+        return visits == null ? null : visits.getAppointments().getValue();
     }
 
     private void init() {
-        setFilterListener();
+        binding.visitFilter.check(R.id.filter_upcoming);
         loadOffers();
     }
 
@@ -264,9 +279,29 @@ public class MedicalHistoryFragment extends Fragment {
      * own navigation sitting under the app's own navigation. Selecting a
      * segment loads its fragment; the group keeps exactly one selected, so
      * there is no state where none is.
+     *
+     * This runs here rather than in onCreateView because only now is
+     * everything back after a rotation or a return from a visit. The
+     * segment that was open is back in the container, and the buttons have
+     * their saved state. The segment in the container decides, and the
+     * buttons follow it. The listener goes on last, so putting the buttons
+     * back does not count as the patient choosing a segment.
+     *
+     * A segment can be chosen before the list has arrived, or after it
+     * failed to. The segment shows nothing until the list lands, and this
+     * screen's own loading or error state covers it in the meantime.
      */
-    private void setFilterListener() {
-        binding.visitFilter.check(R.id.filter_upcoming);
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        Fragment showing = fragmentManager.findFragmentById(R.id.fragment_container);
+        if (showing != null) {
+            binding.visitFilter.check(filterFor(showing));
+        } else {
+            showFilter(binding.visitFilter.getCheckedButtonId());
+        }
+
         binding.visitFilter.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (!isChecked) {
                 return;
@@ -276,15 +311,35 @@ public class MedicalHistoryFragment extends Fragment {
     }
 
     private void showFilter(int checkedId) {
-        Fragment selected;
-        if (checkedId == R.id.filter_past) {
-            selected = new CompletedFragment(appointmentsList);
-        } else if (checkedId == R.id.filter_cancelled) {
-            selected = new CancelledFragment(appointmentsList);
-        } else {
-            selected = new UpcomingFragment(appointmentsList);
+        Class<? extends Fragment> segment = segmentFor(checkedId);
+        // Already there: it redraws itself when the list reloads. Replacing
+        // it anyway would also close a review sheet open on top of Past.
+        if (segment.isInstance(fragmentManager.findFragmentById(R.id.fragment_container))) {
+            return;
         }
-        FragmentUtils.loadFragment(fragmentManager, R.id.fragment_container, selected);
+        FragmentUtils.swapFragment(fragmentManager, R.id.fragment_container, segment);
+    }
+
+    /** Which segment a button shows: Upcoming unless it is one of the other two. */
+    static Class<? extends Fragment> segmentFor(int checkedId) {
+        if (checkedId == R.id.filter_past) {
+            return CompletedFragment.class;
+        }
+        if (checkedId == R.id.filter_cancelled) {
+            return CancelledFragment.class;
+        }
+        return UpcomingFragment.class;
+    }
+
+    /** The button for a segment; segmentFor the other way round. */
+    static int filterFor(Fragment segment) {
+        if (segment instanceof CompletedFragment) {
+            return R.id.filter_past;
+        }
+        if (segment instanceof CancelledFragment) {
+            return R.id.filter_cancelled;
+        }
+        return R.id.filter_upcoming;
     }
 
     @Override
