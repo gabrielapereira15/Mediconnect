@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!--
+    Schedule (board B02).
+
+    One day, a column per doctor working it and a row per time. Every cell
+    is a button that opens its slot in the panel on the right; its words
+    say what it is, so the colours are a help rather than the message.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{nav.schedule}]]</title>
+</head>
+<body>
+<div layout:fragment="content" style="display: flex; flex-direction: column; gap: 20px; flex: 1 0 auto">
+
+    <div class="mc-page-head" style="align-items: center">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+            <h1 class="mc-page-title">[[#{nav.schedule}]]</h1>
+            <div style="display: flex; align-items: center; gap: 2px; margin-left: 12px">
+                <a class="mc-icon-btn mc-icon-btn-sm" th:aria-label="#{schedule.previous}"
+                   th:href="@{/schedule(date=${previous},view=${view},specialty=${specialty})}">
+                    <i class="mc-i mc-i-chevron-left" aria-hidden="true"></i></a>
+                <span class="title-sm" style="padding: 0 6px" th:text="${dateLabel}" aria-live="polite">Tuesday, 29 September</span>
+                <a class="mc-icon-btn mc-icon-btn-sm" th:aria-label="#{schedule.next}"
+                   th:href="@{/schedule(date=${next},view=${view},specialty=${specialty})}">
+                    <i class="mc-i mc-i-chevron-right" aria-hidden="true"></i></a>
+            </div>
+            <a th:unless="${isToday}" class="mc-btn mc-btn-outline mc-btn-sm mc-btn-square"
+               th:href="@{/schedule(view=${view},specialty=${specialty})}">[[#{schedule.today}]]</a>
+        </div>
+        <div class="mc-toolbar">
+            <nav class="mc-seg" style="border-radius: 12px; width: 180px" th:aria-label="#{schedule.view}">
+                <a th:href="@{/schedule(date=${date},view=day,specialty=${specialty})}"
+                   th:classappend="${view == 'day'} ? 'is-active'"
+                   th:attr="aria-current=${view == 'day'} ? 'page' : null"
+                   style="height: 32px; border-radius: 9px; text-decoration: none">[[#{schedule.day}]]</a>
+                <a th:href="@{/schedule(date=${date},view=week,specialty=${specialty})}"
+                   th:classappend="${view == 'week'} ? 'is-active'"
+                   th:attr="aria-current=${view == 'week'} ? 'page' : null"
+                   style="height: 32px; border-radius: 9px; text-decoration: none">[[#{schedule.week}]]</a>
+            </nav>
+            <form th:action="@{/schedule}" method="get" style="display: contents">
+                <input type="hidden" name="date" th:value="${date}" />
+                <input type="hidden" name="view" th:value="${view}" />
+                <select class="mc-input mc-input-md" name="specialty" style="width: 200px"
+                        th:aria-label="#{schedule.specialty}" onchange="this.form.requestSubmit()">
+                    <option value="" th:text="#{schedule.allSpecialties}">All specialties</option>
+                    <option th:each="s : ${specialties}" th:value="${s}" th:selected="${s == specialty}"
+                            th:text="${s}">Surgeon</option>
+                </select>
+            </form>
+            <a class="mc-btn mc-btn-outline mc-btn-md mc-btn-square" th:href="@{/doctors}">
+                <i class="mc-i mc-i-edit" aria-hidden="true"></i>[[#{schedule.editAvailability}]]</a>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 16px; flex: 1; min-height: 480px">
+
+        <!-- ==== Day =========================================================== -->
+        <div th:if="${board != null}" class="mc-panel" style="flex: 1; min-width: 0; overflow: auto">
+            <div th:if="${board.isEmpty()}" class="mc-empty" style="padding: 48px">
+                <p class="mc-empty-title" style="margin: 0">[[#{schedule.empty.title}]]</p>
+                <p class="mc-empty-body">[[#{schedule.empty.body}]]</p>
+            </div>
+
+            <div th:unless="${board.isEmpty()}" class="mc-sched"
+                 th:style="'grid-template-columns: 56px repeat(' + ${#lists.size(board.columns)} + ', minmax(124px, 1fr)); grid-auto-rows: minmax(58px, auto); gap: 6px; padding: 0 12px 12px 0'"
+                 role="grid" th:aria-label="${dateLabel}">
+                <div class="mc-sched-head" style="border: 0; position: sticky; top: 0; z-index: 1"></div>
+                <div th:each="col : ${board.columns}" class="mc-sched-head" role="columnheader"
+                     style="display: flex; gap: 8px; align-items: center; position: sticky; top: 0; z-index: 1">
+                    <span class="mc-avatar mc-avatar-sm" th:classappend="${col.avatarClass}"
+                          th:text="${col.initials}" aria-hidden="true">RC</span>
+                    <div>
+                        <div th:text="${col.name}">Dr. Chase</div>
+                        <div class="caption mc-muted"
+                             th:text="${col.specialty} + ' · ' + ${col.booked} + '/' + ${col.total}">Surgeon · 13/14</div>
+                    </div>
+                </div>
+
+                <th:block th:each="row : ${board.rows}">
+                    <div class="mc-sched-time" th:text="${row.time}">9:00</div>
+                    <div th:if="${row.gap}" class="mc-sched-gap"
+                         th:text="#{schedule.gap(${row.gapLabel})}">12:00–13:00 · nobody booked in</div>
+                    <th:block th:unless="${row.gap}" th:each="cell : ${row.cells}">
+                        <div th:if="${cell == null}" class="mc-sched-empty"></div>
+                        <button th:if="${cell != null}" type="button" class="mc-event"
+                                th:classappend="${cell.state.cssClass} + ${panel != null and panel.slotId == cell.slotId ? ' is-selected' : ''}"
+                                th:attr="hx-get=@{/schedule/slots/{id}(id=${cell.slotId},back=${here})},aria-label=${row.time + ', ' + cell.label}"
+                                hx-target="#slot-panel" hx-swap="innerHTML">
+                            <b th:text="${cell.title}">Lin Wei</b><span th:text="${cell.detail}">Completed</span>
+                        </button>
+                    </th:block>
+                </th:block>
+            </div>
+        </div>
+
+        <!-- ==== Week ========================================================== -->
+        <div th:if="${week != null}" class="mc-panel" style="flex: 1; min-width: 0; overflow: auto">
+            <table class="mc-table">
+                <thead>
+                <tr>
+                    <th>[[#{schedule.col.doctor}]]</th>
+                    <th th:each="d : ${week.days}">
+                        <a class="mc-link" th:href="@{/schedule(date=${d},specialty=${specialty})}"
+                           th:text="${#temporals.format(d, 'EEE d')}">Mon 28</a>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${week.rows}">
+                    <td>
+                        <div class="mc-cell-person">
+                            <span class="mc-avatar mc-avatar-sm" th:classappend="${row.avatarClass}"
+                                  th:text="${row.initials}" aria-hidden="true">RC</span>
+                            <div><b th:text="${row.doctor}">Dr. Chase</b><small th:text="${row.specialty}">Surgeon</small></div>
+                        </div>
+                    </td>
+                    <td th:each="cell : ${row.days}">
+                        <th:block th:if="${cell.working}">
+                            <span class="caption mc-num" th:text="${cell.booked} + ' / ' + ${cell.total}">13 / 14</span>
+                            <div class="mc-progress" style="margin-top: 6px"><span th:style="'width: ' + ${cell.percent} + '%'"></span></div>
+                        </th:block>
+                        <span th:unless="${cell.working}" class="caption mc-subtle">[[#{schedule.notWorking}]]</span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(week.rows)}">
+                    <td colspan="8" class="mc-table-empty">[[#{schedule.empty.title}]]</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <aside id="slot-panel" class="mc-aside" style="width: 320px" aria-live="polite"
+               th:if="${view == 'day'}"
+               th:attr="data-empty=#{schedule.pick}"><th:block th:if="${panel != null}"><div
+                th:replace="~{schedule/slot :: slot}"></div></th:block></aside>
+    </div>
+</div>
+</body>
+</html>

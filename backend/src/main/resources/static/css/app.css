@@ -298,3 +298,70 @@ details.mc-disclosure[open] > summary {
     opacity: .4;
     pointer-events: none;
 }
+
+/* ---- Schedule (B02) ----------------------------------------------------- */
+
+/* Every cell opens its slot, so every cell is a real button. */
+button.mc-event {
+    border: 0;
+    font: inherit;
+    text-align: left;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+button.mc-event.mc-event-free {
+    border: 1.5px dashed var(--line-strong);
+}
+
+button.mc-event:focus-visible,
+button.mc-event.is-selected {
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
+}
+
+/* Taken out of the diary: solid and sunken, unlike a dashed free slot. */
+.mc-event.mc-event-blocked,
+button.mc-event.mc-event-blocked {
+    border: 1.5px solid var(--line);
+    background: var(--surface-sunken);
+    color: var(--ink-muted);
+}
+
+/* A stretch in which nobody works, across every column. */
+.mc-sched-gap {
+    grid-column: 2 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--line);
+    background: var(--surface-sunken);
+    color: var(--ink-muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.mc-sched-empty {
+    min-height: 1px;
+}
+
+.mc-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+}
+
+.mc-legend span {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.mc-legend i {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+}

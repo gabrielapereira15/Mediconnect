@@ -33,4 +33,16 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
             """)
     List<Appointment> findAllOnDay(@Param("date") LocalDate date);
 
+    /** The same, across a range of days — a week of the schedule. */
+    @Query("""
+            select a from Appointment a
+            join fetch a.scheduleTime st
+            join fetch st.schedule s
+            join fetch a.patient
+            join fetch a.doctor
+            where s.date between :from and :to
+            order by s.date asc, st.time asc
+            """)
+    List<Appointment> findAllBetween(@Param("from") LocalDate from, @Param("to") LocalDate to);
+
 }

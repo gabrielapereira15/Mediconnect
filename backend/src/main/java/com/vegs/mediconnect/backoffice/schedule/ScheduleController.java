@@ -1,140 +1,136 @@
 package com.vegs.mediconnect.backoffice.schedule;
 
-import com.vegs.mediconnect.backoffice.schedule_time.ScheduleTimeDTO;
-import com.vegs.mediconnect.backoffice.schedule_time.ScheduleTimeService;
-import com.vegs.mediconnect.backoffice.util.CustomCollectors;
-import com.vegs.mediconnect.backoffice.util.ReferencedWarning;
+import com.vegs.mediconnect.backoffice.auth.RequiresRole;
+import com.vegs.mediconnect.backoffice.auth.StaffSession;
+import com.vegs.mediconnect.backoffice.shared.Display;
+import com.vegs.mediconnect.backoffice.shared.Redirects;
 import com.vegs.mediconnect.backoffice.util.WebUtils;
-import com.vegs.mediconnect.datasource.doctor.Doctor;
-import com.vegs.mediconnect.datasource.doctor.DoctorRepository;
-import jakarta.validation.Valid;
-import org.springframework.data.domain.Sort;
+import com.vegs.mediconnect.datasource.staff.StaffRole;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
 import java.util.UUID;
 
-
+/**
+ * Schedule (board B02): the day, doctor by doctor, with one slot open in
+ * the side panel. A week view gives the shape of the next few days.
+ */
 @Controller
-@RequestMapping("/schedules")
+@RequestMapping("/schedule")
+@RequiredArgsConstructor
 public class ScheduleController {
 
-    private final ScheduleService scheduleService;
-    private final ScheduleTimeService scheduleTimeService;
-    private final DoctorRepository doctorRepository;
-
-    public ScheduleController(final ScheduleService scheduleService, ScheduleTimeService scheduleTimeService,
-                              final DoctorRepository doctorRepository) {
-        this.scheduleService = scheduleService;
-        this.scheduleTimeService = scheduleTimeService;
-        this.doctorRepository = doctorRepository;
-    }
-
-    @ModelAttribute
-    public void prepareContext(final Model model) {
-        var allDoctors = doctorRepository.findAll(Sort.by("lastName", "firstName"));
-
-        List<String> times = createAllTimes();
-        model.addAttribute("timesValues", times);
-        model.addAttribute("doctorIdValues", allDoctors
-                .stream()
-                .collect(CustomCollectors.toSortedMap(Doctor::getId, Doctor::getFullName)));
-    }
-
-    private static List<String> createAllTimes() {
-        List<String> times = new ArrayList<>();
-        times.add("9 AM");
-        times.add("10 AM");
-        times.add("11 AM");
-        times.add("12 PM");
-        times.add("1 PM");
-        times.add("2 PM");
-        times.add("3 PM");
-        times.add("4 PM");
-        times.add("5 PM");
-        return times;
-    }
+    private final ScheduleBoardService board;
 
     @GetMapping
-    public String list(final Model model) {
-        model.addAttribute("schedules", scheduleService.findAll());
-        return "schedule/list";
-    }
+    public String schedule(@RequestParam(required = false)
+                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                           @RequestParam(defaultValue = "day") String view,
+                           @RequestParam(required = false) String specialty,
+                           @RequestParam(required = false) UUID slot,
+                           HttpServletRequest request,
+                           Model model) {
+        LocalDate day = date == null ? LocalDate.now() : date;
+        boolean week = "week".equalsIgnoreCase(view);
+        ScheduleBoardService.Week weekBoard = week ? board.week(day, specialty) : null;
 
-    @GetMapping("/add")
-    public String add(@ModelAttribute("schedule") final ScheduleDTO scheduleDTO) {
-        return "schedule/add";
-    }
-
-    @PostMapping("/add")
-    public String add(@ModelAttribute("schedule") @Valid final ScheduleDTO scheduleDTO,
-            final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            checkUniqueConstraint(bindingResult);
-            scheduleDTO.getTimes().clear();
-            return "schedule/add";
-        }
-        var schedule = scheduleService.create(scheduleDTO);
-        scheduleDTO
-                .getTimes()
-                .stream()
-                .map(ScheduleTimeDTO::new)
-                .forEach(scheduleTimeDTO -> {
-                    scheduleTimeDTO.setScheduleId(schedule.getId());
-                    scheduleTimeService.create(scheduleTimeDTO);
-                });
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("schedule.create.success"));
-        return "redirect:/schedules";
-    }
-
-    private static void checkUniqueConstraint(BindingResult bindingResult) {
-        if (bindingResult.hasFieldErrors("doctorDate")) {
-            bindingResult.addError(new FieldError("schedule", "date",
-                    Optional.ofNullable(bindingResult.getFieldError("doctorDate"))
-                            .map(FieldError::getDefaultMessage)
-                            .orElse("Error")));
-        }
-    }
-
-    @GetMapping("/edit/{id}")
-    public String edit(@PathVariable(name = "id") final UUID id, final Model model) {
-        var schedule = scheduleService.get(id);
-        model.addAttribute("schedule", schedule);
-        return "schedule/edit";
-    }
-
-    @PostMapping("/edit/{id}")
-    public String edit(@PathVariable(name = "id") final UUID id,
-            @ModelAttribute("schedule") @Valid final ScheduleDTO scheduleDTO,
-            final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            checkUniqueConstraint(bindingResult);
-            return "schedule/edit";
-        }
-        scheduleService.update(id, scheduleDTO);
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("schedule.update.success"));
-        return "redirect:/schedules";
-    }
-
-    @PostMapping("/delete/{id}")
-    public String delete(@PathVariable(name = "id") final UUID id,
-            final RedirectAttributes redirectAttributes) {
-        final ReferencedWarning referencedWarning = scheduleService.getReferencedWarning(id);
-        if (referencedWarning != null) {
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR,
-                    WebUtils.getMessage(referencedWarning.getKey(), referencedWarning.getParams().toArray()));
+        model.addAttribute("active", "schedule");
+        model.addAttribute("date", day);
+        model.addAttribute("dateLabel", week
+                ? "Week of " + Display.day(weekBoard.monday())
+                : Display.longDay(day));
+        model.addAttribute("previous", day.minusDays(week ? 7 : 1));
+        model.addAttribute("next", day.plusDays(week ? 7 : 1));
+        model.addAttribute("isToday", day.isEqual(LocalDate.now()));
+        model.addAttribute("view", week ? "week" : "day");
+        model.addAttribute("specialty", specialty == null ? "" : specialty);
+        model.addAttribute("specialties", board.specialties());
+        model.addAttribute("here", here(request));
+        if (week) {
+            model.addAttribute("week", weekBoard);
         } else {
-            scheduleService.delete(id);
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("schedule.delete.success"));
+            model.addAttribute("board", board.day(day, specialty));
         }
-        return "redirect:/schedules";
+        if (slot != null) {
+            model.addAttribute("panel", board.panel(slot, deskMayAct(request)));
+        }
+        return "schedule/board";
     }
 
+    @GetMapping("/slots/{id}")
+    public String slot(@PathVariable UUID id,
+                       @RequestParam(required = false) String back,
+                       HttpServletRequest request,
+                       Model model) {
+        model.addAttribute("panel", board.panel(id, deskMayAct(request)));
+        model.addAttribute("here", Redirects.within(back, "/schedule"));
+        return "schedule/slot :: slot";
+    }
+
+    @PostMapping("/slots/{id}/offer")
+    @RequiresRole(StaffRole.FRONT_DESK)
+    public String offer(@PathVariable UUID id,
+                        @RequestParam(required = false) String back,
+                        RedirectAttributes redirect) {
+        String who = board.offerToWaitlist(id);
+        if (who == null) {
+            redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("schedule.offer.nobody"));
+        } else {
+            redirect.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("schedule.offer.done", who));
+        }
+        return "redirect:" + Redirects.within(back, "/schedule");
+    }
+
+    @PostMapping("/slots/{id}/block")
+    @RequiresRole(StaffRole.FRONT_DESK)
+    public String block(@PathVariable UUID id,
+                        @RequestParam(required = false) String back,
+                        RedirectAttributes redirect) {
+        if (board.block(id)) {
+            redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("schedule.blocked"));
+        } else {
+            redirect.addFlashAttribute(WebUtils.MSG_ERROR, WebUtils.getMessage("schedule.block.taken"));
+        }
+        return "redirect:" + Redirects.within(back, "/schedule");
+    }
+
+    @PostMapping("/slots/{id}/unblock")
+    @RequiresRole(StaffRole.FRONT_DESK)
+    public String unblock(@PathVariable UUID id,
+                          @RequestParam(required = false) String back,
+                          RedirectAttributes redirect) {
+        board.unblock(id);
+        redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("schedule.unblocked"));
+        return "redirect:" + Redirects.within(back, "/schedule");
+    }
+
+    @PostMapping("/slots/{id}/release")
+    @RequiresRole(StaffRole.FRONT_DESK)
+    public String release(@PathVariable UUID id,
+                          @RequestParam(required = false) String back,
+                          RedirectAttributes redirect) {
+        board.releaseHold(id);
+        redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("schedule.released"));
+        return "redirect:" + Redirects.within(back, "/schedule");
+    }
+
+    private static boolean deskMayAct(HttpServletRequest request) {
+        StaffSession session = StaffSession.of(request);
+        return session != null && session.canManageAppointments();
+    }
+
+    private static String here(HttpServletRequest request) {
+        String query = request.getQueryString();
+        return request.getRequestURI() + (query == null ? "" : "?" + query);
+    }
 }

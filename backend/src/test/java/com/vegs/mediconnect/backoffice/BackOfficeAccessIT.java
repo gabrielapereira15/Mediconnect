@@ -77,6 +77,23 @@ class BackOfficeAccessIT {
     }
 
     @Test
+    @DisplayName("signing in lands on the page you were going to, and only inside the app")
+    void signInFollowsNext() throws Exception {
+        mockMvc.perform(post("/staff/login")
+                        .param("email", "desk@mediconnect.ca")
+                        .param("password", "demo")
+                        .param("next", "/appointments?tab=today"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(header().string("Location", "/appointments?tab=today"));
+        mockMvc.perform(post("/staff/login")
+                        .param("email", "desk@mediconnect.ca")
+                        .param("password", "demo")
+                        .param("next", "https://evil.example/"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(header().string("Location", "/"));
+    }
+
+    @Test
     @DisplayName("signed out, a back-office page sends you to sign in")
     void signedOutGoesToSignIn() throws Exception {
         mockMvc.perform(get("/appointments"))
@@ -216,6 +233,44 @@ class BackOfficeAccessIT {
                         .session(desk()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(header().string("Location", "/appointments/new"));
+    }
+
+    @Test
+    @DisplayName("the schedule shows the day, and a slot opens in the panel")
+    void scheduleDay() throws Exception {
+        mockMvc.perform(get("/schedule").session(clinician()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("hx-get=\"/schedule/slots/")));
+        mockMvc.perform(get("/schedule").param("view", "week").session(desk()))
+                .andExpect(status().isOk());
+
+        var slot = scheduleTimeRepository.findAll().getFirst();
+        mockMvc.perform(get("/schedule/slots/" + slot.getId()).session(desk()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("the desk blocks and unblocks a free slot; a clinician cannot")
+    void blockAndUnblock() throws Exception {
+        var slot = scheduleTimeRepository.findAll().stream()
+                .filter(candidate -> Boolean.TRUE.equals(candidate.getAvailable()))
+                .filter(candidate -> candidate.getDateTime().isAfter(java.time.LocalDateTime.now().plusDays(1)))
+                .findFirst().orElseThrow();
+
+        mockMvc.perform(post("/schedule/slots/" + slot.getId() + "/block").session(clinician()))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/schedule/slots/" + slot.getId() + "/block").session(desk()))
+                .andExpect(status().is3xxRedirection());
+        var blocked = scheduleTimeRepository.findById(slot.getId()).orElseThrow();
+        org.junit.jupiter.api.Assertions.assertTrue(blocked.getBlocked());
+        org.junit.jupiter.api.Assertions.assertFalse(blocked.getAvailable());
+
+        mockMvc.perform(post("/schedule/slots/" + slot.getId() + "/unblock").session(desk()))
+                .andExpect(status().is3xxRedirection());
+        org.junit.jupiter.api.Assertions.assertTrue(
+                scheduleTimeRepository.findById(slot.getId()).orElseThrow().getAvailable());
     }
 
     @Test

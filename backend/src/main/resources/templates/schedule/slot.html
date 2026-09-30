@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!--
+    One slot, in the Schedule side panel (board B02).
+
+    What it is, who has it or is being offered it, and what the desk can do
+    with it: book someone in, offer it to the waitlist, block it, or let a
+    hold go to the next person.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="slot" class="mc-sheetpanel">
+    <div class="mc-sheetpanel-head">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+            <h2 class="mc-panel-title" style="margin: 0" th:text="${panel.heading}">Dr. Chase · 10:30</h2>
+            <span class="caption mc-muted" th:text="${panel.day}">Tuesday, 29 September</span>
+        </div>
+        <a class="mc-icon-btn mc-icon-btn-sm" th:href="${here}" th:aria-label="#{appointments.panel.close}">
+            <i class="mc-i mc-i-x" aria-hidden="true"></i></a>
+    </div>
+
+    <div class="mc-sheetpanel-body">
+        <div class="mc-event" th:classappend="${panel.cell.state.cssClass}" style="padding: 10px 12px">
+            <b th:text="${panel.cell.title}">Free</b><span th:text="${panel.cell.detail}">Bookable</span>
+        </div>
+
+        <div th:if="${panel.holdLine != null}" class="mc-banner mc-banner-sun">
+            <i class="mc-i mc-i-hourglass" aria-hidden="true"></i><div th:text="${panel.holdLine}">Held</div>
+        </div>
+
+        <p th:if="${panel.canBook}" class="body-sm mc-muted" style="margin: 0"
+           th:text="${panel.waitingWhoFit == 0} ? #{schedule.slot.nobodyWaiting} : #{schedule.slot.waiting(${panel.waitingWhoFit})}">
+            2 people on the waitlist could take it.</p>
+
+        <a th:if="${panel.appointmentLink != null}" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square"
+           th:href="@{${panel.appointmentLink}}">[[#{schedule.slot.openAppointment}]]</a>
+    </div>
+
+    <div class="mc-sheetpanel-foot" th:if="${panel.hasActions()}">
+        <a th:if="${panel.canBook}" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square"
+           th:href="@{/appointments/new(slot=${panel.slotId})}">[[#{schedule.slot.book}]]</a>
+        <form th:if="${panel.canOffer}" th:action="@{/schedule/slots/{id}/offer(id=${panel.slotId})}" method="post">
+            <input type="hidden" name="back" th:value="${here}" />
+            <button type="submit" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">[[#{schedule.slot.offer}]]</button>
+        </form>
+        <form th:if="${panel.canRelease}" th:action="@{/schedule/slots/{id}/release(id=${panel.slotId})}" method="post">
+            <input type="hidden" name="back" th:value="${here}" />
+            <button type="submit" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">[[#{schedule.slot.release}]]</button>
+        </form>
+        <form th:if="${panel.canUnblock}" th:action="@{/schedule/slots/{id}/unblock(id=${panel.slotId})}" method="post">
+            <input type="hidden" name="back" th:value="${here}" />
+            <button type="submit" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">[[#{schedule.slot.unblock}]]</button>
+        </form>
+        <form th:if="${panel.canBlock}" th:action="@{/schedule/slots/{id}/block(id=${panel.slotId})}" method="post">
+            <input type="hidden" name="back" th:value="${here}" />
+            <button type="submit" class="mc-btn mc-btn-danger-ghost mc-btn-md">[[#{schedule.slot.block}]]</button>
+        </form>
+    </div>
+
+    <div class="mc-legend caption mc-muted" style="padding: 12px 24px 16px">
+        <span><i style="background: var(--blue-soft)"></i>[[#{schedule.legend.booked}]]</span>
+        <span><i style="background: var(--brand-soft)"></i>[[#{schedule.legend.checkedIn}]]</span>
+        <span><i style="background: var(--sun-soft)"></i>[[#{schedule.legend.held}]]</span>
+        <span><i style="border: 1.5px dashed var(--line-strong)"></i>[[#{schedule.legend.free}]]</span>
+        <span><i style="background: var(--surface-sunken)"></i>[[#{schedule.legend.done}]]</span>
+    </div>
+</div>
+</body>
+</html>
