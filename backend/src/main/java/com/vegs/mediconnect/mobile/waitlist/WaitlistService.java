@@ -239,6 +239,36 @@ public class WaitlistService {
     }
 
     /**
+     * The desk offers one free slot to one person on the list (board B05's
+     * "Offer a slot"), skipping the queue on purpose — they may have rung
+     * up, or be the only one who can come at short notice.
+     *
+     * @return why it cannot be offered, or null once the hold is made
+     */
+    @Transactional
+    public String offerTo(WaitlistEntry entry, ScheduleTime slot) {
+        if (entry.getStatus() != WaitlistStatus.WAITING) {
+            return "Only someone still waiting can be offered a slot.";
+        }
+        if (!Boolean.TRUE.equals(slot.getAvailable()) || Boolean.TRUE.equals(slot.getBlocked())) {
+            return "That time is no longer free.";
+        }
+        if (!slot.getSchedule().getDoctor().getId().equals(entry.getDoctor().getId())) {
+            return "That time is with a different doctor.";
+        }
+        if (!entry.wants(slot.getSchedule().getDate())) {
+            return "That time is not earlier than their visit, or they cannot come that day.";
+        }
+        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime expires = holdEnds(slot, now);
+        if (expires == null) {
+            return "That time is too soon to hold for anyone.";
+        }
+        hold(entry, slot, now, expires);
+        return null;
+    }
+
+    /**
      * When a hold made now would end, or null when it is not worth making.
      *
      * Capped at the last moment the slot can still be booked, so an offer

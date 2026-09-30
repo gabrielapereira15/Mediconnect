@@ -58,6 +58,9 @@ class BackOfficeAccessIT {
     private com.vegs.mediconnect.datasource.doctor.DoctorRepository doctorRepository;
 
     @Autowired
+    private com.vegs.mediconnect.datasource.waitlist.WaitlistEntryRepository waitlistRepository;
+
+    @Autowired
     private com.vegs.mediconnect.datasource.doctor.DoctorDayOffRepository dayOffRepository;
 
     private MockHttpSession signedInAs(String email) {
@@ -406,6 +409,59 @@ class BackOfficeAccessIT {
                 .andExpect(status().isOk())
                 .andExpect(header().string("Cache-Control", "no-store"))
                 .andExpect(content().string(containsString("\"resourceType\": \"Bundle\"")));
+    }
+
+    @Test
+    @DisplayName("the waitlist shows the held slot and every tab renders")
+    void waitlistPage() throws Exception {
+        mockMvc.perform(get("/waitlist").session(desk()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Held for Gabriela Pereira")));
+        for (String tab : new String[]{"offered", "booked", "withdrawn"}) {
+            mockMvc.perform(get("/waitlist").param("tab", tab).session(clinician()))
+                    .andExpect(status().isOk());
+        }
+        mockMvc.perform(get("/waitlist/new").session(clinician())).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("the desk adds someone, offers them a slot, then ends the offer")
+    void deskOffersASlot() throws Exception {
+        var visit = appointmentRepository.findAll().stream()
+                .filter(appointment -> !Boolean.TRUE.equals(appointment.getCanceled()))
+                .filter(appointment -> appointment.getDoctor().getLastName().equals("Foreman"))
+                .filter(appointment -> appointment.getDateTime().isAfter(java.time.LocalDateTime.now().plusDays(3)))
+                .findFirst().orElseThrow();
+
+        mockMvc.perform(post("/waitlist/new").param("appointmentId", visit.getId().toString()).session(desk()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(header().string("Location", "/waitlist"));
+        var entry = waitlistRepository.findAllByPatientOrderByDateCreatedDesc(visit.getPatient()).stream()
+                .filter(candidate -> candidate.getDoctor().getId().equals(visit.getDoctor().getId()))
+                .findFirst().orElseThrow();
+
+        var slot = scheduleTimeRepository.findAllBetween(java.time.LocalDate.now().plusDays(1),
+                        visit.getDateTime().toLocalDate().minusDays(1)).stream()
+                .filter(candidate -> candidate.getSchedule().getDoctor().getId().equals(visit.getDoctor().getId()))
+                .filter(candidate -> Boolean.TRUE.equals(candidate.getAvailable()))
+                .filter(candidate -> com.vegs.mediconnect.mobile.waitlist.WaitlistService
+                        .holdEnds(candidate, java.time.OffsetDateTime.now()) != null)
+                .findFirst().orElseThrow();
+
+        mockMvc.perform(post("/waitlist/" + entry.getId() + "/offer").param("slotId", slot.getId().toString())
+                        .session(desk()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(header().string("Location", "/waitlist?tab=offered"));
+        org.junit.jupiter.api.Assertions.assertEquals(
+                com.vegs.mediconnect.datasource.waitlist.WaitlistStatus.OFFERED, entry.getStatus());
+        org.junit.jupiter.api.Assertions.assertFalse(slot.getAvailable(), "held, so off sale");
+
+        mockMvc.perform(post("/waitlist/" + entry.getId() + "/end-offer").session(desk()))
+                .andExpect(status().is3xxRedirection());
+        org.junit.jupiter.api.Assertions.assertEquals(
+                com.vegs.mediconnect.datasource.waitlist.WaitlistStatus.WAITING, entry.getStatus());
+        org.junit.jupiter.api.Assertions.assertTrue(slot.getAvailable(), "nobody else wanted it: back on sale");
     }
 
     @Test

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!--
+    Waitlist (board B05).
+
+    Freed slots first — the ones being held for someone, and the ones
+    nobody on the list can use — then everyone on the list by status. A
+    freed slot is held for the person who has waited longest and can use
+    it; if they do not take it, it passes to the next.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{nav.waitlist}]]</title>
+</head>
+<body>
+<div layout:fragment="content" style="display: flex; flex-direction: column; gap: 20px; flex: 1 0 auto">
+
+    <div class="mc-page-head">
+        <div>
+            <h1 class="mc-page-title">[[#{nav.waitlist}]]</h1>
+            <p class="mc-page-sub" style="max-width: 720px">[[#{waitlist.sub}]]</p>
+        </div>
+        <a th:if="${canAct}" th:href="@{/waitlist/new}" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">
+            <i class="mc-i mc-i-plus" aria-hidden="true"></i>[[#{waitlist.add}]]</a>
+    </div>
+
+    <section th:if="${!#lists.isEmpty(board.cards)}"
+             style="display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 16px">
+        <div th:each="card : ${board.cards}" class="mc-panel"
+             th:style="${card.held} ? 'flex-direction: row; align-items: center; gap: 16px; padding: 18px 20px; background: var(--sun-soft); border-color: transparent; color: var(--on-sun-soft)' : 'flex-direction: row; align-items: center; gap: 16px; padding: 18px 20px'">
+            <span th:style="${card.held} ? 'width: 48px; height: 48px; border-radius: 14px; background: var(--surface); color: var(--sun); display: grid; place-items: center; flex: none' : 'width: 48px; height: 48px; border-radius: 14px; background: var(--danger-soft); color: var(--danger); display: grid; place-items: center; flex: none'">
+                <i class="mc-i" th:classappend="${card.held} ? 'mc-i-hourglass' : 'mc-i-calendar'" aria-hidden="true"></i></span>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+                <span class="title-sm" th:text="${card.when} + ' · ' + ${card.doctor}">Tue 29 Sep, 10:30 AM · Dr. Chase</span>
+                <span class="body-sm" th:classappend="${card.held} ? '' : 'mc-muted'" th:text="${card.line}">Held for Gabriela</span>
+            </div>
+            <a th:href="@{${card.actionLink}}" class="mc-btn mc-btn-md mc-btn-square"
+               th:classappend="${card.held} ? '' : 'mc-btn-outline'"
+               th:style="${card.held} ? 'background: var(--surface); color: var(--ink)' : null"
+               th:text="${card.actionLabel}">Manage</a>
+        </div>
+    </section>
+
+    <nav class="mc-tabs" th:aria-label="#{nav.waitlist}">
+        <a th:each="t : ${tabs}" class="mc-tab" th:classappend="${t == tab} ? 'is-active'"
+           th:attr="aria-current=${t == tab} ? 'page' : null"
+           th:href="@{/waitlist(tab=${t.key})}">
+            <span th:text="${t.label}">Waiting</span><span class="mc-count" th:text="${board.count(t)}">9</span>
+        </a>
+    </nav>
+
+    <div style="display: flex; gap: 16px; flex: 1; min-height: 360px">
+        <div class="mc-panel" style="flex: 1; min-width: 0; overflow: auto">
+            <table class="mc-table">
+                <thead>
+                <tr>
+                    <th>[[#{appointments.col.patient}]]</th>
+                    <th>[[#{appointments.col.doctor}]]</th>
+                    <th>[[#{waitlist.col.current}]]</th>
+                    <th>[[#{waitlist.col.from}]]</th>
+                    <th>[[#{appointments.col.status}]]</th>
+                    <th>[[#{waitlist.col.lastOffer}]]</th>
+                    <th><span class="mc-sr">[[#{waitlist.col.actions}]]</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${board.rows}">
+                    <td>
+                        <div class="mc-cell-person">
+                            <span class="mc-avatar mc-avatar-sm" th:classappend="${r.avatarClass}" th:text="${r.initials}" aria-hidden="true">GP</span>
+                            <div><b th:text="${r.patient}">Gabriela Pereira</b><small th:text="${r.contact}">226-899-0000</small></div>
+                        </div>
+                    </td>
+                    <td th:text="${r.doctor}">Dr. Chase</td>
+                    <td th:text="${r.currentVisit}">Wed 30 Sep</td>
+                    <td th:text="${r.canComeFrom}">Now</td>
+                    <td><span class="mc-badge" th:classappend="${r.statusClass}" th:text="${r.status}">Offered</span></td>
+                    <td th:text="${r.lastOffer}">20 min ago</td>
+                    <td style="text-align: right; white-space: nowrap">
+                        <th:block th:if="${canAct}">
+                            <button th:if="${r.canOffer}" type="button" class="mc-btn mc-btn-outline mc-btn-sm mc-btn-square"
+                                    th:attr="hx-get=@{/waitlist/{id}/offer(id=${r.id})}"
+                                    hx-target="#waitlist-panel" hx-swap="innerHTML">[[#{waitlist.offerSlot}]]</button>
+                            <form th:if="${r.canEndOffer}" th:action="@{/waitlist/{id}/end-offer(id=${r.id})}" method="post" style="display: inline">
+                                <button type="submit" class="mc-btn mc-btn-outline mc-btn-sm mc-btn-square">[[#{waitlist.endOffer}]]</button>
+                            </form>
+                            <form th:if="${r.canWithdraw}" th:action="@{/waitlist/{id}/withdraw(id=${r.id})}" method="post" style="display: inline">
+                                <input type="hidden" name="tab" th:value="${tab.key}" />
+                                <button type="submit" class="mc-btn mc-btn-ghost mc-btn-sm"
+                                        th:aria-label="#{waitlist.withdraw.label(${r.patient})}">[[#{waitlist.withdraw}]]</button>
+                            </form>
+                        </th:block>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(board.rows)}">
+                    <td colspan="7" class="mc-table-empty">[[#{waitlist.empty}]]</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <aside id="waitlist-panel" class="mc-aside" style="width: 360px" aria-live="polite"
+               th:if="${canAct}"
+               th:attr="data-empty=#{waitlist.pick}"><th:block th:if="${options != null}"><div
+                th:replace="~{waitlist/offer :: offer}"></div></th:block></aside>
+    </div>
+</div>
+</body>
+</html>

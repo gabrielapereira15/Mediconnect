@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!--
+    Putting a patient on the waitlist from the desk (board B05's "Add to
+    waitlist"): the visit they would like to improve on, and the first day
+    they could come.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{waitlist.add}]]</title>
+</head>
+<body>
+<div layout:fragment="content" style="display: flex; flex-direction: column; gap: 20px">
+    <div class="mc-page-head">
+        <div>
+            <h1 class="mc-page-title">[[#{waitlist.add}]]</h1>
+            <p class="mc-page-sub">[[#{waitlist.new.sub}]]</p>
+        </div>
+        <a th:href="@{/waitlist}" class="mc-btn mc-btn-ghost mc-btn-md">[[#{waitlist.new.back}]]</a>
+    </div>
+
+    <form th:action="@{/waitlist/new}" method="post" class="mc-panel"
+          style="max-width: 640px; padding: 24px; display: flex; flex-direction: column; gap: 18px">
+        <div class="mc-field">
+            <label class="mc-label" for="appointmentId">[[#{waitlist.new.visit}]]</label>
+            <select class="mc-input" id="appointmentId" name="appointmentId" required>
+                <option value="" th:text="#{waitlist.new.chooseVisit}">Choose a booked visit</option>
+                <option th:each="c : ${candidates}" th:value="${c.appointmentId}" th:text="${c.label}">Gabriela Pereira — Dr. Chase</option>
+            </select>
+            <span class="mc-help">[[#{waitlist.new.visitHelp}]]</span>
+        </div>
+        <div class="mc-field">
+            <label class="mc-label" for="availableFrom">[[#{waitlist.new.from}]] <span class="mc-label-opt">[[#{appointments.new.optional}]]</span></label>
+            <input class="mc-input" type="date" id="availableFrom" name="availableFrom" th:min="${today}" style="max-width: 240px" />
+            <span class="mc-help">[[#{waitlist.new.fromHelp}]]</span>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 8px">
+            <a th:href="@{/waitlist}" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">[[#{appointments.new.cancel}]]</a>
+            <button type="submit" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">[[#{waitlist.add}]]</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
