@@ -576,6 +576,23 @@
 
     <!-- ==== Pre-appointment form (P10) ==== -->
     <string name="form_title">Pre-appointment form</string>
+    <!-- The line at the top of a form naming the visit it belongs to. -->
+    <string name="form_visit_yours">For your visit with %1$s</string>
+    <string name="form_visit_theirs">For %1$s\'s visit with %2$s</string>
+    <string name="form_visit_when">%1$s · %2$s</string>
+
+    <!-- ==== Forms: every visit's form in one list ==== -->
+    <string name="forms_title">Forms</string>
+    <string name="forms_section_to_fill">To fill in · %1$d</string>
+    <string name="forms_section_sent">Sent · %1$d</string>
+    <string name="forms_day_time">%1$s · %2$s</string>
+    <string name="forms_empty_title">No forms to fill in</string>
+    <string name="forms_empty_body">Each visit you book has a short form for the doctor. It will show up here.</string>
+    <string name="forms_cd_to_fill">Form to fill in</string>
+    <string name="forms_cd_sent">Form sent %1$s</string>
+    <!-- Said by TalkBack after "Double tap to". -->
+    <string name="forms_cd_open_to_fill">fill in the form</string>
+    <string name="forms_cd_open_sent">view your answers</string>
 
     <!-- ==== Leaving a review (P11) ==== -->
     <string name="review_book_again">Book again</string>
@@ -596,7 +613,6 @@
         <item>Very good</item>
         <item>Excellent</item>
     </string-array>
-    <string name="home_form_no_visit">There is no visit to fill a form in for yet. Book one first.</string>
     <string name="form_step">Step %1$d of %2$d · %3$s</string>
     <string name="form_draft_saved">Draft saved</string>
     <string name="form_back">Back</string>

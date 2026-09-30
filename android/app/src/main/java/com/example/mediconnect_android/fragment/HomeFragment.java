@@ -28,7 +28,7 @@ import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.Doctor;
 import com.example.mediconnect_android.model.HealthEntry;
 import com.example.mediconnect_android.util.Background;
-import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.FormSections;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.KeyboardUtils;
 import com.example.mediconnect_android.util.WhenLabel;
@@ -62,12 +62,6 @@ public class HomeFragment extends Fragment {
     private final DoctorClient doctorClient = new DoctorClientImpl();
     private final AppointmentClient appointmentClient = new AppointmentClientImpl();
     private final HealthClient healthClient = new HealthClientImpl();
-
-    /** The soonest visit ahead of us, or null if there is none. */
-    private Appointment nextVisit;
-
-    /** The soonest visit whose form is still to be filled in, if any. */
-    private Appointment nextPendingForm;
 
     private final List<Doctor> doctorList = new ArrayList<>();
 
@@ -144,34 +138,17 @@ public class HomeFragment extends Fragment {
 
     // ---- quick actions --------------------------------------------------
 
-    /**
-     * The form that most needs doing, since a form belongs to one visit.
-     *
-     * The soonest visit still waiting for its form comes first — the tile's
-     * count promised there was one. With every form in, it shows the next
-     * visit's answers rather than a blank form to fill in again. With
-     * nothing booked there is nothing to fill in, and saying so beats
-     * opening four questions that cannot be sent anywhere.
-     */
-    private void openNextVisitForm() {
-        if (nextPendingForm != null) {
-            show(PreAppointmentFormFragment.of(nextPendingForm));
-            return;
-        }
-        if (nextVisit == null) {
-            DialogUtils.showMessageDialog(getContext(), getString(R.string.home_form_no_visit));
-            return;
-        }
-        show(FormAnswersFragment.forVisit(nextVisit));
-    }
-
     private void bindQuickActions() {
         // The primary one is filled; the rest are tonal, so there is one
         // obvious first move rather than four equal squares.
         bindAction(binding.actionBook, R.drawable.ic_calendar_plus, R.string.home_action_book,
                 true, () -> show(new DoctorsFragment()));
+        // Forms opens the list of them rather than one form. It used to jump
+        // straight into the soonest owed form, and with several visits
+        // booked the patient could not tell which visit they were
+        // answering for.
         bindAction(binding.actionForms, R.drawable.ic_form, R.string.home_action_forms,
-                false, this::openNextVisitForm);
+                false, () -> show(new FormsFragment()));
         bindAction(binding.actionRecord, R.drawable.ic_record, R.string.home_action_record,
                 false, () -> show(new HealthRecordFragment()));
         bindAction(binding.actionMessages, R.drawable.ic_mail, R.string.home_action_messages,
@@ -236,10 +213,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void bindNextVisit(Appointment appointment) {
-        // Held so the Forms quick action knows which visit it is for: a
-        // form belongs to a visit, and the next one is the only one a
-        // patient could mean from here.
-        nextVisit = appointment;
         binding.nextVisitCard.setVisibility(View.VISIBLE);
         binding.noVisitCard.setVisibility(View.GONE);
 
@@ -285,7 +258,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void bindNoVisit() {
-        nextVisit = null;
         binding.nextVisitCard.setVisibility(View.GONE);
         binding.noVisitCard.setVisibility(View.VISIBLE);
     }
@@ -371,26 +343,20 @@ public class HomeFragment extends Fragment {
      * The tile has always had a corner for a count and nothing ever put a
      * number in it, so a patient with two forms outstanding saw the same
      * Forms tile as one with none.
+     *
+     * Counted by the same rule the Forms screen lists by, so the number on
+     * the tile is the number of rows under "To fill in" behind it.
      */
     private void bindFormCount(List<Appointment> appointments) {
         if (appointments == null) {
             return;
         }
-        LocalDateTime now = LocalDateTime.now();
-        List<Appointment> waiting = appointments.stream()
-                .filter(a -> "UPCOMING".equals(a.getStatus()))
-                .filter(a -> WhenLabel.parse(a.getStartsAt())
-                        .map(at -> at.isAfter(now)).orElse(false))
-                .filter(a -> !a.isFormSubmitted())
-                .sorted(java.util.Comparator.comparing(Appointment::getStartsAt))
-                .collect(java.util.stream.Collectors.toList());
-        long pending = waiting.size();
-        nextPendingForm = waiting.isEmpty() ? null : waiting.get(0);
+        int pending = FormSections.split(appointments, LocalDateTime.now()).toFillIn().size();
 
         binding.actionForms.actionCount.setVisibility(pending > 0 ? View.VISIBLE : View.GONE);
         binding.actionForms.actionCount.setText(String.valueOf(pending));
         binding.actionForms.getRoot().setContentDescription(pending > 0
-                ? getString(R.string.cd_forms_pending, (int) pending)
+                ? getString(R.string.cd_forms_pending, pending)
                 : getString(R.string.home_action_forms));
     }
 

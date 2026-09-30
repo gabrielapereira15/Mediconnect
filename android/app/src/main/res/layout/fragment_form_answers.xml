@@ -44,6 +44,18 @@
                     android:text="@string/form_answers_title"
                     android:textAppearance="@style/TextAppearance.Mediconnect.Headline" />
 
+                <!-- Which visit these answers are for, once FormVisitLine knows. -->
+                <TextView
+                    android:id="@+id/visit_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                    android:textColor="@color/md_on_surface_variant"
+                    android:visibility="gone"
+                    tools:text="For your visit with Dr. Robert Chase · Thu 8 Oct, 10:00 AM"
+                    tools:visibility="visible" />
+
                 <TextView
                     android:id="@+id/sent_at"
                     android:layout_width="match_parent"

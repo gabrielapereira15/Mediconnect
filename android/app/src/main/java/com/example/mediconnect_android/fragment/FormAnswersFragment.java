@@ -18,6 +18,7 @@ import com.example.mediconnect_android.databinding.ViewDetailRowBinding;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.PreVisitForm;
 import com.example.mediconnect_android.util.Background;
+import com.example.mediconnect_android.util.FormVisitLine;
 import com.example.mediconnect_android.util.FragmentUtils;
 import com.example.mediconnect_android.util.WhenLabel;
 
@@ -50,12 +51,16 @@ public class FormAnswersFragment extends Fragment {
 
     /**
      * The right screen for a visit's form: the answers once it has been
-     * sent, the form itself while it has not.
+     * sent, the form itself while it has not. Either way the visit goes
+     * with it, so the screen can say which one it is.
      */
     public static Fragment forVisit(Appointment appointment) {
-        return appointment.isFormSubmitted()
-                ? of(appointment.getId())
-                : PreAppointmentFormFragment.of(appointment);
+        if (!appointment.isFormSubmitted()) {
+            return PreAppointmentFormFragment.of(appointment);
+        }
+        FormAnswersFragment fragment = of(appointment.getId());
+        FormVisitLine.put(fragment.requireArguments(), appointment);
+        return fragment;
     }
 
     @Override
@@ -70,13 +75,19 @@ public class FormAnswersFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentFormAnswersBinding.inflate(inflater, container, false);
         binding.stateView.setContentView(binding.content);
-        binding.btnEdit.setOnClickListener(v -> FragmentUtils.loadFragment(
-                getParentFragmentManager(), R.id.flFragment,
-                PreAppointmentFormFragment.of(appointmentId)));
+        FormVisitLine.bind(binding.visitLine, getArguments(), appointmentId);
+        binding.btnEdit.setOnClickListener(v -> edit());
         // Loaded every time the view is made, so coming back from Edit shows
         // what was just sent rather than what was there before.
         load();
         return binding.getRoot();
+    }
+
+    /** The form again, still naming the visit this screen was opened for. */
+    private void edit() {
+        PreAppointmentFormFragment form = PreAppointmentFormFragment.of(appointmentId);
+        FormVisitLine.copy(getArguments(), form.requireArguments());
+        FragmentUtils.loadFragment(getParentFragmentManager(), R.id.flFragment, form);
     }
 
     private void load() {
