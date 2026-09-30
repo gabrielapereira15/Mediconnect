@@ -18,60 +18,79 @@
     android:background="@color/md_deep"
     tools:context=".activity.WelcomeActivity">
 
-    <ImageView
-        android:id="@+id/wordmark"
-        android:layout_width="wrap_content"
-        android:layout_height="52dp"
-        android:layout_marginStart="@dimen/space_2xl"
-        android:layout_marginTop="@dimen/space_6xl"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/app_name"
-        android:src="@drawable/mediconnect_wordmark_on_deep"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <!--
-        Three tiles, the middle one dropped, so the group reads as a set
-        rather than a row of buttons.
+        The top half scrolls. The sheet is anchored to the bottom, so at a
+        large font size the tiles grow straight underneath it; scrolling is
+        what keeps all three readable instead of half-covered.
     -->
-    <LinearLayout
-        android:id="@+id/tiles"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_3xl"
-        android:baselineAligned="false"
-        android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/space_2xl"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/sheet"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/wordmark">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <include
-            android:id="@+id/tile_book"
-            layout="@layout/view_welcome_tile"
-            android:layout_width="0dp"
-            android:layout_height="132dp"
-            android:layout_weight="1" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/space_xl">
 
-        <include
-            android:id="@+id/tile_forms"
-            layout="@layout/view_welcome_tile"
-            android:layout_width="0dp"
-            android:layout_height="132dp"
-            android:layout_marginStart="@dimen/space_md"
-            android:layout_marginTop="@dimen/space_3xl"
-            android:layout_weight="1" />
+            <ImageView
+                android:id="@+id/wordmark"
+                android:layout_width="wrap_content"
+                android:layout_height="52dp"
+                android:layout_marginStart="@dimen/space_2xl"
+                android:layout_marginTop="@dimen/space_6xl"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/mediconnect_wordmark_on_deep" />
 
-        <include
-            android:id="@+id/tile_record"
-            layout="@layout/view_welcome_tile"
-            android:layout_width="0dp"
-            android:layout_height="132dp"
-            android:layout_marginStart="@dimen/space_md"
-            android:layout_weight="1" />
-    </LinearLayout>
+            <!--
+                Three tiles, the middle one dropped, so the group reads as a
+                set rather than a row of buttons.
+            -->
+            <LinearLayout
+                android:id="@+id/tiles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_3xl"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/space_2xl">
+
+                <include
+                    android:id="@+id/tile_book"
+                    layout="@layout/view_welcome_tile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/tile_forms"
+                    layout="@layout/view_welcome_tile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_md"
+                    android:layout_marginTop="@dimen/space_3xl"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/tile_record"
+                    layout="@layout/view_welcome_tile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_md"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
+        android:id="@+id/sheet"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/sheet_background"

@@ -93,4 +93,6 @@
     <dimen name="review_star_size">48dp</dimen>
     <!-- One box of the 6-digit passcode. -->
     <dimen name="otp_cell_height">64dp</dimen>
+    <!-- A value tile on the welcome screen, at a normal font size. -->
+    <dimen name="welcome_tile_height">132dp</dimen>
 </resources>
