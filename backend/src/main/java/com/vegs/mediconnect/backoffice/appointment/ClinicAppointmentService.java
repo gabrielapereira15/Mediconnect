@@ -6,17 +6,13 @@ import com.vegs.mediconnect.datasource.appointment.AppointmentRepository;
 import com.vegs.mediconnect.datasource.health.HealthEntry;
 import com.vegs.mediconnect.datasource.health.HealthEntryRepository;
 import com.vegs.mediconnect.datasource.health.HealthEntryType;
-import com.vegs.mediconnect.datasource.notification.Notification;
-import com.vegs.mediconnect.datasource.notification.NotificationKind;
-import com.vegs.mediconnect.datasource.notification.NotificationPatient;
-import com.vegs.mediconnect.datasource.notification.NotificationPatientRepository;
-import com.vegs.mediconnect.datasource.notification.NotificationRepository;
 import com.vegs.mediconnect.datasource.schedule.ScheduleTime;
 import com.vegs.mediconnect.datasource.schedule.ScheduleTimeRepository;
 import com.vegs.mediconnect.datasource.waitlist.WaitlistEntry;
 import com.vegs.mediconnect.datasource.waitlist.WaitlistEntryRepository;
 import com.vegs.mediconnect.datasource.waitlist.WaitlistStatus;
 import com.vegs.mediconnect.mobile.appointment.AppointmentNotFoundException;
+import com.vegs.mediconnect.mobile.notification.PatientMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,8 +46,7 @@ public class ClinicAppointmentService {
     private final HealthEntryRepository healthEntryRepository;
     private final WaitlistEntryRepository waitlistRepository;
     private final ScheduleTimeRepository scheduleTimeRepository;
-    private final NotificationRepository notificationRepository;
-    private final NotificationPatientRepository notificationPatientRepository;
+    private final PatientMessages patientMessages;
 
     /** One tab of the list, filtered and paged, built while the data is at hand. */
     @Transactional(readOnly = true)
@@ -227,23 +222,7 @@ public class ClinicAppointmentService {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(AppointmentNotFoundException::new);
 
-        var notification = new Notification();
-        notification.setKind(NotificationKind.APPOINTMENT);
-        notification.setTitle("Please fill in your pre-appointment form");
-        notification.setMessage("Dr. " + appointment.getDoctor().getLastName()
-                + " would like your answers before your visit on "
-                + Display.dayAndTime(appointment.getDateTime())
-                + ". It takes about three minutes.");
-        notification.setAppointmentId(appointment.getId());
-        notification.setSendAllPatients(false);
-        notification.setIsDeleted(false);
-        var saved = notificationRepository.save(notification);
-
-        var delivery = new NotificationPatient();
-        delivery.setNotificationId(saved);
-        delivery.setPatientId(appointment.getPatient());
-        delivery.setAcknowledged(false);
-        notificationPatientRepository.save(delivery);
+        patientMessages.formReminder(appointment);
         return appointment.getPatient().getFirstName();
     }
 
