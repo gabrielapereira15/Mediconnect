@@ -79,6 +79,11 @@ public class AppointmentMock implements AppointmentClient {
     }
 
     @Override
+    public Appointment confirmAttendance(String appointmentId) {
+        return null;
+    }
+
+    @Override
     public Boolean cancelAppointment(String appointmentId) {
         return null;
     }

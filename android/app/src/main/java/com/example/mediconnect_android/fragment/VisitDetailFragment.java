@@ -50,6 +50,7 @@ public class VisitDetailFragment extends Fragment {
     private static final String ARG_DOCTOR_SPECIALTY = "doctorSpecialty";
     private static final String ARG_FORM_SUBMITTED_AT = "formSubmittedAt";
     private static final String ARG_CHECKED_IN_AT = "checkedInAt";
+    private static final String ARG_ATTENDANCE = "attendanceConfirmedAt";
 
     private FragmentVisitDetailBinding binding;
     private final AppointmentClient appointmentClient = new AppointmentClientImpl();
@@ -62,6 +63,7 @@ public class VisitDetailFragment extends Fragment {
     private LocalDateTime startsAt;
     private String formSubmittedAt;
     private String checkedInAt;
+    private String attendanceConfirmedAt;
 
     /**
      * Opens the screen for one appointment.
@@ -77,6 +79,7 @@ public class VisitDetailFragment extends Fragment {
         args.putString(ARG_STARTS_AT, appointment.getStartsAt());
         args.putString(ARG_FORM_SUBMITTED_AT, appointment.getFormSubmittedAt());
         args.putString(ARG_CHECKED_IN_AT, appointment.getCheckedInAt());
+        args.putString(ARG_ATTENDANCE, appointment.getAttendanceConfirmedAt());
         if (appointment.getDoctor() != null) {
             args.putString(ARG_DOCTOR_ID, appointment.getDoctor().getId());
             args.putString(ARG_DOCTOR_NAME, appointment.getDoctor().getName());
@@ -97,6 +100,7 @@ public class VisitDetailFragment extends Fragment {
         startsAt = WhenLabel.parse(args.getString(ARG_STARTS_AT)).orElse(null);
         formSubmittedAt = args.getString(ARG_FORM_SUBMITTED_AT);
         checkedInAt = args.getString(ARG_CHECKED_IN_AT);
+        attendanceConfirmedAt = args.getString(ARG_ATTENDANCE);
     }
 
     @Override
@@ -256,7 +260,60 @@ public class VisitDetailFragment extends Fragment {
         binding.rowForm.rowAction.setOnClickListener(openForm);
         binding.rowForm.visitRow.setOnClickListener(openForm);
 
+        bindAttendance();
         bindHealthCard();
+    }
+
+    /**
+     * "I will be there" (board P09's second checklist item).
+     *
+     * Asked of the patient days ahead, so the front desk can tell somebody
+     * who is running late from somebody who is not coming. Once given it
+     * is shown as done rather than offered again.
+     */
+    private void bindAttendance() {
+        boolean confirmed = attendanceConfirmedAt != null && !attendanceConfirmedAt.isEmpty();
+        if (confirmed) {
+            done(binding.rowAttendance.rowIcon);
+            binding.rowAttendance.rowTitle.setText(R.string.visit_attendance_done);
+            binding.rowAttendance.rowSub.setText(R.string.visit_attendance_done_sub);
+            binding.rowAttendance.rowAction.setVisibility(View.GONE);
+            binding.rowAttendance.visitRow.setOnClickListener(null);
+            return;
+        }
+        todo(binding.rowAttendance.rowIcon, R.drawable.ic_calendar_check);
+        binding.rowAttendance.rowTitle.setText(R.string.visit_attendance);
+        binding.rowAttendance.rowSub.setText(R.string.visit_attendance_sub);
+        binding.rowAttendance.rowAction.setVisibility(View.VISIBLE);
+        binding.rowAttendance.rowAction.setText(R.string.visit_attendance_confirm);
+        binding.rowAttendance.rowAction.setOnClickListener(v -> confirmAttendance());
+        binding.rowAttendance.visitRow.setOnClickListener(v -> confirmAttendance());
+    }
+
+    private void confirmAttendance() {
+        binding.rowAttendance.rowAction.setEnabled(false);
+        Background.run(
+                () -> appointmentClient.confirmAttendance(appointmentId),
+                appointment -> {
+                    if (binding == null) {
+                        return;
+                    }
+                    binding.rowAttendance.rowAction.setEnabled(true);
+                    if (appointment == null) {
+                        DialogUtils.showMessageDialog(getContext(),
+                                getString(R.string.visit_attendance_failed));
+                        return;
+                    }
+                    attendanceConfirmedAt = appointment.getAttendanceConfirmedAt();
+                    bindAttendance();
+                },
+                error -> {
+                    if (binding != null) {
+                        binding.rowAttendance.rowAction.setEnabled(true);
+                        DialogUtils.showMessageDialog(getContext(),
+                                getString(R.string.error_no_server));
+                    }
+                });
     }
 
     private void bindHealthCard() {

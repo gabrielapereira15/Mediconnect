@@ -21,4 +21,7 @@ public interface AppointmentClient {
      * any day but the day of the visit.
      */
     Appointment checkIn(String appointmentId);
+
+    /** "I will be there". The updated appointment, or null if refused. */
+    Appointment confirmAttendance(String appointmentId);
 }

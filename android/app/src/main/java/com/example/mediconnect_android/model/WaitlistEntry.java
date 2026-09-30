@@ -17,6 +17,10 @@ public class WaitlistEntry {
     private String status;
     private String currentAppointmentDate;
     private String availableFrom;
+    /** The slot held for them while the offer lasts, as local ISO date-time. */
+    private String offeredStartsAt;
+    /** When the hold ends, as local ISO date-time. */
+    private String offerExpiresAt;
 
     public String getId() {
         return id;
@@ -36,6 +40,14 @@ public class WaitlistEntry {
 
     public String getCurrentAppointmentDate() {
         return currentAppointmentDate;
+    }
+
+    public String getOfferedStartsAt() {
+        return offeredStartsAt;
+    }
+
+    public String getOfferExpiresAt() {
+        return offerExpiresAt;
     }
 
     public String getAvailableFrom() {

@@ -74,6 +74,17 @@ public class AppointmentClientImpl implements AppointmentClient {
     }
 
     @Override
+    public Appointment confirmAttendance(String appointmentId) {
+        String url = ApiConfig.url("/api/mobile/appointments/") + appointmentId + "/attendance";
+        ApiGenericResponse response = OkHttpClientHelper.put(url);
+        if (response.isSuccess()) {
+            return new Gson().fromJson(response.getResponseBody(), Appointment.class);
+        }
+        Log.e("AppointmentClientImpl", "Error confirming attendance: " + response.getResponseBody());
+        return null;
+    }
+
+    @Override
     public Boolean cancelAppointment(String appointmentId) {
         String url = ApiConfig.url("/api/mobile/appointments/cancel/") + appointmentId;
         ApiGenericResponse response = OkHttpClientHelper.put(url);

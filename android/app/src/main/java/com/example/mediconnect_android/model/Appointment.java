@@ -22,6 +22,8 @@ public class Appointment {
 
     /** ISO local date-time the patient checked in, or null. */
     private String checkedInAt;
+    /** When the patient said they will be there; null until they do. */
+    private String attendanceConfirmedAt;
 
 
     public Boolean getReviewed() {
@@ -144,6 +146,14 @@ public class Appointment {
 
     public String getCheckedInAt() {
         return checkedInAt;
+    }
+
+    public String getAttendanceConfirmedAt() {
+        return attendanceConfirmedAt;
+    }
+
+    public boolean isAttendanceConfirmed() {
+        return attendanceConfirmedAt != null && !attendanceConfirmedAt.isEmpty();
     }
 
     public void setCheckedInAt(String checkedInAt) {

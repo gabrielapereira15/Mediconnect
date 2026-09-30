@@ -13,6 +13,15 @@ public interface WaitlistClient {
     boolean leave(String email, String entryId);
 
     /**
+     * "Take it": books the held slot in place of the visit it replaces.
+     * Throws ApiException with the server's words when the offer has ended.
+     */
+    com.example.mediconnect_android.model.Appointment accept(String email, String entryId);
+
+    /** "Keep mine": passes the held slot on; they stay on the list. */
+    boolean decline(String email, String entryId);
+
+    /**
      * Asks to be told if something earlier opens up with this doctor.
      *
      * The date of the appointment they already hold goes with it, so the

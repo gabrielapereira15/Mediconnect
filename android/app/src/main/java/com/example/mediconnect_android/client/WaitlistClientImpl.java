@@ -43,6 +43,30 @@ public class WaitlistClientImpl implements WaitlistClient {
     }
 
     @Override
+    public com.example.mediconnect_android.model.Appointment accept(String email, String entryId) {
+        String url = ApiConfig.url("/api/mobile/waitlist/") + email + "/" + entryId + "/accept";
+        ApiGenericResponse response = OkHttpClientHelper.post(url, "");
+        if (response.isSuccess()) {
+            return new com.google.gson.Gson().fromJson(response.getResponseBody(),
+                    com.example.mediconnect_android.model.Appointment.class);
+        }
+        Log.e(TAG, "Error taking an offer: " + response.getResponseBody());
+        throw new com.example.mediconnect_android.client.ApiException(
+                response.getStatus(), response.getResponseBody());
+    }
+
+    @Override
+    public boolean decline(String email, String entryId) {
+        String url = ApiConfig.url("/api/mobile/waitlist/") + email + "/" + entryId + "/decline";
+        ApiGenericResponse response = OkHttpClientHelper.post(url, "");
+        if (response.isSuccess()) {
+            return true;
+        }
+        Log.e(TAG, "Error turning an offer down: " + response.getResponseBody());
+        return false;
+    }
+
+    @Override
     public boolean join(String email, String doctorId, String currentAppointmentDate) {
         String url = ApiConfig.url("/api/mobile/waitlist/") + email;
 

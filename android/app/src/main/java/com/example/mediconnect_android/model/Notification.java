@@ -11,6 +11,10 @@ public class Notification {
 
     /** Whether the patient has seen it. */
     private boolean read;
+    /** The visit a reminder is about, when it is about one. */
+    private String appointmentId;
+    /** Whether that visit's form is still to be filled in. */
+    private boolean formPending;
 
     public String getId() {
         return id;
@@ -51,6 +55,15 @@ public class Notification {
 
     public void setKind(String kind) {
         this.kind = kind;
+    }
+
+    public String getAppointmentId() {
+        return appointmentId;
+    }
+
+    /** "Fill in form" is offered only while there is one to fill in. */
+    public boolean hasFormToFill() {
+        return formPending && appointmentId != null && !appointmentId.isEmpty();
     }
 
     public boolean isRead() {

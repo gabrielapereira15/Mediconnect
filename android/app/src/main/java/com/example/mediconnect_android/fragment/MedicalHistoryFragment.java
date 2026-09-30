@@ -1,5 +1,6 @@
 package com.example.mediconnect_android.fragment;
 
+import com.example.mediconnect_android.client.ApiException;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -159,27 +160,95 @@ public class MedicalHistoryFragment extends Fragment {
             return;
         }
         binding.offerBanner.offerCard.setVisibility(View.VISIBLE);
-        binding.offerBanner.offerBody.setText(getString(R.string.offer_body,
-                WhenLabel.doctorName(offer.getDoctorName())));
+        binding.offerBanner.offerBody.setText(getString(R.string.offer_body_held,
+                WhenLabel.doctorName(offer.getDoctorName()),
+                WhenLabel.parse(offer.getOfferedStartsAt())
+                        .map(at -> WhenLabel.whenWords(requireContext(), at))
+                        .orElse(""),
+                dayWords(offer.getCurrentAppointmentDate()),
+                holdWords(offer.getOfferExpiresAt())));
 
-        binding.offerBanner.offerTake.setOnClickListener(v -> BookAppointmentFragment.open(
-                requireActivity().getSupportFragmentManager(),
-                offer.getDoctorId(), offer.getDoctorName(), ""));
-
+        binding.offerBanner.offerTake.setEnabled(true);
+        binding.offerBanner.offerKeep.setEnabled(true);
+        binding.offerBanner.offerTake.setOnClickListener(v -> takeIt());
         binding.offerBanner.offerKeep.setOnClickListener(v -> keepMine());
     }
 
-    /** Declining takes them off that doctor's list, which is what it means. */
+    /**
+     * "Take it": the held slot becomes their appointment and the one it
+     * replaces is given up, in one step. The list reloads to show it.
+     */
+    private void takeIt() {
+        WaitlistEntry taken = offer;
+        binding.offerBanner.offerTake.setEnabled(false);
+        binding.offerBanner.offerKeep.setEnabled(false);
+
+        Background.run(
+                () -> waitlistClient.accept(email(), taken.getId()),
+                appointment -> {
+                    if (binding == null) {
+                        return;
+                    }
+                    offer = null;
+                    bindOffer();
+                    DialogUtils.showMessageDialog(getContext(), getString(R.string.offer_taken,
+                            WhenLabel.parse(taken.getOfferedStartsAt())
+                                    .map(at -> WhenLabel.whenWords(requireContext(), at))
+                                    .orElse(""),
+                            dayWords(taken.getCurrentAppointmentDate())));
+                    loadAppointments(email());
+                },
+                error -> {
+                    if (binding == null) {
+                        return;
+                    }
+                    // Most often the hold ran out a moment ago; the server
+                    // says so, and the banner goes with it.
+                    boolean ended = error instanceof ApiException
+                            && ((ApiException) error).getStatus() == 409;
+                    DialogUtils.showMessageDialog(getContext(), getString(ended
+                            ? R.string.offer_ended
+                            : R.string.error_no_server));
+                    loadOffers();
+                });
+    }
+
+    /** "Keep mine": the slot moves on now, and they stay on the list. */
     private void keepMine() {
         WaitlistEntry declined = offer;
         offer = null;
         bindOffer();
 
         Background.run(
-                () -> waitlistClient.leave(email(), declined.getId()),
-                left -> DialogUtils.showMessageDialog(getContext(), getString(
-                        R.string.offer_kept, WhenLabel.doctorName(declined.getDoctorName()))),
+                () -> waitlistClient.decline(email(), declined.getId()),
+                done -> DialogUtils.showMessageDialog(getContext(), getString(
+                        R.string.offer_kept, dayWords(declined.getCurrentAppointmentDate()))),
                 error -> loadOffers());
+    }
+
+    /** "Wed 30 Sep", for the visit the offer would replace. */
+    private String dayWords(String isoDate) {
+        try {
+            return java.time.LocalDate.parse(isoDate).format(
+                    java.time.format.DateTimeFormatter.ofPattern("EEE d MMM",
+                            java.util.Locale.getDefault()));
+        } catch (RuntimeException e) {
+            return "";
+        }
+    }
+
+    /** "1 h 42 min" left on the hold, counted from now. */
+    private String holdWords(String isoExpiry) {
+        long minutes = WhenLabel.parse(isoExpiry)
+                .map(at -> java.time.Duration.between(java.time.LocalDateTime.now(), at).toMinutes())
+                .orElse(0L);
+        if (minutes < 1) {
+            return getString(R.string.offer_hold_moments);
+        }
+        if (minutes < 60) {
+            return getString(R.string.offer_hold_minutes, minutes);
+        }
+        return getString(R.string.offer_hold_hours, minutes / 60, minutes % 60);
     }
 
     private String email() {

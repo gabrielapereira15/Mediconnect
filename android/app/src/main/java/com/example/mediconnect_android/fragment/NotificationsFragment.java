@@ -138,10 +138,15 @@ public class NotificationsFragment extends Fragment {
     private void act(Notification notification) {
         open(notification);
 
-        // Both kinds lead to the visit list, and both go through the tab
-        // rather than loading its fragment behind a lit-up Profile. A
-        // message carries no appointment id, so it cannot open one visit's
-        // form — the label says where it actually goes.
+        // A reminder about a visit whose form is still due opens that form.
+        // Anything else leads to the visit list, through the tab rather
+        // than loading its fragment behind a lit-up Profile.
+        if (notification.hasFormToFill()) {
+            com.example.mediconnect_android.util.FragmentUtils.loadFragment(
+                    getParentFragmentManager(), R.id.flFragment,
+                    PreAppointmentFormFragment.of(notification.getAppointmentId()));
+            return;
+        }
         goToTab(R.id.visits_fragment);
     }
 

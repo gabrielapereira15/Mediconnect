@@ -307,10 +307,15 @@
     <string name="health_type_condition">Condition</string>
     <!-- ==== Waitlist offers ==== -->
     <string name="offer_title">An earlier slot opened up</string>
-    <string name="offer_body">%1$s has something earlier than the visit you hold. Open their times to take it.</string>
+    <string name="offer_body_held">%1$s · %2$s · instead of %3$s. We are holding it for you for %4$s.</string>
+    <string name="offer_hold_hours">%1$d h %2$d min</string>
+    <string name="offer_hold_minutes">%1$d min</string>
+    <string name="offer_hold_moments">a few more moments</string>
     <string name="offer_keep">Keep mine</string>
-    <string name="offer_take">See times</string>
-    <string name="offer_kept">We will stop offering earlier slots with %1$s.</string>
+    <string name="offer_take">Take it</string>
+    <string name="offer_kept">You keep your visit on %1$s. We will tell you if something earlier comes up again.</string>
+    <string name="offer_taken">Booked for %1$s. Your visit on %2$s has been given up, and anything you sent the clinic moved with you.</string>
+    <string name="offer_ended">That offer has ended, and the time went to the next person on the list. You are still on it.</string>
 
     <!-- ==== Messages (P13) ==== -->
     <string name="messages_title">Messages</string>
@@ -322,6 +327,7 @@
     <string name="messages_earlier">Earlier</string>
     <string name="messages_see_offer">See offer</string>
     <string name="messages_see_visits">See visits</string>
+    <string name="messages_fill_form">Fill in form</string>
     <string name="messages_just_now">Just now</string>
     <string name="messages_minutes">%1$d min</string>
     <string name="messages_hours">%1$d h</string>
@@ -518,6 +524,12 @@
     <string name="visit_check_in_day_only">You can check in on the day of your visit.</string>
     <string name="visit_before_you_go">Before you go in</string>
     <string name="visit_form_row">Pre-appointment form</string>
+    <string name="visit_attendance">Confirm you will be there</string>
+    <string name="visit_attendance_sub">So the clinic knows to expect you</string>
+    <string name="visit_attendance_confirm">Confirm</string>
+    <string name="visit_attendance_done">Attendance confirmed</string>
+    <string name="visit_attendance_done_sub">You said you will be there</string>
+    <string name="visit_attendance_failed">The clinic could not take that. The visit may have been cancelled or already happened.</string>
     <string name="visit_form_row_sent">Sent %1$s</string>
     <string name="visit_form_row_todo">The doctor reads it before you arrive</string>
     <string name="visit_form_view">View</string>

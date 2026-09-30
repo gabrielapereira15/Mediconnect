@@ -141,6 +141,15 @@
                         android:background="@color/md_outline_variant" />
 
                     <include
+                        android:id="@+id/row_attendance"
+                        layout="@layout/view_visit_row" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/stroke_hairline"
+                        android:background="@color/md_outline_variant" />
+
+                    <include
                         android:id="@+id/row_health_card"
                         layout="@layout/view_visit_row" />
                 </LinearLayout>

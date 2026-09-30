@@ -185,7 +185,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 binding.messageIcon.setImageTintList(ContextCompat.getColorStateList(
                         context, R.color.md_on_secondary_container));
                 binding.messageAction.setVisibility(View.VISIBLE);
-                binding.messageAction.setText(R.string.messages_see_visits);
+                binding.messageAction.setText(notification.hasFormToFill()
+                        ? R.string.messages_fill_form
+                        : R.string.messages_see_visits);
                 binding.messageAction.setOnClickListener(v -> onAction.accept(notification));
                 return;
             }
