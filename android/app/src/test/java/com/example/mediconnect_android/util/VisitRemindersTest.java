@@ -132,6 +132,40 @@ public class VisitRemindersTest {
     }
 
     @Test
+    public void storedRemindersMatchAVisitThatHasNotMoved() {
+        VisitReminders.Entry entry = new VisitReminders.Entry();
+        entry.startsAt = "2026-10-02T10:00";
+
+        assertTrue(VisitReminders.setFor(entry,
+                Optional.of(LocalDateTime.of(2026, 10, 2, 10, 0))));
+    }
+
+    @Test
+    public void storedRemindersDoNotMatchAVisitTheClinicMoved() {
+        // These are the ones that must not survive: they would go off at
+        // the old time and say the old time.
+        VisitReminders.Entry entry = new VisitReminders.Entry();
+        entry.startsAt = "2026-10-02T10:00";
+
+        assertFalse(VisitReminders.setFor(entry,
+                Optional.of(LocalDateTime.of(2026, 10, 2, 14, 30))));
+    }
+
+    @Test
+    public void storedRemindersThatCannotBeCheckedDoNotMatch() {
+        VisitReminders.Entry entry = new VisitReminders.Entry();
+        entry.startsAt = "2026-10-02T10:00";
+        VisitReminders.Entry unreadable = new VisitReminders.Entry();
+        unreadable.startsAt = "next Tuesday";
+        Optional<LocalDateTime> start = Optional.of(LocalDateTime.of(2026, 10, 2, 10, 0));
+
+        assertFalse(VisitReminders.setFor(entry, Optional.empty()));
+        assertFalse(VisitReminders.setFor(null, start));
+        assertFalse(VisitReminders.setFor(unreadable, start));
+        assertFalse(VisitReminders.setFor(new VisitReminders.Entry(), start));
+    }
+
+    @Test
     public void whatIsStoredReadsBackTheSame() {
         VisitReminders.Entry entry = new VisitReminders.Entry();
         entry.startsAt = "2026-10-02T10:00";

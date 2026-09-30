@@ -264,17 +264,30 @@ public final class VisitReminders {
      * visit or moved it, and a reminder for either would be wrong. A visit
      * that is no longer upcoming loses its reminders; one that still is
      * gets them set again, so they follow it if its time changed.
+     *
+     * Setting them again does not wait for notifications to be allowed.
+     * It used to, and a visit moved while the patient had notifications
+     * blocked kept its alarms at the old time; once notifications were
+     * back on, the old alarm went off and gave the wrong time. When the
+     * alarms cannot be set at all, a visit whose time changed loses its
+     * reminders instead, so the old time is never brought back after a
+     * restart either; its switch sets them again once alarms are allowed.
      */
     public static void sync(Context context, List<Appointment> appointments) {
         Context app = context.getApplicationContext();
         Map<String, Appointment> upcoming = upcomingById(appointments);
-        boolean canRemind = canRemind(app);
-        for (String appointmentId : new ArrayList<>(store(app).getAll().keySet())) {
+        for (Map.Entry<String, ?> stored : new ArrayList<>(store(app).getAll().entrySet())) {
+            String appointmentId = stored.getKey();
             Appointment visit = upcoming.get(appointmentId);
             if (visit == null) {
                 cancel(app, appointmentId);
-            } else if (canRemind) {
-                schedule(app, visit);
+                continue;
+            }
+            // Read before scheduling, which rewrites or removes it.
+            Entry entry = decode(stored.getValue() instanceof String
+                    ? (String) stored.getValue() : null);
+            if (!schedule(app, visit) && !setFor(entry, startOf(visit))) {
+                cancel(app, appointmentId);
             }
         }
     }
@@ -371,6 +384,19 @@ public final class VisitReminders {
             }
         }
         return Optional.empty();
+    }
+
+    /**
+     * Whether stored reminders were worked out from this start.
+     *
+     * Anything that cannot be checked counts as no: an old time nobody can
+     * confirm is exactly the reminder that would say the wrong thing.
+     */
+    static boolean setFor(Entry entry, Optional<LocalDateTime> start) {
+        if (entry == null || start.isEmpty()) {
+            return false;
+        }
+        return WhenLabel.parse(entry.startsAt).equals(start);
     }
 
     /** The visits whose reminders should stand, by id. */

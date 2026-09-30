@@ -18,6 +18,7 @@ import com.example.mediconnect_android.databinding.FragmentMedicalHistoryBinding
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.client.WaitlistClient;
 import com.example.mediconnect_android.client.WaitlistClientImpl;
+import com.example.mediconnect_android.data.DemoMode;
 import com.example.mediconnect_android.model.WaitlistEntry;
 import com.example.mediconnect_android.util.DialogUtils;
 import com.example.mediconnect_android.util.VisitReminders;
@@ -110,7 +111,11 @@ public class MedicalHistoryFragment extends Fragment {
                     appointmentsList = appointments;
                     // This is where the app hears that the clinic cancelled
                     // or moved a visit, so the reminders follow the list.
-                    if (appointments != null) {
+                    // Not when the server was out of reach, though: the
+                    // list is then the sample clinic, none of the patient's
+                    // real visits are in it, and following it would take
+                    // back every reminder they had set.
+                    if (appointments != null && !DemoMode.isActive()) {
                         VisitReminders.sync(requireContext(), appointments);
                     }
                     binding.stateView.showContent();
