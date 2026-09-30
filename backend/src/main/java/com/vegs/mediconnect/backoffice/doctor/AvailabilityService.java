@@ -149,7 +149,43 @@ public class AvailabilityService {
         hoursRepository.saveAll(rows);
 
         LocalDate from = LocalDate.now().plusDays(1);
-        return regenerate(doctor, hours, from, LocalDate.now().plusWeeks(hours.weeks()));
+        LocalDate horizon = LocalDate.now().plusWeeks(hours.weeks());
+        Regenerated inside = regenerate(doctor, hours, from, horizon);
+        // Beyond the horizon nothing new may be booked: closed the same
+        // way, so a booking already made out there is kept.
+        Regenerated beyond = regenerate(doctor, new WeeklyHours(Map.of(), hours.slotMinutes(), hours.weeks()),
+                horizon.plusDays(1), horizon.plusYears(1));
+        return new Regenerated(inside.created(), inside.removed() + beyond.removed(),
+                inside.keptBooked() + beyond.keptBooked());
+    }
+
+    /**
+     * Keeps every doctor's diary open to the end of their horizon as the
+     * days go by: without this, a three-week horizon saved on Monday would
+     * be two weeks by the next Monday. Once a night, and once as the
+     * application starts, so a clinic that was closed overnight wakes up
+     * with its diary open.
+     */
+    @org.springframework.scheduling.annotation.Scheduled(cron = "0 15 2 * * *")
+    @org.springframework.context.event.EventListener(org.springframework.boot.context.event.ApplicationReadyEvent.class)
+    @Transactional
+    public int rollForward() {
+        int created = 0;
+        LocalDate from = LocalDate.now().plusDays(1);
+        for (Doctor doctor : doctorRepository.findAll()) {
+            List<DoctorHours> saved = hoursRepository.findAllByDoctorOrderByDayOfWeekAscStartTimeAsc(doctor);
+            if (saved.isEmpty()) {
+                continue;
+            }
+            Map<DayOfWeek, List<WeeklyHours.Range>> days = new EnumMap<>(DayOfWeek.class);
+            for (DoctorHours row : saved) {
+                days.computeIfAbsent(row.getDayOfWeek(), key -> new ArrayList<>())
+                        .add(new WeeklyHours.Range(row.getStartTime(), row.getEndTime()));
+            }
+            WeeklyHours hours = new WeeklyHours(days, doctor.slotLength(), doctor.horizonWeeks());
+            created += regenerate(doctor, hours, from, LocalDate.now().plusWeeks(hours.weeks())).created();
+        }
+        return created;
     }
 
     /** Brings the diary between two dates into line with the week. */

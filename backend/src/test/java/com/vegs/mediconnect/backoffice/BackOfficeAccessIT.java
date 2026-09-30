@@ -66,6 +66,9 @@ class BackOfficeAccessIT {
     @Autowired
     private com.vegs.mediconnect.datasource.doctor.DoctorDayOffRepository dayOffRepository;
 
+    @Autowired
+    private com.vegs.mediconnect.backoffice.doctor.AvailabilityService availabilityService;
+
     private MockHttpSession signedInAs(String email) {
         var request = new MockHttpServletRequest();
         StaffSession.begin(request, staffUsers.findByEmailIgnoreCase(email).orElseThrow());
@@ -325,6 +328,50 @@ class BackOfficeAccessIT {
             org.junit.jupiter.api.Assertions.assertTrue(scheduleTimeRepository.existsById(slotId),
                     "a booked slot was removed");
         }
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("a shorter horizon closes the free slots beyond it, and the diary rolls forward")
+    void horizonIsEnforced() throws Exception {
+        var doctor = doctorRepository.findAll().stream()
+                .filter(candidate -> candidate.getLastName().equals("Hadley"))
+                .findFirst().orElseThrow();
+        var horizon = java.time.LocalDate.now().plusWeeks(1);
+
+        var form = org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .post("/doctors/" + doctor.getId() + "/availability").session(desk())
+                .param("slotMinutes", "30").param("weeks", "1");
+        for (String day : new String[]{"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"}) {
+            form.param("on_" + day, "on").param("start1_" + day, "09:00").param("end1_" + day, "12:00");
+        }
+        mockMvc.perform(form).andExpect(status().is3xxRedirection());
+
+        var beyond = scheduleTimeRepository.findAllBetween(horizon.plusDays(1), horizon.plusWeeks(4)).stream()
+                .filter(slot -> slot.getSchedule().getDoctor().getId().equals(doctor.getId()))
+                .filter(slot -> Boolean.TRUE.equals(slot.getAvailable()))
+                .toList();
+        org.junit.jupiter.api.Assertions.assertTrue(beyond.isEmpty(), "nothing bookable past the horizon");
+
+        // A day inside the horizon that has lost its slots gets them back
+        // on the next roll-forward.
+        var day = java.time.LocalDate.now().plusDays(1);
+        while (day.getDayOfWeek().getValue() > 5) {
+            day = day.plusDays(1);
+        }
+        final var target = day;
+        scheduleTimeRepository.findAllBetween(target, target).stream()
+                .filter(slot -> slot.getSchedule().getDoctor().getId().equals(doctor.getId()))
+                .filter(slot -> Boolean.TRUE.equals(slot.getAvailable()))
+                .filter(slot -> appointmentRepository.findAllOnDay(target).stream()
+                        .noneMatch(appointment -> appointment.getScheduleTime().getId().equals(slot.getId())))
+                .forEach(scheduleTimeRepository::delete);
+        scheduleTimeRepository.flush();
+
+        org.junit.jupiter.api.Assertions.assertTrue(availabilityService.rollForward() > 0);
+        org.junit.jupiter.api.Assertions.assertTrue(scheduleTimeRepository.findAllBetween(target, target).stream()
+                .anyMatch(slot -> slot.getSchedule().getDoctor().getId().equals(doctor.getId())
+                        && Boolean.TRUE.equals(slot.getAvailable())));
     }
 
     @Test

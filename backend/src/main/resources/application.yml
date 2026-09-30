@@ -4,6 +4,12 @@ server:
       # Cookie only. URL rewriting puts the session id in every link, where
       # it leaks through Referer headers and anything that logs URLs.
       tracking-modes: cookie
+      cookie:
+        # The back office's forms post without a CSRF token; Lax keeps the
+        # staff session cookie off posts that start on another site, in
+        # every browser rather than only the ones that default to it.
+        same-site: lax
+        http-only: true
 
 spring:
   application:
