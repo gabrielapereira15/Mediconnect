@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!--
+    Moving an appointment, inside the side panel (board B03's Reschedule).
+
+    Only free times with the same doctor over the next three weeks. The
+    old time goes back to the waitlist as soon as the move is saved.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="reschedule" class="mc-sheetpanel">
+    <div class="mc-sheetpanel-head">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+            <span class="mc-overline">[[#{appointments.reschedule}]]</span>
+            <h2 class="title-lg" style="margin: 0" th:text="${panel.patientName}">Gabriela Pereira</h2>
+            <span class="body-sm mc-muted" th:text="#{appointments.reschedule.from(${panel.when})}">Now Wed 30 Sep</span>
+        </div>
+        <button type="button" class="mc-icon-btn mc-icon-btn-sm" th:aria-label="#{appointments.reschedule.back}"
+                th:attr="hx-get=@{/appointments/{id}/panel(id=${panel.id},back=${here})}"
+                hx-target="#appointment-panel" hx-swap="innerHTML">
+            <i class="mc-i mc-i-x" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <form th:action="@{/appointments/{id}/reschedule(id=${panel.id})}" method="post"
+          style="display: flex; flex-direction: column; min-height: 0; flex: 1">
+        <input type="hidden" name="back" th:value="${here}" />
+        <div class="mc-sheetpanel-body">
+            <fieldset th:each="day : ${slotsByDay}" style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+                <legend class="mc-overline" style="padding: 0 0 8px" th:text="${day.key}">Thu 1 Oct</legend>
+                <div class="mc-slotpick">
+                    <label th:each="slot : ${day.value}">
+                        <input type="radio" name="slotId" th:value="${slot.id}" required />
+                        <span th:text="${slot.time}">9:00 AM</span>
+                    </label>
+                </div>
+            </fieldset>
+            <p th:if="${#maps.isEmpty(slotsByDay)}" class="body-sm mc-muted" style="margin: 0">
+                [[#{appointments.reschedule.none}]]</p>
+        </div>
+        <div class="mc-sheetpanel-foot" th:unless="${#maps.isEmpty(slotsByDay)}">
+            <button type="submit" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">[[#{appointments.reschedule.confirm}]]</button>
+            <span class="mc-help">[[#{appointments.reschedule.help}]]</span>
+        </div>
+    </form>
+</div>
+</body>
+</html>

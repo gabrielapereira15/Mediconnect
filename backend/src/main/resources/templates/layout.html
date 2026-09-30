@@ -42,7 +42,7 @@
            th:attr="aria-current=${active == 'today'} ? 'page' : null">
             <i class="mc-i mc-i-grid" aria-hidden="true"></i>[[#{nav.today}]]
         </a>
-        <a th:href="@{/schedules}" class="mc-sidenav-item"
+        <a th:href="@{/schedule}" class="mc-sidenav-item"
            th:classappend="${active == 'schedule'} ? 'is-active'"
            th:attr="aria-current=${active == 'schedule'} ? 'page' : null">
             <i class="mc-i mc-i-calendar" aria-hidden="true"></i>[[#{nav.schedule}]]
@@ -75,7 +75,7 @@
            th:attr="aria-current=${active == 'doctors'} ? 'page' : null">
             <i class="mc-i mc-i-stethoscope" aria-hidden="true"></i>[[#{nav.doctors}]]
         </a>
-        <a th:href="@{/notifications}" class="mc-sidenav-item"
+        <a th:href="@{/messages}" class="mc-sidenav-item"
            th:classappend="${active == 'messages'} ? 'is-active'"
            th:attr="aria-current=${active == 'messages'} ? 'page' : null">
             <i class="mc-i mc-i-megaphone" aria-hidden="true"></i>[[#{nav.messages}]]
@@ -107,11 +107,11 @@
                 </label>
             </form>
             <span style="flex: 1"></span>
-            <a th:href="@{/notifications}" class="mc-icon-btn" th:aria-label="#{nav.messages}">
+            <a th:href="@{/messages}" class="mc-icon-btn" th:aria-label="#{nav.messages}">
                 <i class="mc-i mc-i-bell" aria-hidden="true"></i>
             </a>
             <a th:if="${staff == null or staff.canManageAppointments()}"
-               th:href="@{/appointments/add}" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">
+               th:href="@{/appointments/new}" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">
                 <i class="mc-i mc-i-plus" aria-hidden="true"></i>[[#{appointment.new}]]
             </a>
         </header>

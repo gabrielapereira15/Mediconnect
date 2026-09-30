@@ -7,8 +7,6 @@ import com.vegs.mediconnect.datasource.health.HealthEntryRepository;
 import com.vegs.mediconnect.datasource.health.HealthEntryType;
 import com.vegs.mediconnect.datasource.schedule.ScheduleTime;
 import com.vegs.mediconnect.datasource.schedule.ScheduleTimeRepository;
-import com.vegs.mediconnect.datasource.waitlist.WaitlistEntryRepository;
-import com.vegs.mediconnect.datasource.waitlist.WaitlistStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +39,6 @@ public class TodayController {
     private final AppointmentRepository appointmentRepository;
     private final ScheduleTimeRepository scheduleTimeRepository;
     private final HealthEntryRepository healthEntryRepository;
-    private final WaitlistEntryRepository waitlistRepository;
 
     @GetMapping("/")
     @Transactional(readOnly = true)
@@ -70,8 +67,6 @@ public class TodayController {
         model.addAttribute("rows", rows);
         model.addAttribute("counts", TodayView.count(rows, appointments, now, freed.size()));
         model.addAttribute("doctorLoads", doctorLoads(today));
-        model.addAttribute("waitingCount", waitlistRepository
-                .findAllByStatusOrderByDateCreatedAsc(WaitlistStatus.WAITING).size());
         return "home/index";
     }
 

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!--
+    One appointment, in the Appointments side panel (board B03).
+
+    Allergies come straight after the patient: they are the one thing on
+    this panel that can hurt somebody if missed. The actions at the foot are
+    only the ones that will work for this visit, and only for the desk.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="panel" class="mc-sheetpanel">
+    <div class="mc-sheetpanel-head">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+            <span class="mc-overline">[[#{appointments.panel.overline}]]</span>
+            <h2 class="title-lg" style="margin: 0" th:text="${panel.when}">Wed 30 Sep, 10:00 AM</h2>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap">
+                <span th:each="badge : ${panel.badges}" class="mc-badge" th:classappend="${badge.badgeClass}"
+                      th:text="${badge.label}">Confirmed</span>
+            </div>
+        </div>
+        <a class="mc-icon-btn mc-icon-btn-sm" th:href="${here}" th:aria-label="#{appointments.panel.close}">
+            <i class="mc-i mc-i-x" aria-hidden="true"></i>
+        </a>
+    </div>
+
+    <div class="mc-sheetpanel-body">
+        <!-- The chart is a clinician's; the desk sees the name, not a link. -->
+        <a th:if="${staff != null and staff.canReadCharts()}" class="mc-cell-person"
+           th:href="@{/patients/{id}(id=${panel.patientId})}" style="text-decoration: none; color: var(--ink)">
+            <span class="mc-avatar" th:classappend="${panel.avatarClass}" th:text="${panel.initials}" aria-hidden="true">GP</span>
+            <div style="flex: 1"><b th:text="${panel.patientName}">Gabriela Pereira</b>
+                <small th:text="${panel.patientLine}">Female · 1995-04-12</small></div>
+            <i class="mc-i mc-i-chevron-right mc-subtle" aria-hidden="true"></i>
+        </a>
+        <div th:unless="${staff != null and staff.canReadCharts()}" class="mc-cell-person">
+            <span class="mc-avatar" th:classappend="${panel.avatarClass}" th:text="${panel.initials}" aria-hidden="true">GP</span>
+            <div style="flex: 1"><b th:text="${panel.patientName}">Gabriela Pereira</b>
+                <small th:text="${panel.patientLine}">Female · 1995-04-12</small></div>
+        </div>
+
+        <div th:if="${panel.allergies != null}" class="mc-banner mc-banner-danger" role="note">
+            <i class="mc-i mc-i-alert" aria-hidden="true"></i>
+            <div><b>[[#{appointments.panel.allergies}]]</b> <span th:text="${panel.allergies}">Penicillin</span></div>
+        </div>
+
+        <div th:if="${panel.cancelled}" class="mc-banner mc-banner-warning" role="note">
+            <i class="mc-i mc-i-info" aria-hidden="true"></i>
+            <div><b>[[#{appointments.panel.cancelled}]]</b>
+                <span th:text="${panel.cancelReason != null} ? ${panel.cancelReason} : #{appointments.panel.noReason}">Reason</span></div>
+        </div>
+
+        <dl class="mc-kv">
+            <dt>[[#{appointments.panel.doctor}]]</dt><dd th:text="${panel.doctorLine}">Dr. Robert Chase · Surgeon</dd>
+            <dt>[[#{appointments.panel.bookedFor}]]</dt><dd th:text="${panel.bookedFor}">The patient</dd>
+            <th:block th:if="${panel.bookedOn != null}">
+                <dt>[[#{appointments.panel.booked}]]</dt><dd th:text="${panel.bookedOn}">Mon 21 Sep</dd>
+            </th:block>
+            <dt>[[#{appointments.panel.form}]]</dt><dd th:text="${panel.form}">Not sent yet</dd>
+            <dt>[[#{appointments.panel.attendance}]]</dt><dd th:text="${panel.attendance}">Confirmed</dd>
+            <th:block th:if="${panel.checkedIn != null}">
+                <dt>[[#{appointments.panel.checkedIn}]]</dt><dd th:text="${panel.checkedIn}">9:12 AM</dd>
+            </th:block>
+            <th:block th:if="${panel.waitlist != null}">
+                <dt>[[#{appointments.panel.waitlist}]]</dt><dd th:text="${panel.waitlist}">Wants earlier</dd>
+            </th:block>
+        </dl>
+
+        <div th:if="${panel.note != null}" style="display: flex; flex-direction: column; gap: 6px">
+            <span class="mc-overline">[[#{appointments.panel.note}]]</span>
+            <p class="body-sm" style="margin: 0; white-space: pre-line" th:text="${panel.note}">Note</p>
+        </div>
+    </div>
+
+    <div class="mc-sheetpanel-foot" th:if="${panel.hasActions()}">
+        <div class="mc-btnrow">
+            <form th:if="${panel.canCheckIn}" th:action="@{/appointments/{id}/check-in(id=${panel.id})}" method="post">
+                <input type="hidden" name="back" th:value="${here}" />
+                <button type="submit" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">
+                    <i class="mc-i mc-i-checkin" aria-hidden="true"></i>[[#{today.checkIn}]]</button>
+            </form>
+            <button th:if="${panel.canReschedule}" type="button" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square"
+                    th:attr="hx-get=@{/appointments/{id}/reschedule(id=${panel.id},back=${here})}"
+                    hx-target="#appointment-panel" hx-swap="innerHTML">[[#{appointments.reschedule}]]</button>
+        </div>
+        <div class="mc-btnrow">
+            <form th:if="${panel.canRemind}" th:action="@{/appointments/{id}/remind(id=${panel.id})}" method="post">
+                <input type="hidden" name="back" th:value="${here}" />
+                <button type="submit" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">
+                    <i class="mc-i mc-i-send" aria-hidden="true"></i>[[#{appointments.remind}]]</button>
+            </form>
+            <details th:if="${panel.canCancel}" class="mc-disclosure" style="flex: 1">
+                <summary class="mc-btn mc-btn-danger-ghost mc-btn-md" style="width: 100%">[[#{appointments.cancel}]]</summary>
+                <form th:action="@{/appointments/{id}/cancel(id=${panel.id})}" method="post"
+                      style="display: flex; flex-direction: column; gap: 8px">
+                    <input type="hidden" name="back" th:value="${here}" />
+                    <label class="mc-label" th:for="'reason-' + ${panel.id}">[[#{appointments.cancel.reason}]]</label>
+                    <textarea class="mc-input" th:id="'reason-' + ${panel.id}" name="reason" maxlength="500"
+                              style="min-height: 72px" th:placeholder="#{appointments.cancel.placeholder}"></textarea>
+                    <span class="mc-help">[[#{appointments.cancel.help}]]</span>
+                    <button type="submit" class="mc-btn mc-btn-danger mc-btn-md mc-btn-square">[[#{appointments.cancel.confirm}]]</button>
+                </form>
+            </details>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -9,12 +9,16 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Puts the staff check in front of the back office, and nothing else.
+ * Puts the staff check in front of everything that is not the patient API.
  *
- * The mobile API carries its own token and is checked by its own
- * interceptor; the FHIR facade likewise. Listing what this guards, rather
- * than guarding everything and listing exceptions, is what keeps a new
- * mobile route from being locked out by a change made for the web.
+ * Everything is guarded unless it is listed as belonging to someone else.
+ * The previous allow-list guarded the pages it named and nothing more,
+ * which left a scaffolded REST API — every patient, readable and deletable
+ * — and a file upload open to anybody, because nobody had thought to add
+ * them to the list. The mobile API, sign-in and the FHIR facade carry
+ * their own bearer token and are checked by their own interceptor, so they
+ * are excluded here by prefix: a new mobile route cannot be locked out by
+ * a change made for the web.
  */
 @Configuration
 @RequiredArgsConstructor
@@ -30,24 +34,21 @@ public class StaffAuthConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(staffAuthInterceptor)
-                .addPathPatterns(
-                        "/",
-                        "/appointments/**",
-                        "/doctors/**",
-                        "/patients/**",
-                        "/schedules/**",
-                        "/scheduleTimes/**",
-                        "/notifications/**",
-                        "/waitlist/**")
-                // The sign-in page itself, and the static files every page
-                // needs before anyone has signed in.
+                .addPathPatterns("/**")
                 .excludePathPatterns(
+                        // The patient's side, with its own token check.
+                        "/api/mobile/**",
+                        "/auth/**",
+                        "/fhir/**",
+                        // The sign-in page itself, and the static files
+                        // every page needs before anyone has signed in.
                         "/staff/login",
                         "/staff/logout",
                         "/css/**",
                         "/js/**",
                         "/images/**",
                         "/webjars/**",
+                        "/favicon.ico",
                         "/error");
     }
 }

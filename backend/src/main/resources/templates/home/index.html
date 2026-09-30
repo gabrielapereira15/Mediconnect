@@ -14,7 +14,7 @@
     <title>[[#{nav.today}]]</title>
 </head>
 <body>
-<div layout:fragment="content" style="display: flex; flex-direction: column; gap: 16px; min-height: 0; flex: 1">
+<div layout:fragment="content" style="display: flex; flex-direction: column; gap: 16px; flex: 1 0 auto">
 
     <div class="mc-page-head">
         <div>
@@ -62,7 +62,7 @@
 
     <!-- ==== The queue and the side column ============================== -->
 
-    <section style="display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; flex: 1; min-height: 0">
+    <section style="display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; flex: 1; min-height: 420px">
 
         <div class="mc-panel">
             <div class="mc-panel-head">
@@ -131,7 +131,8 @@
                             </button>
                         </form>
                         <a th:unless="${row.canCheckIn() and (staff == null or staff.canManageAppointments())}"
-                           th:href="@{/appointments}" class="mc-btn mc-btn-outline mc-btn-sm mc-btn-square">
+                           th:href="@{/appointments(tab=today,selected=${row.id})}"
+                           class="mc-btn mc-btn-outline mc-btn-sm mc-btn-square">
                             [[#{today.view}]]
                         </a>
                     </td>
@@ -176,7 +177,7 @@
             <div class="mc-panel" style="flex: 1">
                 <div class="mc-panel-head">
                     <h2 class="mc-panel-title">[[#{today.doctors}]]</h2>
-                    <a th:href="@{/schedules}" class="mc-link body-sm">[[#{nav.schedule}]]</a>
+                    <a th:href="@{/schedule}" class="mc-link body-sm">[[#{nav.schedule}]]</a>
                 </div>
                 <div style="padding: 12px 20px; display: flex; flex-direction: column; gap: 14px">
                     <div th:each="load : ${doctorLoads}"

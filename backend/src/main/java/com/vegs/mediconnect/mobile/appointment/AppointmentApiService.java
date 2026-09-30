@@ -255,8 +255,120 @@ public class AppointmentApiService {
      */
     @Transactional
     public void cancelAppointmentAsClinic(UUID appointmentId) {
-        appointmentRepository.findById(appointmentId)
-                .ifPresentOrElse(this::cancelAppointment, AppointmentNotFoundException::new);
+        cancelAppointmentAsClinic(appointmentId, null);
+    }
+
+    /**
+     * Cancels for the clinic and says why (board B03's "Cancel…").
+     *
+     * The reason is kept on the appointment, not in anybody's head: the
+     * next person to open it can see what happened. Nothing is deleted —
+     * a cancelled visit is still part of the patient's history.
+     */
+    @Transactional
+    public void cancelAppointmentAsClinic(UUID appointmentId, String reason) {
+        var appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(AppointmentNotFoundException::new);
+        if (Boolean.TRUE.equals(appointment.getCanceled())) {
+            return;
+        }
+        appointment.setCancelReason(trimToNull(reason));
+        cancelAppointment(appointment);
+    }
+
+    /**
+     * The front desk marks the patient as arrived. Once: checking in twice
+     * keeps the first time, so nobody is sent to the back of a queue they
+     * have been standing in.
+     */
+    @Transactional
+    public void checkInAsClinic(UUID appointmentId) {
+        var appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(AppointmentNotFoundException::new);
+        if (Boolean.TRUE.equals(appointment.getCanceled())) {
+            throw new CheckInNotOpenException("That visit was cancelled.");
+        }
+        if (!appointment.getScheduleTime().getSchedule().getDate().isEqual(LocalDate.now())) {
+            throw new CheckInNotOpenException("Check-in is only open on the day of the visit.");
+        }
+        if (appointment.getCheckedInAt() == null) {
+            appointment.setCheckedInAt(OffsetDateTime.now());
+            appointmentRepository.save(appointment);
+        }
+    }
+
+    /**
+     * Books a patient in from the desk.
+     *
+     * The slot must be free, but not six hours away: the lead time is there
+     * so the app does not sell a slot nobody can prepare for, and a patient
+     * standing at the desk is already prepared.
+     */
+    @Transactional
+    public Appointment bookAsClinic(UUID patientId, UUID slotId, String note) {
+        var slot = scheduleTimeRepository.findById(slotId)
+                .orElseThrow(ScheduleTimeNotFoundException::new);
+        requireFreeAndAhead(slot);
+        var patient = patientRepository.findById(patientId)
+                .orElseThrow(PatientNotFoundException::new);
+
+        var appointment = createAppointment(slot, patient, slot.getSchedule().getDoctor());
+        appointment.setBookedForNotes(trimToNull(note));
+        slot.setAvailable(false);
+        scheduleTimeRepository.save(slot);
+        var saved = appointmentRepository.save(appointment);
+
+        waitlistService.onAppointmentBooked(patient, saved.getDoctor(),
+                slot.getSchedule().getDate());
+        return saved;
+    }
+
+    /**
+     * Moves an appointment to another free slot with the same doctor.
+     *
+     * What the patient told the clinic moves with it — who it is for, the
+     * note, the form — and the slot it leaves goes to the waitlist, as any
+     * freed slot does.
+     */
+    @Transactional
+    public Appointment rescheduleAsClinic(UUID appointmentId, UUID slotId) {
+        var current = appointmentRepository.findById(appointmentId)
+                .orElseThrow(AppointmentNotFoundException::new);
+        if (Boolean.TRUE.equals(current.getCanceled())) {
+            throw new SlotNoLongerAvailableException("A cancelled visit cannot be moved.");
+        }
+        var slot = scheduleTimeRepository.findById(slotId)
+                .orElseThrow(ScheduleTimeNotFoundException::new);
+        if (!slot.getSchedule().getDoctor().getId().equals(current.getDoctor().getId())) {
+            throw new SlotNoLongerAvailableException("That time is with a different doctor.");
+        }
+        requireFreeAndAhead(slot);
+
+        var moved = createAppointment(slot, current.getPatient(), current.getDoctor());
+        moved.setBookedForName(current.getBookedForName());
+        moved.setBookedForDateOfBirth(current.getBookedForDateOfBirth());
+        moved.setBookedForPhone(current.getBookedForPhone());
+        moved.setBookedForNotes(current.getBookedForNotes());
+        moved.setFormSubmittedAt(current.getFormSubmittedAt());
+        slot.setAvailable(false);
+        scheduleTimeRepository.save(slot);
+        var saved = appointmentRepository.save(moved);
+
+        preVisitFormRepository.findByAppointment(current).ifPresent(form -> {
+            form.setAppointment(saved);
+            preVisitFormRepository.save(form);
+        });
+        removeAppointment(current);
+        return saved;
+    }
+
+    private void requireFreeAndAhead(ScheduleTime slot) {
+        if (!Boolean.TRUE.equals(slot.getAvailable()) || Boolean.TRUE.equals(slot.getBlocked())) {
+            throw new SlotNoLongerAvailableException("That time has just been taken.");
+        }
+        if (!slot.getDateTime().isAfter(LocalDateTime.now())) {
+            throw new SlotNoLongerAvailableException("That time has already passed.");
+        }
     }
 
     @Transactional

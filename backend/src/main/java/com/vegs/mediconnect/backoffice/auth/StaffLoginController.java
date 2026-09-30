@@ -2,6 +2,7 @@ package com.vegs.mediconnect.backoffice.auth;
 
 import com.vegs.mediconnect.datasource.staff.StaffUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import com.vegs.mediconnect.backoffice.shared.Redirects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -67,9 +68,6 @@ public class StaffLoginController {
      * them on somebody else's site.
      */
     private String safeNext(String next) {
-        if (next == null || next.isBlank() || !next.startsWith("/") || next.startsWith("//")) {
-            return "/";
-        }
-        return next;
+        return Redirects.within(next, "/");
     }
 }

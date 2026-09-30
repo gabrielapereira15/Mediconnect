@@ -6,6 +6,32 @@
  * shell, and the table's own empty and loading states.
  */
 
+/* ---- The shell, in a real browser window -------------------------------- */
+
+/*
+ * The boards draw the shell at a fixed 1440 x 900. In a browser it is the
+ * window: the side navigation and top bar stay put, and the page between
+ * them scrolls when it is taller than the window, rather than the whole
+ * document scrolling the navigation away.
+ */
+body.mc {
+    margin: 0;
+}
+
+body.mc > .mc-shell {
+    height: 100vh;
+    height: 100dvh;
+}
+
+.mc-shell > .mc-main {
+    min-height: 0;
+}
+
+.mc-shell .mc-page {
+    overflow-y: auto;
+    min-height: 0;
+}
+
 /* ---- Sign-in ---------------------------------------------------------- */
 
 .mc-signin {
@@ -81,4 +107,194 @@
 
 .mc-table tbody tr.is-selected {
     background: var(--brand-soft);
+}
+
+.mc-table tbody tr[data-clickable]:hover {
+    background: var(--surface-sunken);
+}
+
+.mc-table tbody tr[data-clickable]:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: -2px;
+}
+
+/* ---- The detail panel's own card -------------------------------------- */
+
+/*
+ * The aside holds one of these: a head that stays put, a body that
+ * scrolls, and the actions pinned to the bottom where they always are.
+ */
+.mc-sheetpanel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+.mc-sheetpanel-head {
+    padding: var(--space-5) var(--space-6);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+    border-bottom: 1px solid var(--line);
+}
+
+.mc-sheetpanel-body {
+    padding: var(--space-5) var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.mc-sheetpanel-foot {
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.mc-sheetpanel-foot form {
+    display: contents;
+}
+
+.mc-btnrow {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.mc-btnrow > *,
+.mc-btnrow > form > button {
+    flex: 1;
+}
+
+/* ---- Native controls, dressed as the design system's ------------------ */
+
+select.mc-input {
+    appearance: none;
+    padding-right: 40px;
+    background-image: linear-gradient(45deg, transparent 50%, var(--ink-muted) 50%),
+                      linear-gradient(135deg, var(--ink-muted) 50%, transparent 50%);
+    background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+}
+
+label.mc-choice {
+    cursor: pointer;
+}
+
+.mc-choice input[type="radio"],
+.mc-choice input[type="checkbox"] {
+    accent-color: var(--brand);
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    flex: none;
+}
+
+/* Selected is the border and the tint together, and the control's own tick. */
+.mc-choice:has(input:checked) {
+    border: 2px solid var(--brand);
+    background: var(--brand-soft);
+    padding: 15px;
+}
+
+input[type="checkbox"].mc-switch {
+    appearance: none;
+    margin: 0;
+    cursor: pointer;
+}
+
+input[type="checkbox"].mc-switch:checked {
+    background: var(--brand);
+    border-color: var(--brand);
+}
+
+input[type="checkbox"].mc-switch:checked::after {
+    left: 25px;
+    top: 3px;
+    width: 23px;
+    height: 23px;
+    background: var(--on-brand);
+}
+
+.mc-switch:focus-visible,
+.mc-choice:has(input:focus-visible),
+.mc-slotpick input:focus-visible + span {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+
+/* A time to pick: a radio button that looks like the app's slot. */
+.mc-slotpick {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: var(--space-2);
+}
+
+.mc-slotpick label {
+    position: relative;
+    cursor: pointer;
+}
+
+.mc-slotpick input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+}
+
+.mc-slotpick span {
+    height: 44px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.mc-slotpick input:checked + span {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: var(--on-brand);
+}
+
+/* "Cancel…" opens its reason in place rather than in a dialog. */
+details.mc-disclosure > summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+details.mc-disclosure > summary::-webkit-details-marker {
+    display: none;
+}
+
+details.mc-disclosure[open] > summary {
+    display: none;
+}
+
+/* ---- Pager -------------------------------------------------------------- */
+
+.mc-pager {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+}
+
+.mc-icon-btn[aria-disabled="true"] {
+    opacity: .4;
+    pointer-events: none;
 }
