@@ -17,6 +17,10 @@ import java.util.UUID;
 /**
  * A patient waiting for an earlier appointment than the one they could get.
  *
+ * Either they hold a visit and want it brought forward, or they wanted a
+ * day that was already full and hold nothing yet. holdsVisit says which,
+ * because the two want different slots.
+ *
  * A cancelled slot is the clinic's most perishable asset: it is revenue and
  * a treated patient if somebody takes it, and nothing at all if the day
  * passes. The waitlist is what turns a cancellation back into a booking
@@ -44,9 +48,10 @@ public class WaitlistEntry {
     private Doctor doctor;
 
     /**
-     * The date they already hold, so an offer is only made when the freed
-     * slot is genuinely earlier. Without it the clinic would offer people
-     * appointments later than the ones they have.
+     * The day that sets how late an offer may be: the visit they already
+     * hold, or, when they hold none, the full day they asked for. Without
+     * it the clinic would offer people appointments later than the ones
+     * they have or wanted.
      */
     @Column(nullable = false)
     private LocalDate currentAppointmentDate;
@@ -89,6 +94,19 @@ public class WaitlistEntry {
     @Column(columnDefinition = "UUID")
     private UUID passedSlotId;
 
+    /**
+     * Whether they hold a visit with this doctor on currentAppointmentDate.
+     *
+     * Joining from a full day on the booking screen sends that day, and
+     * such a patient usually holds nothing on it. For them a slot freed on
+     * that very day is the one they asked for; for someone who holds a
+     * visit there, the same day again is no improvement. Worked out by the
+     * server when they join. Null on entries from before this was recorded,
+     * which all came from a held visit, so null counts as holding one.
+     */
+    @Column
+    private Boolean holdsVisit;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private OffsetDateTime dateCreated;
@@ -97,11 +115,27 @@ public class WaitlistEntry {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+    /** Whether they hold a visit being improved on; see the field. */
+    public boolean holdsVisit() {
+        return !Boolean.FALSE.equals(holdsVisit);
+    }
+
+    /**
+     * The latest day a slot could be on and still be what they asked for.
+     *
+     * The day before the visit they hold, since the same day again is no
+     * improvement; or, holding none, the day they asked for itself.
+     */
+    public LocalDate lastWantedDate() {
+        return holdsVisit() ? currentAppointmentDate.minusDays(1) : currentAppointmentDate;
+    }
+
     /**
      * Whether this entry would be interested in a slot on the given date.
      *
-     * Earlier than what they hold, not before they are available, and only
-     * while they are still on the list.
+     * Earlier than what they hold (or on the day they asked for, when they
+     * hold nothing), not before they are available, and only while they
+     * are still on the list.
      *
      * An offer is a reservation now, held for one patient at a time, so
      * someone who turned one down or let it lapse is back to WAITING and
@@ -115,7 +149,7 @@ public class WaitlistEntry {
         if (status != WaitlistStatus.WAITING) {
             return false;
         }
-        if (!slotDate.isBefore(currentAppointmentDate)) {
+        if (slotDate.isAfter(lastWantedDate())) {
             return false;
         }
         return availableFrom == null || !slotDate.isBefore(availableFrom);

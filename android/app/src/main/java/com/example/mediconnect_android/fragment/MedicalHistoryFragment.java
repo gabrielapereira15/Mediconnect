@@ -186,13 +186,20 @@ public class MedicalHistoryFragment extends Fragment {
             return;
         }
         binding.offerBanner.offerCard.setVisibility(View.VISIBLE);
-        binding.offerBanner.offerBody.setText(getString(R.string.offer_body_held,
+        // A patient who joined from a full day holds no visit, so the offer
+        // is for the day they asked for or sooner rather than "instead of"
+        // anything, and there is no visit of theirs to keep. Both branches
+        // set the button, because the banner is reused for the next offer.
+        boolean holdsVisit = offer.holdsVisit();
+        binding.offerBanner.offerBody.setText(getString(
+                holdsVisit ? R.string.offer_body_held : R.string.offer_body_open,
                 WhenLabel.doctorName(offer.getDoctorName()),
                 WhenLabel.parse(offer.getOfferedStartsAt())
                         .map(at -> WhenLabel.whenWords(requireContext(), at))
                         .orElse(""),
                 dayWords(offer.getCurrentAppointmentDate()),
                 holdWords(offer.getOfferExpiresAt())));
+        binding.offerBanner.offerKeep.setText(holdsVisit ? R.string.offer_keep : R.string.offer_pass);
 
         binding.offerBanner.offerTake.setEnabled(true);
         binding.offerBanner.offerKeep.setEnabled(true);
@@ -217,11 +224,13 @@ public class MedicalHistoryFragment extends Fragment {
                     }
                     offer = null;
                     bindOffer();
-                    DialogUtils.showMessageDialog(getContext(), getString(R.string.offer_taken,
-                            WhenLabel.parse(taken.getOfferedStartsAt())
-                                    .map(at -> WhenLabel.whenWords(requireContext(), at))
-                                    .orElse(""),
-                            dayWords(taken.getCurrentAppointmentDate())));
+                    String when = WhenLabel.parse(taken.getOfferedStartsAt())
+                            .map(at -> WhenLabel.whenWords(requireContext(), at))
+                            .orElse("");
+                    DialogUtils.showMessageDialog(getContext(), taken.holdsVisit()
+                            ? getString(R.string.offer_taken, when,
+                                    dayWords(taken.getCurrentAppointmentDate()))
+                            : getString(R.string.offer_taken_open, when));
                     loadAppointments(email());
                 },
                 error -> {
@@ -239,7 +248,10 @@ public class MedicalHistoryFragment extends Fragment {
                 });
     }
 
-    /** "Keep mine": the slot moves on now, and they stay on the list. */
+    /**
+     * "Keep mine" ("Not this one" when they hold no visit): the slot moves
+     * on now, and they stay on the list.
+     */
     private void keepMine() {
         WaitlistEntry declined = offer;
         offer = null;
@@ -248,11 +260,12 @@ public class MedicalHistoryFragment extends Fragment {
         Background.run(
                 () -> waitlistClient.decline(email(), declined.getId()),
                 done -> DialogUtils.showMessageDialog(getContext(), getString(
-                        R.string.offer_kept, dayWords(declined.getCurrentAppointmentDate()))),
+                        declined.holdsVisit() ? R.string.offer_kept : R.string.offer_passed,
+                        dayWords(declined.getCurrentAppointmentDate()))),
                 error -> loadOffers());
     }
 
-    /** "Wed 30 Sep", for the visit the offer would replace. */
+    /** "Wed 30 Sep", for the visit the offer would replace or the day asked for. */
     private String dayWords(String isoDate) {
         try {
             return java.time.LocalDate.parse(isoDate).format(

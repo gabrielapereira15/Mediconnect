@@ -15,8 +15,10 @@ public class WaitlistRequest {
     private UUID doctorId;
 
     /**
-     * The appointment they already hold. An offer is only worth making when
-     * the freed slot is earlier than this.
+     * The day of the appointment they already hold, or of the full day they
+     * wanted when they hold none. The server works out which from their
+     * bookings: a slot earlier than a held visit is worth offering, and so
+     * is one on or before a day they asked for.
      */
     @NotNull
     private LocalDate currentAppointmentDate;

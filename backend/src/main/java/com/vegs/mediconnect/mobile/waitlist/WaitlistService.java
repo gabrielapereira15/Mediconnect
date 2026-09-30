@@ -1,6 +1,7 @@
 package com.vegs.mediconnect.mobile.waitlist;
 
 import com.vegs.mediconnect.datasource.appointment.Appointment;
+import com.vegs.mediconnect.datasource.appointment.AppointmentRepository;
 import com.vegs.mediconnect.datasource.doctor.Doctor;
 import com.vegs.mediconnect.datasource.notification.Notification;
 import com.vegs.mediconnect.datasource.notification.NotificationPatient;
@@ -73,6 +74,7 @@ public class WaitlistService {
     private final ScheduleTimeRepository scheduleTimeRepository;
     private final NotificationRepository notificationRepository;
     private final NotificationPatientRepository notificationPatientRepository;
+    private final AppointmentRepository appointmentRepository;
 
     // ---- the patient's side --------------------------------------------------
 
@@ -95,10 +97,29 @@ public class WaitlistService {
         entry.setPatient(patient);
         entry.setDoctor(doctor);
         entry.setCurrentAppointmentDate(request.getCurrentAppointmentDate());
+        entry.setHoldsVisit(holdsVisitOn(patient, doctor, request.getCurrentAppointmentDate()));
         entry.setAvailableFrom(request.getAvailableFrom());
         entry.setStatus(WaitlistStatus.WAITING);
 
         return toResponse(waitlistRepository.save(entry));
+    }
+
+    /**
+     * Whether the patient has a visit with this doctor on the date they
+     * sent.
+     *
+     * The app sends one date from two places: the visit they want brought
+     * forward, or a full day on the booking screen, where they usually hold
+     * nothing. Which one it was decides whether a slot on that same day is
+     * worth offering, so it is worked out here from their bookings rather
+     * than taken on the app's word.
+     */
+    private boolean holdsVisitOn(Patient patient, Doctor doctor, LocalDate date) {
+        return appointmentRepository.findAllByPatient(patient).stream()
+                .filter(appointment -> !Boolean.TRUE.equals(appointment.getCanceled()))
+                .filter(appointment -> appointment.getDoctor().getId().equals(doctor.getId()))
+                .anyMatch(appointment -> date.equals(
+                        appointment.getScheduleTime().getSchedule().getDate()));
     }
 
     @Transactional
@@ -151,7 +172,8 @@ public class WaitlistService {
 
     /**
      * Takes a patient off this doctor's waitlist once they book something
-     * earlier than the appointment they were waiting to improve on.
+     * earlier than the appointment they were waiting to improve on, or, if
+     * they held none, something on or before the day they asked for.
      *
      * Without this they would keep being offered slots they no longer want,
      * which is the fastest way to teach someone to ignore notifications. A
@@ -163,8 +185,8 @@ public class WaitlistService {
             var entries = waitlistRepository.findAllByPatientOrderByDateCreatedDesc(patient);
             for (WaitlistEntry entry : entries) {
                 boolean sameDoctor = entry.getDoctor().getId().equals(doctor.getId());
-                boolean earlier = bookedDate.isBefore(entry.getCurrentAppointmentDate());
-                if (!sameDoctor || !earlier) {
+                boolean wanted = !bookedDate.isAfter(entry.lastWantedDate());
+                if (!sameDoctor || !wanted) {
                     continue;
                 }
                 if (entry.getStatus() == WaitlistStatus.OFFERED) {
@@ -257,7 +279,9 @@ public class WaitlistService {
             return "That time is with a different doctor.";
         }
         if (!entry.wants(slot.getSchedule().getDate())) {
-            return "That time is not earlier than their visit, or they cannot come that day.";
+            return entry.holdsVisit()
+                    ? "That time is not earlier than their visit, or they cannot come that day."
+                    : "That time is later than the day they asked for, or they cannot come that day.";
         }
         OffsetDateTime now = OffsetDateTime.now();
         OffsetDateTime expires = holdEnds(slot, now);
@@ -383,6 +407,7 @@ public class WaitlistService {
                 .status(entry.getStatus().name())
                 .currentAppointmentDate(entry.getCurrentAppointmentDate() == null ? null
                         : entry.getCurrentAppointmentDate().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                .holdsVisit(entry.holdsVisit())
                 .availableFrom(entry.getAvailableFrom() == null ? null
                         : entry.getAvailableFrom().format(DateTimeFormatter.ISO_LOCAL_DATE))
                 .offeredSlotId(slot == null ? null : slot.getId())

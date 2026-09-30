@@ -16,6 +16,14 @@ public class WaitlistResponse {
     private String doctorName;
     private String status;
     private String currentAppointmentDate;
+
+    /**
+     * Whether currentAppointmentDate is a visit they hold, or only the day
+     * they asked for when it was full. The app words the offer differently:
+     * "instead of your visit" means nothing to someone who has none.
+     */
+    private boolean holdsVisit;
+
     private String availableFrom;
 
     /** The slot held for them, while there is one (status OFFERED). */

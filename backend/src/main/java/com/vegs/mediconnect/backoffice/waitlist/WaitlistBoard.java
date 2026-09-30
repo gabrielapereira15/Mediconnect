@@ -208,7 +208,10 @@ public class WaitlistBoard {
         WaitlistEntry entry = waitlistRepository.findById(entryId).orElseThrow(NotFoundException::new);
         OffsetDateTime now = OffsetDateTime.now();
         Map<String, List<ClinicAppointmentService.SlotChoice>> byDay = new LinkedHashMap<>();
-        scheduleTimeRepository.findAllBetween(LocalDate.now(), entry.getCurrentAppointmentDate().minusDays(1)).stream()
+        // Up to the last day they want, which is the day they asked for
+        // itself when they hold no visit, so the picker lists every time
+        // offerTo would accept.
+        scheduleTimeRepository.findAllBetween(LocalDate.now(), entry.lastWantedDate()).stream()
                 .filter(slot -> slot.getSchedule().getDoctor().getId().equals(entry.getDoctor().getId()))
                 .filter(slot -> Boolean.TRUE.equals(slot.getAvailable()) && !Boolean.TRUE.equals(slot.getBlocked()))
                 .filter(slot -> entry.getAvailableFrom() == null
@@ -293,6 +296,7 @@ public class WaitlistBoard {
         entry.setPatient(patientRepository.getReferenceById(patient.getId()));
         entry.setDoctor(doctorRepository.getReferenceById(doctor.getId()));
         entry.setCurrentAppointmentDate(appointment.getDateTime().toLocalDate());
+        entry.setHoldsVisit(true);
         entry.setAvailableFrom(availableFrom);
         entry.setStatus(WaitlistStatus.WAITING);
         waitlistRepository.save(entry);
