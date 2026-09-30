@@ -285,6 +285,49 @@
     <string name="health_none_recorded">None recorded</string>
     <string name="health_line">%1$s · %2$s</string>
     <string name="health_card_masked">Health card ••• %1$s · %2$s</string>
+
+    <!-- Edit profile: the health card. -->
+    <string name="edit_profile_card_title">Health card</string>
+    <string name="edit_profile_card_body">Optional. It lets the front desk find your provincial record. Everywhere else in the app shows only the last four characters.</string>
+    <string name="edit_profile_card_number">Card number</string>
+    <string name="edit_profile_card_number_help">As printed on the card. Spaces and dashes are fine.</string>
+    <string name="edit_profile_card_province">Province or territory</string>
+    <string name="edit_profile_card_province_pick">Which province or territory issued your card?</string>
+    <string name="cd_edit_profile_card_province">Choose the province or territory</string>
+    <string name="edit_profile_card_characters">Use only letters, numbers, spaces and dashes.</string>
+    <string name="edit_profile_card_length">A card number has %1$d to %2$d letters and numbers.</string>
+    <!-- Codes line up with the names below, one for one. -->
+    <string-array name="health_card_province_codes" translatable="false">
+        <item>AB</item>
+        <item>BC</item>
+        <item>MB</item>
+        <item>NB</item>
+        <item>NL</item>
+        <item>NT</item>
+        <item>NS</item>
+        <item>NU</item>
+        <item>ON</item>
+        <item>PE</item>
+        <item>QC</item>
+        <item>SK</item>
+        <item>YT</item>
+    </string-array>
+    <string-array name="health_card_province_names">
+        <item>Alberta</item>
+        <item>British Columbia</item>
+        <item>Manitoba</item>
+        <item>New Brunswick</item>
+        <item>Newfoundland and Labrador</item>
+        <item>Northwest Territories</item>
+        <item>Nova Scotia</item>
+        <item>Nunavut</item>
+        <item>Ontario</item>
+        <item>Prince Edward Island</item>
+        <item>Quebec</item>
+        <item>Saskatchewan</item>
+        <item>Yukon</item>
+    </string-array>
+
     <string name="sign_out_title">Sign out?</string>
     <string name="sign_out_body">You will need your email and a passcode to sign back in.</string>
 

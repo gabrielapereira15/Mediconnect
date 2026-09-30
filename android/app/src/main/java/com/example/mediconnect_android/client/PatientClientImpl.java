@@ -32,10 +32,25 @@ public class PatientClientImpl implements PatientClient {
         return Collections.emptyList();
     }
 
+    /**
+     * Saves the profile. A 400 with a plain-text reason is thrown as an
+     * {@link ApiException} carrying it: the server words those for the
+     * patient, for instance a health card number no province issues, and
+     * "try again later" would send them to retry something that cannot work.
+     * Anything else unsuccessful stays a plain false.
+     */
     @Override
     public Boolean createPatient(String patient) {
         String url = ApiConfig.url("/api/mobile/patients");
         ApiGenericResponse response = OkHttpClientHelper.post(url, patient);
+        if (response.getStatus() == 400) {
+            String reason = response.getResponseBody() == null ? "" : response.getResponseBody().trim();
+            // A JSON body is the framework's own validation report, which is
+            // written for developers rather than patients.
+            if (!reason.isEmpty() && !reason.startsWith("{")) {
+                throw new ApiException(400, reason);
+            }
+        }
         return response.isSuccess();
     }
 }

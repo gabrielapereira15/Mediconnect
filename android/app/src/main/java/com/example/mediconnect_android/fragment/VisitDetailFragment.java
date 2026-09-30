@@ -327,8 +327,9 @@ public class VisitDetailFragment extends Fragment {
         if (number.isEmpty()) {
             binding.rowHealthCard.rowSub.setText(R.string.visit_health_card_missing);
             binding.rowHealthCard.rowAction.setVisibility(View.GONE);
+            // Straight to the card, not to the top of a long form.
             binding.rowHealthCard.visitRow.setOnClickListener(
-                    v -> show(new EditProfileFragment()));
+                    v -> show(EditProfileFragment.forHealthCard()));
             return;
         }
         // Only the last four, the way the card is read back at a desk.
