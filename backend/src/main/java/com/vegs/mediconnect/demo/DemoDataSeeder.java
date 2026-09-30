@@ -95,6 +95,7 @@ public class DemoDataSeeder implements ApplicationRunner {
         seedStaff();
 
         if (doctorRepository.count() > 0) {
+            linkDemoClinician();
             log.info("Demo data: database already has doctors, skipping seed.");
             return;
         }
@@ -102,6 +103,7 @@ public class DemoDataSeeder implements ApplicationRunner {
         log.info("Demo data: seeding an empty database…");
 
         List<Doctor> doctors = seedDoctors();
+        linkDemoClinician();
         List<Patient> patients = seedPatients();
         List<ScheduleTime> slots = seedSchedules(doctors);
         seedWeeklyHours(doctors);
@@ -133,6 +135,23 @@ public class DemoDataSeeder implements ApplicationRunner {
         staffUserRepository.saveAll(List.of(
                 staff("desk@mediconnect.ca", "Ana Ferreira", StaffRole.FRONT_DESK),
                 staff("doctor@mediconnect.ca", "Robert Chase", StaffRole.CLINICIAN)));
+    }
+
+    /**
+     * The demo clinician is Dr. Robert Chase, so signing in as them shows
+     * what a doctor can do with their own agenda.
+     */
+    private void linkDemoClinician() {
+        staffUserRepository.findByEmailIgnoreCase("doctor@mediconnect.ca")
+                .filter(user -> user.getDoctorId() == null)
+                .ifPresent(user -> doctorRepository.findAll().stream()
+                        .filter(doctor -> "Chase".equals(doctor.getLastName())
+                                && "Robert".equals(doctor.getFirstName()))
+                        .findFirst()
+                        .ifPresent(chase -> {
+                            user.setDoctorId(chase.getId());
+                            staffUserRepository.save(user);
+                        }));
     }
 
     private StaffUser staff(String email, String name, StaffRole role) {

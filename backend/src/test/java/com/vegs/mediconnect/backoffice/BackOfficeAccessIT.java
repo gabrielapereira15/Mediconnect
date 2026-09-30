@@ -272,9 +272,10 @@ class BackOfficeAccessIT {
 
     @Test
     @Transactional
-    @DisplayName("the desk blocks and unblocks a free slot; a clinician cannot")
+    @DisplayName("the desk blocks and unblocks a free slot; a clinician cannot block another doctor's")
     void blockAndUnblock() throws Exception {
         var slot = scheduleTimeRepository.findAll().stream()
+                .filter(candidate -> !"Chase".equals(candidate.getSchedule().getDoctor().getLastName()))
                 .filter(candidate -> Boolean.TRUE.equals(candidate.getAvailable()))
                 .filter(candidate -> candidate.getDateTime().isAfter(java.time.LocalDateTime.now().plusDays(1)))
                 .findFirst().orElseThrow();
@@ -687,6 +688,83 @@ class BackOfficeAccessIT {
         org.junit.jupiter.api.Assertions.assertTrue(reached > 0);
         org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> clinicMessages.send(saved),
                 "a second Send on the same draft must not deliver it again");
+    }
+
+    private com.vegs.mediconnect.datasource.doctor.Doctor doctorNamed(String lastName) {
+        return doctorRepository.findAll().stream()
+                .filter(doctor -> doctor.getLastName().equals(lastName)).findFirst().orElseThrow();
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("a doctor changes their own availability and days off, and nobody else's")
+    void doctorOwnsTheirAgenda() throws Exception {
+        var chase = doctorNamed("Chase");
+        var cameron = doctorNamed("Cameron");
+
+        // Doctors opens on their own agenda, with the form usable.
+        mockMvc.perform(get("/doctors").session(clinician()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("/doctors/" + chase.getId() + "/availability")))
+                .andExpect(content().string(containsString("Save availability")));
+
+        var week = org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .post("/doctors/" + chase.getId() + "/availability").session(clinician())
+                .param("slotMinutes", "30").param("weeks", "3");
+        for (String day : new String[]{"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"}) {
+            week.param("on_" + day, "on").param("start1_" + day, "09:00").param("end1_" + day, "12:00");
+        }
+        mockMvc.perform(week)
+                .andExpect(status().is3xxRedirection())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers
+                        .flash().attributeExists("MSG_SUCCESS"));
+
+        var day = java.time.LocalDate.now().plusDays(10);
+        mockMvc.perform(post("/doctors/" + chase.getId() + "/days-off").session(clinician())
+                        .param("date", day.toString()).param("reason", "Conference"))
+                .andExpect(status().is3xxRedirection());
+
+        // Someone else's agenda stays closed to them.
+        mockMvc.perform(post("/doctors/" + cameron.getId() + "/availability").session(clinician())
+                        .param("slotMinutes", "30").param("weeks", "3"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(post("/doctors/" + cameron.getId() + "/days-off").session(clinician())
+                        .param("date", day.toString()))
+                .andExpect(status().isForbidden());
+
+        // And their own address cannot be used to reach another doctor's day off.
+        mockMvc.perform(post("/doctors/" + cameron.getId() + "/days-off").session(desk())
+                        .param("date", day.plusDays(1).toString()))
+                .andExpect(status().is3xxRedirection());
+        var camerons = dayOffRepository.findAllByDoctorOrderByDateAsc(cameron).getFirst();
+        mockMvc.perform(post("/doctors/" + chase.getId() + "/days-off/" + camerons.getId() + "/remove").session(clinician()))
+                .andExpect(status().isNotFound());
+        org.junit.jupiter.api.Assertions.assertTrue(dayOffRepository.existsById(camerons.getId()));
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("a doctor may block and unblock their own free slots, and not book or offer them")
+    void doctorBlocksOwnSlot() throws Exception {
+        var slot = scheduleTimeRepository.findAll().stream()
+                .filter(candidate -> "Chase".equals(candidate.getSchedule().getDoctor().getLastName()))
+                .filter(candidate -> Boolean.TRUE.equals(candidate.getAvailable()))
+                .filter(candidate -> candidate.getDateTime().isAfter(java.time.LocalDateTime.now().plusDays(1)))
+                .findFirst().orElseThrow();
+
+        mockMvc.perform(get("/schedule/slots/" + slot.getId()).session(clinician()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Block this slot")))
+                .andExpect(content().string(org.hamcrest.Matchers.not(containsString("Book a patient into this slot"))));
+
+        mockMvc.perform(post("/schedule/slots/" + slot.getId() + "/block").session(clinician()))
+                .andExpect(status().is3xxRedirection());
+        org.junit.jupiter.api.Assertions.assertTrue(
+                scheduleTimeRepository.findById(slot.getId()).orElseThrow().getBlocked());
+        mockMvc.perform(post("/schedule/slots/" + slot.getId() + "/unblock").session(clinician()))
+                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post("/schedule/slots/" + slot.getId() + "/offer").session(clinician()))
+                .andExpect(status().isForbidden());
     }
 
     @Test

@@ -304,8 +304,13 @@ public class AvailabilityService {
 
     /** Takes a day off back: its blocked slots are open again. */
     @Transactional
-    public void removeDayOff(UUID dayOffId) {
-        DoctorDayOff day = dayOffRepository.findById(dayOffId).orElseThrow(NotFoundException::new);
+    public void removeDayOff(UUID dayOffId, UUID doctorId) {
+        DoctorDayOff day = dayOffRepository.findById(dayOffId)
+                // Only a day off of the doctor named in the address: a doctor
+                // allowed to change their own agenda must not reach anyone
+                // else's by swapping an id.
+                .filter(found -> found.getDoctor().getId().equals(doctorId))
+                .orElseThrow(NotFoundException::new);
         // Only the doctor's usual times reopen; a slot blocked because it
         // fell outside their hours stays blocked.
         List<LocalTime> usual = editor(day.getDoctor().getId()).hours().timesOn(day.getDate().getDayOfWeek());

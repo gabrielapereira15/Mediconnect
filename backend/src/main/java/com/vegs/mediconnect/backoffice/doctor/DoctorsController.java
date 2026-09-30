@@ -54,6 +54,11 @@ public class DoctorsController {
                        Model model) {
         model.addAttribute("active", "doctors");
         model.addAttribute("cards", directory.cards());
+        // A doctor opening Doctors lands on their own agenda.
+        StaffSession session = StaffSession.of(request);
+        if (selected == null && session != null && session.getDoctorId() != null) {
+            selected = session.getDoctorId();
+        }
         if (selected != null) {
             fillPanel(selected, tab, request, model);
         }
@@ -74,6 +79,7 @@ public class DoctorsController {
         model.addAttribute("tab", chosen);
         model.addAttribute("profile", directory.profile(id));
         model.addAttribute("canEdit", deskMayAct(request));
+        model.addAttribute("canEditAgenda", mayEditAgenda(request, id));
         model.addAttribute("reviewCount", directory.reviews(id).size());
         switch (chosen) {
             case "reviews" -> model.addAttribute("reviews", directory.reviews(id));
@@ -149,10 +155,11 @@ public class DoctorsController {
      * stretches, "start1_MONDAY" to "end1_MONDAY" and so on.
      */
     @PostMapping("/{id}/availability")
-    @RequiresRole(StaffRole.FRONT_DESK)
     public String saveAvailability(@PathVariable UUID id,
                                    @RequestParam Map<String, String> form,
+                                   HttpServletRequest request,
                                    RedirectAttributes redirect) {
+        requireAgenda(request, id);
         WeeklyHours hours;
         try {
             hours = read(form);
@@ -204,11 +211,12 @@ public class DoctorsController {
     }
 
     @PostMapping("/{id}/days-off")
-    @RequiresRole(StaffRole.FRONT_DESK)
     public String addDayOff(@PathVariable UUID id,
                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                             @RequestParam(required = false) String reason,
+                            HttpServletRequest request,
                             RedirectAttributes redirect) {
+        requireAgenda(request, id);
         if (date == null) {
             redirect.addFlashAttribute(WebUtils.MSG_ERROR, WebUtils.getMessage("doctors.dayOff.noDate"));
             return back(id, "availability");
@@ -225,11 +233,12 @@ public class DoctorsController {
     }
 
     @PostMapping("/{id}/days-off/{dayOffId}/remove")
-    @RequiresRole(StaffRole.FRONT_DESK)
     public String removeDayOff(@PathVariable UUID id,
                                @PathVariable UUID dayOffId,
+                               HttpServletRequest request,
                                RedirectAttributes redirect) {
-        availability.removeDayOff(dayOffId);
+        requireAgenda(request, id);
+        availability.removeDayOff(dayOffId, id);
         redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("doctors.dayOff.removed"));
         return back(id, "availability");
     }
@@ -262,6 +271,23 @@ public class DoctorsController {
             redirect.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage(successKey));
         } else {
             redirect.addFlashAttribute(WebUtils.MSG_ERROR, problem);
+        }
+    }
+
+    private static boolean mayEditAgenda(HttpServletRequest request, UUID doctorId) {
+        StaffSession session = StaffSession.of(request);
+        return session != null && session.canEditAgendaOf(doctorId);
+    }
+
+    /**
+     * The desk may change anyone's agenda; a doctor only their own. Checked
+     * here rather than with @RequiresRole, because the answer depends on
+     * which doctor is being changed, not only on the role.
+     */
+    private static void requireAgenda(HttpServletRequest request, UUID doctorId) {
+        if (!mayEditAgenda(request, doctorId)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN);
         }
     }
 

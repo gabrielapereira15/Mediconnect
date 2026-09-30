@@ -76,7 +76,7 @@ public class ScheduleController {
             model.addAttribute("board", board.day(day, specialty));
         }
         if (slot != null) {
-            model.addAttribute("panel", board.panel(slot, deskMayAct(request)));
+            model.addAttribute("panel", board.panel(slot, deskMayAct(request), ownDoctor(request)));
         }
         return "schedule/board";
     }
@@ -86,7 +86,7 @@ public class ScheduleController {
                        @RequestParam(required = false) String back,
                        HttpServletRequest request,
                        Model model) {
-        model.addAttribute("panel", board.panel(id, deskMayAct(request)));
+        model.addAttribute("panel", board.panel(id, deskMayAct(request), ownDoctor(request)));
         model.addAttribute("here", Redirects.within(back, "/schedule"));
         return "schedule/slot :: slot";
     }
@@ -106,10 +106,11 @@ public class ScheduleController {
     }
 
     @PostMapping("/slots/{id}/block")
-    @RequiresRole(StaffRole.FRONT_DESK)
     public String block(@PathVariable UUID id,
                         @RequestParam(required = false) String back,
+                        HttpServletRequest request,
                         RedirectAttributes redirect) {
+        requireAgenda(request, id);
         if (board.block(id)) {
             redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("schedule.blocked"));
         } else {
@@ -119,10 +120,11 @@ public class ScheduleController {
     }
 
     @PostMapping("/slots/{id}/unblock")
-    @RequiresRole(StaffRole.FRONT_DESK)
     public String unblock(@PathVariable UUID id,
                           @RequestParam(required = false) String back,
+                          HttpServletRequest request,
                           RedirectAttributes redirect) {
+        requireAgenda(request, id);
         board.unblock(id);
         redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("schedule.unblocked"));
         return "redirect:" + Redirects.within(back, "/schedule");
@@ -136,6 +138,21 @@ public class ScheduleController {
         board.releaseHold(id);
         redirect.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("schedule.released"));
         return "redirect:" + Redirects.within(back, "/schedule");
+    }
+
+    /** The doctor a clinician's login belongs to, or null. */
+    private static UUID ownDoctor(HttpServletRequest request) {
+        StaffSession session = StaffSession.of(request);
+        return session == null ? null : session.getDoctorId();
+    }
+
+    /** Blocking is part of a doctor's agenda: the desk for anyone, a doctor for their own slots. */
+    private void requireAgenda(HttpServletRequest request, UUID slotId) {
+        StaffSession session = StaffSession.of(request);
+        if (session == null || !session.canEditAgendaOf(board.doctorOf(slotId))) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN);
+        }
     }
 
     private static boolean deskMayAct(HttpServletRequest request) {

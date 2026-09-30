@@ -60,6 +60,14 @@ public class StaffUser {
     @Column(nullable = false)
     private Boolean active = true;
 
+    /**
+     * The doctor this login belongs to, for a clinician. It is what lets a
+     * doctor change their own availability and days off, and nobody
+     * else's. Null for the front desk, and for a clinician not yet linked.
+     */
+    @Column(columnDefinition = "UUID")
+    private java.util.UUID doctorId;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private OffsetDateTime dateCreated;
