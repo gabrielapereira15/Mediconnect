@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,6 +8,7 @@
     tools:context=".fragment.EditProfileFragment">
 
     <ScrollView
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/space_lg">
@@ -215,6 +217,110 @@
                     android:text="@string/other"
                     android:textColor="@color/dark_gray" />
             </RadioGroup>
+
+            <!--
+                Health card. Optional, so it sits after the details the clinic
+                cannot book without. Visit day's "Bring your health card" row
+                opens this form with the number focused and the section
+                scrolled to the top, which is what its id is for.
+            -->
+            <LinearLayout
+                android:id="@+id/health_card_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2xl"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:accessibilityHeading="true"
+                    android:text="@string/edit_profile_card_title"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.TitleMedium"
+                    android:textColor="@color/md_on_surface" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:text="@string/edit_profile_card_body"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+                    android:textColor="@color/md_on_surface_variant" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:labelFor="@id/et_health_card_number"
+                    android:text="@string/edit_profile_card_number"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelLarge"
+                    android:textColor="@color/md_on_surface" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_health_card_number"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    app:errorEnabled="true"
+                    app:helperText="@string/edit_profile_card_number_help"
+                    app:helperTextEnabled="true"
+                    app:hintEnabled="false">
+
+                    <!--
+                        Text rather than a number keyboard: Quebec numbers
+                        start with letters, and Ontario's version code ends
+                        with two. No suggestions, so the keyboard does not
+                        learn the number.
+                    -->
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_health_card_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:importantForAutofill="no"
+                        android:imeOptions="actionDone"
+                        android:inputType="textCapCharacters|textNoSuggestions"
+                        android:maxLength="20"
+                        android:maxLines="1"
+                        android:minHeight="@dimen/control_lg" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:labelFor="@id/et_health_card_province"
+                    android:text="@string/edit_profile_card_province"
+                    android:textAppearance="@style/TextAppearance.Mediconnect.LabelLarge"
+                    android:textColor="@color/md_on_surface" />
+
+                <!--
+                    Picked from a list rather than typed, so it is always one
+                    of the thirteen codes the server accepts. Tapping the
+                    field or its arrow opens the same list.
+                -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_health_card_province"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    app:endIconContentDescription="@string/cd_edit_profile_card_province"
+                    app:endIconDrawable="@drawable/ic_chevron_down"
+                    app:endIconMode="custom"
+                    app:hintEnabled="false">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_health_card_province"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:inputType="none"
+                        android:maxLines="1"
+                        android:minHeight="@dimen/control_lg" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
             <!-- Upload Photo ID Button -->
             <Button

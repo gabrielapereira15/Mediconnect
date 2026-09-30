@@ -31,6 +31,11 @@ public class PatientDetailRequest {
      * The provincial health card. In FHIR this becomes the jurisdictional
      * health number CA Baseline and CA Core+ slice Patient.identifier on, so
      * without it a patient is only identifiable inside this clinic.
+     *
+     * Left out, the card already on file is kept; blank, it is removed. It
+     * is not @NotNull because the card is optional, and not a bean
+     * validation pattern because {@code HealthCard} explains a bad one in
+     * words the app can show.
      */
     private String healthCardNumber;
 
