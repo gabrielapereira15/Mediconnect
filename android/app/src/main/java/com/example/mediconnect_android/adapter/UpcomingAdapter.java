@@ -67,6 +67,9 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     /** Either a heading or a visit; the list is built once, in order. */
     private final List<Object> rows = new ArrayList<>();
 
+    /** Whether this list has already asked for notifications for the Profile default. */
+    private boolean askedForDefault;
+
     public UpcomingAdapter(List<Appointment> appointmentList, Context context,
                            ReminderPermissions reminderPermissions) {
         this.context = context;
@@ -108,6 +111,39 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             rows.add(context.getString(R.string.visit_later));
             rows.addAll(later);
         }
+    }
+
+    /**
+     * The Profile default says reminders on, but Android is not letting
+     * notifications through, so no visit that inherits it can have them.
+     *
+     * Nobody asked, because the patient never touched a switch here: they
+     * said so once, in Profile, possibly before Android 13 needed asking at
+     * all. So the list asks, once, rather than showing every switch off
+     * without a word. A yes binds the list again and the switches come on.
+     * A no turns the default off, as it would in Profile, so the question
+     * does not come back every time Visits opens.
+     */
+    private void askForDefault() {
+        if (askedForDefault
+                || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
+                || !ReminderPreference.defaultOn(context)
+                || VisitReminders.notificationsAllowed(context)) {
+            return;
+        }
+        askedForDefault = true;
+        // Posted, so the prompt does not start in the middle of laying out
+        // the list.
+        Background.onMain(() -> reminderPermissions.ensure(
+                this::notifyDataSetChanged,
+                () -> {
+                    // Only a no to notifications. Refusing exact alarms
+                    // leaves the default alone: once they are allowed, the
+                    // switches come on by themselves.
+                    if (!VisitReminders.notificationsAllowed(context)) {
+                        ReminderPreference.setDefaultOn(context, false);
+                    }
+                }));
     }
 
     @Override
@@ -268,10 +304,11 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             String id = appointment.getId();
             boolean on = false;
-            // No prompts from here: binding happens card by card as the
-            // list scrolls, and a dialog per card would stack up. A visit
-            // that cannot be reminded just shows off until the patient
-            // turns it on, which is where the asking happens.
+            // No prompts per card: binding happens card by card as the list
+            // scrolls, and a dialog each would stack up. A visit that
+            // cannot be reminded shows off until the patient turns it on,
+            // which is where the asking happens; the one exception is the
+            // Profile default, asked about once for the whole list.
             if (getReminderState(id) && VisitReminders.canRemind(context)) {
                 // Set again rather than trusted, which also puts back
                 // alarms that were lost and follows a visit that moved.
@@ -280,6 +317,8 @@ public class UpcomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     // Inherited rather than chosen, and now real, so kept.
                     saveReminderState(id, true);
                 }
+            } else if (!hasStoredReminderState(id)) {
+                askForDefault();
             }
             showReminder(appointment, on);
         }

@@ -49,12 +49,13 @@ public final class ReminderPermissions {
      * Runs {@code allowed} once reminders can reach the patient, or
      * {@code refused} if they cannot, having said why.
      *
-     * Either may run straight away, or after the system's prompt.
+     * Either may run straight away, or after the system's prompt. Neither
+     * runs if the screen has already gone: there is nobody to ask, and
+     * that is not the patient saying no.
      */
     public void ensure(Runnable allowed, Runnable refused) {
         Context context = fragment.getContext();
         if (context == null) {
-            refused.run();
             return;
         }
         if (!VisitReminders.notificationsAllowed(context)) {
