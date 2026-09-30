@@ -61,6 +61,9 @@ class BackOfficeAccessIT {
     private com.vegs.mediconnect.datasource.waitlist.WaitlistEntryRepository waitlistRepository;
 
     @Autowired
+    private com.vegs.mediconnect.datasource.notification.NotificationPatientRepository notificationPatientRepository;
+
+    @Autowired
     private com.vegs.mediconnect.datasource.doctor.DoctorDayOffRepository dayOffRepository;
 
     private MockHttpSession signedInAs(String email) {
@@ -462,6 +465,46 @@ class BackOfficeAccessIT {
         org.junit.jupiter.api.Assertions.assertEquals(
                 com.vegs.mediconnect.datasource.waitlist.WaitlistStatus.WAITING, entry.getStatus());
         org.junit.jupiter.api.Assertions.assertTrue(slot.getAvailable(), "nobody else wanted it: back on sale");
+    }
+
+    @Test
+    @DisplayName("messages list what was sent with read counts; a clinician can read but not send")
+    void messagesPage() throws Exception {
+        mockMvc.perform(get("/messages").session(clinician()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Flu shots available")));
+        mockMvc.perform(post("/messages").param("title", "Hi").param("message", "Hello").session(clinician()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("the desk sends to one doctor's patients; links are refused; drafts reach nobody")
+    void deskSendsAMessage() throws Exception {
+        var chase = doctorRepository.findAll().stream()
+                .filter(doctor -> doctor.getLastName().equals("Chase")).findFirst().orElseThrow();
+        long before = notificationPatientRepository.count();
+
+        mockMvc.perform(post("/messages").session(desk())
+                        .param("audience", "doctor").param("doctorId", chase.getId().toString())
+                        .param("title", "Clinic closed Friday afternoon")
+                        .param("message", "Dr. Chase is away from 1pm. Your visit is not affected unless we call you."))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(header().string("Location", "/messages"));
+        org.junit.jupiter.api.Assertions.assertTrue(notificationPatientRepository.count() > before);
+
+        long afterSend = notificationPatientRepository.count();
+        mockMvc.perform(post("/messages").session(desk())
+                        .param("audience", "all").param("title", "Update")
+                        .param("message", "See https://example.com for details"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers
+                        .flash().attributeExists("MSG_ERROR"));
+        mockMvc.perform(post("/messages").session(desk()).param("action", "draft")
+                        .param("title", "Holiday hours").param("message", "To follow."))
+                .andExpect(status().is3xxRedirection());
+        org.junit.jupiter.api.Assertions.assertEquals(afterSend, notificationPatientRepository.count(),
+                "neither a refused message nor a draft reaches anyone");
     }
 
     @Test

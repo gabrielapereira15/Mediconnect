@@ -57,6 +57,25 @@ public class Notification {
     @Column(columnDefinition = "UUID")
     private java.util.UUID appointmentId;
 
+    /**
+     * Who it went to, in words (board B07): "All patients", "Patients of
+     * Dr. Chase", "Patients booked on Thu 1 Oct". Kept as sent, because the
+     * people it reached are fixed at that moment even if the group changes.
+     */
+    @Column
+    private String audience;
+
+    /**
+     * Written but not sent. A draft reaches nobody: it has no delivery
+     * rows, so no patient's inbox can show it.
+     */
+    @Column
+    private Boolean draft;
+
+    /** When it went out; null while it is a draft. */
+    @Column
+    private OffsetDateTime sentAt;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private OffsetDateTime dateCreated;
