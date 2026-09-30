@@ -267,11 +267,18 @@
     <string name="profile_reminders">Visit reminders</string>
     <string name="profile_reminders_body">The day before and 30 minutes before, for visits you switch on.</string>
     <string name="profile_offers">Earlier-slot offers</string>
-    <string name="profile_offers_body_on">You are on %1$d waitlist. Turning this off leaves them all.</string>
-    <string name="profile_offers_body_many">You are on %1$d waitlists. Turning this off leaves them all.</string>
-    <string name="profile_offers_body_off">Ask for these from a visit, or when you are booking.</string>
-    <string name="profile_offers_left">You have left every waitlist.</string>
-    <string name="profile_offers_leave">Leave them</string>
+    <string name="profile_offers_body_on_none">On. Ask for an earlier time from a visit and the clinic will message you if one opens up.</string>
+    <plurals name="profile_offers_body_on">
+        <item quantity="one">On. You are on %1$d waitlist, and the clinic will message you if an earlier time opens up.</item>
+        <item quantity="other">On. You are on %1$d waitlists, and the clinic will message you if an earlier time opens up.</item>
+    </plurals>
+    <plurals name="profile_offers_body_paused">
+        <item quantity="one">Paused. You keep your place on %1$d waitlist, but get no offers until you turn this on.</item>
+        <item quantity="other">Paused. You keep your place on %1$d waitlists, but get no offers until you turn this on.</item>
+    </plurals>
+    <string name="profile_offers_body_off">Off. The clinic will not offer you earlier times.</string>
+    <string name="profile_offers_body_unknown">Checking with the clinic…</string>
+    <string name="profile_offers_failed">The clinic did not take that change. Please try again.</string>
     <string name="profile_row_record">Your health record</string>
     <string name="profile_row_record_sub">Allergies, medications and conditions</string>
     <string name="profile_row_summary">Download my health summary</string>

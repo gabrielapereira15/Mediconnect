@@ -124,6 +124,31 @@ class WaitlistHoldTest {
     }
 
     @Test
+    @DisplayName("a patient who paused offers keeps their place but is not offered the slot")
+    void pausedIsSkipped() {
+        var paused = waiting("paused@example.com", 5);
+        paused.getPatient().setEarlierSlotOffers(false);
+        var next = waiting("next@example.com", 1);
+        var slot = slotInDays(2);
+
+        service.offerFreedSlot(cancelledBy(patient("gone@example.com"), slot));
+
+        assertEquals(WaitlistStatus.WAITING, paused.getStatus(), "still on the list, just not offered");
+        assertEquals(WaitlistStatus.OFFERED, next.getStatus());
+    }
+
+    @Test
+    @DisplayName("the desk cannot hold a slot for someone who paused offers")
+    void deskCannotOfferToPaused() {
+        var paused = waiting("paused@example.com", 5);
+        paused.getPatient().setEarlierSlotOffers(false);
+        var slot = slotInDays(2);
+
+        assertNotNull(service.offerTo(paused, slot), "the desk is told why");
+        assertEquals(WaitlistStatus.WAITING, paused.getStatus());
+    }
+
+    @Test
     @DisplayName("the patient who gave the slot up is not offered it back")
     void neverTheOneWhoCancelled() {
         var canceller = waiting("canceller@example.com", 5);
