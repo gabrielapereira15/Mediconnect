@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The status-bar icon for MediConnect's notifications.
+
+    Android draws a notification's small icon from its alpha channel alone,
+    tinted by the system, so any colour in it is thrown away: the full
+    lockup that used to be here came out as a grey smear of cross and
+    letters. This is a flat white silhouette on transparent instead.
+
+    It is the cross's outer edge filled solid rather than the outlined mark.
+    At the 24dp the status bar allows, the mark's outline would be under 1dp
+    wide and all but vanish; the solid shape keeps the same silhouette and
+    reads at a glance. The path is the outer contour from the design
+    system's SVG, and the groups centre it and scale it to 20dp across,
+    inside the 2dp margin Material asks of system icons.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <group
+        android:translateX="12"
+        android:translateY="12">
+        <group
+            android:scaleX="0.16"
+            android:scaleY="0.16">
+            <group
+                android:translateX="-82.37"
+                android:translateY="-187.5">
+                <path
+                    android:fillColor="#FFFFFF"
+                    android:pathData="M102.36,250.01L62.38,250.01L62.38,207.49L19.85,207.49L19.85,167.51L62.38,167.51L62.38,124.98L102.36,124.98L102.36,167.51L144.88,167.51L144.88,207.49L102.36,207.49L102.36,250.01Z" />
+            </group>
+        </group>
+    </group>
+</vector>

@@ -14,14 +14,17 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <!-- Logo da sua app -->
+        <!--
+            The cross alone: at the size a dialog can spare, the lockup's
+            letters would be a few dp tall and unreadable.
+        -->
         <ImageView
             android:id="@+id/dialog_logo"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginEnd="@dimen/space_md"
-            android:contentDescription="@string/logo"
-            android:src="@drawable/mediconnect" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="@dimen/space_md"
+            android:contentDescription="@string/cd_app_logo"
+            android:src="@drawable/mediconnect_mark" />
 
         <!-- Texto da mensagem -->
         <TextView
