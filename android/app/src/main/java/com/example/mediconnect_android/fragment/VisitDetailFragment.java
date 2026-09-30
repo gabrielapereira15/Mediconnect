@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.client.AppointmentClient;
 import com.example.mediconnect_android.client.AppointmentClientImpl;
+import com.example.mediconnect_android.client.ApiException;
 import com.example.mediconnect_android.client.WaitlistClient;
 import com.example.mediconnect_android.client.WaitlistClientImpl;
 import com.example.mediconnect_android.databinding.FragmentVisitDetailBinding;
@@ -394,8 +395,14 @@ public class VisitDetailFragment extends Fragment {
                         () -> waitlistClient.join(email(), doctorId, before.toString()),
                         joined -> DialogUtils.showMessageDialog(getContext(),
                                 getString(R.string.waitlist_joined)),
-                        error -> DialogUtils.showMessageDialog(getContext(),
-                                getString(R.string.error_no_server))))
+                        // A 409 is "already on this doctor's waitlist", not a
+                        // failure to reach the clinic. Offline also arrives as
+                        // an ApiException, so the status decides.
+                        error -> DialogUtils.showMessageDialog(getContext(), getString(
+                                error instanceof ApiException
+                                        && ((ApiException) error).getStatus() == 409
+                                        ? R.string.waitlist_already_on
+                                        : R.string.error_no_server))))
                 .show();
     }
 

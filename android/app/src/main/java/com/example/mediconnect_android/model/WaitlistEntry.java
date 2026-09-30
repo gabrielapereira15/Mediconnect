@@ -16,6 +16,12 @@ public class WaitlistEntry {
     private String doctorName;
     private String status;
     private String currentAppointmentDate;
+    /**
+     * Whether currentAppointmentDate is a visit they hold, or only the full
+     * day they asked for on the booking screen. Boxed so that a server
+     * which does not send it reads as holding one, which is all it knew.
+     */
+    private Boolean holdsVisit;
     private String availableFrom;
     /** The slot held for them while the offer lasts, as local ISO date-time. */
     private String offeredStartsAt;
@@ -52,6 +58,15 @@ public class WaitlistEntry {
 
     public String getAvailableFrom() {
         return availableFrom;
+    }
+
+    /**
+     * True when an offer would replace a visit they hold; false when they
+     * joined from a full day and hold nothing, so there is no visit to
+     * keep or give up and the offer should not speak of one.
+     */
+    public boolean holdsVisit() {
+        return !Boolean.FALSE.equals(holdsVisit);
     }
 
     /** Still in the queue, whether or not an offer has gone out. */

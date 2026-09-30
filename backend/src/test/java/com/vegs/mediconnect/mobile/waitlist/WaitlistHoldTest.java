@@ -16,6 +16,7 @@ import com.vegs.mediconnect.datasource.waitlist.WaitlistEntry;
 import com.vegs.mediconnect.datasource.waitlist.WaitlistEntryRepository;
 import com.vegs.mediconnect.datasource.waitlist.WaitlistStatus;
 import com.vegs.mediconnect.mobile.appointment.AppointmentApiService;
+import com.vegs.mediconnect.mobile.waitlist.model.WaitlistRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -49,7 +51,8 @@ import static org.mockito.Mockito.when;
  * The rules that decide who gets an earlier appointment are the ones a
  * clinic has to be able to defend to the person who did not, so they are
  * written down here: longest-waiting first, never the patient who gave the
- * slot up, and a hold that is declined or runs out moves on by itself.
+ * slot up, and a hold that is declined or runs out moves on by itself. A
+ * patient who joined from a full day, holding nothing, is offered that day.
  */
 class WaitlistHoldTest {
 
@@ -58,7 +61,9 @@ class WaitlistHoldTest {
 
     private WaitlistEntryRepository waitlistRepository;
     private PatientRepository patientRepository;
+    private DoctorRepository doctorRepository;
     private NotificationRepository notificationRepository;
+    private AppointmentRepository appointmentRepository;
     private WaitlistService service;
 
     @BeforeEach
@@ -69,7 +74,9 @@ class WaitlistHoldTest {
 
         waitlistRepository = mock(WaitlistEntryRepository.class);
         patientRepository = mock(PatientRepository.class);
+        doctorRepository = mock(DoctorRepository.class);
         notificationRepository = mock(NotificationRepository.class);
+        appointmentRepository = mock(AppointmentRepository.class);
 
         // The repository answers from the entries as they are at the time
         // of the call, which is what the service's decisions depend on.
@@ -87,12 +94,16 @@ class WaitlistHoldTest {
         when(waitlistRepository.findById(any())).thenAnswer(invocation -> entries.stream()
                 .filter(entry -> entry.getId().equals(invocation.getArgument(0)))
                 .findFirst());
+        when(waitlistRepository.save(any(WaitlistEntry.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
         when(notificationRepository.save(any(Notification.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
+        when(doctorRepository.findById(doctor.getId())).thenReturn(Optional.of(doctor));
 
         service = new WaitlistService(waitlistRepository, patientRepository,
-                mock(DoctorRepository.class), mock(ScheduleTimeRepository.class),
-                notificationRepository, mock(NotificationPatientRepository.class));
+                doctorRepository, mock(ScheduleTimeRepository.class),
+                notificationRepository, mock(NotificationPatientRepository.class),
+                appointmentRepository);
     }
 
     @Test
@@ -200,7 +211,6 @@ class WaitlistHoldTest {
 
         var current = cancelledBy(entry.getPatient(), slotOn(entry.getCurrentAppointmentDate()));
         current.setCanceled(false);
-        var appointmentRepository = mock(AppointmentRepository.class);
         when(appointmentRepository.findAll()).thenReturn(List.of(current));
         var appointments = mock(AppointmentApiService.class);
         var offers = new WaitlistOfferService(service, waitlistRepository,
@@ -231,6 +241,101 @@ class WaitlistHoldTest {
         verify(appointments, never()).bookHeldSlot(any(), any(), any());
     }
 
+    @Test
+    @DisplayName("taking an offer while holding no visit books it and gives nothing up")
+    void acceptWithNothingHeld() {
+        var entry = waiting("asker@example.com", 3);
+        entry.setHoldsVisit(false);
+        var slot = slotInDays(2);
+        service.offerFreedSlot(cancelledBy(patient("gone@example.com"), slot));
+        when(patientRepository.findByEmail("asker@example.com"))
+                .thenReturn(Optional.of(entry.getPatient()));
+        var appointments = mock(AppointmentApiService.class);
+        var offers = new WaitlistOfferService(service, waitlistRepository,
+                mock(AppointmentRepository.class), appointments);
+
+        offers.accept("asker@example.com", entry.getId());
+
+        assertEquals(WaitlistStatus.BOOKED, entry.getStatus());
+        verify(appointments).bookHeldSlot(eq(slot), eq(entry.getPatient()), isNull());
+        verify(appointments, never()).removeAppointment(any(UUID.class));
+    }
+
+    // ---- joining from a full day ----------------------------------------------
+
+    @Test
+    @DisplayName("joining with the date of a visit they hold records that they hold it")
+    void joinFromAHeldVisit() {
+        var patient = signedIn("holder@example.com");
+        var day = LocalDate.now().plusDays(10);
+        var visit = cancelledBy(patient, slotOn(day));
+        visit.setCanceled(false);
+        when(appointmentRepository.findAllByPatient(patient)).thenReturn(List.of(visit));
+
+        var response = service.join("holder@example.com", joining(day));
+
+        assertTrue(response.isHoldsVisit());
+    }
+
+    @Test
+    @DisplayName("joining from a full day records that they hold no visit on it")
+    void joinFromAFullDay() {
+        var patient = signedIn("asker@example.com");
+        var day = LocalDate.now().plusDays(10);
+        // A visit on that day they have since cancelled, and one with a
+        // different doctor, are neither of them a visit being improved on.
+        var cancelled = cancelledBy(patient, slotOn(day));
+        var otherDoctor = new Doctor();
+        otherDoctor.setId(UUID.randomUUID());
+        var elsewhere = cancelledBy(patient, slotOn(day));
+        elsewhere.setCanceled(false);
+        elsewhere.setDoctor(otherDoctor);
+        when(appointmentRepository.findAllByPatient(patient))
+                .thenReturn(List.of(cancelled, elsewhere));
+
+        var response = service.join("asker@example.com", joining(day));
+
+        assertFalse(response.isHoldsVisit());
+    }
+
+    @Test
+    @DisplayName("a slot freed on a full day goes to the patient who asked for that day")
+    void freedOnTheAskedForDay() {
+        var holder = waiting("holder@example.com", 5);
+        var asker = waiting("asker@example.com", 1);
+        asker.setHoldsVisit(false);
+        var slot = slotOn(asker.getCurrentAppointmentDate());
+
+        service.offerFreedSlot(cancelledBy(patient("gone@example.com"), slot));
+
+        assertEquals(WaitlistStatus.WAITING, holder.getStatus(),
+                "the same day is no improvement on a visit they already hold there");
+        assertEquals(WaitlistStatus.OFFERED, asker.getStatus(),
+                "a slot on the day they asked for is the one they joined for");
+        assertEquals(slot, asker.getOfferedSlot());
+    }
+
+    @Test
+    @DisplayName("booking the day they asked for takes them off the list")
+    void bookingTheAskedForDay() {
+        var holder = waiting("holder@example.com", 5);
+        var asker = waiting("asker@example.com", 1);
+        asker.setHoldsVisit(false);
+        var day = asker.getCurrentAppointmentDate();
+        when(waitlistRepository.findAllByPatientOrderByDateCreatedDesc(holder.getPatient()))
+                .thenReturn(List.of(holder));
+        when(waitlistRepository.findAllByPatientOrderByDateCreatedDesc(asker.getPatient()))
+                .thenReturn(List.of(asker));
+
+        service.onAppointmentBooked(holder.getPatient(), doctor, day);
+        service.onAppointmentBooked(asker.getPatient(), doctor, day);
+
+        assertEquals(WaitlistStatus.WAITING, holder.getStatus(),
+                "a second booking on the day they hold is not the earlier one they wanted");
+        assertEquals(WaitlistStatus.BOOKED, asker.getStatus(),
+                "otherwise they would be offered the day they already have");
+    }
+
     // ---- fixtures -------------------------------------------------------------
 
     private WaitlistEntry waiting(String email, int daysOnTheList) {
@@ -240,9 +345,24 @@ class WaitlistHoldTest {
         entry.setDoctor(doctor);
         entry.setStatus(WaitlistStatus.WAITING);
         entry.setCurrentAppointmentDate(LocalDate.now().plusDays(10));
+        entry.setHoldsVisit(true);
         entry.setDateCreated(OffsetDateTime.now().minusDays(daysOnTheList));
         entries.add(entry);
         return entry;
+    }
+
+    /** A patient the service can find by email, as the signed-in caller. */
+    private Patient signedIn(String email) {
+        var patient = patient(email);
+        when(patientRepository.findByEmail(email)).thenReturn(Optional.of(patient));
+        return patient;
+    }
+
+    private WaitlistRequest joining(LocalDate day) {
+        var request = new WaitlistRequest();
+        request.setDoctorId(doctor.getId());
+        request.setCurrentAppointmentDate(day);
+        return request;
     }
 
     private Patient patient(String email) {

@@ -12,12 +12,14 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.mediconnect_android.R;
+import com.example.mediconnect_android.client.ApiException;
 import com.example.mediconnect_android.client.DoctorClient;
 import com.example.mediconnect_android.client.DoctorClientImpl;
 import com.example.mediconnect_android.client.WaitlistClient;
@@ -468,28 +470,44 @@ public class BookAppointmentFragment extends Fragment {
     }
 
     /**
-     * Joining the waitlist here means "anything before the day I am looking
-     * at", which is the same promise the clinic already keeps for a patient
-     * who holds an appointment they would rather bring forward.
+     * Joining the waitlist here means "the day I am looking at, or sooner".
+     *
+     * Usually that day is full and the patient holds nothing on it, so a
+     * slot freed on that very day is the one they want. The server checks
+     * whether they do hold a visit there, and if so offers only earlier
+     * days, the same promise it keeps for a visit being brought forward.
      */
     private void askToJoinWaitlist() {
         if (selectedDay == null) {
             return;
         }
-        LocalDate before = selectedDay;
+        LocalDate askedFor = selectedDay;
 
         new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.waitlist_sooner_title)
                 .setMessage(getString(R.string.waitlist_sooner_confirm,
-                        doctorName, before.format(DAY_SHORT)))
+                        doctorName, askedFor.format(DAY_SHORT)))
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(R.string.waitlist_join_confirm, (dialog, which) -> Background.run(
-                        () -> waitlistClient.join(email(), doctorId, before.toString()),
+                        () -> waitlistClient.join(email(), doctorId, askedFor.toString()),
                         joined -> DialogUtils.showMessageDialog(getContext(),
                                 getString(R.string.waitlist_joined)),
                         error -> DialogUtils.showMessageDialog(getContext(),
-                                getString(R.string.error_no_server))))
+                                getString(joinErrorMessage(error)))))
                 .show();
+    }
+
+    /**
+     * A 409 means they are already on this doctor's waitlist, which the
+     * server says in so many words; anything else is a failure to get
+     * through. The client throws ApiException offline too, so it is the
+     * status that tells them apart, not the exception's type.
+     */
+    @StringRes
+    private static int joinErrorMessage(Exception error) {
+        return error instanceof ApiException && ((ApiException) error).getStatus() == 409
+                ? R.string.waitlist_already_on
+                : R.string.error_no_server;
     }
 
     private String email() {

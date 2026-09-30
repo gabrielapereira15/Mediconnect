@@ -25,7 +25,10 @@ public interface WaitlistClient {
      * Asks to be told if something earlier opens up with this doctor.
      *
      * The date of the appointment they already hold goes with it, so the
-     * clinic only offers slots that are actually an improvement.
+     * clinic only offers slots that are actually an improvement; from a
+     * full day on the booking screen it is that day, and the server works
+     * out that they hold nothing there and offers it too. Throws
+     * ApiException with status 409 when they are already on this list.
      */
     boolean join(String email, String doctorId, String currentAppointmentDate);
 }

@@ -316,6 +316,13 @@
     <string name="offer_kept">You keep your visit on %1$s. We will tell you if something earlier comes up again.</string>
     <string name="offer_taken">Booked for %1$s. Your visit on %2$s has been given up, and anything you sent the clinic moved with you.</string>
     <string name="offer_ended">That offer has ended, and the time went to the next person on the list. You are still on it.</string>
+    <!-- The same offer to a patient who joined from a full day and holds no
+         visit, so there is nothing to keep or give up: %3$s is the day they
+         asked for, and the slot is on it or sooner. -->
+    <string name="offer_body_open">%1$s · %2$s · on or before %3$s, the day you asked for. We are holding it for you for %4$s.</string>
+    <string name="offer_pass">Not this one</string>
+    <string name="offer_passed">You passed on this one and are still on the waitlist. We will tell you if another time opens up on or before %1$s.</string>
+    <string name="offer_taken_open">Booked for %1$s. It is in your upcoming visits, and you are off the waitlist.</string>
 
     <!-- ==== Messages (P13) ==== -->
     <string name="messages_title">Messages</string>
@@ -368,6 +375,7 @@
     <string name="waitlist_join_body">If someone cancels with %1$s before this appointment, we will send you a notification so you can take the slot.</string>
     <string name="waitlist_join_confirm">Add me</string>
     <string name="waitlist_joined">You are on the waitlist. Watch your notifications.</string>
+    <string name="waitlist_already_on">You are already on the waitlist for this doctor.</string>
 
     <!-- The four bottom-navigation destinations. -->
     <string name="nav_home">Home</string>
@@ -468,7 +476,7 @@
 
     <string name="waitlist_sooner_title">Need something sooner?</string>
     <string name="waitlist_sooner_body">Join the waitlist and we will offer you any earlier slot that frees up.</string>
-    <string name="waitlist_sooner_confirm">If a slot with %1$s opens up before %2$s, we will send you a notification so you can take it.</string>
+    <string name="waitlist_sooner_confirm">If a slot with %1$s opens up on %2$s or sooner, we will send you a notification so you can take it.</string>
 
     <string name="review_title">Review and confirm</string>
     <string name="review_change">Change</string>
