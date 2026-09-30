@@ -25,6 +25,7 @@ import com.example.mediconnect_android.databinding.FragmentVisitDetailBinding;
 import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.util.Background;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.VisitReminders;
 import com.example.mediconnect_android.util.WhenLabel;
 
 import java.time.Duration;
@@ -405,6 +406,9 @@ public class VisitDetailFragment extends Fragment {
      * the first half.
      */
     private void reschedule() {
+        // Held from here because the answer can arrive after this screen
+        // has gone, and the reminders still have to be taken back then.
+        Context app = requireContext().getApplicationContext();
         new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.visit_reschedule)
                 .setMessage(R.string.visit_reschedule_body)
@@ -417,6 +421,9 @@ public class VisitDetailFragment extends Fragment {
                                         getString(R.string.visit_cancel_failed));
                                 return;
                             }
+                            // The new booking gets reminders of its own; the
+                            // old visit's would point at a slot given up.
+                            VisitReminders.cancel(app, appointmentId);
                             BookAppointmentFragment.open(getParentFragmentManager(),
                                     doctorId, doctorName, doctorSpecialty);
                         },
@@ -426,6 +433,7 @@ public class VisitDetailFragment extends Fragment {
     }
 
     private void confirmCancel() {
+        Context app = requireContext().getApplicationContext();
         new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.visit_cancel)
                 .setMessage(R.string.visit_cancel_body)
@@ -438,6 +446,9 @@ public class VisitDetailFragment extends Fragment {
                                         getString(R.string.visit_cancel_failed));
                                 return;
                             }
+                            // Otherwise the patient is still told to come in
+                            // 30 minutes before a visit that is gone.
+                            VisitReminders.cancel(app, appointmentId);
                             getParentFragmentManager().popBackStack();
                         },
                         error -> DialogUtils.showMessageDialog(getContext(),

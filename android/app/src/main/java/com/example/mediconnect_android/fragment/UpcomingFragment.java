@@ -14,6 +14,7 @@ import com.example.mediconnect_android.R;
 import com.example.mediconnect_android.adapter.UpcomingAdapter;
 import com.example.mediconnect_android.databinding.FragmentUpcomingBinding;
 import com.example.mediconnect_android.model.Appointment;
+import com.example.mediconnect_android.util.ReminderPermissions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
@@ -23,6 +24,9 @@ public class UpcomingFragment extends Fragment {
 
     FragmentUpcomingBinding binding;
     UpcomingAdapter adapter;
+
+    /** Registered here, as a field, because the Activity Result API needs it before onCreate. */
+    private final ReminderPermissions reminderPermissions = new ReminderPermissions(this);
 
     /**
      * Takes nothing, and must stay that way. Android rebuilds this segment
@@ -103,7 +107,7 @@ public class UpcomingFragment extends Fragment {
             binding.stateView.showContent();
         }
 
-        adapter = new UpcomingAdapter(filteredAppointments, getContext());
+        adapter = new UpcomingAdapter(filteredAppointments, getContext(), reminderPermissions);
         binding.recyclerView.setAdapter(adapter);
     }
 

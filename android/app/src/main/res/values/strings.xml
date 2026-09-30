@@ -211,6 +211,11 @@
     <string name="reminder_soon_body">Your appointment with %1$s is in 30 minutes.</string>
     <string name="reminder_tomorrow_title">Appointment tomorrow</string>
     <string name="reminder_tomorrow_body">You have an appointment with %1$s tomorrow at %2$s.</string>
+    <!-- Shown when Android is not letting the app post notifications, so a reminder switch cannot come on. -->
+    <string name="reminder_notifications_refused">Reminders need notifications, which are off for Mediconnect. You can turn them on in your phone\'s settings.</string>
+    <!-- The notification channel, as listed in the phone's settings for the app. -->
+    <string name="reminder_channel_name">Visit reminders</string>
+    <string name="reminder_channel_body">The day before and 30 minutes before each visit you switch reminders on for.</string>
 
     <!-- Accessibility -->
     <string name="cd_app_logo">MediConnect</string>

@@ -26,9 +26,11 @@ import com.example.mediconnect_android.databinding.ViewDetailRowBinding;
 import com.example.mediconnect_android.model.WaitlistEntry;
 import com.example.mediconnect_android.util.Background;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.ReminderPermissions;
 import com.example.mediconnect_android.util.ReminderPreference;
 import com.example.mediconnect_android.util.SessionManager;
 import com.example.mediconnect_android.util.ThemePreference;
+import com.example.mediconnect_android.util.VisitReminders;
 import com.example.mediconnect_android.util.WhenLabel;
 
 import java.util.ArrayList;
@@ -49,6 +51,9 @@ public class ProfileFragment extends Fragment {
 
     /** The queues this patient is in, which the offers switch reflects. */
     private final List<WaitlistEntry> waitlists = new ArrayList<>();
+
+    /** Registered here, as a field, because the Activity Result API needs it before onCreate. */
+    private final ReminderPermissions reminderPermissions = new ReminderPermissions(this);
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -200,16 +205,41 @@ public class ProfileFragment extends Fragment {
         binding.switchReminders.switchIcon.setImageResource(R.drawable.ic_bell);
         binding.switchReminders.switchTitle.setText(R.string.profile_reminders);
         binding.switchReminders.switchSub.setText(R.string.profile_reminders_body);
-        boolean remindersOn = ReminderPreference.defaultOn(requireContext());
-        binding.switchReminders.switchToggle.setChecked(remindersOn);
-        describeSwitch(binding.switchReminders, R.string.profile_reminders, remindersOn);
+        // On only if a visit inheriting it would really be reminded. With
+        // notifications blocked since, it would promise what it cannot do.
+        boolean remindersOn = ReminderPreference.defaultOn(requireContext())
+                && VisitReminders.canRemind(requireContext());
+        showReminderDefault(remindersOn);
 
         binding.switchReminders.switchRow.setOnClickListener(v -> {
-            boolean on = !binding.switchReminders.switchToggle.isChecked();
-            binding.switchReminders.switchToggle.setChecked(on);
-            describeSwitch(binding.switchReminders, R.string.profile_reminders, on);
-            ReminderPreference.setDefaultOn(requireContext(), on);
+            Context app = requireContext().getApplicationContext();
+            if (binding.switchReminders.switchToggle.isChecked()) {
+                ReminderPreference.setDefaultOn(app, false);
+                showReminderDefault(false);
+                return;
+            }
+            // This turns reminders on for every visit that inherits it, so
+            // it asks for what they need now, while the patient is thinking
+            // about reminders, and stays off if the answer is no.
+            reminderPermissions.ensure(
+                    () -> {
+                        ReminderPreference.setDefaultOn(app, true);
+                        showReminderDefault(true);
+                    },
+                    () -> {
+                        ReminderPreference.setDefaultOn(app, false);
+                        showReminderDefault(false);
+                    });
         });
+    }
+
+    /** The answer can come back after the screen has gone, hence the check. */
+    private void showReminderDefault(boolean on) {
+        if (binding == null) {
+            return;
+        }
+        binding.switchReminders.switchToggle.setChecked(on);
+        describeSwitch(binding.switchReminders, R.string.profile_reminders, on);
     }
 
     /**
