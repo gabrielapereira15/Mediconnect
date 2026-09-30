@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!--
+    A new doctor (board B06's "Add doctor"). Name and specialty first;
+    their hours are set on the Availability tab straight afterwards.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{doctors.add}]]</title>
+</head>
+<body>
+<div layout:fragment="content" style="display: flex; flex-direction: column; gap: 20px">
+    <div class="mc-page-head">
+        <div>
+            <h1 class="mc-page-title">[[#{doctors.add}]]</h1>
+            <p class="mc-page-sub">[[#{doctors.new.sub}]]</p>
+        </div>
+        <a th:href="@{/doctors}" class="mc-btn mc-btn-ghost mc-btn-md">[[#{doctors.new.back}]]</a>
+    </div>
+
+    <form th:action="@{/doctors/new}" method="post" class="mc-panel"
+          style="max-width: 640px; padding: 24px; display: flex; flex-direction: column; gap: 18px">
+        <div style="display: flex; gap: 12px">
+            <div class="mc-field" style="flex: 1">
+                <label class="mc-label" for="firstName">[[#{doctors.firstName}]]</label>
+                <input class="mc-input" id="firstName" name="firstName" required maxlength="80" autocomplete="off" />
+            </div>
+            <div class="mc-field" style="flex: 1">
+                <label class="mc-label" for="lastName">[[#{doctors.lastName}]]</label>
+                <input class="mc-input" id="lastName" name="lastName" required maxlength="80" autocomplete="off" />
+            </div>
+        </div>
+        <div style="display: flex; gap: 12px">
+            <div class="mc-field" style="flex: 2">
+                <label class="mc-label" for="specialty">[[#{doctors.specialty}]]</label>
+                <input class="mc-input" id="specialty" name="specialty" required maxlength="80" />
+            </div>
+            <div class="mc-field" style="flex: 1">
+                <label class="mc-label" for="experienceInYears">[[#{doctors.years}]]</label>
+                <input class="mc-input" id="experienceInYears" name="experienceInYears" inputmode="numeric"
+                       pattern="\d{1,2}" maxlength="2" />
+            </div>
+        </div>
+        <div class="mc-field">
+            <label class="mc-label" for="about">[[#{doctors.about}]]</label>
+            <textarea class="mc-input" id="about" name="about" maxlength="1000"></textarea>
+            <span class="mc-help">[[#{doctors.about.help}]]</span>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 8px">
+            <a th:href="@{/doctors}" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">[[#{appointments.new.cancel}]]</a>
+            <button type="submit" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">[[#{doctors.new.save}]]</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -56,6 +56,18 @@ public class Doctor {
     @Column
     private String profilePhotoExtension;
 
+    /**
+     * How long one appointment is, in minutes (board B06). Null on
+     * doctors created before availability could be set; read through
+     * {@link #slotLength()}.
+     */
+    @Column
+    private Integer slotMinutes;
+
+    /** How many weeks ahead patients may book (board B06). */
+    @Column
+    private Integer bookingWeeks;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private OffsetDateTime dateCreated;
@@ -63,6 +75,16 @@ public class Doctor {
     @LastModifiedDate
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
+
+    /** The appointment length, with the clinic's usual half hour as the default. */
+    public int slotLength() {
+        return slotMinutes == null ? 30 : slotMinutes;
+    }
+
+    /** The booking horizon, three weeks unless the doctor's is set. */
+    public int horizonWeeks() {
+        return bookingWeeks == null ? 3 : bookingWeeks;
+    }
 
     public String getFullName() {
         if (isNull(lastName)) {

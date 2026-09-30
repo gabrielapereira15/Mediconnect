@@ -299,6 +299,27 @@ details.mc-disclosure[open] > summary {
     pointer-events: none;
 }
 
+/* ---- Doctors (B06) ------------------------------------------------------ */
+
+button.mc-panel {
+    border: 1px solid var(--line);
+}
+
+button.mc-panel:hover {
+    border-color: var(--line-strong);
+}
+
+button.mc-panel.is-selected,
+button.mc-panel:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: -1px;
+}
+
+fieldset[disabled] .mc-input {
+    background: var(--surface-sunken);
+    color: var(--ink-muted);
+}
+
 /* ---- Schedule (B02) ----------------------------------------------------- */
 
 /* Every cell opens its slot, so every cell is a real button. */

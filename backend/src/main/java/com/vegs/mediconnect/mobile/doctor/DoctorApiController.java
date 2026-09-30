@@ -36,6 +36,9 @@ public class DoctorApiController {
     @GetMapping("/photo/{id}")
     public ResponseEntity<Resource> getProfilePhoto(@PathVariable(name = "id") final UUID id) {
         Doctor doctor = doctorApiService.getDoctor(id);
+        if (doctor.getProfilePhoto() == null || doctor.getProfilePhoto().length == 0) {
+            return ResponseEntity.notFound().build();
+        }
 
         ByteArrayResource resource = new ByteArrayResource(doctor.getProfilePhoto());
         return ResponseEntity.ok()

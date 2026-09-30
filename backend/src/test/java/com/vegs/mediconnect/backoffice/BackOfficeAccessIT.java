@@ -54,6 +54,12 @@ class BackOfficeAccessIT {
     @Autowired
     private com.vegs.mediconnect.datasource.patient.PatientRepository patientRepository;
 
+    @Autowired
+    private com.vegs.mediconnect.datasource.doctor.DoctorRepository doctorRepository;
+
+    @Autowired
+    private com.vegs.mediconnect.datasource.doctor.DoctorDayOffRepository dayOffRepository;
+
     private MockHttpSession signedInAs(String email) {
         var request = new MockHttpServletRequest();
         StaffSession.begin(request, staffUsers.findByEmailIgnoreCase(email).orElseThrow());
@@ -271,6 +277,104 @@ class BackOfficeAccessIT {
                 .andExpect(status().is3xxRedirection());
         org.junit.jupiter.api.Assertions.assertTrue(
                 scheduleTimeRepository.findById(slot.getId()).orElseThrow().getAvailable());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("saving a doctor's week rewrites the diary ahead and keeps every booking")
+    void saveAvailability() throws Exception {
+        var doctor = doctorRepository.findAll().stream()
+                .filter(candidate -> candidate.getLastName().equals("Cameron"))
+                .findFirst().orElseThrow();
+        var from = java.time.LocalDate.now().plusDays(1);
+        var to = java.time.LocalDate.now().plusWeeks(3);
+        var bookedBefore = appointmentRepository.findAllBetween(from, to).stream()
+                .filter(appointment -> appointment.getDoctor().getId().equals(doctor.getId()))
+                .filter(appointment -> !Boolean.TRUE.equals(appointment.getCanceled()))
+                .map(appointment -> appointment.getScheduleTime().getId())
+                .toList();
+
+        mockMvc.perform(post("/doctors/" + doctor.getId() + "/availability").session(clinician())
+                        .param("slotMinutes", "30").param("weeks", "3"))
+                .andExpect(status().isForbidden());
+
+        // Mondays only, mornings only.
+        mockMvc.perform(post("/doctors/" + doctor.getId() + "/availability").session(desk())
+                        .param("slotMinutes", "30").param("weeks", "3")
+                        .param("on_MONDAY", "on").param("start1_MONDAY", "09:00").param("end1_MONDAY", "11:00"))
+                .andExpect(status().is3xxRedirection());
+
+        var slots = scheduleTimeRepository.findAllBetween(from, to).stream()
+                .filter(slot -> slot.getSchedule().getDoctor().getId().equals(doctor.getId()))
+                .toList();
+        for (var slot : slots) {
+            boolean usual = slot.getSchedule().getDate().getDayOfWeek() == java.time.DayOfWeek.MONDAY
+                    && slot.getTime().isBefore(java.time.LocalTime.of(11, 0));
+            boolean booked = bookedBefore.contains(slot.getId());
+            org.junit.jupiter.api.Assertions.assertTrue(usual || booked || Boolean.TRUE.equals(slot.getBlocked())
+                            || !Boolean.TRUE.equals(slot.getAvailable()),
+                    "a bookable slot outside the new hours: " + slot.getDateTime());
+        }
+        for (var slotId : bookedBefore) {
+            org.junit.jupiter.api.Assertions.assertTrue(scheduleTimeRepository.existsById(slotId),
+                    "a booked slot was removed");
+        }
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("a day off blocks the free slots, and taking it back reopens them")
+    void dayOff() throws Exception {
+        var doctor = doctorRepository.findAll().stream()
+                .filter(candidate -> candidate.getLastName().equals("Taub"))
+                .findFirst().orElseThrow();
+        var date = java.time.LocalDate.now().plusDays(1);
+        while (date.getDayOfWeek().getValue() > 5) {
+            date = date.plusDays(1);
+        }
+        final var day = date;
+
+        mockMvc.perform(post("/doctors/" + doctor.getId() + "/days-off").session(desk())
+                        .param("date", day.toString()).param("reason", "Conference"))
+                .andExpect(status().is3xxRedirection());
+        java.util.function.Supplier<java.util.List<com.vegs.mediconnect.datasource.schedule.ScheduleTime>> slotsThatDay =
+                () -> scheduleTimeRepository.findAllBetween(day, day).stream()
+                        .filter(slot -> slot.getSchedule().getDoctor().getId().equals(doctor.getId()))
+                        .toList();
+        org.junit.jupiter.api.Assertions.assertTrue(slotsThatDay.get().stream()
+                .noneMatch(slot -> Boolean.TRUE.equals(slot.getAvailable())), "nothing bookable on a day off");
+
+        var off = dayOffRepository.findAllByDoctorOrderByDateAsc(doctor).getFirst();
+        mockMvc.perform(post("/doctors/" + doctor.getId() + "/days-off/" + off.getId() + "/remove").session(desk()))
+                .andExpect(status().is3xxRedirection());
+        org.junit.jupiter.api.Assertions.assertTrue(slotsThatDay.get().stream()
+                .anyMatch(slot -> Boolean.TRUE.equals(slot.getAvailable())));
+    }
+
+    @Test
+    @DisplayName("a photo is checked by what the file is, not what it claims")
+    void photoMustBeAnImage() throws Exception {
+        var doctor = doctorRepository.findAll().getFirst();
+        var fake = new org.springframework.mock.web.MockMultipartFile("photo", "x.jpg", "image/jpeg",
+                "<svg onload=alert(1)>".getBytes());
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .multipart("/doctors/" + doctor.getId() + "/photo").file(fake).session(desk()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers
+                        .flash().attribute("MSG_ERROR", "Use a JPEG, PNG or WebP photo."));
+    }
+
+    @Test
+    @DisplayName("the doctors page and each panel tab render")
+    void doctorsPage() throws Exception {
+        var doctor = doctorRepository.findAll().getFirst();
+        mockMvc.perform(get("/doctors").session(clinician()))
+                .andExpect(status().isOk());
+        for (String tab : new String[]{"profile", "availability", "reviews"}) {
+            mockMvc.perform(get("/doctors/" + doctor.getId() + "/panel").param("tab", tab).session(desk()))
+                    .andExpect(status().isOk());
+        }
     }
 
     @Test

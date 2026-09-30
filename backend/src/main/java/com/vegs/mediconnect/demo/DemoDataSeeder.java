@@ -80,6 +80,7 @@ public class DemoDataSeeder implements ApplicationRunner {
     private final ReviewRepository reviewRepository;
     private final com.vegs.mediconnect.datasource.health.HealthEntryRepository healthEntryRepository;
     private final StaffUserRepository staffUserRepository;
+    private final com.vegs.mediconnect.datasource.doctor.DoctorHoursRepository doctorHoursRepository;
     private final com.vegs.mediconnect.datasource.previsit.PreVisitFormRepository preVisitFormRepository;
     private final com.vegs.mediconnect.datasource.waitlist.WaitlistEntryRepository waitlistEntryRepository;
     private final com.vegs.mediconnect.mobile.waitlist.WaitlistService waitlistService;
@@ -103,6 +104,7 @@ public class DemoDataSeeder implements ApplicationRunner {
         List<Doctor> doctors = seedDoctors();
         List<Patient> patients = seedPatients();
         List<ScheduleTime> slots = seedSchedules(doctors);
+        seedWeeklyHours(doctors);
         List<Appointment> appointments = seedAppointments(doctors, patients, slots);
         seedForms(appointments);
         seedReviews(doctors, appointments);
@@ -207,6 +209,38 @@ public class DemoDataSeeder implements ApplicationRunner {
         patient.setHealthCardProvince("ON");
         patient.setAddress(address);
         return patient;
+    }
+
+    /**
+     * The usual week behind the seeded slots — weekdays, 9:00–12:00 and
+     * 13:00–16:00 in half hours, three weeks ahead — so the back office's
+     * Availability tab shows it rather than working it out.
+     */
+    private void seedWeeklyHours(List<Doctor> doctors) {
+        var rows = new ArrayList<com.vegs.mediconnect.datasource.doctor.DoctorHours>();
+        for (Doctor doctor : doctors) {
+            doctor.setSlotMinutes(30);
+            doctor.setBookingWeeks(3);
+            for (java.time.DayOfWeek day : java.time.DayOfWeek.values()) {
+                if (day.getValue() > 5) {
+                    continue;
+                }
+                rows.add(hours(doctor, day, LocalTime.of(9, 0), LocalTime.of(12, 0)));
+                rows.add(hours(doctor, day, LocalTime.of(13, 0), LocalTime.of(16, 0)));
+            }
+        }
+        doctorRepository.saveAll(doctors);
+        doctorHoursRepository.saveAll(rows);
+    }
+
+    private com.vegs.mediconnect.datasource.doctor.DoctorHours hours(Doctor doctor, java.time.DayOfWeek day,
+                                                                       LocalTime start, LocalTime end) {
+        var row = new com.vegs.mediconnect.datasource.doctor.DoctorHours();
+        row.setDoctor(doctor);
+        row.setDayOfWeek(day);
+        row.setStartTime(start);
+        row.setEndTime(end);
+        return row;
     }
 
     /** Gives every doctor a slot grid over the next few weeks, weekdays only. */

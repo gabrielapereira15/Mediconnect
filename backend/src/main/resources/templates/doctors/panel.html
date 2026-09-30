@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<!--
+    One doctor, in the Doctors side panel (board B06): Profile,
+    Availability and Reviews, each loaded into the panel with htmx.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="panel" class="mc-sheetpanel">
+    <div class="mc-sheetpanel-head" style="align-items: center">
+        <div style="display: flex; gap: 16px; align-items: center">
+            <img th:if="${profile.hasPhoto}" th:src="@{/api/mobile/doctors/photo/{id}(id=${profile.id})}" alt=""
+                 class="mc-avatar mc-avatar-xl" style="object-fit: cover" />
+            <span th:unless="${profile.hasPhoto}" class="mc-avatar mc-avatar-xl" th:classappend="${profile.avatarClass}"
+                  th:text="${profile.initials}" aria-hidden="true">JW</span>
+            <div>
+                <h2 class="title-lg" style="margin: 0" th:text="${profile.name}">Dr. James Wilson</h2>
+                <span class="body-sm mc-muted"
+                      th:text="${profile.specialty} + (${profile.experienceInYears} != null ? ' · ' + ${profile.experienceInYears} + ' years' : '')">Paediatrician · 16 years</span>
+            </div>
+        </div>
+        <a class="mc-icon-btn mc-icon-btn-sm" th:href="@{/doctors}" th:aria-label="#{appointments.panel.close}">
+            <i class="mc-i mc-i-x" aria-hidden="true"></i></a>
+    </div>
+
+    <nav class="mc-tabs" style="gap: 20px; padding: 0 24px" th:aria-label="${profile.name}">
+        <a th:each="t : ${ {'profile', 'availability', 'reviews'} }" class="mc-tab"
+           th:classappend="${t == tab} ? 'is-active'"
+           th:attr="aria-current=${t == tab} ? 'page' : null,hx-get=@{/doctors/{id}/panel(id=${profile.id},tab=${t})}"
+           hx-target="#doctor-panel" hx-swap="innerHTML"
+           th:href="@{/doctors(selected=${profile.id},tab=${t})}">
+            <span th:text="#{doctors.tab.__${t}__}">Profile</span>
+            <span th:if="${t == 'reviews'}" class="mc-count" th:text="${reviewCount}">32</span>
+        </a>
+    </nav>
+
+    <!-- ==== Profile ======================================================== -->
+    <th:block th:if="${tab == 'profile'}">
+        <form th:action="@{/doctors/{id}/profile(id=${profile.id})}" method="post"
+              style="display: flex; flex-direction: column; min-height: 0; flex: 1">
+            <fieldset class="mc-sheetpanel-body" th:disabled="${!canEdit}" style="border: 0; margin: 0">
+                <div style="display: flex; gap: 12px">
+                    <div class="mc-field" style="flex: 1">
+                        <label class="mc-label" for="firstName">[[#{doctors.firstName}]]</label>
+                        <input class="mc-input mc-input-md" id="firstName" name="firstName" required maxlength="80"
+                               th:value="${profile.firstName}" />
+                    </div>
+                    <div class="mc-field" style="flex: 1">
+                        <label class="mc-label" for="lastName">[[#{doctors.lastName}]]</label>
+                        <input class="mc-input mc-input-md" id="lastName" name="lastName" required maxlength="80"
+                               th:value="${profile.lastName}" />
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px">
+                    <div class="mc-field" style="flex: 2">
+                        <label class="mc-label" for="specialty">[[#{doctors.specialty}]]</label>
+                        <input class="mc-input mc-input-md" id="specialty" name="specialty" required maxlength="80"
+                               th:value="${profile.specialty}" />
+                    </div>
+                    <div class="mc-field" style="flex: 1">
+                        <label class="mc-label" for="experienceInYears">[[#{doctors.years}]]</label>
+                        <input class="mc-input mc-input-md" id="experienceInYears" name="experienceInYears"
+                               inputmode="numeric" pattern="\d{1,2}" maxlength="2"
+                               th:value="${profile.experienceInYears}" />
+                    </div>
+                </div>
+                <div class="mc-field">
+                    <label class="mc-label" for="about">[[#{doctors.about}]]</label>
+                    <textarea class="mc-input" id="about" name="about" maxlength="1000" style="min-height: 120px"
+                              th:text="${profile.about}"></textarea>
+                    <span class="mc-help">[[#{doctors.about.help}]]</span>
+                </div>
+            </fieldset>
+            <div class="mc-sheetpanel-foot" th:if="${canEdit}">
+                <button type="submit" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">[[#{doctors.profile.save}]]</button>
+            </div>
+        </form>
+        <form th:if="${canEdit}" th:action="@{/doctors/{id}/photo(id=${profile.id})}" method="post"
+              enctype="multipart/form-data" hx-boost="false"
+              style="padding: 0 24px 20px; display: flex; flex-direction: column; gap: 8px">
+            <label class="mc-label" for="photo">[[#{doctors.photo}]]</label>
+            <div style="display: flex; gap: 8px; align-items: center">
+                <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" required class="body-sm" />
+                <button type="submit" class="mc-btn mc-btn-outline mc-btn-sm mc-btn-square">
+                    <i class="mc-i mc-i-camera" aria-hidden="true"></i>[[#{doctors.photo.upload}]]</button>
+            </div>
+            <span class="mc-help">[[#{doctors.photo.help}]]</span>
+        </form>
+    </th:block>
+
+    <!-- ==== Availability =================================================== -->
+    <th:block th:if="${tab == 'availability'}">
+        <form th:action="@{/doctors/{id}/availability(id=${profile.id})}" method="post"
+              style="display: flex; flex-direction: column; min-height: 0; flex: 1">
+            <fieldset class="mc-sheetpanel-body" th:disabled="${!canEdit}" style="border: 0; margin: 0">
+                <div th:if="${editor.inferred}" class="mc-banner">
+                    <i class="mc-i mc-i-info" aria-hidden="true"></i><div>[[#{doctors.hours.inferred}]]</div>
+                </div>
+
+                <div style="display: flex; gap: 12px">
+                    <div class="mc-field" style="flex: 1">
+                        <label class="mc-label" for="slotMinutes">[[#{doctors.slotLength}]]</label>
+                        <select class="mc-input mc-input-md" id="slotMinutes" name="slotMinutes">
+                            <option th:each="m : ${slotLengths}" th:value="${m}" th:selected="${m == editor.hours.slotMinutes}"
+                                    th:text="#{doctors.minutes(${m})}">30 minutes</option>
+                        </select>
+                    </div>
+                    <div class="mc-field" style="flex: 1">
+                        <label class="mc-label" for="weeks">[[#{doctors.horizon}]]</label>
+                        <select class="mc-input mc-input-md" id="weeks" name="weeks">
+                            <option th:each="w : ${horizons}" th:value="${w}" th:selected="${w == editor.hours.weeks}"
+                                    th:text="#{doctors.weeksAhead(${w})}">3 weeks ahead</option>
+                        </select>
+                    </div>
+                </div>
+
+                <span class="mc-overline">[[#{doctors.weeklyHours}]]</span>
+                <div style="display: flex; flex-direction: column; gap: 8px">
+                    <div th:each="d : ${days}" style="display: flex; align-items: center; gap: 10px">
+                        <input type="checkbox" class="mc-switch" role="switch" value="on"
+                               th:name="'on_' + ${d.key}" th:id="'on_' + ${d.key}" th:checked="${d.on}"
+                               th:aria-label="${d.fullName}" />
+                        <label class="label" style="width: 36px" th:for="'on_' + ${d.key}" th:text="${d.shortName}">Mon</label>
+                        <input type="time" class="mc-input mc-input-md" style="width: auto; flex: 1; padding: 0 8px"
+                               th:name="'start1_' + ${d.key}" th:value="${d.start1}" th:aria-label="#{doctors.hours.from(${d.fullName})}" />
+                        <input type="time" class="mc-input mc-input-md" style="width: auto; flex: 1; padding: 0 8px"
+                               th:name="'end1_' + ${d.key}" th:value="${d.end1}" th:aria-label="#{doctors.hours.to(${d.fullName})}" />
+                        <input type="time" class="mc-input mc-input-md" style="width: auto; flex: 1; padding: 0 8px"
+                               th:name="'start2_' + ${d.key}" th:value="${d.start2}" th:aria-label="#{doctors.hours.from2(${d.fullName})}" />
+                        <input type="time" class="mc-input mc-input-md" style="width: auto; flex: 1; padding: 0 8px"
+                               th:name="'end2_' + ${d.key}" th:value="${d.end2}" th:aria-label="#{doctors.hours.to2(${d.fullName})}" />
+                    </div>
+                </div>
+                <div class="mc-banner" style="background: var(--surface-sunken); color: var(--ink-muted)">
+                    <i class="mc-i mc-i-info" aria-hidden="true"></i><div>[[#{doctors.hours.help}]]</div>
+                </div>
+            </fieldset>
+            <div class="mc-sheetpanel-foot" th:if="${canEdit}">
+                <div class="mc-btnrow">
+                    <a class="mc-btn mc-btn-outline mc-btn-md mc-btn-square"
+                       th:href="@{/doctors(selected=${profile.id},tab=availability)}">[[#{doctors.discard}]]</a>
+                    <button type="submit" class="mc-btn mc-btn-primary mc-btn-md mc-btn-square">[[#{doctors.availability.save}]]</button>
+                </div>
+            </div>
+        </form>
+
+        <section style="padding: 16px 24px 20px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px">
+            <span class="mc-overline">[[#{doctors.daysOff}]]</span>
+            <div th:each="off : ${editor.daysOff}" style="display: flex; align-items: center; gap: 10px">
+                <div style="flex: 1">
+                    <b th:text="${#temporals.format(off.date, 'EEE d MMM')}">Fri 9 Oct</b>
+                    <span class="caption mc-muted" th:if="${off.reason != null}" th:text="' · ' + ${off.reason}">Conference</span>
+                    <div th:if="${off.toRebook > 0}" class="caption" style="margin-top: 2px">
+                        <span class="mc-badge mc-badge-warning">[[#{doctors.dayOff.actionNeeded}]]</span>
+                        <a class="mc-link" th:href="@{/appointments(doctor=${profile.id},tab=upcoming)}"
+                           th:text="#{doctors.dayOff.toRebook(${off.toRebook})}">3 patients to rebook</a>
+                    </div>
+                </div>
+                <form th:if="${canEdit}" th:action="@{/doctors/{id}/days-off/{off}/remove(id=${profile.id},off=${off.id})}" method="post">
+                    <button type="submit" class="mc-btn mc-btn-ghost mc-btn-sm">[[#{doctors.dayOff.remove}]]</button>
+                </form>
+            </div>
+            <p th:if="${#lists.isEmpty(editor.daysOff)}" class="body-sm mc-muted" style="margin: 0">[[#{doctors.dayOff.none}]]</p>
+
+            <form th:if="${canEdit}" th:action="@{/doctors/{id}/days-off(id=${profile.id})}" method="post"
+                  style="display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap">
+                <div class="mc-field">
+                    <label class="mc-label" for="offDate">[[#{doctors.dayOff.date}]]</label>
+                    <input class="mc-input mc-input-md" type="date" id="offDate" name="date" required
+                           th:min="${today}" style="padding: 0 8px" />
+                </div>
+                <div class="mc-field" style="flex: 1; min-width: 140px">
+                    <label class="mc-label" for="offReason">[[#{doctors.dayOff.reason}]] <span class="mc-label-opt">[[#{appointments.new.optional}]]</span></label>
+                    <input class="mc-input mc-input-md" id="offReason" name="reason" maxlength="120" />
+                </div>
+                <button type="submit" class="mc-btn mc-btn-outline mc-btn-md mc-btn-square">
+                    <i class="mc-i mc-i-plus" aria-hidden="true"></i>[[#{doctors.dayOff.add}]]</button>
+            </form>
+        </section>
+    </th:block>
+
+    <!-- ==== Reviews ======================================================== -->
+    <div th:if="${tab == 'reviews'}" class="mc-sheetpanel-body">
+        <p th:if="${#lists.isEmpty(reviews)}" class="body-sm mc-muted" style="margin: 0">[[#{doctors.reviews.none}]]</p>
+        <div th:each="r : ${reviews}" style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid var(--line)">
+            <div style="display: flex; justify-content: space-between; align-items: center">
+                <span style="color: var(--sun); letter-spacing: 2px" th:text="${r.stars}"
+                      th:aria-label="#{doctors.reviews.stars(${r.score})}">★★★★☆</span>
+                <span class="caption mc-subtle" th:text="${r.when}">Fri 18 Sep</span>
+            </div>
+            <p class="body-sm" style="margin: 0" th:if="${r.text != null}" th:text="${r.text}">Very kind.</p>
+            <span class="caption mc-muted" th:text="${r.by}">Gabriela P.</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>
