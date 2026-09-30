@@ -50,10 +50,8 @@ public class FormsFragment extends Fragment {
 
         // Sending a form pops back here, and the list below is fetched
         // afresh anyway, so there is nothing to do with the result. It is
-        // still taken here: left unheard, the fragment manager holds it for
-        // the next screen that listens — the visit screen, for whichever
-        // visit is opened next — which would then mark that visit's form as
-        // sent.
+        // still taken here so it does not sit in the fragment manager
+        // waiting for the next screen that listens.
         getParentFragmentManager().setFragmentResultListener(
                 PreAppointmentFormFragment.RESULT_SENT, getViewLifecycleOwner(),
                 (key, result) -> { /* the reload below already shows it */ });

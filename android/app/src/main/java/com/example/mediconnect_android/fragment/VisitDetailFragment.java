@@ -120,6 +120,14 @@ public class VisitDetailFragment extends Fragment {
         getParentFragmentManager().setFragmentResultListener(
                 PreAppointmentFormFragment.RESULT_SENT, getViewLifecycleOwner(),
                 (key, result) -> {
+                    // A form sent from somewhere that did not listen (Home,
+                    // the Visits list) leaves its result waiting for the
+                    // next listener, which may be the screen for a
+                    // different visit. Only this visit's own form counts.
+                    if (appointmentId == null || !appointmentId.equals(
+                            result.getString(PreAppointmentFormFragment.RESULT_APPOINTMENT_ID))) {
+                        return;
+                    }
                     formSubmittedAt = result.getString(
                             PreAppointmentFormFragment.RESULT_SUBMITTED_AT);
                     bindChecklist();

@@ -54,6 +54,8 @@ public class PreAppointmentFormFragment extends Fragment {
     /** Reported to whatever opened the form, so it can stop saying "pending". */
     public static final String RESULT_SENT = "preVisitFormSent";
     public static final String RESULT_SUBMITTED_AT = "submittedAt";
+    /** Which visit the sent form was for, so only that visit's screen takes it. */
+    public static final String RESULT_APPOINTMENT_ID = "appointmentId";
 
     private static final String YES = "YES";
     private static final String NO = "NO";
@@ -400,6 +402,7 @@ public class PreAppointmentFormFragment extends Fragment {
                     // pending" from the arguments it was opened with.
                     Bundle result = new Bundle();
                     result.putString(RESULT_SUBMITTED_AT, saved.getSubmittedAt());
+                    result.putString(RESULT_APPOINTMENT_ID, appointmentId);
                     getParentFragmentManager().setFragmentResult(RESULT_SENT, result);
                     DialogUtils.showMessageDialog(getContext(), getString(R.string.form_sent));
                     getParentFragmentManager().popBackStack();
