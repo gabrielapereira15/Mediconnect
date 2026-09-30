@@ -91,4 +91,29 @@ public class WaitlistClientImpl implements WaitlistClient {
                 ? "You are already on the waitlist for this doctor."
                 : "Could not join the waitlist");
     }
+
+    @Override
+    public Boolean offersOn(String email) {
+        String url = ApiConfig.url("/api/mobile/waitlist/") + email + "/offers";
+        return onFrom(OkHttpClientHelper.get(url), "reading");
+    }
+
+    @Override
+    public Boolean setOffersOn(String email, boolean on) {
+        String url = ApiConfig.url("/api/mobile/waitlist/") + email + "/offers";
+        return onFrom(OkHttpClientHelper.put(url, "{\"on\":" + on + "}"), "changing");
+    }
+
+    private Boolean onFrom(ApiGenericResponse response, String what) {
+        if (!response.isSuccess()) {
+            Log.e(TAG, "Error " + what + " earlier-slot offers: " + response.getResponseBody());
+            return null;
+        }
+        try {
+            return new JSONObject(response.getResponseBody()).getBoolean("on");
+        } catch (JSONException e) {
+            Log.e(TAG, "Unexpected earlier-slot offers reply", e);
+            return null;
+        }
+    }
 }

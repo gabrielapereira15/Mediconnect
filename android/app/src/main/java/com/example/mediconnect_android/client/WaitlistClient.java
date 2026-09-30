@@ -28,4 +28,17 @@ public interface WaitlistClient {
      * clinic only offers slots that are actually an improvement.
      */
     boolean join(String email, String doctorId, String currentAppointmentDate);
+
+    /**
+     * Profile's "Earlier-slot offers" switch as the clinic has it: true or
+     * false, or null when it could not be asked.
+     */
+    Boolean offersOn(String email);
+
+    /**
+     * Turns earlier-slot offers on or off. Off pauses them; the patient
+     * stays on every waitlist. Returns the new setting, or null when the
+     * clinic did not take it.
+     */
+    Boolean setOffersOn(String email, boolean on);
 }

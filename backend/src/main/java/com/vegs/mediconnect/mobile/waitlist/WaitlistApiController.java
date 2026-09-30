@@ -52,6 +52,26 @@ public class WaitlistApiController {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
     }
 
+    /** Profile's "Earlier-slot offers" switch, as it stands. */
+    @GetMapping("/{email}/offers")
+    public ResponseEntity<OffersPreference> offers(@PathVariable String email) {
+        return ResponseEntity.ok(new OffersPreference(waitlistService.offersOn(email)));
+    }
+
+    /** Turns earlier-slot offers on or off. Off pauses them; no list is left. */
+    @PutMapping("/{email}/offers")
+    public ResponseEntity<OffersPreference> setOffers(@PathVariable String email,
+                                                      @RequestBody OffersPreference preference) {
+        if (preference == null || preference.on() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(new OffersPreference(waitlistService.setOffersOn(email, preference.on())));
+    }
+
+    /** {"on": true} — whether the clinic may offer earlier times. */
+    public record OffersPreference(Boolean on) {
+    }
+
     @PostMapping("/{email}/{entryId}/leave")
     public ResponseEntity<Void> leave(@PathVariable String email, @PathVariable UUID entryId) {
         waitlistService.leave(email, entryId);

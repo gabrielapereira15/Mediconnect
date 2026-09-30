@@ -73,6 +73,15 @@ public class Patient {
     @Column
     private String healthCardProvince;
 
+    /**
+     * Whether the clinic may offer this patient earlier times from their
+     * waitlists (Profile's "Earlier-slot offers"). Off pauses the offers
+     * without taking them off any list. Null is on: offers were always on
+     * before there was a switch.
+     */
+    @Column
+    private Boolean earlierSlotOffers;
+
     @OneToMany(mappedBy = "patient")
     private List<Appointment> appointments;
 

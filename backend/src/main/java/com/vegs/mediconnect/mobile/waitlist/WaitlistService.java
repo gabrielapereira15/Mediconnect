@@ -91,6 +91,13 @@ public class WaitlistService {
                     "You are already on the waitlist for this doctor.");
         }
 
+        // Asking for an earlier time is asking to be offered one, so it
+        // switches offers back on if the patient had paused them.
+        if (!offersOn(patient)) {
+            patient.setEarlierSlotOffers(true);
+            patientRepository.save(patient);
+        }
+
         var entry = new WaitlistEntry();
         entry.setPatient(patient);
         entry.setDoctor(doctor);
@@ -232,6 +239,10 @@ public class WaitlistService {
             if (!entry.wants(schedule.getDate())) {
                 continue;
             }
+            if (!offersOn(entry.getPatient())) {
+                // Paused, not gone: they keep their place in the queue.
+                continue;
+            }
             hold(entry, slot, now, expires);
             return true;
         }
@@ -249,6 +260,9 @@ public class WaitlistService {
     public String offerTo(WaitlistEntry entry, ScheduleTime slot) {
         if (entry.getStatus() != WaitlistStatus.WAITING) {
             return "Only someone still waiting can be offered a slot.";
+        }
+        if (!offersOn(entry.getPatient())) {
+            return "They have paused earlier-slot offers in the app. Call them instead.";
         }
         if (!Boolean.TRUE.equals(slot.getAvailable()) || Boolean.TRUE.equals(slot.getBlocked())) {
             return "That time is no longer free.";
@@ -368,6 +382,32 @@ public class WaitlistService {
         delivery.setPatientId(entry.getPatient());
         delivery.setAcknowledged(false);
         notificationPatientRepository.save(delivery);
+    }
+
+    // ---- the Profile switch ---------------------------------------------------
+
+    /** Whether the clinic may offer this patient earlier times. Null counts as on. */
+    public static boolean offersOn(Patient patient) {
+        return !Boolean.FALSE.equals(patient.getEarlierSlotOffers());
+    }
+
+    @Transactional
+    public boolean offersOn(String email) {
+        return offersOn(patient(email));
+    }
+
+    /**
+     * Turns earlier-slot offers on or off. Off is a pause: the patient
+     * stays on every waitlist, keeps their place, and simply is not offered
+     * anything until they turn it back on. An offer already being held for
+     * them is left alone; they can still take it or pass it on.
+     */
+    @Transactional
+    public boolean setOffersOn(String email, boolean on) {
+        Patient patient = patient(email);
+        patient.setEarlierSlotOffers(on);
+        patientRepository.save(patient);
+        return on;
     }
 
     private Patient patient(String email) {

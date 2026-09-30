@@ -159,8 +159,12 @@ public class WaitlistBoard {
     private Row row(WaitlistEntry entry, LocalDateTime now) {
         var patient = entry.getPatient();
         String name = Display.name(patient.getFirstName(), patient.getLastName());
-        String status = entry.getStatus().name().charAt(0) + entry.getStatus().name().substring(1).toLowerCase(Locale.ENGLISH);
-        String statusClass = switch (entry.getStatus()) {
+        // Paused in the app: still on the list, but not to be offered anything.
+        boolean paused = entry.getStatus() == WaitlistStatus.WAITING && !WaitlistService.offersOn(patient);
+        String status = paused
+                ? "Offers paused"
+                : entry.getStatus().name().charAt(0) + entry.getStatus().name().substring(1).toLowerCase(Locale.ENGLISH);
+        String statusClass = paused ? "" : switch (entry.getStatus()) {
             case OFFERED -> "mc-badge-sun";
             case BOOKED -> "mc-badge-success";
             case WITHDRAWN -> "";
@@ -176,7 +180,7 @@ public class WaitlistBoard {
                 entry.getAvailableFrom() == null || !entry.getAvailableFrom().isAfter(now.toLocalDate())
                         ? "Now" : Display.day(entry.getAvailableFrom()),
                 status, statusClass, lastOffer,
-                entry.getStatus() == WaitlistStatus.WAITING,
+                entry.getStatus() == WaitlistStatus.WAITING && !paused,
                 entry.getStatus() == WaitlistStatus.OFFERED,
                 open);
     }

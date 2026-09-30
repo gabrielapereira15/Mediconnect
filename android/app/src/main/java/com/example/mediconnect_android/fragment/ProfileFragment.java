@@ -47,8 +47,11 @@ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
     private final WaitlistClient waitlistClient = new WaitlistClientImpl();
 
-    /** The queues this patient is in, which the offers switch reflects. */
+    /** The queues this patient is in, which the offers switch describes. */
     private final List<WaitlistEntry> waitlists = new ArrayList<>();
+
+    /** The offers switch as the clinic has it; null until it has answered. */
+    private Boolean offersOn;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -213,22 +216,31 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * Whether the clinic may offer earlier slots.
+     * Whether the clinic may offer earlier slots (Profile's switch).
      *
-     * It reflects something real: the queues the patient is actually in.
-     * Turning it off leaves all of them, which is the only thing "no
-     * thank you" could honestly mean.
+     * A real preference, on by default. Off pauses the offers: the patient
+     * stays on every waitlist and keeps their place, but the clinic offers
+     * them nothing until it is back on. It used to mean "leave every
+     * waitlist", so it could only ever be turned off, and only by someone
+     * already on one.
      */
     private void loadWaitlists() {
         bindOffersSwitch();
 
         Background.run(
-                () -> waitlistClient.list(email()),
-                entries -> {
+                () -> {
+                    Boolean on = waitlistClient.offersOn(email());
+                    List<WaitlistEntry> entries = waitlistClient.list(email());
+                    return new Object[]{on, entries};
+                },
+                result -> {
                     if (binding == null) {
                         return;
                     }
                     binding.swipeRefresh.setRefreshing(false);
+                    @SuppressWarnings("unchecked")
+                    List<WaitlistEntry> entries = (List<WaitlistEntry>) result[1];
+                    offersOn = (Boolean) result[0];
                     waitlists.clear();
                     if (entries != null) {
                         waitlists.addAll(entries.stream()
@@ -245,29 +257,34 @@ public class ProfileFragment extends Fragment {
     }
 
     private void bindOffersSwitch() {
+        boolean known = offersOn != null;
+        boolean on = known && offersOn;
         int count = waitlists.size();
-        boolean on = count > 0;
 
         binding.switchOffers.switchIcon.setImageResource(R.drawable.ic_hourglass);
         binding.switchOffers.switchTitle.setText(R.string.profile_offers);
         binding.switchOffers.switchToggle.setChecked(on);
-        binding.switchOffers.switchToggle.setEnabled(on);
+        binding.switchOffers.switchToggle.setEnabled(known);
         describeSwitch(binding.switchOffers, R.string.profile_offers, on);
 
-        if (count == 1) {
-            binding.switchOffers.switchSub.setText(
-                    getString(R.string.profile_offers_body_on, count));
-        } else if (count > 1) {
-            binding.switchOffers.switchSub.setText(
-                    getString(R.string.profile_offers_body_many, count));
+        if (!known) {
+            binding.switchOffers.switchSub.setText(R.string.profile_offers_body_unknown);
+        } else if (on && count > 0) {
+            binding.switchOffers.switchSub.setText(getResources().getQuantityString(
+                    R.plurals.profile_offers_body_on, count, count));
+        } else if (on) {
+            binding.switchOffers.switchSub.setText(R.string.profile_offers_body_on_none);
+        } else if (count > 0) {
+            binding.switchOffers.switchSub.setText(getResources().getQuantityString(
+                    R.plurals.profile_offers_body_paused, count, count));
         } else {
             binding.switchOffers.switchSub.setText(R.string.profile_offers_body_off);
         }
 
-        // With no waitlists there is nothing to turn off, and turning it on
-        // is done from a visit — which is where the doctor is named.
-        binding.switchOffers.switchRow.setOnClickListener(on ? v -> confirmLeaveAll() : null);
-        binding.switchOffers.switchRow.setClickable(on);
+        // Until the clinic has said where the switch stands, a tap could
+        // only guess which way to flip it.
+        binding.switchOffers.switchRow.setOnClickListener(known ? v -> setOffers(!offersOn) : null);
+        binding.switchOffers.switchRow.setClickable(known);
     }
 
     /**
@@ -284,41 +301,40 @@ public class ProfileFragment extends Fragment {
                 getString(titleRes), getString(on ? R.string.cd_on : R.string.cd_off)));
     }
 
-    private void confirmLeaveAll() {
-        new AlertDialog.Builder(requireContext())
-                .setTitle(R.string.profile_offers)
-                .setMessage(getString(waitlists.size() == 1
-                        ? R.string.profile_offers_body_on
-                        : R.string.profile_offers_body_many, waitlists.size()))
-                .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.profile_offers_leave, (dialog, which) -> leaveAll())
-                .show();
-    }
+    /**
+     * Flips the switch at once and tells the clinic. Nothing is lost
+     * either way, so there is no "are you sure"; if the clinic does not
+     * take it, the switch goes back and says so.
+     */
+    private void setOffers(boolean on) {
+        Boolean before = offersOn;
+        offersOn = on;
+        bindOffersSwitch();
 
-    private void leaveAll() {
-        List<WaitlistEntry> leaving = new ArrayList<>(waitlists);
         Background.run(
-                () -> {
-                    for (WaitlistEntry entry : leaving) {
-                        waitlistClient.leave(email(), entry.getId());
-                    }
-                    return true;
-                },
-                left -> {
+                () -> waitlistClient.setOffersOn(email(), on),
+                saved -> {
                     if (binding == null) {
                         return;
                     }
-                    waitlists.clear();
+                    if (saved == null) {
+                        offersOn = before;
+                        bindOffersSwitch();
+                        DialogUtils.showMessageDialog(getContext(),
+                                getString(R.string.profile_offers_failed));
+                        return;
+                    }
+                    offersOn = saved;
                     bindOffersSwitch();
-                    DialogUtils.showMessageDialog(getContext(),
-                            getString(R.string.profile_offers_left));
                 },
                 error -> {
-                    if (binding != null) {
-                        DialogUtils.showMessageDialog(getContext(),
-                                getString(R.string.error_no_server));
-                        loadWaitlists();
+                    if (binding == null) {
+                        return;
                     }
+                    offersOn = before;
+                    bindOffersSwitch();
+                    DialogUtils.showMessageDialog(getContext(),
+                            getString(R.string.error_no_server));
                 });
     }
 
