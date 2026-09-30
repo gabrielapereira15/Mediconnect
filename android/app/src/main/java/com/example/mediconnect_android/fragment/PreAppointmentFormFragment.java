@@ -23,6 +23,7 @@ import com.example.mediconnect_android.model.Appointment;
 import com.example.mediconnect_android.model.PreVisitForm;
 import com.example.mediconnect_android.util.Background;
 import com.example.mediconnect_android.util.DialogUtils;
+import com.example.mediconnect_android.util.FormVisitLine;
 import com.example.mediconnect_android.util.KeyboardUtils;
 import com.google.gson.Gson;
 
@@ -84,11 +85,20 @@ public class PreAppointmentFormFragment extends Fragment {
     public PreAppointmentFormFragment() {
     }
 
-    /** Opens the form for the visit it belongs to. */
+    /**
+     * Opens the form for the visit it belongs to, carrying the doctor and
+     * the time so the top of the form can say which visit that is.
+     */
     public static PreAppointmentFormFragment of(Appointment appointment) {
-        return of(appointment.getId());
+        PreAppointmentFormFragment fragment = of(appointment.getId());
+        FormVisitLine.put(fragment.requireArguments(), appointment);
+        return fragment;
     }
 
+    /**
+     * Opens the form knowing only the visit's id, as a message does. The
+     * form then looks the visit up itself to name it.
+     */
     public static PreAppointmentFormFragment of(String appointmentId) {
         PreAppointmentFormFragment fragment = new PreAppointmentFormFragment();
         Bundle args = new Bundle();
@@ -115,6 +125,7 @@ public class PreAppointmentFormFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentPreAppointmentFormBinding.inflate(inflater, container, false);
 
+        FormVisitLine.bind(binding.visitLine, getArguments(), appointmentId);
         binding.progress.setMax(STEPS);
         binding.textAnswer.addTextChangedListener(new TextWatcher() {
             @Override

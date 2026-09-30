@@ -27,6 +27,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!--
+            Which visit this form is for. Hidden until FormVisitLine has a
+            doctor to name, so a visit it cannot find is not guessed at.
+        -->
+        <TextView
+            android:id="@+id/visit_line"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/space_sm"
+            android:textAppearance="@style/TextAppearance.Mediconnect.BodyMedium"
+            android:textColor="@color/md_on_surface_variant"
+            android:visibility="gone"
+            tools:text="For your visit with Dr. Robert Chase · Thu 8 Oct, 10:00 AM"
+            tools:visibility="visible" />
+
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progress"
             android:layout_width="match_parent"
