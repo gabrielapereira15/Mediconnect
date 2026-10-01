@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, master, v2, 'revamp/**']
+    branches: [main, master, 'revamp/**']
   pull_request:
   workflow_dispatch:
 
@@ -20,16 +20,18 @@ jobs:
         working-directory: backend
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           java-version: '21'
           distribution: temurin
-
-      - name: Cache Gradle
-        uses: gradle/actions/setup-gradle@v4
+          # Gradle's dependencies and wrapper, keyed on this project's build files.
+          cache: gradle
+          cache-dependency-path: |
+            backend/*.gradle
+            backend/gradle/wrapper/gradle-wrapper.properties
 
       - name: Build and test
         # The tests use the default in-memory H2 datasource, so no database
@@ -38,7 +40,7 @@ jobs:
 
       - name: Upload test report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: backend-test-report
           path: backend/build/reports/tests/test
@@ -52,16 +54,19 @@ jobs:
         working-directory: android
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           java-version: '21'
           distribution: temurin
-
-      - name: Cache Gradle
-        uses: gradle/actions/setup-gradle@v4
+          # Gradle's dependencies and wrapper, keyed on this project's build files.
+          cache: gradle
+          cache-dependency-path: |
+            android/**/*.gradle.kts
+            android/gradle/libs.versions.toml
+            android/gradle/wrapper/gradle-wrapper.properties
 
       - name: Unit tests
         run: ./gradlew testDebugUnitTest --no-daemon
@@ -73,7 +78,7 @@ jobs:
         run: ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mediconnect-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
@@ -81,7 +86,7 @@ jobs:
 
       - name: Upload reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-reports
           path: |
